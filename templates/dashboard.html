@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adlin & Prithvi</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="dashboard-page">
+
+    <div id="login-toast" class="login-toast">
+        <div class="login-toast-inner">
+            <span class="login-icon">✨</span>
+            <div>
+                <strong>Welcome!</strong>
+                <p>Your guest portal is ready.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
+
+    <div id="celebration-toast" class="celebration-toast">
+        <div class="celebration-toast-inner">
+            <span class="celebration-icon">🎉</span>
+            <div>
+                <strong>RSVP Confirmed!</strong>
+                <p>We can’t wait to celebrate with you.</p>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-container">
+
+        <div class="top-line">
+            <span>Nov, 2026</span>
+            <span>Tampa,FL</span>
+            <span>Guest Edition</span>
+        </div>
+
+        <h1 class="dashboard-title">Adlin & Prithvi</h1>
+
+
+        <div class="tabs"> 
+            <button type="button" class="tab-btn active" data-tab="welcome">Welcome</button>
+            <button type="button" class="tab-btn" data-tab="schedule">Schedule</button>
+            <button type="button" class="tab-btn" data-tab="travel">Travel</button>
+            <button type="button" class="tab-btn" data-tab="registry">Registry</button>
+            <button type="button" class="tab-btn" data-tab="qa">Q&A</button>
+        </div>
+        <!-- Welcome Tab -->
+        <div id="welcome" class="tab-content active">
+
+            <div class="welcome-section-header">
+                <h2>Welcome, Dear Guest</h2>
+                <p>
+                    We are so excited to celebrate our special day with you.
+                    Please use this portal to view wedding details, travel plans,
+                    registry information, and common questions.
+                </p>
+            </div>
+
+            <div class="countdown-section-header">
+                <!-- <h2>Countdown to the Wedding Day</h2> -->
+
+                <div class="countdown-inline">
+                    <div>
+                        <span id="days">00</span>
+                        <small>Days</small>
+                    </div>
+
+                    <div>
+                        <span id="hours">00</span>
+                        <small>Hours</small>
+                    </div>
+
+                    <div>
+                        <span id="minutes">00</span>
+                        <small>Minutes</small>
+                    </div>
+
+                    <div>
+                        <span id="seconds">00</span>
+                        <small>Seconds</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="welcome-hero">
+                <img class="slide active-slide" src="{{ url_for('static', filename='images/DSC06660.jpg') }}" alt="Wedding image 1">
+                <img class="slide" src="{{ url_for('static', filename='images/DSC06692.jpg') }}" alt="Wedding image 2">
+                <img class="slide" src="{{ url_for('static', filename='images/DSC06717.jpg') }}" alt="Wedding image 3">
+                <img class="slide" src="{{ url_for('static', filename='images/DSC06785.jpg') }}" alt="Wedding image 4">
+                <img class="slide" src="{{ url_for('static', filename='images/DSC06855.jpg') }}" alt="Wedding image 5">
+                <img class="slide" src="{{ url_for('static', filename='images/DSC06882.jpg') }}" alt="Wedding image 6">
+
+                <button class="slide-arrow left-arrow" onclick="changeSlide(-1)">&#10094;</button>
+                <button class="slide-arrow right-arrow" onclick="changeSlide(1)">&#10095;</button>
+            </div>
+
+            <div class="slide-dots">
+                <span class="dot active-dot" onclick="showSlide(0)"></span>
+                <span class="dot" onclick="showSlide(1)"></span>
+                <span class="dot" onclick="showSlide(2)"></span>
+                <span class="dot" onclick="showSlide(3)"></span>
+                <span class="dot" onclick="showSlide(4)"></span>
+                <span class="dot" onclick="showSlide(5)"></span>
+            </div>
+        </div>
+
+        <!-- Schedule Tab -->
+        <div id="schedule" class="tab-content">
+            <h2>Wedding Schedule</h2>
+        
+
+            <p class="schedule-intro">
+                Please RSVP for each event you are invited to. Your response will help us plan seating,
+                food, transportation, and guest arrangements.
+            </p>
+
+            {% for event in events %}
+                {% set saved = saved_rsvps.get(event.id, {}) %}
+                {% set has_response = saved.get("attending") %}
+
+                <div 
+                    class="info-card event-card 
+                        {% if event.id == 'haldi' %}event-haldi{% endif %}
+                        {% if event.id == 'hindu_wedding' %}event-hindu{% endif %}
+                        {% if event.id == 'christian_wedding_reception' %}event-christian{% endif %}
+                    "
+                >
+                    {% if event.id == 'haldi' %}
+                        <div class="event-theme-badge">
+                            <span>Nov 19</span>
+                            <strong>Haldi</strong>
+                        </div>
+                    {% elif event.id == 'hindu_wedding' %}
+                        <div class="event-theme-badge">
+                            <span>Nov 20</span>
+                            <strong>Hindu Ceremony</strong>
+                        </div>
+                    {% elif event.id == 'christian_wedding_reception' %}
+                        <div class="event-theme-badge">
+                            <span>Nov 21</span>
+                            <strong>Reception</strong>
+                        </div>
+                    {% endif %}
+                    <div class="event-header">
+                        <div>
+                            <h3>{{ event.title }}</h3>
+                            {% if event.id == 'haldi' %}
+                                <p class="event-kicker">A joyful pre-wedding celebration</p>
+                            {% elif event.id == 'hindu_wedding' %}
+                                <p class="event-kicker">Traditional Hindu ceremony and blessings</p>
+                            {% elif event.id == 'christian_wedding_reception' %}
+                                <p class="event-kicker">Ceremony, dinner, dancing, and celebration</p>
+                            {% endif %}
+                            <p><strong>Date:</strong> {{ event.date }}</p>
+                            <p><strong>Time:</strong> {{ event.time }}</p>
+                            <p><strong>Location:</strong> {{ event.location }}</p>
+                            <p>{{ event.description }}</p>
+
+                            <div class="event-actions">
+                                <a 
+                                    href="{{ event.calendar_link }}" 
+                                    target="_blank" 
+                                    class="event-action-link"
+                                >
+                                    Add to Google Calendar
+                                </a>
+
+                                 <a 
+                                    href="{{ url_for('apple_calendar_event', event_id=event.id) }}" 
+                                    class="event-action-link"
+                                >
+                                    Add to Apple Calendar
+                                </a>
+
+                                <a 
+                                    href="{{ event.directions_link }}" 
+                                    target="_blank" 
+                                    class="event-action-link"
+                                >
+                                    Get Directions
+                                </a>
+                            </div>
+
+                            <div class="attire-box">
+                                <span>Attire</span>
+                                <p>{{ event.attire }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if has_response %}
+                        <div 
+                            id="confirmation-{{ event.id }}" 
+                            class="rsvp-confirmation 
+                                {% if saved.get('attending') == 'Yes' %}status-yes{% endif %}
+                                {% if saved.get('attending') == 'No' %}status-no{% endif %}
+                                {% if saved.get('attending') == 'Maybe' %}status-maybe{% endif %}
+                            "
+                        >
+                            <div class="rsvp-status-header">
+                                {% if saved.get("attending") == "Yes" %}
+                                    <span class="status-badge badge-yes">Confirmed</span>
+                                    <h4>You’re Attending</h4>
+                                {% elif saved.get("attending") == "No" %}
+                                    <span class="status-badge badge-no">Not Attending</span>
+                                    <h4>Response Saved</h4>
+                                {% else %}
+                                    <span class="status-badge badge-maybe">Maybe</span>
+                                    <h4>Response Saved</h4>
+                                {% endif %}
+                            </div>
+
+                            <div class="confirmation-details">
+                                <p><strong>RSVP:</strong> {{ saved.get("attending") }}</p>
+
+                                {% if saved.get("attending") != "No" %}
+                                    <p><strong>Number of guests:</strong> {{ saved.get("guest_count", 0) }}</p>
+                                {% endif %}
+
+                                {% if saved.get("notes") %}
+                                    <p><strong>Notes:</strong> {{ saved.get("notes") }}</p>
+                                {% endif %}
+                            </div>
+
+                            <button 
+                                type="button" 
+                                class="edit-rsvp-btn" 
+                                onclick="toggleRsvpForm('{{ event.id }}')"
+                            >
+                                Edit Response
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    <form 
+                        id="rsvp-form-{{ event.id }}" 
+                        action="{{ url_for('save_rsvp') }}" 
+                        method="POST" 
+                        class="rsvp-form {% if has_response %}is-hidden{% endif %}"
+                    >
+                        <input type="hidden" name="event_id" value="{{ event.id }}">
+
+                        <div class="rsvp-grid">
+                            <div class="rsvp-field">
+                                <label>Will you attend?</label>
+                                <select name="attending" required>
+                                    <option value="">Select</option>
+                                    <option value="Yes" {% if saved.get("attending") == "Yes" %}selected{% endif %}>Yes</option>
+                                    <option value="No" {% if saved.get("attending") == "No" %}selected{% endif %}>No</option>
+                                    <option value="Maybe" {% if saved.get("attending") == "Maybe" %}selected{% endif %}>Maybe</option>
+                                </select>
+                            </div>
+
+                            <div class="rsvp-field">
+                                <label>Number of guests</label>
+                                <input 
+                                    type="number" 
+                                    name="guest_count" 
+                                    min="0" 
+                                    max="{{ guest.max_guests }}" 
+                                    value="{{ saved.get('guest_count', 0) }}"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="rsvp-field">
+                            <label>Notes</label>
+                            <textarea name="notes" placeholder="Food restrictions, accessibility needs, or other notes">{{ saved.get("notes", "") }}</textarea>
+                        </div>
+
+                        <button type="submit" class="rsvp-btn">
+                            {% if has_response %}
+                                Update RSVP
+                            {% else %}
+                                Save RSVP
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+
+      <!-- Travel Tab -->
+        <div id="travel" class="tab-content">
+
+            <div class="travel-page-header">
+                <h2>Travel Guide</h2>
+                <p>
+                    A helpful guide for our out-of-town guests — airports, hotels, places to visit,
+                    and a few favorite food spots around Tampa.
+                </p>
+            </div>
+
+            <div class="travel-paper-grid mixed-newspaper-grid">
+
+                    <!-- Airport Information - large feature -->
+                    <section class="travel-paper-card airport-feature">
+                        <div class="paper-label">Travel Forecast</div>
+
+                        <div class="newspaper-split-title">
+                            <h3>Airport Information</h3>
+                            <span class="mini-stamp">Arrivals Desk</span>
+                        </div>
+
+                        <div class="paper-image-wrap feature-image">
+                            <img 
+                                src="{{ url_for('static', filename='images/travel/airport.png') }}" 
+                                alt="Airport illustration"
+                                class="paper-image"
+                            >
+                        </div>
+
+                        <div class="paper-columns">
+                            <div class="paper-item">
+                                <h4>Tampa International Airport</h4>
+                                <p>
+                                    Recommended airport for most guests traveling to Tampa.
+                                    This is the most convenient option for the wedding weekend.
+                                </p>
+                                <a 
+                                    href="https://www.google.com/maps/search/?api=1&query=Tampa+International+Airport"
+                                    target="_blank"
+                                >
+                                    Open in Maps
+                                </a>
+                            </div>
+
+                            <div class="paper-item">
+                                <h4>St. Pete-Clearwater International Airport</h4>
+                                <p>
+                                    A secondary airport option depending on flight availability and pricing.
+                                </p>
+                                <a 
+                                    href="https://www.google.com/maps/search/?api=1&query=St.+Pete-Clearwater+International+Airport"
+                                    target="_blank"
+                                >
+                                    Open in Maps
+                                </a>
+                            </div>
+
+                            <div class="paper-item">
+                                <h4>Orlando International Airport</h4>
+                                <p>
+                                    Another airport option for guests who may find better flight availability
+                                    or pricing into Orlando. Please note that Orlando is farther from the Tampa
+                                    wedding events, so guests should plan additional drive time.
+                                </p>
+                                <a 
+                                    href="https://www.google.com/maps/search/?api=1&query=Orlando+International+Airport"
+                                    target="_blank"
+                                >
+                                    Open in Maps
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Hotel Information - image side layout -->
+                    <section class="travel-paper-card hotel-side-card">
+                        <div class="paper-label">Stay Bulletin</div>
+                        <h3>Hotel Information</h3>
+
+                        <div class="hotel-side-layout">
+                            <div class="hotel-copy">
+                                <div class="paper-item no-top-border">
+                                    <h4>Hotel Block</h4>
+                                    <p>
+                                        Hotel block details will be shared soon. Please check back here
+                                        for booking links, group rates, and recommended stay areas.
+                                    </p>
+                                </div>
+
+                                <div class="paper-item">
+                                    <h4>Recommended Areas</h4>
+                                    <p>
+                                        Guests may prefer staying around Tampa, New Tampa, Wesley Chapel,
+                                        or Brandon depending on which events they are attending.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="paper-image-wrap side-image">
+                                <img 
+                                    src="{{ url_for('static', filename='images/travel/hotel.png') }}" 
+                                    alt="Hotel illustration"
+                                    class="paper-image"
+                                >
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Things To Do - image floated like newspaper clipping -->
+                    <section class="travel-paper-card things-clipping-card">
+                        <div class="paper-label">Around Town</div>
+                        <h3>Things To Do</h3>
+
+                        <div class="paper-image-wrap clipping-image">
+                            <img 
+                                src="{{ url_for('static', filename='images/travel/tampa.png') }}" 
+                                alt="Tampa illustration"
+                                class="paper-image"
+                            >
+                        </div>
+
+                        <div class="paper-item no-top-border">
+                            <h4>Tampa Riverwalk</h4>
+                            <p>
+                                A scenic waterfront area with walking paths, restaurants,
+                                museums, and downtown views.
+                            </p>
+                            <a 
+                                href="https://www.google.com/maps/search/?api=1&query=Tampa+Riverwalk"
+                                target="_blank"
+                            >
+                                Open in Maps
+                            </a>
+                        </div>
+
+                        <div class="paper-item">
+                            <h4>Armature Works</h4>
+                            <p>
+                                A fun food hall and hangout spot near the river, great for groups.
+                            </p>
+                            <a 
+                                href="https://www.google.com/maps/search/?api=1&query=Armature+Works+Tampa"
+                                target="_blank"
+                            >
+                                Open in Maps
+                            </a>
+                        </div>
+
+                        <div class="paper-item">
+                            <h4>Clearwater Beach</h4>
+                            <p>
+                                A beautiful beach option if you are extending your trip.
+                            </p>
+                            <a 
+                                href="https://www.google.com/maps/search/?api=1&query=Clearwater+Beach"
+                                target="_blank"
+                            >
+                                Open in Maps
+                            </a>
+                        </div>
+                    </section>
+
+                    <!-- Favorite Restaurants - ad style -->
+                    <section class="travel-paper-card restaurant-ad-card">
+                        <div class="paper-label">Selected Eats</div>
+
+                        <div class="restaurant-ad-heading">
+                            <h3>Favorite<br>Restaurants</h3>
+                            <div class="ad-circle">Eats</div>
+                        </div>
+
+                        <div class="paper-item no-top-border">
+                            <h4>Favorite Restaurant 1</h4>
+                            <p>Add your favorite restaurant recommendation here.</p>
+                        </div>
+
+                        <div class="paper-item">
+                            <h4>Favorite Restaurant 2</h4>
+                            <p>Add another food spot, dessert place, or coffee shop here.</p>
+                        </div>
+
+                        <div class="paper-image-wrap bottom-ad-image">
+                            <img 
+                                src="{{ url_for('static', filename='images/travel/restaurants.png') }}" 
+                                alt="Restaurant illustration"
+                                class="paper-image"
+                            >
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+
+        <!-- Registry Tab -->
+        <div id="registry" class="tab-content">
+            <h2>Registry</h2>
+
+            <div class="info-card">
+                <p>
+                    Your presence is the greatest gift. Registry details will be added here soon.
+                </p>
+            </div>
+        </div>
+
+        <!-- QA Tab -->
+        <div id="qa" class="tab-content">
+            <div class="qa-section-header">
+                <h2>Questions & Answers</h2>
+                <p>
+                    A few helpful notes for the wedding weekend. If you still have questions,
+                    please reach out to us directly.
+                </p>
+            </div>
+
+            <div class="qa-newspaper-grid">
+
+                <div class="qa-card featured-qa">
+                    <div class="qa-label">Guest Notice</div>
+                    <h3>What should I wear?</h3>
+                    <p>
+                        Please refer to the attire notes listed under each event in the Schedule tab.
+                        Bright festive colors are perfect for Haldi, traditional Indian formal attire is
+                        encouraged for the Hindu ceremony, and formal or semi-formal attire is welcome
+                        for the Christian wedding and reception.
+                    </p>
+                </div>
+
+                <div class="qa-card">
+                    <div class="qa-label">Invitation</div>
+                    <h3>Can I bring a guest?</h3>
+                    <p>
+                        Please refer to your invitation and RSVP options in the Schedule tab.
+                        If your invitation includes additional guests, you will be able to enter that
+                        number while submitting your RSVP.
+                    </p>
+                </div>
+
+                <div class="qa-card">
+                    <div class="qa-label">Family</div>
+                    <h3>Are children invited?</h3>
+                    <p>
+                        Please refer to your invitation details. If children are included in your invitation,
+                        they can be counted in your RSVP guest count.
+                    </p>
+                </div>
+
+                <div class="qa-card">
+                    <div class="qa-label">Arrival</div>
+                    <h3>What time should I arrive?</h3>
+                    <p>
+                        We recommend arriving 20–30 minutes before the listed event start time so you have
+                        enough time for parking, seating, and settling in.
+                    </p>
+                </div>
+
+                <div class="qa-card">
+                    <div class="qa-label">Parking</div>
+                    <h3>Will parking be available?</h3>
+                    <p>
+                        Parking details will depend on the event location. Please use the directions link
+                        under each event, and we will share any specific parking instructions closer to
+                        the wedding weekend.
+                    </p>
+                </div>
+
+                <div class="qa-card">
+                    <div class="qa-label">Food</div>
+                    <h3>Will food be provided?</h3>
+                    <p>
+                        Yes, food will be provided at the wedding events. If you have dietary restrictions
+                        or allergies, please include them in the notes section when submitting your RSVP.
+                    </p>
+                </div>
+
+                <div class="qa-card">
+                    <div class="qa-label">Photos</div>
+                    <h3>Can I take photos?</h3>
+                    <p>
+                        We would love for you to capture memories during the celebrations. During formal
+                        ceremony moments, please be mindful of the photographer and the couple’s view.
+                    </p>
+                </div>
+
+                <div class="qa-card">
+                    <div class="qa-label">Travel</div>
+                    <h3>Where should I stay?</h3>
+                    <p>
+                        Please check the Travel tab for airport information, recommended stay areas,
+                        things to do, and restaurant suggestions. Hotel block details will be shared there
+                        when available.
+                    </p>
+                </div>
+
+                <div class="qa-card contact-qa">
+                    <div class="qa-label">Help Desk</div>
+                    <h3>Who should I contact?</h3>
+                    <p>
+                        If you have questions about your invitation, RSVP, travel, or wedding details,
+                        please reach out to Adlin or Prithvi directly.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+
+    </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        function activateTab(tabName) {
+            tabButtons.forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+
+            tabContents.forEach(function (content) {
+                content.classList.remove("active");
+            });
+
+            const targetButton = document.querySelector('.tab-btn[data-tab="' + tabName + '"]');
+            const targetContent = document.getElementById(tabName);
+
+            if (targetButton && targetContent) {
+                targetButton.classList.add("active");
+                targetContent.classList.add("active");
+            }
+        }
+
+        tabButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                const targetTab = button.getAttribute("data-tab");
+                activateTab(targetTab);
+
+                // Update URL hash without reloading page
+                history.replaceState(null, "", "#" + targetTab);
+            });
+        });
+
+        // Open tab from URL hash, for example /dashboard#schedule
+        const hashTab = window.location.hash.replace("#", "");
+
+        if (hashTab) {
+            activateTab(hashTab);
+        }
+
+        let currentSlide = 0;
+        const slides = document.querySelectorAll("#welcome .slide");
+        const dots = document.querySelectorAll(".dot");
+
+        function showSlideInternal(index) {
+            if (slides.length === 0) {
+                return;
+            }
+
+            if (index >= slides.length) {
+                currentSlide = 0;
+            } else if (index < 0) {
+                currentSlide = slides.length - 1;
+            } else {
+                currentSlide = index;
+            }
+
+            slides.forEach(function (slide) {
+                slide.classList.remove("active-slide");
+            });
+
+            dots.forEach(function (dot) {
+                dot.classList.remove("active-dot");
+            });
+
+            slides[currentSlide].classList.add("active-slide");
+
+            if (dots[currentSlide]) {
+                dots[currentSlide].classList.add("active-dot");
+            }
+        }
+
+        window.changeSlide = function (direction) {
+            showSlideInternal(currentSlide + direction);
+        };
+
+        window.showSlide = function (index) {
+            showSlideInternal(index);
+        };
+
+        setInterval(function () {
+            showSlideInternal(currentSlide + 1);
+        }, 4000);
+
+        window.toggleRsvpForm = function (eventId) {
+            const form = document.getElementById("rsvp-form-" + eventId);
+            const confirmation = document.getElementById("confirmation-" + eventId);
+
+            if (form) {
+                form.classList.remove("is-hidden");
+            }
+
+            if (confirmation) {
+                confirmation.style.display = "none";
+            }
+        };
+
+        const shouldCelebrate = {{ 'true' if celebrate == 'yes' else 'false' }};
+
+        function showCelebrationToast() {
+            const toast = document.getElementById("celebration-toast");
+
+            if (!toast) {
+                return;
+            }
+
+            toast.classList.add("show");
+
+            setTimeout(function () {
+                toast.classList.remove("show");
+            }, 3500);
+        }
+
+        function burstConfetti() {
+            const container = document.getElementById("confetti-container");
+
+            if (!container) {
+                return;
+            }
+
+            const colors = [
+                "#7b3b2d",
+                "#916926",
+                "#4a673b",
+                "#d7c08a",
+                "#c4935f",
+                "#fff1d6"
+            ];
+
+            for (let i = 0; i < 55; i++) {
+                const piece = document.createElement("span");
+                piece.className = "confetti-piece";
+
+                piece.style.left = Math.random() * 100 + "vw";
+                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDelay = Math.random() * 0.45 + "s";
+                piece.style.width = 7 + Math.random() * 8 + "px";
+                piece.style.height = 10 + Math.random() * 12 + "px";
+
+                container.appendChild(piece);
+
+                setTimeout(function () {
+                    piece.remove();
+                }, 3800);
+            }
+        }
+
+        if (shouldCelebrate) {
+            activateTab("schedule");
+            showCelebrationToast();
+            burstConfetti();
+
+            history.replaceState(null, "", window.location.pathname + "#schedule");
+        }
+        const shouldShowLoginEffect = {{ 'true' if login_effect == 'success' else 'false' }};
+
+        function showLoginToast() {
+            const toast = document.getElementById("login-toast");
+
+            if (!toast) {
+                return;
+            }
+
+            toast.classList.add("show");
+
+            setTimeout(function () {
+                toast.classList.remove("show");
+            }, 3200);
+        }
+
+        function burstLoginSparkles() {
+            const container = document.getElementById("confetti-container");
+
+            if (!container) {
+                return;
+            }
+
+            const colors = [
+                "#916926",
+                "#d7c08a",
+                "#c4935f",
+                "#fff1d6"
+            ];
+
+            for (let i = 0; i < 38; i++) {
+                const piece = document.createElement("span");
+                piece.className = "confetti-piece";
+
+                piece.style.left = Math.random() * 100 + "vw";
+                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDelay = Math.random() * 1.2 + "s";
+                piece.style.width = 6 + Math.random() * 6 + "px";
+                piece.style.height = 8 + Math.random() * 8 + "px";
+
+                container.appendChild(piece);
+
+                setTimeout(function () {
+                    piece.remove();
+                }, 7000);
+            }
+        }
+
+        if (shouldShowLoginEffect) {
+            activateTab("welcome");
+            showLoginToast();
+            burstLoginSparkles();
+
+            const hero = document.querySelector(".welcome-hero");
+
+            if (hero) {
+                hero.classList.add("login-glow");
+
+                setTimeout(function () {
+                    hero.classList.remove("login-glow");
+                }, 3500);
+            }
+
+            history.replaceState(null, "", window.location.pathname + "#welcome");
+        }
+
+        function updateCountdown() {
+        const weddingDate = new Date("2026-11-20T09:00:00-05:00").getTime();
+        const now = new Date().getTime();
+        const distance = weddingDate - now;
+
+        const daysEl = document.getElementById("days");
+        const hoursEl = document.getElementById("hours");
+        const minutesEl = document.getElementById("minutes");
+        const secondsEl = document.getElementById("seconds");
+
+        if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
+            return;
+        }
+
+        if (distance <= 0) {
+            daysEl.innerText = "00";
+            hoursEl.innerText = "00";
+            minutesEl.innerText = "00";
+            secondsEl.innerText = "00";
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((distance / (1000 * 60)) % 60);
+        const seconds = Math.floor((distance / 1000) % 60);
+
+        daysEl.innerText = String(days).padStart(2, "0");
+        hoursEl.innerText = String(hours).padStart(2, "0");
+        minutesEl.innerText = String(minutes).padStart(2, "0");
+        secondsEl.innerText = String(seconds).padStart(2, "0");
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adlin & Prithvi</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="login-page">
+
+
+    <div class="login-container">
+
+        <svg class="vintage-frame" viewBox="0 0 620 590" aria-hidden="true">
+            <!-- top left flourish -->
+            <path d="M40 55 C55 40, 80 42, 75 65 C72 82, 48 78, 55 62 C62 47, 88 53, 98 75" />
+            <path d="M40 55 C62 55, 74 72, 62 90" />
+
+            <!-- top right flourish -->
+            <path d="M580 55 C565 40, 540 42, 545 65 C548 82, 572 78, 565 62 C558 47, 532 53, 522 75" />
+            <path d="M580 55 C558 55, 546 72, 558 90" />
+
+            <!-- bottom left flourish -->
+            <path d="M40 535 C55 550, 80 548, 75 525 C72 508, 48 512, 55 528 C62 543, 88 537, 98 515" />
+            <path d="M40 535 C62 535, 74 518, 62 500" />
+
+            <!-- bottom right flourish -->
+            <path d="M580 535 C565 550, 540 548, 545 525 C548 508, 572 512, 565 528 C558 543, 532 537, 522 515" />
+            <path d="M580 535 C558 535, 546 518, 558 500" />
+        </svg>
+
+        <div class="top-line">
+            <span>Est. 2026</span>
+            <span>The Wedding Gazette</span>
+            <span>Guest Access</span>
+        </div>
+
+        <h1>Guest Portal</h1>
+
+        <div class="divider"></div>
+
+        <p class="subtitle">
+            Sign in to view wedding details, RSVP, travel information, and event updates.
+        </p>
+
+        <form action="/login" method="POST" class="login-form">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit">Enter</button>
+        </form>
+
+        <p class="small-text">
+            Your invitation awaits.
+        </p>
+
+    </div>
+</body>
+</html>
