@@ -33,8 +33,8 @@
 
         <div class="top-line">
             <span>Nov, 2026</span>
-            <span>Tampa,FL</span>
-            <span>Guest Edition</span>
+            <span>Tampa, FL</span>
+            <span>{{ guest.name if guest.name else "Guest Edition" }}</span>
         </div>
 
         <h1 class="dashboard-title">Adlin & Prithvi</h1>
@@ -51,7 +51,7 @@
         <div id="welcome" class="tab-content active">
 
             <div class="welcome-section-header">
-                <h2>Welcome, Dear Guest</h2>
+                <h2>Welcome, {{ guest.name if guest.name else "Dear Guest" }}</h2>
                 <p>
                     We are so excited to celebrate our special day with you.
                     Please use this portal to view wedding details, travel plans,
@@ -114,173 +114,234 @@
 
             <p class="schedule-intro">
                 Please RSVP for each event you are invited to. Your response will help us plan seating,
-                food, transportation, and guest arrangements.
+                food, parking, and guest arrangements.
             </p>
 
             {% for event in events %}
-                {% set saved = saved_rsvps.get(event.id, {}) %}
-                {% set has_response = saved.get("attending") %}
+    {% set saved = saved_rsvps.get(event.id, {}) %}
+    {% set has_response = saved.get("attending") %}
 
-                <div 
-                    class="info-card event-card 
-                        {% if event.id == 'haldi' %}event-haldi{% endif %}
-                        {% if event.id == 'hindu_wedding' %}event-hindu{% endif %}
-                        {% if event.id == 'christian_wedding_reception' %}event-christian{% endif %}
-                    "
-                >
-                    {% if event.id == 'haldi' %}
-                        <div class="event-theme-badge">
-                            <span>Nov 19</span>
-                            <strong>Haldi</strong>
-                        </div>
-                    {% elif event.id == 'hindu_wedding' %}
-                        <div class="event-theme-badge">
-                            <span>Nov 20</span>
-                            <strong>Hindu Ceremony</strong>
-                        </div>
-                    {% elif event.id == 'christian_wedding_reception' %}
-                        <div class="event-theme-badge">
-                            <span>Nov 21</span>
-                            <strong>Reception</strong>
-                        </div>
-                    {% endif %}
-                    <div class="event-header">
-                        <div>
-                            <h3>{{ event.title }}</h3>
-                            {% if event.id == 'haldi' %}
-                                <p class="event-kicker">A joyful pre-wedding celebration</p>
-                            {% elif event.id == 'hindu_wedding' %}
-                                <p class="event-kicker">Traditional Hindu ceremony and blessings</p>
-                            {% elif event.id == 'christian_wedding_reception' %}
-                                <p class="event-kicker">Ceremony, dinner, dancing, and celebration</p>
-                            {% endif %}
-                            <p><strong>Date:</strong> {{ event.date }}</p>
-                            <p><strong>Time:</strong> {{ event.time }}</p>
-                            <p><strong>Location:</strong> {{ event.location }}</p>
-                            <p>{{ event.description }}</p>
+    <div 
+        class="info-card event-card 
+            {% if event.id == 'haldi' %}event-haldi{% endif %}
+            {% if event.id == 'hindu_wedding' %}event-hindu{% endif %}
+            {% if event.id == 'christian_wedding_reception' %}event-christian{% endif %}
+        "
+    >
 
-                            <div class="event-actions">
-                                <a 
-                                    href="{{ event.calendar_link }}" 
-                                    target="_blank" 
-                                    class="event-action-link"
-                                >
-                                    Add to Google Calendar
-                                </a>
+        <!-- EVENT TITLE -->
+        <div class="event-title-block">
+            <h3>{{ event.title }}</h3>
 
-                                 <a 
-                                    href="{{ url_for('apple_calendar_event', event_id=event.id) }}" 
-                                    class="event-action-link"
-                                >
-                                    Add to Apple Calendar
-                                </a>
+            {% if event.id == 'haldi' %}
+                <p class="event-kicker">A joyful pre-wedding celebration</p>
+            {% elif event.id == 'hindu_wedding' %}
+                <p class="event-kicker">Traditional Hindu ceremony and blessings</p>
+            {% elif event.id == 'christian_wedding_reception' %}
+                <p class="event-kicker">Ceremony, dinner, dancing, and celebration</p>
+            {% endif %}
+        </div>
 
-                                <a 
-                                    href="{{ event.directions_link }}" 
-                                    target="_blank" 
-                                    class="event-action-link"
-                                >
-                                    Get Directions
-                                </a>
-                            </div>
-
-                            <div class="attire-box">
-                                <span>Attire</span>
-                                <p>{{ event.attire }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {% if has_response %}
-                        <div 
-                            id="confirmation-{{ event.id }}" 
-                            class="rsvp-confirmation 
-                                {% if saved.get('attending') == 'Yes' %}status-yes{% endif %}
-                                {% if saved.get('attending') == 'No' %}status-no{% endif %}
-                                {% if saved.get('attending') == 'Maybe' %}status-maybe{% endif %}
-                            "
-                        >
-                            <div class="rsvp-status-header">
-                                {% if saved.get("attending") == "Yes" %}
-                                    <span class="status-badge badge-yes">Confirmed</span>
-                                    <h4>You’re Attending</h4>
-                                {% elif saved.get("attending") == "No" %}
-                                    <span class="status-badge badge-no">Not Attending</span>
-                                    <h4>Response Saved</h4>
-                                {% else %}
-                                    <span class="status-badge badge-maybe">Maybe</span>
-                                    <h4>Response Saved</h4>
-                                {% endif %}
-                            </div>
-
-                            <div class="confirmation-details">
-                                <p><strong>RSVP:</strong> {{ saved.get("attending") }}</p>
-
-                                {% if saved.get("attending") != "No" %}
-                                    <p><strong>Number of guests:</strong> {{ saved.get("guest_count", 0) }}</p>
-                                {% endif %}
-
-                                {% if saved.get("notes") %}
-                                    <p><strong>Notes:</strong> {{ saved.get("notes") }}</p>
-                                {% endif %}
-                            </div>
-
-                            <button 
-                                type="button" 
-                                class="edit-rsvp-btn" 
-                                onclick="toggleRsvpForm('{{ event.id }}')"
-                            >
-                                Edit Response
-                            </button>
-                        </div>
-                    {% endif %}
-
-                    <form 
-                        id="rsvp-form-{{ event.id }}" 
-                        action="{{ url_for('save_rsvp') }}" 
-                        method="POST" 
-                        class="rsvp-form {% if has_response %}is-hidden{% endif %}"
-                    >
-                        <input type="hidden" name="event_id" value="{{ event.id }}">
-
-                        <div class="rsvp-grid">
-                            <div class="rsvp-field">
-                                <label>Will you attend?</label>
-                                <select name="attending" required>
-                                    <option value="">Select</option>
-                                    <option value="Yes" {% if saved.get("attending") == "Yes" %}selected{% endif %}>Yes</option>
-                                    <option value="No" {% if saved.get("attending") == "No" %}selected{% endif %}>No</option>
-                                    <option value="Maybe" {% if saved.get("attending") == "Maybe" %}selected{% endif %}>Maybe</option>
-                                </select>
-                            </div>
-
-                            <div class="rsvp-field">
-                                <label>Number of guests</label>
-                                <input 
-                                    type="number" 
-                                    name="guest_count" 
-                                    min="0" 
-                                    max="{{ guest.max_guests }}" 
-                                    value="{{ saved.get('guest_count', 0) }}"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="rsvp-field">
-                            <label>Notes</label>
-                            <textarea name="notes" placeholder="Food restrictions, accessibility needs, or other notes">{{ saved.get("notes", "") }}</textarea>
-                        </div>
-
-                        <button type="submit" class="rsvp-btn">
-                            {% if has_response %}
-                                Update RSVP
-                            {% else %}
-                                Save RSVP
-                            {% endif %}
-                        </button>
-                    </form>
+        <!-- DATE / TIME / LOCATION -->
+        <div class="event-meta-grid">
+            <div class="event-meta-item">
+                <div class="meta-icon" aria-hidden="true">
+                    <!-- Calendar icon -->
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="8" y1="3.5" x2="8" y2="7"></line>
+                        <line x1="16" y1="3.5" x2="16" y2="7"></line>
+                    </svg>
                 </div>
-            {% endfor %}
+                <div class="meta-label">Date</div>
+                <div class="meta-value">November 19, 2026</div>
+            </div>
+
+            <div class="event-meta-item">
+                <div class="meta-icon" aria-hidden="true">
+                    <!-- Clock icon -->
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="8.5"></circle>
+                        <line x1="12" y1="12" x2="12" y2="8"></line>
+                        <line x1="12" y1="12" x2="15" y2="13.8"></line>
+                    </svg>
+                </div>
+                <div class="meta-label">Time</div>
+                <div class="meta-value">11:00 AM</div>
+            </div>
+
+            <div class="event-meta-item event-meta-location">
+                <div class="meta-icon" aria-hidden="true">
+                    <!-- Location pin icon -->
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 21s-6-5.4-6-10.2A6 6 0 0 1 18 10.8C18 15.6 12 21 12 21z"></path>
+                        <circle cx="12" cy="10.5" r="2.3"></circle>
+                    </svg>
+                </div>
+                <div class="meta-label">Location</div>
+                <div class="meta-value">
+                    Private Residence<br>
+                    5312 Windingbrook Trail, Wesley Chapel, FL 33544
+                </div>
+            </div>
+        </div>
+
+        <!-- ATTIRE GUIDE -->
+        <div class="attire-guide-card">
+            <span class="attire-guide-label">Attire Guide</span>
+
+            {% if event.attire_image %}
+                <img 
+                    src="{{ url_for('static', filename=event.attire_image) }}" 
+                    alt="{{ event.title }} attire guide"
+                    class="attire-guide-image"
+                >
+            {% endif %}
+
+            <strong>
+                {{ event.attire_heading if event.attire_heading else "Attire" }}
+            </strong>
+
+            {% if event.attire_subheading %}
+                <small>{{ event.attire_subheading }}</small>
+            {% endif %}
+
+            <p>{{ event.attire }}</p>
+        </div>
+
+        <!-- CALENDAR / DIRECTIONS -->
+        <div class="event-actions">
+            <a 
+                href="{{ event.calendar_link }}" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="event-action-link"
+            >
+                Google Calendar
+            </a>
+
+            <a 
+                href="{{ url_for('apple_calendar_event', event_id=event.id) }}" 
+                class="event-action-link"
+            >
+                Apple Calendar
+            </a>
+
+            <a 
+                href="{{ event.directions_link }}" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="event-action-link"
+            >
+                Directions
+            </a>
+        </div>
+
+        <!-- RSVP CONFIRMATION -->
+        {% if has_response %}
+            <div 
+                id="confirmation-{{ event.id }}" 
+                class="rsvp-confirmation 
+                    {% if saved.get('attending') == 'Yes' %}status-yes{% endif %}
+                    {% if saved.get('attending') == 'No' %}status-no{% endif %}
+                    {% if saved.get('attending') == 'Maybe' %}status-maybe{% endif %}
+                "
+            >
+                <div class="rsvp-status-header">
+                    {% if saved.get("attending") == "Yes" %}
+                        <span class="status-badge badge-yes">Confirmed</span>
+                        <h4>You’re Attending</h4>
+                    {% elif saved.get("attending") == "No" %}
+                        <span class="status-badge badge-no">Declined</span>
+                        <h4>You’re Not Attending</h4>
+                    {% else %}
+                        <span class="status-badge badge-maybe">Maybe</span>
+                        <h4>Response Pending</h4>
+                    {% endif %}
+                </div>
+
+                <div class="confirmation-details">
+                    {% if saved.get("attending") != "No" %}
+                        <p><strong>Total attending:</strong> {{ saved.get("guest_count", 0) }}</p>
+                    {% else %}
+                        <p><strong>Total attending:</strong> 0</p>
+                    {% endif %}
+
+                    {% if saved.get("notes") %}
+                        <p><strong>Notes:</strong> {{ saved.get("notes") }}</p>
+                    {% endif %}
+                </div>
+
+                <button 
+                    type="button" 
+                    class="edit-rsvp-btn" 
+                    onclick="toggleRsvpForm('{{ event.id }}')"
+                >
+                    Edit Response
+                </button>
+            </div>
+        {% endif %}
+
+        <!-- RSVP FORM -->
+        <form 
+            id="rsvp-form-{{ event.id }}" 
+            action="{{ url_for('save_rsvp') }}" 
+            method="POST" 
+            class="rsvp-form {% if has_response %}is-hidden{% endif %}"
+        >
+            <div class="rsvp-form-heading">
+                <span>Your Response</span>
+                <p>Please confirm your plans for this event.</p>
+            </div>
+
+            <input type="hidden" name="event_id" value="{{ event.id }}">
+
+            <div class="rsvp-grid">
+                <div class="rsvp-field">
+                    <label>Will you attend?</label>
+                    <select name="attending" required>
+                        <option value="">Select</option>
+                        <option value="Yes" {% if saved.get("attending") == "Yes" %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if saved.get("attending") == "No" %}selected{% endif %}>No</option>
+                        <option value="Maybe" {% if saved.get("attending") == "Maybe" %}selected{% endif %}>Maybe</option>
+                    </select>
+
+                    <p class="rsvp-helper">
+                        If you select Maybe, please update your RSVP once your plans are final.
+                    </p>
+                </div>
+
+                <div class="rsvp-field">
+                    <label>Total attending, including you</label>
+                    <input 
+                        type="number" 
+                        name="guest_count" 
+                        min="0" 
+                        max="{{ guest.max_guests }}" 
+                        value="{{ saved.get('guest_count', 0) }}"
+                    >
+                </div>
+            </div>
+
+            <div class="rsvp-field">
+                <label>Notes</label>
+                <textarea name="notes" placeholder="Food restrictions, accessibility needs, or other notes">{{ saved.get("notes", "") }}</textarea>
+            </div>
+
+            <button type="submit" class="rsvp-btn">
+                {% if has_response %}
+                    Update RSVP
+                {% else %}
+                    Save RSVP
+                {% endif %}
+            </button>
+        </form>
+
+    </div>
+{% endfor %}
+
+            
         </div>
 
       <!-- Travel Tab -->

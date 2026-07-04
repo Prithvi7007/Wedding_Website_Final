@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Rye&family=Special+Elite&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&family=Libre+Baskerville:wght@400;700&family=Parisienne&family=Special+Elite&family=Tangerine:wght@400;700&display=swap');
 
 /* ============================= */
 /* GLOBAL RESET + THEME */
@@ -55,15 +55,15 @@ body::after {
 
 h1 {
     color: var(--dark-brown);
-    font-family: "Rye", Georgia, serif;
-    font-size: 54px;
+    font-family: "Parisienne", cursive;
+    font-size: 72px;
     font-weight: 400;
-    letter-spacing: 2px;
-    line-height: 1;
-    text-transform: uppercase;
+    line-height: 1.05;
+    letter-spacing: 0;
+    text-transform: none;
     text-shadow:
-        1px 1px 0 rgba(255, 244, 220, 0.45),
-        2px 2px 0 rgba(90, 56, 37, 0.18);
+        1px 1px 0 rgba(255, 244, 220, 0.35),
+        2px 2px 0 rgba(90, 56, 37, 0.10);
 }
 
 button {
@@ -103,17 +103,17 @@ body.login-page {
 .login-container {
     position: relative;
     z-index: 1;
-    width: 620px;
-    padding: 54px 44px 44px;
+    width: min(620px, 92vw);
+    padding: 46px 44px 40px;
     text-align: center;
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: 26px;
+    background: rgba(243, 223, 189, 0.42);
+    border: 1px solid rgba(255, 244, 220, 0.52);
+    border-radius: 24px;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     box-shadow:
-        0 14px 40px rgba(43, 26, 18, 0.28),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        0 16px 42px rgba(43, 26, 18, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.36);
 }
 
 .login-container > *:not(.vintage-frame) {
@@ -132,37 +132,49 @@ body.login-page {
 
 .vintage-frame path {
     fill: none;
-    stroke: rgba(43, 26, 18, 0.72);
-    stroke-width: 2;
+    stroke: rgba(43, 26, 18, 0.54);
+    stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
 
-.top-line {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
+.login-private-line {
+    max-width: 520px;
+    margin: 0 auto 18px;
     padding: 8px 0;
-    margin-bottom: 18px;
-    border-top: 2px solid rgba(43, 26, 18, 0.45);
-    border-bottom: 2px solid rgba(43, 26, 18, 0.45);
-    color: var(--brown);
+    border-top: 2px solid rgba(43, 26, 18, 0.42);
+    border-bottom: 2px solid rgba(43, 26, 18, 0.42);
+    color: var(--dark-brown);
     font-family: "Special Elite", monospace;
-    font-size: 12px;
-    letter-spacing: 1px;
+    font-size: 13px;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
 }
 
-.divider {
-    height: 2px;
-    max-width: 1250px;
-    margin: 26px auto 24px;
-    background: rgba(43, 26, 18, 0.45);
+.login-title {
+    margin: 0;
+    color: var(--dark-brown);
+    font-family: "Parisienne", cursive;
+    font-size: clamp(54px, 8vw, 78px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: 0;
+    text-transform: none;
+    text-shadow:
+        1px 1px 0 rgba(255, 244, 220, 0.35),
+        2px 2px 0 rgba(90, 56, 37, 0.10);
 }
 
-.subtitle {
-    max-width: 480px;
-    margin: 0 auto 28px;
+.login-divider {
+    height: 2px;
+    max-width: 520px;
+    margin: 22px auto 22px;
+    background: rgba(43, 26, 18, 0.42);
+}
+
+.login-subtitle {
+    max-width: 470px;
+    margin: 0 auto 26px;
     color: var(--brown);
     font-size: 15px;
     line-height: 1.7;
@@ -170,8 +182,9 @@ body.login-page {
 
 .login-form {
     display: grid;
-    gap: 18px;
-    margin-top: 10px;
+    gap: 17px;
+    max-width: 520px;
+    margin: 0 auto;
 }
 
 .form-group {
@@ -198,21 +211,22 @@ body.login-page {
     border: 1px solid rgba(43, 26, 18, 0.30);
     border-radius: 13px;
     outline: none;
-    background: rgba(255, 244, 220, 0.42);
+    background: rgba(255, 244, 220, 0.50);
     color: var(--ink);
     font-family: "Libre Baskerville", Georgia, serif;
     font-size: 15px;
 }
 
 .form-group input {
-    padding: 14px 16px;
+    padding: 15px 17px;
     border-radius: 14px;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
 
-.form-group input::placeholder {
-    color: rgba(90, 56, 37, 0.65);
+.form-group input::placeholder,
+.rsvp-field textarea::placeholder {
+    color: rgba(90, 56, 37, 0.62);
 }
 
 .form-group input:focus,
@@ -223,11 +237,30 @@ body.login-page {
     box-shadow: 0 0 0 3px rgba(90, 56, 37, 0.15);
 }
 
+.open-invitation-btn {
+    width: 100%;
+    margin-top: 8px;
+    background: rgba(43, 26, 18, 0.86);
+    color: var(--paper-light);
+    border: 1px solid rgba(255, 244, 220, 0.50);
+    border-radius: 14px;
+    box-shadow:
+        0 8px 20px rgba(43, 26, 18, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    font-size: 14px;
+}
+
+.open-invitation-btn:hover {
+    background: rgba(90, 56, 37, 0.95);
+    transform: translateY(-3px);
+}
+
 .small-text {
     margin-top: 20px;
     color: var(--brown);
     font-family: "Special Elite", monospace;
-    font-size: 13px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
 }
 
 /* ============================= */
@@ -251,24 +284,58 @@ body.dashboard-page {
 }
 
 .dashboard-container .top-line,
-.dashboard-container .divider {
+.dashboard-container .divider,
+.tabs,
+.tab-content {
     max-width: 1250px;
     margin-left: auto;
     margin-right: auto;
 }
 
+body.dashboard-page .top-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1250px;
+    margin: 0 auto 18px;
+    padding: 8px 0;
+    border-top: 2px solid rgba(43, 26, 18, 0.45);
+    border-bottom: 2px solid rgba(43, 26, 18, 0.45);
+    color: var(--brown);
+    font-family: "Special Elite", monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+body.dashboard-page .top-line span {
+    flex: 1;
+}
+
+body.dashboard-page .top-line span:first-child {
+    text-align: left;
+}
+
+body.dashboard-page .top-line span:nth-child(2) {
+    text-align: center;
+}
+
+body.dashboard-page .top-line span:last-child {
+    text-align: right;
+}
+
 .dashboard-title {
-    margin-top: 20px;
+    margin: 18px auto 18px;
     color: var(--dark-brown);
-    font-family: "Rye", Georgia, serif;
-    font-size: 64px;
+    font-family: "Parisienne", cursive;
+    font-size: 78px;
     font-weight: 400;
-    letter-spacing: 2px;
-    line-height: 1;
-    text-transform: capitalize;
+    line-height: 1.05;
+    letter-spacing: 0;
+    text-transform: none;
     text-shadow:
-        1px 1px 0 rgba(255, 244, 220, 0.45),
-        2px 2px 0 rgba(90, 56, 37, 0.18);
+        1px 1px 0 rgba(255, 244, 220, 0.35),
+        2px 2px 0 rgba(90, 56, 37, 0.10);
 }
 
 .tabs {
@@ -277,8 +344,7 @@ body.dashboard-page {
     align-items: center;
     flex-wrap: wrap;
     gap: 42px;
-    max-width: 1250px;
-    margin: 26px auto 34px;
+    margin: 18px auto 34px;
     padding: 12px 0 10px;
     border-top: 2px solid rgba(43, 26, 18, 0.45);
     border-bottom: 2px solid rgba(43, 26, 18, 0.45);
@@ -295,6 +361,7 @@ body.dashboard-page {
     font-family: "Special Elite", monospace;
     font-size: 13px;
     letter-spacing: 1.4px;
+    line-height: 1.2;
     text-transform: uppercase;
     transition: 0.25s ease;
 }
@@ -315,9 +382,6 @@ body.dashboard-page {
 
 .tab-content {
     display: none;
-    max-width: 1250px;
-    margin-left: auto;
-    margin-right: auto;
     animation: fadeIn 0.4s ease;
 }
 
@@ -326,7 +390,7 @@ body.dashboard-page {
 }
 
 .tab-content h2 {
-    margin-bottom: 14px;
+    margin: 10px 0 14px;
     color: var(--dark-brown);
     font-family: "Special Elite", monospace;
     font-size: 26px;
@@ -423,8 +487,9 @@ body.dashboard-page {
 .countdown-inline span {
     display: block;
     color: var(--dark-brown);
-    font-family: "Rye", Georgia, serif;
-    font-size: clamp(22px, 4vw, 34px);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
     line-height: 1;
 }
 
@@ -563,6 +628,7 @@ body.dashboard-page {
 
 /* ============================= */
 /* SCHEDULE + RSVP */
+/* Title | Details | Attire | Actions | RSVP */
 /* ============================= */
 
 .schedule-intro {
@@ -573,39 +639,52 @@ body.dashboard-page {
     line-height: 1.7;
 }
 
+/* Event card shell */
 .event-card {
     position: relative;
     max-width: 1050px;
-    margin: 22px auto;
-    padding: 28px;
+    margin: 24px auto 34px;
+    padding: 48px 32px 28px;
     overflow: hidden;
+    text-align: left;
+    border: 1px solid rgba(190, 148, 77, 0.55);
+    border-radius: 24px;
+
+    /* IMPORTANT: show full artwork */
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+        0 12px 28px rgba(43, 26, 18, 0.16),
+        inset 0 0 0 7px rgba(255, 244, 220, 0.30),
+        inset 0 0 0 9px rgba(190, 148, 77, 0.18);
 }
 
 .event-card::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: 13px;
+    z-index: 0;
+    border: 1px solid rgba(190, 148, 77, 0.42);
+    border-radius: 17px;
     pointer-events: none;
-    opacity: 0.55;
-    background:
-        radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.24), transparent 24%),
-        radial-gradient(circle at 85% 80%, rgba(43, 26, 18, 0.08), transparent 28%),
-        repeating-linear-gradient(
-            0deg,
-            rgba(43, 26, 18, 0.025) 0px,
-            rgba(43, 26, 18, 0.025) 1px,
-            transparent 1px,
-            transparent 5px
-        );
 }
 
 .event-card::after {
     content: "";
     position: absolute;
-    inset: 14px;
+    inset: 18px;
     z-index: 0;
-    border-radius: 14px;
-    opacity: 0.45;
+    border: 1px solid rgba(255, 244, 220, 0.34);
+    border-radius: 13px;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 248, 235, 0.18),
+        rgba(255, 248, 235, 0.06)
+    );
     pointer-events: none;
 }
 
@@ -614,171 +693,296 @@ body.dashboard-page {
     z-index: 1;
 }
 
-.event-header {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.event-card .event-header {
-    padding-right: 160px;
-}
-
-.event-card h3 {
-    display: inline-block;
-    padding-bottom: 6px;
-    font-size: 21px;
-}
-
+/* Event backgrounds */
 .event-haldi {
-    background: linear-gradient(135deg, rgba(255, 214, 96, 0.36), rgba(255, 244, 220, 0.68));
-    border-left: 8px solid rgba(194, 139, 32, 0.88);
-}
-
-.event-haldi::after {
-    opacity: 0.32;
     background:
-        radial-gradient(circle, rgba(194, 139, 32, 0.34) 0 3px, transparent 4px) 0 0 / 34px 34px,
-        radial-gradient(circle, rgba(255, 244, 220, 0.40) 0 4px, transparent 5px) 17px 17px / 40px 40px;
-}
-
-.event-haldi h3 {
-    border-bottom: 2px solid rgba(194, 139, 32, 0.65);
+        linear-gradient(
+            135deg,
+            rgba(255, 244, 220, 0.50),
+            rgba(255, 226, 124, 0.14)
+        ),
+        url("/static/images/HALDI.png");
+    border-color: rgba(209, 156, 34, 0.58);
 }
 
 .event-hindu {
-    background: linear-gradient(135deg, rgba(128, 38, 32, 0.20), rgba(255, 232, 180, 0.66));
-    border-left: 8px solid rgba(128, 38, 32, 0.86);
-}
-
-.event-hindu::after {
-    opacity: 0.55;
     background:
-        linear-gradient(90deg, rgba(128, 38, 32, 0.55), transparent 22%) top left / 180px 2px no-repeat,
-        linear-gradient(rgba(128, 38, 32, 0.55), transparent 22%) top left / 2px 180px no-repeat,
-        linear-gradient(270deg, rgba(128, 38, 32, 0.55), transparent 22%) top right / 180px 2px no-repeat,
-        linear-gradient(rgba(128, 38, 32, 0.55), transparent 22%) top right / 2px 180px no-repeat,
-        linear-gradient(90deg, rgba(128, 38, 32, 0.55), transparent 22%) bottom left / 180px 2px no-repeat,
-        linear-gradient(0deg, rgba(128, 38, 32, 0.55), transparent 22%) bottom left / 2px 180px no-repeat,
-        linear-gradient(270deg, rgba(128, 38, 32, 0.55), transparent 22%) bottom right / 180px 2px no-repeat,
-        linear-gradient(0deg, rgba(128, 38, 32, 0.55), transparent 22%) bottom right / 2px 180px no-repeat;
-}
-
-.event-hindu h3 {
-    border-bottom: 2px solid rgba(128, 38, 32, 0.62);
+        linear-gradient(
+            135deg,
+            rgba(255, 244, 220, 0.50),
+            rgba(128, 38, 32, 0.08)
+        ),
+        url("/static/images/WEDDING.png");
+    border-color: rgba(153, 69, 57, 0.50);
 }
 
 .event-christian {
-    background: linear-gradient(135deg, rgba(255, 248, 232, 0.72), rgba(190, 211, 178, 0.34));
-    border-left: 8px solid rgba(74, 103, 59, 0.82);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 244, 220, 0.54),
+            rgba(115, 150, 102, 0.10)
+        ),
+        url("/static/images/RECEPTION.png");
+    border-color: rgba(104, 132, 88, 0.50);
 }
 
-.event-christian::after {
-    opacity: 0.25;
-    background:
-        radial-gradient(ellipse at center, rgba(74, 103, 59, 0.20) 0 32%, transparent 34%) 0 0 / 72px 34px,
-        radial-gradient(ellipse at center, rgba(255, 248, 232, 0.32) 0 32%, transparent 34%) 36px 18px / 72px 34px;
+.event-theme-badge,
+.event-description,
+.event-timeline,
+.attire-box,
+.attire-guide-box {
+    display: none !important;
+}
+
+.event-header {
+    display: block;
+}
+
+.event-card .event-header {
+    padding-right: 0;
+}
+
+/* Event title */
+.event-title-block {
+    max-width: 850px;
+    margin: 0 auto 28px;
+    padding-right: 0;
+    text-align: center;
+}
+
+.event-card h3 {
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    border-bottom: none;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 52px;
+    font-weight: 400;
+    letter-spacing: 9px;
+    line-height: 1.08;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.event-haldi h3 {
+    color: rgba(163, 100, 19, 0.96);
+}
+
+.event-hindu h3 {
+    color: rgba(128, 38, 32, 0.92);
 }
 
 .event-christian h3 {
-    border-bottom: 2px solid rgba(74, 103, 59, 0.62);
+    color: rgba(74, 103, 59, 0.92);
+}
+
+.event-hindu h3,
+.event-christian h3 {
+    max-width: 760px;
+    font-size: 46px;
+    letter-spacing: 7px;
+    line-height: 1.08;
 }
 
 .event-kicker {
-    margin: 6px 0 12px;
+    margin: 18px auto 0;
     color: var(--brown);
     font-family: "Special Elite", monospace;
-    font-size: 12px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.event-haldi .event-kicker {
-    color: rgba(130, 88, 18, 0.95);
-}
-
-.event-hindu .event-kicker {
-    color: rgba(110, 32, 28, 0.95);
-}
-
-.event-christian .event-kicker {
-    color: rgba(57, 83, 46, 0.95);
-}
-
-.event-theme-badge {
-    position: absolute;
-    top: 22px;
-    right: 24px;
-    z-index: 2;
-    min-width: 112px;
-    padding: 10px 12px;
+    font-size: 13px;
+    letter-spacing: 5px;
+    line-height: 1.5;
     text-align: center;
-    background: rgba(255, 244, 220, 0.58);
-    border: 1px solid rgba(43, 26, 18, 0.32);
-    border-radius: 12px;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow:
-        0 8px 18px rgba(43, 26, 18, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.28);
-}
-
-.event-theme-badge span,
-.event-theme-badge strong {
-    display: block;
-    font-family: "Special Elite", monospace;
-    letter-spacing: 1px;
     text-transform: uppercase;
 }
 
-.event-theme-badge span {
-    margin-bottom: 4px;
+/* Meta row */
+.event-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr;
+    gap: 0;
+    max-width: 840px;
+    margin: 0 auto 32px;
+}
+
+.event-meta-item {
+    position: relative;
+    padding: 0 26px;
+    text-align: center;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.event-meta-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    right: 0;
+    width: 1px;
+    height: 104px;
+    border-right: 1px dashed rgba(180, 119, 31, 0.38);
+}
+
+.event-meta-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 10px;
+    background: rgba(218, 173, 88, 0.34);
+    border: 1px solid rgba(180, 119, 31, 0.18);
+    border-radius: 50%;
+    color: rgba(130, 88, 18, 0.92);
+    font-family: "Special Elite", monospace;
+    font-size: 10px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.38),
+        0 4px 10px rgba(43, 26, 18, 0.05);
+}
+
+/* New icon HTML support */
+.meta-icon {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(218, 173, 88, 0.34);
+    border: 1px solid rgba(180, 119, 31, 0.18);
+    border-radius: 50%;
+    color: rgba(130, 88, 18, 0.92);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.38),
+        0 4px 10px rgba(43, 26, 18, 0.05);
+}
+
+.meta-icon svg {
+    width: 19px;
+    height: 19px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.event-meta-item span:not(.event-meta-icon),
+.meta-label {
+    display: block;
+    margin-bottom: 7px;
     color: var(--brown);
+    font-family: "Special Elite", monospace;
     font-size: 11px;
+    letter-spacing: 1.2px;
+    text-align: center;
+    text-transform: uppercase;
 }
 
-.event-theme-badge strong {
+.event-meta-item strong,
+.meta-value {
+    display: block;
     color: var(--dark-brown);
-    font-size: 12px;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.42;
+    text-align: center;
 }
 
-.event-haldi .event-theme-badge {
-    background: rgba(255, 226, 124, 0.52);
-    border-color: rgba(194, 139, 32, 0.48);
+/* Attire guide */
+.attire-guide-card {
+    max-width: 430px;
+    margin: 0 auto 24px;
+    padding: 18px 20px 20px;
+    text-align: center;
+    background: rgba(255, 244, 220, 0.46);
+    border: 1px solid rgba(180, 119, 31, 0.44);
+    border-radius: 18px;
+    box-shadow:
+        0 8px 18px rgba(43, 26, 18, 0.08),
+        inset 0 0 0 4px rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
-.event-hindu .event-theme-badge {
-    background: rgba(255, 232, 180, 0.58);
-    border-color: rgba(128, 38, 32, 0.42);
+.attire-guide-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--dark-brown);
+    font-family: "Special Elite", monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
-.event-christian .event-theme-badge {
-    background: rgba(235, 244, 222, 0.58);
-    border-color: rgba(74, 103, 59, 0.42);
+.attire-guide-image {
+    display: block;
+    width: 100%;
+    max-height: 175px;
+    object-fit: contain;
+    margin: 0 auto 8px;
+    mix-blend-mode: multiply;
 }
 
+.attire-guide-card strong {
+    display: block;
+    margin-top: 6px;
+    color: var(--dark-brown);
+    font-family: "Great Vibes", cursive;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.05;
+}
+
+.attire-guide-card small {
+    display: block;
+    margin-top: 4px;
+    color: var(--brown);
+    font-family: "Special Elite", monospace;
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+.attire-guide-card p {
+    margin-top: 10px;
+    color: var(--brown);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+/* Calendar / Directions */
 .event-actions {
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 12px;
-    margin: 18px 0;
+    margin: 0 auto 24px;
 }
 
 .event-action-link {
     display: inline-block;
-    padding: 10px 14px;
-    background: rgba(255, 244, 220, 0.48);
-    border: 1px solid rgba(43, 26, 18, 0.36);
+    padding: 9px 14px;
+    background: rgba(255, 244, 220, 0.58);
+    border: 1px solid rgba(43, 26, 18, 0.30);
     border-radius: 999px;
     box-shadow:
-        0 6px 14px rgba(43, 26, 18, 0.10),
+        0 4px 10px rgba(43, 26, 18, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.22);
     color: var(--dark-brown);
-    font-family: "Special Elite", monospace;
-    font-size: 12px;
-    letter-spacing: 1px;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 13px;
+    letter-spacing: 0;
     text-decoration: none;
-    text-transform: uppercase;
+    text-transform: none;
     transition: 0.25s ease;
 }
 
@@ -800,39 +1004,177 @@ body.dashboard-page {
     background: rgba(74, 103, 59, 0.82);
 }
 
-.attire-box {
-    margin-top: 14px;
-    padding: 15px 16px;
-    background: rgba(255, 244, 220, 0.42);
-    border: 1px dashed rgba(43, 26, 18, 0.34);
-    border-radius: 14px;
+/* RSVP confirmation */
+.rsvp-confirmation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(160, 139, 94, 0.32);
+    background: linear-gradient(
+        90deg,
+        rgba(218, 228, 198, 0.92) 0%,
+        rgba(245, 239, 220, 0.92) 45%,
+        rgba(249, 228, 214, 0.90) 100%
+    );
+    box-shadow:
+        0 6px 18px rgba(70, 45, 24, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
-.attire-box span {
-    display: block;
-    margin-bottom: 6px;
-    color: var(--dark-brown);
+.rsvp-confirmation.status-no {
+    background: linear-gradient(
+        90deg,
+        rgba(229, 196, 180, 0.74) 0%,
+        rgba(245, 239, 220, 0.90) 55%,
+        rgba(255, 244, 220, 0.88) 100%
+    );
+}
+
+.rsvp-confirmation.status-maybe {
+    background: linear-gradient(
+        90deg,
+        rgba(237, 214, 157, 0.78) 0%,
+        rgba(245, 239, 220, 0.90) 55%,
+        rgba(255, 244, 220, 0.88) 100%
+    );
+}
+
+.rsvp-status-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+.rsvp-status-header h4 {
+    margin: 0;
+    color: #2d1d14;
     font-family: "Special Elite", monospace;
-    font-size: 12px;
+    font-size: 15px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.confirmation-details {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin: 0 auto 0 0;
+}
+
+.confirmation-details p {
+    margin: 0;
+    color: #4d382b;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(77, 98, 64, 0.28);
+    color: #fff7eb;
+    font-family: "Special Elite", monospace;
+    font-size: 11px;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
 
-.attire-box p {
-    margin: 0;
-    color: var(--brown);
-    font-size: 15px;
-    line-height: 1.65;
+.badge-yes {
+    background: #748b5d;
+    color: #fffaf2;
+    border-color: rgba(77, 98, 64, 0.35);
 }
 
+.badge-no {
+    background: #8f6a60;
+    color: #fffaf2;
+}
+
+.badge-maybe {
+    background: #b59b63;
+    color: #fffaf2;
+}
+
+.edit-rsvp-btn {
+    width: auto;
+    min-width: 150px;
+    margin-left: auto;
+    padding: 11px 22px;
+    border-radius: 14px;
+    border: 1px solid rgba(184, 137, 86, 0.48);
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 248, 236, 0.96),
+        rgba(244, 229, 205, 0.94)
+    );
+    color: #3d2a1f;
+    font-family: "Special Elite", monospace;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow:
+        0 4px 10px rgba(56, 36, 19, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.edit-rsvp-btn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 248, 236, 0.98),
+        rgba(238, 217, 186, 0.96)
+    );
+    color: #3d2a1f;
+    box-shadow:
+        0 6px 14px rgba(56, 36, 19, 0.12),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+/* RSVP form */
 .rsvp-form {
     margin-top: 22px;
-    padding-top: 20px;
+    padding-top: 18px;
     border-top: 1px solid rgba(43, 26, 18, 0.25);
 }
 
 .rsvp-form.is-hidden {
     display: none;
+}
+
+.rsvp-form-heading {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.rsvp-form-heading span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--dark-brown);
+    font-family: "Special Elite", monospace;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.rsvp-form-heading p {
+    margin: 0;
+    color: var(--brown);
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .rsvp-grid {
@@ -847,121 +1189,43 @@ body.dashboard-page {
 }
 
 .rsvp-field textarea {
-    min-height: 90px;
+    min-height: 70px;
     resize: vertical;
+}
+
+.rsvp-helper {
+    margin-top: 7px;
+    color: var(--brown);
+    font-size: 12px;
+    line-height: 1.45;
 }
 
 .rsvp-btn {
     width: 100%;
-    margin-top: 8px;
-    padding: 13px 18px;
-    background: rgba(43, 26, 18, 0.82);
-    color: var(--paper-light);
-    border: 1px solid rgba(255, 244, 220, 0.45);
-    border-radius: 14px;
-    cursor: pointer;
+    margin-top: 18px;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(
+        90deg,
+        rgba(77, 48, 33, 0.96),
+        rgba(109, 68, 46, 0.96)
+    );
+    color: #fff7ec;
     font-family: "Special Elite", monospace;
-    letter-spacing: 1px;
+    font-size: 14px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(68, 39, 22, 0.14);
 }
 
 .rsvp-btn:hover {
-    background: rgba(90, 56, 37, 0.92);
-}
-
-.rsvp-confirmation {
-    margin-top: 22px;
-    padding: 20px;
-    border: 1px solid rgba(43, 26, 18, 0.25);
-    border-radius: 16px;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.28),
-        0 8px 20px rgba(43, 26, 18, 0.10);
-}
-
-.rsvp-confirmation.status-yes {
-    background: rgba(217, 229, 190, 0.45);
-    border-left: 6px solid rgba(74, 103, 59, 0.75);
-}
-
-.rsvp-confirmation.status-no {
-    background: rgba(229, 196, 180, 0.45);
-    border-left: 6px solid rgba(126, 59, 45, 0.75);
-}
-
-.rsvp-confirmation.status-maybe {
-    background: rgba(237, 214, 157, 0.48);
-    border-left: 6px solid rgba(145, 105, 38, 0.75);
-}
-
-.rsvp-status-header {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 14px;
-}
-
-.rsvp-status-header h4 {
-    margin: 0;
-    color: var(--dark-brown);
-    font-family: "Special Elite", monospace;
-    font-size: 17px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.status-badge {
-    display: inline-block;
-    padding: 7px 12px;
-    border: 1px solid rgba(43, 26, 18, 0.25);
-    border-radius: 999px;
-    color: #fff7eb;
-    font-family: "Special Elite", monospace;
-    font-size: 12px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.badge-yes {
-    background: rgba(74, 103, 59, 0.82);
-}
-
-.badge-no {
-    background: rgba(126, 59, 45, 0.82);
-}
-
-.badge-maybe {
-    background: rgba(145, 105, 38, 0.82);
-}
-
-.confirmation-details {
-    margin-bottom: 16px;
-}
-
-.confirmation-details p {
-    color: var(--brown);
-    font-size: 15px;
-    line-height: 1.7;
-}
-
-.edit-rsvp-btn {
-    width: 100%;
-    padding: 12px 16px;
-    background: transparent;
-    color: var(--dark-brown);
-    border: 1px solid rgba(43, 26, 18, 0.45);
-    border-radius: 13px;
-    cursor: pointer;
-    font-family: "Special Elite", monospace;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    transition: 0.25s ease;
-}
-
-.edit-rsvp-btn:hover {
-    background: rgba(43, 26, 18, 0.78);
-    color: var(--paper-light);
+    background: linear-gradient(
+        90deg,
+        rgba(90, 56, 37, 0.98),
+        rgba(119, 76, 50, 0.98)
+    );
 }
 
 /* ============================= */
@@ -1492,7 +1756,7 @@ body.dashboard-page {
 
 @media (max-width: 900px) {
     h1 {
-        font-size: 42px;
+        font-size: 56px;
     }
 
     .login-container {
@@ -1505,7 +1769,7 @@ body.dashboard-page {
     }
 
     .dashboard-title {
-        font-size: 46px;
+        font-size: 62px;
     }
 
     .top-line {
@@ -1521,17 +1785,153 @@ body.dashboard-page {
         height: 60vh;
         min-height: 430px;
     }
+
+    .event-card h3 {
+        font-size: 42px;
+        letter-spacing: 6px;
+    }
+
+    .event-hindu h3,
+    .event-christian h3 {
+        font-size: 38px;
+        letter-spacing: 4px;
+    }
 }
 
 @media (max-width: 700px) {
-    .event-theme-badge {
-        position: static;
-        width: fit-content;
-        margin-bottom: 18px;
+    .event-card {
+        margin: 22px auto 30px;
+        padding: 24px 18px 22px;
+        border-radius: 20px;
     }
 
-    .event-card .event-header {
-        padding-right: 0;
+    .event-card::before {
+        inset: 8px;
+        border-radius: 15px;
+    }
+
+    .event-card::after {
+        inset: 13px;
+        border-radius: 11px;
+    }
+
+    .event-title-block {
+        margin-bottom: 22px;
+        text-align: left;
+    }
+
+    .event-card h3 {
+        font-size: 30px;
+        letter-spacing: 3px;
+        line-height: 1.12;
+        text-align: left;
+    }
+
+    .event-hindu h3,
+    .event-christian h3 {
+        font-size: 27px;
+        letter-spacing: 2px;
+        text-align: left;
+    }
+
+    .event-kicker {
+        margin-top: 10px;
+        font-size: 11px;
+        letter-spacing: 1.4px;
+        text-align: left;
+    }
+
+    .event-meta-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        max-width: 100%;
+        margin: 16px 0 22px;
+    }
+
+    .event-meta-item {
+        padding: 13px 14px;
+        text-align: left;
+        background: rgba(255, 244, 220, 0.50);
+        border: 1px solid rgba(43, 26, 18, 0.18);
+        border-radius: 12px;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+
+    .event-meta-item:not(:last-child)::after {
+        display: none;
+    }
+
+    .event-meta-location {
+        grid-column: auto;
+    }
+
+    .event-meta-icon,
+    .meta-icon {
+        width: 36px;
+        height: 36px;
+        margin: 0 0 8px;
+    }
+
+    .meta-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .event-meta-item span:not(.event-meta-icon),
+    .event-meta-item strong,
+    .meta-label,
+    .meta-value {
+        text-align: left;
+    }
+
+    .attire-guide-card {
+        max-width: 100%;
+        margin: 0 0 20px;
+        padding: 16px 15px 18px;
+    }
+
+    .attire-guide-image {
+        max-height: 140px;
+    }
+
+    .attire-guide-card strong {
+        font-size: 28px;
+    }
+
+    .event-actions {
+        justify-content: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .event-action-link {
+        padding: 8px 11px;
+        font-size: 12px;
+    }
+
+    .rsvp-confirmation {
+        align-items: flex-start;
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .rsvp-status-header {
+        width: 100%;
+    }
+
+    .confirmation-details {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .confirmation-details p {
+        width: 100%;
+    }
+
+    .edit-rsvp-btn {
+        width: 100%;
+        min-width: 0;
+        margin-left: 0;
     }
 
     .rsvp-grid,
@@ -1550,9 +1950,17 @@ body.dashboard-page {
 }
 
 @media (max-width: 600px) {
-    .top-line {
+    body.dashboard-page .top-line {
         flex-direction: column;
         gap: 4px;
+    }
+
+    body.dashboard-page .top-line span {
+        text-align: center !important;
+    }
+
+    .dashboard-title {
+        font-size: 54px;
     }
 
     .tabs {
@@ -1600,5 +2008,251 @@ body.dashboard-page {
     .login-toast-inner {
         width: 100%;
         min-width: auto;
+    }
+}
+
+/* ============================= */
+/* FORCE FULL EVENT BACKGROUND ARTWORK */
+/* ============================= */
+
+.event-haldi {
+    background-image:
+        linear-gradient(
+            135deg,
+            rgba(255, 244, 220, 0.30),
+            rgba(255, 226, 124, 0.06)
+        ),
+        url("/static/images/HALDI.png") !important;
+
+    background-size: 100% 100%, 100% 100% !important;
+    background-position: center center, center center !important;
+    background-repeat: no-repeat, no-repeat !important;
+}
+
+.event-hindu {
+    background-image:
+        linear-gradient(
+            135deg,
+            rgba(255, 244, 220, 0.30),
+            rgba(128, 38, 32, 0.05)
+        ),
+        url("/static/images/WEDDING.png") !important;
+
+    background-size: 100% 100%, 100% 100% !important;
+    background-position: center center, center center !important;
+    background-repeat: no-repeat, no-repeat !important;
+}
+
+.event-christian {
+    background-image:
+        linear-gradient(
+            135deg,
+            rgba(255, 244, 220, 0.34),
+            rgba(115, 150, 102, 0.06)
+        ),
+        url("/static/images/RECEPTION.png") !important;
+
+    background-size: 100% 100%, 100% 100% !important;
+    background-position: center center, center center !important;
+    background-repeat: no-repeat, no-repeat !important;
+}
+
+/* make overlay lighter so the artwork is not washed out */
+.event-card::after {
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 248, 235, 0.08),
+        rgba(255, 248, 235, 0.03)
+    ) !important;
+}
+
+/* ============================= */
+/* TYPOGRAPHY REFINEMENT */
+/* Elegant wedding + soft vintage */
+/* ============================= */
+
+/* Main couple name: keep cursive */
+.dashboard-title,
+.login-title {
+    font-family: "Parisienne", cursive !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+/* Body copy: elegant and readable */
+body,
+.tab-content p,
+.schedule-intro,
+.welcome-section-header p,
+.travel-page-header p,
+.qa-section-header p,
+.paper-item p,
+.qa-card p,
+.confirmation-details p,
+.rsvp-form-heading p,
+.rsvp-helper {
+    font-family: "Libre Baskerville", Georgia, serif !important;
+}
+
+/* Main tab/page headings: more wedding-editorial, less typewriter */
+.tab-content h2,
+.welcome-section-header h2,
+.countdown-section-header h2,
+.travel-page-header h2,
+.qa-section-header h2,
+#schedule h2,
+#registry h2 {
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 34px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.8px !important;
+    line-height: 1.1 !important;
+    text-transform: uppercase !important;
+}
+
+/* Schedule event titles: elegant invitation serif */
+.event-card h3 {
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 7px !important;
+    line-height: 1.05 !important;
+}
+
+/* Schedule subtitle/kicker: keep vintage, but softer */
+.event-kicker {
+    font-family: "Special Elite", monospace !important;
+    font-size: 12px !important;
+    letter-spacing: 4px !important;
+    line-height: 1.5 !important;
+}
+
+/* Navigation: keep the guest-edition newspaper feel */
+.tab-btn,
+body.dashboard-page .top-line,
+.login-private-line,
+.paper-label,
+.qa-label,
+.mini-stamp,
+.meta-label,
+.attire-guide-label,
+.rsvp-form-heading span,
+.form-group label,
+.rsvp-field label {
+    font-family: "Special Elite", monospace !important;
+}
+
+/* Make nav less harsh */
+.tab-btn {
+    font-size: 12px !important;
+    letter-spacing: 1.7px !important;
+    font-weight: 400 !important;
+}
+
+/* Top newspaper line: lighter and cleaner */
+body.dashboard-page .top-line {
+    font-size: 11px !important;
+    letter-spacing: 1.2px !important;
+}
+
+/* Countdown numbers: elegant instead of western */
+.countdown-inline span {
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* Countdown labels: small vintage accent */
+.countdown-inline small {
+    font-family: "Special Elite", monospace !important;
+    letter-spacing: 1.2px !important;
+}
+
+/* Travel/Q&A card titles: serif for elegance */
+.travel-paper-card h3,
+.qa-card h3,
+.paper-item h4 {
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+}
+
+/* Attire guide script stays romantic */
+.attire-guide-card strong {
+    font-family: "Great Vibes", cursive !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+}
+
+/* RSVP confirmation: cleaner hierarchy */
+.rsvp-status-header h4 {
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+}
+
+.status-badge,
+.edit-rsvp-btn,
+.rsvp-btn,
+.event-action-link {
+    font-family: "Special Elite", monospace !important;
+    letter-spacing: 1px !important;
+}
+
+/* Calendar/action buttons: slightly softer */
+.event-action-link {
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+}
+
+/* Inputs stay readable */
+.form-group input,
+.rsvp-field select,
+.rsvp-field input,
+.rsvp-field textarea {
+    font-family: "Libre Baskerville", Georgia, serif !important;
+}
+
+/* Mobile typography */
+@media (max-width: 700px) {
+    .dashboard-title {
+        font-size: 56px !important;
+        line-height: 1.05 !important;
+    }
+
+    .tab-content h2,
+    .welcome-section-header h2,
+    .countdown-section-header h2,
+    .travel-page-header h2,
+    .qa-section-header h2,
+    #schedule h2,
+    #registry h2 {
+        font-size: 28px !important;
+        letter-spacing: 1.2px !important;
+    }
+
+    .event-card h3 {
+        font-size: 32px !important;
+        letter-spacing: 3px !important;
+        line-height: 1.1 !important;
+    }
+
+    .event-hindu h3,
+    .event-christian h3 {
+        font-size: 30px !important;
+        letter-spacing: 2px !important;
+    }
+
+    .event-kicker {
+        font-size: 11px !important;
+        letter-spacing: 1.6px !important;
+    }
+
+    .tab-btn {
+        font-size: 11px !important;
+        letter-spacing: 1.1px !important;
     }
 }

@@ -62,8 +62,18 @@ EVENTS = {
         "time": "11:00 AM",
         "calendar_start": "20261119T110000",
         "calendar_end": "20261119T140000",
+        "short_date": "Nov 19",
+        "badge_title": "Haldi",
+        "venue_name": "Private Residence",
         "location": "5312 Windingbrook Trail, Wesley Chapel, FL 33544",
         "description": "Join us for a joyful Haldi celebration with family, friends, traditions, and blessings.",
+        "timeline": [
+            "11:00 AM - Haldi celebration begins",
+            "2:00 PM - Celebration concludes"
+        ],
+        "attire_image": "images/schedule/attire-haldi.png",
+        "attire_heading": "Pastel & Floral Shades",
+        "attire_subheading": "Daytime Event",
         "attire": "Festive Indian attire encouraged. Bright yellows, oranges, greens, and floral colors are perfect for the Haldi celebration."
     },
 
@@ -72,11 +82,21 @@ EVENTS = {
         "id": "hindu_wedding",
         "title": "Traditional Telugu Wedding",
         "date": "November 20, 2026",
-        "time": "10:00 AM",
+        "time": "9:00 AM",
         "calendar_start": "20261120T090000",
         "calendar_end": "20261120T120000",
+        "short_date": "Nov 20",
+        "badge_title": "Hindu Ceremony",
+        "venue_name": "Hindu Wedding Venue",
         "location": "9338 Old Gibsonton Dr, Gibsonton, FL 33534",
         "description": "Join us for the Hindu wedding ceremony as we celebrate our marriage with traditional rituals and blessings.",
+        "timeline": [
+            "9:00 AM - Ceremony begins",
+            "12:00 PM - Ceremony concludes"
+        ],
+        "attire_image": "images/schedule/attire-hindu.png",
+        "attire_heading": "Traditional Formal Wear",
+        "attire_subheading": "Ceremony Event",
         "attire": "Traditional Indian formal attire is encouraged. Sarees, lehengas, anarkalis, kurtas, sherwanis, or formal festive wear are welcome."
     },
 
@@ -84,11 +104,22 @@ EVENTS = {
         "id": "christian_wedding_reception",
         "title": "Church Wedding and Reception",
         "date": "November 21, 2026",
-        "time": "6:00 PM",
+        "time": "5:00 PM",
         "calendar_start": "20261121T170000",
         "calendar_end": "20261121T230000",
+        "short_date": "Nov 21",
+        "badge_title": "Reception",
+        "venue_name": "Church Wedding and Reception Venue",
         "location": "9724 Cross Creek Blvd, Tampa, FL 33647",
         "description": "Join us for the Christian wedding ceremony followed by an evening reception, dinner, dancing, and celebration.",
+        "timeline": [
+            "5:00 PM - Ceremony begins",
+            "6:00 PM - Reception begins",
+            "11:00 PM - Celebration concludes"
+        ],
+        "attire_image": "images/schedule/attire-reception.png",
+        "attire_heading": "Formal Evening Attire",
+        "attire_subheading": "Ceremony & Reception",
         "attire": "Formal or semi-formal wedding attire. Evening dresses, suits, dress shirts, cocktail attire, and elegant traditional outfits are welcome."
     }
 }
@@ -354,22 +385,24 @@ def apple_calendar_event(event_id):
     description = escape_ics_text(event["description"])
     location = escape_ics_text(event["location"])
 
-    ics_content = f"""BEGIN:VCALENDAR
-                    VERSION:2.0
-                    PRODID:-//Adlin and Prithvi Wedding//EN
-                    CALSCALE:GREGORIAN
-                    METHOD:PUBLISH
-                    BEGIN:VEVENT
-                    UID:{event_id}@adlin-prithvi-wedding
-                    DTSTAMP:20260701T120000Z
-                    DTSTART;TZID=America/New_York:{event["calendar_start"]}
-                    DTEND;TZID=America/New_York:{event["calendar_end"]}
-                    SUMMARY:{title}
-                    DESCRIPTION:{description}
-                    LOCATION:{location}
-                    END:VEVENT
-                    END:VCALENDAR
-                    """
+    ics_content = "\r\n".join([
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Adlin and Prithvi Wedding//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "BEGIN:VEVENT",
+        f"UID:{event_id}@adlin-prithvi-wedding",
+        "DTSTAMP:20260701T120000Z",
+        f"DTSTART;TZID=America/New_York:{event['calendar_start']}",
+        f"DTEND;TZID=America/New_York:{event['calendar_end']}",
+        f"SUMMARY:{title}",
+        f"DESCRIPTION:{description}",
+        f"LOCATION:{location}",
+        "END:VEVENT",
+        "END:VCALENDAR",
+        ""
+    ])
 
     filename = f"{event_id}.ics"
 
