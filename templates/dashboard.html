@@ -3,7 +3,8 @@
 <head>
     <title>Adlin & Prithvi</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260705b">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="dashboard-page">
@@ -871,7 +872,11 @@
                 }, 3500);
             }
 
-            history.replaceState(null, "", window.location.pathname + "#welcome");
+            history.replaceState(null, "", window.location.pathname);
+
+            requestAnimationFrame(function () {
+                window.scrollTo(0, 0);
+            });
         }
 
         function updateCountdown() {
