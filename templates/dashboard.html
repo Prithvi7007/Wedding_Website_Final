@@ -156,7 +156,7 @@
                     </svg>
                 </div>
                 <div class="meta-label">Date</div>
-                <div class="meta-value">November 19, 2026</div>
+                <div class="meta-value">{{ event.date }}</div>
             </div>
 
             <div class="event-meta-item">
@@ -169,7 +169,7 @@
                     </svg>
                 </div>
                 <div class="meta-label">Time</div>
-                <div class="meta-value">11:00 AM</div>
+                <div class="meta-value">{{ event.time }}</div>
             </div>
 
             <div class="event-meta-item event-meta-location">
@@ -182,8 +182,8 @@
                 </div>
                 <div class="meta-label">Location</div>
                 <div class="meta-value">
-                    Private Residence<br>
-                    5312 Windingbrook Trail, Wesley Chapel, FL 33544
+                    {{ event.venue_name }}<br>
+                    {{ event.location }}
                 </div>
             </div>
         </div>

@@ -2439,3 +2439,318 @@ body.dashboard-page .top-line {
         min-height: 360px !important;
     }
 }
+
+/* ===================================================== */
+/* MOBILE SCHEDULE CLEANUP                               */
+/* Clean stacked event cards for phone screens            */
+/* ===================================================== */
+
+@media (max-width: 700px) {
+
+    /* Schedule header */
+    #schedule h2 {
+        margin-top: 18px !important;
+        margin-bottom: 12px !important;
+        font-size: 28px !important;
+        letter-spacing: 1.2px !important;
+        text-align: center !important;
+    }
+
+    .schedule-intro {
+        max-width: 92% !important;
+        margin: 0 auto 22px !important;
+        font-size: 14px !important;
+        line-height: 1.65 !important;
+        text-align: center !important;
+    }
+
+    /* Event card becomes a clean mobile invitation card */
+    .event-card {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 22px auto 32px !important;
+        padding: 22px 16px 18px !important;
+
+        border-radius: 20px !important;
+        text-align: center !important;
+
+        box-shadow:
+            0 10px 24px rgba(43, 26, 18, 0.16),
+            inset 0 0 0 5px rgba(255, 244, 220, 0.24),
+            inset 0 0 0 7px rgba(190, 148, 77, 0.12) !important;
+    }
+
+    .event-card::before {
+        inset: 8px !important;
+        border-radius: 15px !important;
+    }
+
+    .event-card::after {
+        inset: 12px !important;
+        border-radius: 12px !important;
+        background: linear-gradient(
+            to bottom,
+            rgba(255, 248, 235, 0.22),
+            rgba(255, 248, 235, 0.10)
+        ) !important;
+    }
+
+    /* Make background calmer on mobile */
+    .event-haldi,
+    .event-hindu,
+    .event-christian {
+        background-size: cover !important;
+        background-position: center top !important;
+        background-repeat: no-repeat !important;
+    }
+
+    /* Title area */
+    .event-title-block {
+        max-width: 100% !important;
+        margin: 0 auto 18px !important;
+        padding: 0 !important;
+        text-align: center !important;
+    }
+
+    .event-card h3 {
+        max-width: 100% !important;
+        margin: 0 auto !important;
+
+        font-size: 34px !important;
+        line-height: 1.05 !important;
+        letter-spacing: 4px !important;
+        text-align: center !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+    }
+
+    .event-hindu h3,
+    .event-christian h3 {
+        font-size: 28px !important;
+        line-height: 1.08 !important;
+        letter-spacing: 2px !important;
+        text-align: center !important;
+    }
+
+    .event-kicker {
+        max-width: 92% !important;
+        margin: 10px auto 0 !important;
+
+        font-size: 10px !important;
+        line-height: 1.5 !important;
+        letter-spacing: 1.7px !important;
+        text-align: center !important;
+    }
+
+    /* Date / Time / Location compact mobile cards */
+    .event-meta-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 16px auto 18px !important;
+    }
+
+    .event-meta-item {
+        display: grid !important;
+        grid-template-columns: 38px 1fr !important;
+        column-gap: 12px !important;
+        align-items: center !important;
+
+        padding: 12px 13px !important;
+
+        text-align: left !important;
+        background: rgba(255, 244, 220, 0.58) !important;
+        border: 1px solid rgba(43, 26, 18, 0.16) !important;
+        border-radius: 13px !important;
+
+        box-shadow:
+            0 4px 10px rgba(43, 26, 18, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    }
+
+    .event-meta-item:not(:last-child)::after {
+        display: none !important;
+    }
+
+    .meta-icon {
+        grid-row: 1 / span 2 !important;
+
+        width: 34px !important;
+        height: 34px !important;
+        margin: 0 !important;
+    }
+
+    .meta-icon svg {
+        width: 15px !important;
+        height: 15px !important;
+    }
+
+    .meta-label {
+        margin: 0 0 3px !important;
+
+        font-size: 10px !important;
+        letter-spacing: 1px !important;
+        line-height: 1.1 !important;
+        text-align: left !important;
+    }
+
+    .meta-value {
+        font-size: 13px !important;
+        line-height: 1.35 !important;
+        text-align: left !important;
+    }
+
+    /* Attire guide */
+    .attire-guide-card {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 16px auto 18px !important;
+        padding: 16px 14px 17px !important;
+
+        border-radius: 16px !important;
+        background: rgba(255, 244, 220, 0.62) !important;
+    }
+
+    .attire-guide-label {
+        font-size: 11px !important;
+        letter-spacing: 1.5px !important;
+    }
+
+    .attire-guide-image {
+        max-height: 130px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .attire-guide-card strong {
+        font-size: 29px !important;
+        line-height: 1.05 !important;
+    }
+
+    .attire-guide-card small {
+        font-size: 9px !important;
+        letter-spacing: 1.4px !important;
+    }
+
+    .attire-guide-card p {
+        max-width: 92% !important;
+        margin: 9px auto 0 !important;
+        font-size: 12px !important;
+        line-height: 1.45 !important;
+    }
+
+    /* Calendar buttons */
+    .event-actions {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+
+        width: 100% !important;
+        margin: 4px auto 18px !important;
+    }
+
+    .event-action-link {
+        min-width: 0 !important;
+        min-height: 40px !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        padding: 9px 10px !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+    }
+
+    .event-action-link:nth-child(3) {
+        grid-column: 1 / -1 !important;
+    }
+
+    /* RSVP confirmation */
+    .rsvp-confirmation {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+
+        margin-top: 16px !important;
+        padding: 14px !important;
+
+        border-radius: 16px !important;
+        text-align: left !important;
+    }
+
+    .rsvp-status-header {
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .status-badge {
+        min-height: 30px !important;
+        padding: 6px 11px !important;
+        font-size: 9px !important;
+        letter-spacing: 0.8px !important;
+    }
+
+    .rsvp-status-header h4 {
+        font-size: 16px !important;
+        line-height: 1.1 !important;
+    }
+
+    .confirmation-details {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 5px !important;
+        margin: 0 !important;
+    }
+
+    .confirmation-details p {
+        width: 100% !important;
+        margin: 0 !important;
+        font-size: 13px !important;
+        line-height: 1.45 !important;
+    }
+
+    .edit-rsvp-btn {
+        width: 100% !important;
+        min-height: 42px !important;
+        margin: 0 !important;
+        padding: 11px 14px !important;
+        font-size: 11px !important;
+    }
+
+    /* RSVP form */
+    .rsvp-form {
+        margin-top: 18px !important;
+        padding-top: 16px !important;
+    }
+
+    .rsvp-form-heading {
+        text-align: left !important;
+    }
+
+    .rsvp-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    .rsvp-field {
+        margin-bottom: 13px !important;
+    }
+
+    .rsvp-field select,
+    .rsvp-field input,
+    .rsvp-field textarea {
+        min-height: 44px !important;
+        font-size: 16px !important;
+    }
+}
