@@ -694,36 +694,56 @@ body.dashboard-page .top-line span:last-child {
 }
 
 /* Event backgrounds */
+/* ============================= */
+/* EVENT BACKGROUNDS - DESKTOP */
+/* Uses 4:3 artwork */
+/* ============================= */
+
 .event-haldi {
-    background:
+    background-image:
         linear-gradient(
             135deg,
-            rgba(255, 244, 220, 0.50),
-            rgba(255, 226, 124, 0.14)
+            rgba(255, 244, 220, 0.32),
+            rgba(255, 226, 124, 0.08)
         ),
         url("/static/images/HALDI.png");
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
     border-color: rgba(209, 156, 34, 0.58);
 }
 
 .event-hindu {
-    background:
+    background-image:
         linear-gradient(
             135deg,
-            rgba(255, 244, 220, 0.50),
-            rgba(128, 38, 32, 0.08)
+            rgba(255, 244, 220, 0.30),
+            rgba(128, 38, 32, 0.06)
         ),
         url("/static/images/WEDDING.png");
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
     border-color: rgba(153, 69, 57, 0.50);
 }
 
 .event-christian {
-    background:
+    background-image:
         linear-gradient(
             135deg,
-            rgba(255, 244, 220, 0.54),
-            rgba(115, 150, 102, 0.10)
+            rgba(255, 244, 220, 0.32),
+            rgba(115, 150, 102, 0.08)
         ),
         url("/static/images/RECEPTION.png");
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
     border-color: rgba(104, 132, 88, 0.50);
 }
 
@@ -2752,5 +2772,63 @@ body.dashboard-page .top-line {
     .rsvp-field textarea {
         min-height: 44px !important;
         font-size: 16px !important;
+    }
+}
+
+/* ============================= */
+/* EVENT BACKGROUNDS - MOBILE */
+/* Uses 9:16 portrait artwork */
+/* ============================= */
+
+@media (max-width: 700px) {
+    .event-haldi {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.16),
+                rgba(255, 226, 124, 0.03)
+            ),
+            url("/static/images/HALDI-mobile.png") !important;
+
+        background-size: cover !important;
+        background-position: center top !important;
+        background-repeat: no-repeat !important;
+    }
+
+    .event-hindu {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.14),
+                rgba(128, 38, 32, 0.03)
+            ),
+            url("/static/images/WEDDING-mobile.png") !important;
+
+        background-size: cover !important;
+        background-position: center top !important;
+        background-repeat: no-repeat !important;
+    }
+
+    .event-christian {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.16),
+                rgba(115, 150, 102, 0.03)
+            ),
+            url("/static/images/RECEPTION-mobile.png") !important;
+
+        background-size: cover !important;
+        background-position: center top !important;
+        background-repeat: no-repeat !important;
+    }
+
+    /* Let the new portrait artwork show through more */
+    .event-card::after {
+        background: linear-gradient(
+            to bottom,
+            rgba(255, 248, 235, 0.05),
+            rgba(255, 248, 235, 0.015)
+        ) !important;
     }
 }
