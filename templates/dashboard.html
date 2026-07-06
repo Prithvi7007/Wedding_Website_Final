@@ -9,15 +9,6 @@
 
 <body class="dashboard-page">
 
-    <div id="login-toast" class="login-toast">
-        <div class="login-toast-inner">
-            <span class="login-icon">✨</span>
-            <div>
-                <strong>Welcome!</strong>
-                <p>Your guest portal is ready.</p>
-            </div>
-        </div>
-    </div>
 
     <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
 
@@ -809,21 +800,7 @@
 
             history.replaceState(null, "", window.location.pathname + "#schedule");
         }
-        const shouldShowLoginEffect = {{ 'true' if login_effect == 'success' else 'false' }};
 
-        function showLoginToast() {
-            const toast = document.getElementById("login-toast");
-
-            if (!toast) {
-                return;
-            }
-
-            toast.classList.add("show");
-
-            setTimeout(function () {
-                toast.classList.remove("show");
-            }, 3200);
-        }
 
         function burstLoginSparkles() {
             const container = document.getElementById("confetti-container");
@@ -859,7 +836,6 @@
 
         if (shouldShowLoginEffect) {
             activateTab("welcome");
-            showLoginToast();
             burstLoginSparkles();
 
             const hero = document.querySelector(".welcome-hero");
