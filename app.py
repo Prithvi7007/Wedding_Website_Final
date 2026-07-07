@@ -271,11 +271,27 @@ def login():
     password = request.form.get("password", "")
 
     guest = GUESTS.get(email)
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
 
     if guest and guest["password"] == password:
         session["guest_email"] = email
         session["guest_name"] = guest["name"]
-        return redirect(url_for("dashboard", login="success"))
+
+        redirect_url = url_for("dashboard", login="success")
+
+        if is_ajax:
+            return jsonify({
+                "success": True,
+                "redirect_url": redirect_url
+            })
+
+        return redirect(redirect_url)
+
+    if is_ajax:
+        return jsonify({
+            "success": False,
+            "message": "Invalid email or access code."
+        }), 401
 
     return redirect(url_for("login_page"))
 

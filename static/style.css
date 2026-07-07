@@ -3583,3 +3583,57 @@ button {
 .right-arrow {
     display: none !important;
 }
+
+/* ============================= */
+/* LOGIN LOADING BUTTON           */
+/* ============================= */
+
+.open-invitation-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-spinner {
+    display: none;
+    width: 17px;
+    height: 17px;
+    border: 2px solid rgba(255, 244, 220, 0.45);
+    border-top-color: rgba(255, 244, 220, 1);
+    border-radius: 50%;
+    animation: login-spin 0.8s linear infinite;
+}
+
+.open-invitation-btn.is-loading {
+    pointer-events: none;
+    opacity: 0.92;
+}
+
+.open-invitation-btn.is-loading .btn-spinner {
+    display: inline-block;
+}
+
+.open-invitation-btn.is-loading .btn-label {
+    opacity: 0.92;
+}
+
+.login-error-message {
+    min-height: 18px;
+    margin-top: -4px;
+    color: #7b2f25;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: center;
+}
+
+@keyframes login-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
