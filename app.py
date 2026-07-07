@@ -94,7 +94,7 @@ EVENTS = {
             "9:00 AM - Ceremony begins",
             "12:00 PM - Ceremony concludes"
         ],
-        "attire_image": "images/schedule/attire-hindu.png",
+        "attire_image": "images/schedule/attire-hindu.webp",
         "attire_heading": "Traditional Formal Wear",
         "attire_subheading": "Ceremony Event",
         "attire": "Traditional Indian formal attire is encouraged. Sarees, lehengas, anarkalis, kurtas, sherwanis, or formal festive wear are welcome."
@@ -117,7 +117,7 @@ EVENTS = {
             "6:00 PM - Reception begins",
             "11:00 PM - Celebration concludes"
         ],
-        "attire_image": "images/schedule/attire-reception.png",
+        "attire_image": "images/schedule/attire-reception.webp",
         "attire_heading": "Formal Evening Attire",
         "attire_subheading": "Ceremony & Reception",
         "attire": "Formal or semi-formal wedding attire. Evening dresses, suits, dress shirts, cocktail attire, and elegant traditional outfits are welcome."
