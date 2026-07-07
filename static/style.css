@@ -35,7 +35,7 @@ body::before {
     position: fixed;
     inset: 0;
     z-index: -2;
-    background: url("/static/images/site-bg.jpg") center center / cover no-repeat;
+    background: url("/static/images/site-bg.webp") center center / cover no-repeat;
     filter: blur(3px) brightness(0.78) sepia(12%);
     transform: scale(1.03);
 }
