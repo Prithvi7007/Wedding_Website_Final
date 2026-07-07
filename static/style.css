@@ -1025,230 +1025,6 @@ body.dashboard-page .top-line span:last-child {
     background: rgba(74, 103, 59, 0.82);
 }
 
-/* RSVP confirmation */
-.rsvp-confirmation {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-    padding: 16px 18px;
-    border-radius: 18px;
-    border: 1px solid rgba(160, 139, 94, 0.32);
-    background: linear-gradient(
-        90deg,
-        rgba(218, 228, 198, 0.92) 0%,
-        rgba(245, 239, 220, 0.92) 45%,
-        rgba(249, 228, 214, 0.90) 100%
-    );
-    box-shadow:
-        0 6px 18px rgba(70, 45, 24, 0.08),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-}
-
-.rsvp-confirmation.status-no {
-    background: linear-gradient(
-        90deg,
-        rgba(229, 196, 180, 0.74) 0%,
-        rgba(245, 239, 220, 0.90) 55%,
-        rgba(255, 244, 220, 0.88) 100%
-    );
-}
-
-.rsvp-confirmation.status-maybe {
-    background: linear-gradient(
-        90deg,
-        rgba(237, 214, 157, 0.78) 0%,
-        rgba(245, 239, 220, 0.90) 55%,
-        rgba(255, 244, 220, 0.88) 100%
-    );
-}
-
-.rsvp-status-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin: 0;
-}
-
-.rsvp-status-header h4 {
-    margin: 0;
-    color: #2d1d14;
-    font-family: "Special Elite", monospace;
-    font-size: 15px;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-}
-
-.confirmation-details {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    flex-wrap: wrap;
-    margin: 0 auto 0 0;
-}
-
-.confirmation-details p {
-    margin: 0;
-    color: #4d382b;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 34px;
-    padding: 7px 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(77, 98, 64, 0.28);
-    color: #fff7eb;
-    font-family: "Special Elite", monospace;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.badge-yes {
-    background: #748b5d;
-    color: #fffaf2;
-    border-color: rgba(77, 98, 64, 0.35);
-}
-
-.badge-no {
-    background: #8f6a60;
-    color: #fffaf2;
-}
-
-.badge-maybe {
-    background: #b59b63;
-    color: #fffaf2;
-}
-
-.edit-rsvp-btn {
-    width: auto;
-    min-width: 150px;
-    margin-left: auto;
-    padding: 11px 22px;
-    border-radius: 14px;
-    border: 1px solid rgba(184, 137, 86, 0.48);
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 248, 236, 0.96),
-        rgba(244, 229, 205, 0.94)
-    );
-    color: #3d2a1f;
-    font-family: "Special Elite", monospace;
-    font-size: 13px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    box-shadow:
-        0 4px 10px rgba(56, 36, 19, 0.08),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.25);
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
-}
-
-.edit-rsvp-btn:hover {
-    transform: translateY(-1px);
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 248, 236, 0.98),
-        rgba(238, 217, 186, 0.96)
-    );
-    color: #3d2a1f;
-    box-shadow:
-        0 6px 14px rgba(56, 36, 19, 0.12),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.28);
-}
-
-/* RSVP form */
-.rsvp-form {
-    margin-top: 22px;
-    padding-top: 18px;
-    border-top: 1px solid rgba(43, 26, 18, 0.25);
-}
-
-.rsvp-form.is-hidden {
-    display: none;
-}
-
-.rsvp-form-heading {
-    margin-bottom: 16px;
-    text-align: left;
-}
-
-.rsvp-form-heading span {
-    display: block;
-    margin-bottom: 4px;
-    color: var(--dark-brown);
-    font-family: "Special Elite", monospace;
-    font-size: 14px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.rsvp-form-heading p {
-    margin: 0;
-    color: var(--brown);
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.rsvp-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-}
-
-.rsvp-field {
-    margin-bottom: 16px;
-    text-align: left;
-}
-
-.rsvp-field textarea {
-    min-height: 70px;
-    resize: vertical;
-}
-
-.rsvp-helper {
-    margin-top: 7px;
-    color: var(--brown);
-    font-size: 12px;
-    line-height: 1.45;
-}
-
-.rsvp-btn {
-    width: 100%;
-    margin-top: 18px;
-    padding: 14px 18px;
-    border: none;
-    border-radius: 16px;
-    background: linear-gradient(
-        90deg,
-        rgba(77, 48, 33, 0.96),
-        rgba(109, 68, 46, 0.96)
-    );
-    color: #fff7ec;
-    font-family: "Special Elite", monospace;
-    font-size: 14px;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    box-shadow: 0 8px 20px rgba(68, 39, 22, 0.14);
-}
-
-.rsvp-btn:hover {
-    background: linear-gradient(
-        90deg,
-        rgba(90, 56, 37, 0.98),
-        rgba(119, 76, 50, 0.98)
-    );
-}
-
 /* ============================= */
 /* TRAVEL PAGE */
 /* ============================= */
@@ -1930,24 +1706,7 @@ body.dashboard-page .top-line span:last-child {
         font-size: 12px;
     }
 
-    .rsvp-confirmation {
-        align-items: flex-start;
-        padding: 14px;
-        gap: 12px;
-    }
-
-    .rsvp-status-header {
-        width: 100%;
-    }
-
-    .confirmation-details {
-        width: 100%;
-        gap: 10px;
-    }
-
-    .confirmation-details p {
-        width: 100%;
-    }
+  
 
     .edit-rsvp-btn {
         width: 100%;
@@ -2939,3 +2698,708 @@ button {
         letter-spacing: 1px !important;
     }
 }
+
+/* ===================================================== */
+/* RSVP SYSTEM - CLEAN VERSION                           */
+/* Confirmation footer + edit form drawer                 */
+/* ===================================================== */
+
+.event-card {
+    padding-bottom: 0 !important;
+}
+
+.rsvp-confirmation.is-hidden,
+.rsvp-form.is-hidden {
+    display: none !important;
+}
+
+.rsvp-confirmation {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    align-items: center !important;
+    gap: 24px !important;
+
+    margin: 28px -32px 0 !important;
+    padding: 20px 34px !important;
+
+    border: none !important;
+    border-top: 1px solid rgba(90, 56, 37, 0.18) !important;
+    border-radius: 0 0 24px 24px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(221, 232, 203, 0.92) 0%,
+            rgba(250, 242, 222, 0.94) 46%,
+            rgba(248, 225, 211, 0.90) 100%
+        ) !important;
+
+    box-shadow:
+        0 -10px 24px rgba(43, 26, 18, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -1px 0 rgba(43, 26, 18, 0.08) !important;
+
+    overflow: hidden !important;
+    text-align: left !important;
+}
+
+.rsvp-confirmation::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 34px;
+    right: 34px;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(90, 56, 37, 0.30),
+        transparent
+    );
+}
+
+.rsvp-confirmation-main {
+    display: flex !important;
+    align-items: center !important;
+    gap: 24px !important;
+    min-width: 0 !important;
+}
+
+.rsvp-status-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    flex: 0 0 auto !important;
+    flex-wrap: nowrap !important;
+    width: auto !important;
+    margin: 0 !important;
+}
+
+.rsvp-status-header h4 {
+    margin: 0 !important;
+    color: rgba(43, 26, 18, 0.96) !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 19px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: 1.3px !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+}
+
+.status-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    min-height: 32px !important;
+    padding: 7px 15px !important;
+
+    border-radius: 999px !important;
+    border: 1px solid rgba(255, 255, 255, 0.34) !important;
+
+    color: #fffaf0 !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.3px !important;
+    text-transform: uppercase !important;
+
+    box-shadow:
+        0 4px 10px rgba(43, 26, 18, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+.badge-yes {
+    background: linear-gradient(
+        135deg,
+        rgba(93, 118, 73, 0.96),
+        rgba(124, 145, 101, 0.96)
+    ) !important;
+}
+
+.badge-no {
+    background: linear-gradient(
+        135deg,
+        rgba(126, 88, 78, 0.96),
+        rgba(151, 107, 94, 0.96)
+    ) !important;
+}
+
+.badge-maybe {
+    background: linear-gradient(
+        135deg,
+        rgba(156, 126, 58, 0.96),
+        rgba(190, 155, 84, 0.96)
+    ) !important;
+}
+
+.confirmation-details {
+    display: flex !important;
+    align-items: center !important;
+    gap: 22px !important;
+    flex-wrap: wrap !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+}
+
+.confirmation-details p {
+    position: relative !important;
+    width: auto !important;
+    margin: 0 !important;
+
+    color: rgba(68, 47, 35, 0.90) !important;
+    font-family: "Libre Baskerville", Georgia, serif !important;
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+}
+
+.confirmation-details p + p::before {
+    content: "•";
+    position: absolute;
+    left: -14px;
+    color: rgba(90, 56, 37, 0.45);
+}
+
+.confirmation-details strong {
+    color: rgba(43, 26, 18, 0.90) !important;
+    font-weight: 700 !important;
+}
+
+.edit-rsvp-btn {
+    width: auto !important;
+    min-width: 152px !important;
+    min-height: 42px !important;
+
+    margin: 0 !important;
+    padding: 11px 22px !important;
+
+    border-radius: 999px !important;
+    border: 1px solid rgba(150, 101, 53, 0.42) !important;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255, 249, 239, 0.98),
+            rgba(242, 225, 198, 0.94)
+        ) !important;
+
+    color: rgba(43, 26, 18, 0.95) !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.4px !important;
+    text-transform: uppercase !important;
+
+    cursor: pointer !important;
+
+    box-shadow:
+        0 6px 14px rgba(56, 36, 19, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.48) !important;
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease !important;
+}
+
+.edit-rsvp-btn:hover {
+    transform: translateY(-1px) !important;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255, 250, 241, 1),
+            rgba(236, 213, 181, 0.98)
+        ) !important;
+    box-shadow:
+        0 8px 18px rgba(56, 36, 19, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.50) !important;
+}
+
+.rsvp-form {
+    margin: 28px -32px 0 !important;
+    padding: 24px 32px 28px !important;
+
+    border-top: 1px solid rgba(90, 56, 37, 0.22) !important;
+    border-radius: 0 0 24px 24px !important;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255, 244, 220, 0.76),
+            rgba(255, 236, 185, 0.54)
+        ) !important;
+
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+
+    box-shadow:
+        0 -8px 20px rgba(43, 26, 18, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+}
+
+.rsvp-form.is-editing {
+    display: block !important;
+}
+
+.rsvp-form-heading {
+    margin-bottom: 18px !important;
+    text-align: left !important;
+}
+
+.rsvp-form-heading span {
+    display: block !important;
+    margin-bottom: 5px !important;
+
+    color: var(--dark-brown) !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.7px !important;
+    text-transform: uppercase !important;
+}
+
+.rsvp-form-heading p {
+    margin: 0 !important;
+    color: var(--brown) !important;
+    font-family: "Libre Baskerville", Georgia, serif !important;
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+}
+
+.rsvp-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 18px !important;
+}
+
+.rsvp-field {
+    margin-bottom: 16px !important;
+    text-align: left !important;
+}
+
+.rsvp-field label {
+    display: block !important;
+    margin-bottom: 8px !important;
+
+    color: var(--dark-brown) !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.3px !important;
+    text-transform: uppercase !important;
+}
+
+.rsvp-field select,
+.rsvp-field input,
+.rsvp-field textarea {
+    width: 100% !important;
+    padding: 13px 15px !important;
+
+    border: 1px solid rgba(43, 26, 18, 0.30) !important;
+    border-radius: 13px !important;
+
+    outline: none !important;
+    background: rgba(255, 244, 220, 0.56) !important;
+
+    color: var(--ink) !important;
+    font-family: "Libre Baskerville", Georgia, serif !important;
+    font-size: 15px !important;
+}
+
+.rsvp-field textarea {
+    min-height: 76px !important;
+    resize: vertical !important;
+}
+
+.rsvp-field select:focus,
+.rsvp-field input:focus,
+.rsvp-field textarea:focus {
+    border-color: var(--dark-brown) !important;
+    box-shadow: 0 0 0 3px rgba(90, 56, 37, 0.15) !important;
+}
+
+.rsvp-helper {
+    margin-top: 7px !important;
+    color: var(--brown) !important;
+    font-family: "Libre Baskerville", Georgia, serif !important;
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+}
+
+.rsvp-btn {
+    width: 100% !important;
+    min-height: 46px !important;
+
+    margin-top: 18px !important;
+    padding: 14px 18px !important;
+
+    border: none !important;
+    border-radius: 999px !important;
+
+    background: linear-gradient(
+        90deg,
+        rgba(77, 48, 33, 0.96),
+        rgba(109, 68, 46, 0.96)
+    ) !important;
+
+    color: #fff7ec !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.5px !important;
+    text-transform: uppercase !important;
+
+    cursor: pointer !important;
+    box-shadow: 0 8px 20px rgba(68, 39, 22, 0.14) !important;
+}
+
+.rsvp-btn:hover {
+    background: linear-gradient(
+        90deg,
+        rgba(90, 56, 37, 0.98),
+        rgba(119, 76, 50, 0.98)
+    ) !important;
+}
+
+@media (max-width: 700px) {
+    .rsvp-confirmation {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+
+        margin: 20px -18px 0 !important;
+        padding: 18px 20px 20px !important;
+
+        border-radius: 0 0 20px 20px !important;
+        text-align: left !important;
+    }
+
+    .rsvp-confirmation::before {
+        left: 20px !important;
+        right: 20px !important;
+    }
+
+    .rsvp-confirmation-main {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .rsvp-status-header {
+        width: 100% !important;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+
+    .status-badge {
+        min-height: 30px !important;
+        padding: 7px 13px !important;
+        font-size: 10px !important;
+    }
+
+    .rsvp-status-header h4 {
+        font-size: 18px !important;
+        line-height: 1.1 !important;
+        white-space: normal !important;
+    }
+
+    .confirmation-details {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 6px !important;
+        width: 100% !important;
+    }
+
+    .confirmation-details p {
+        width: 100% !important;
+        font-size: 14px !important;
+        white-space: normal !important;
+    }
+
+    .confirmation-details p + p::before {
+        display: none !important;
+    }
+
+    .edit-rsvp-btn {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 44px !important;
+    }
+
+    .rsvp-form {
+        margin: 20px -18px 0 !important;
+        padding: 20px 18px 22px !important;
+        border-radius: 0 0 20px 20px !important;
+    }
+
+    .rsvp-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    .rsvp-field {
+        margin-bottom: 13px !important;
+    }
+
+    .rsvp-field select,
+    .rsvp-field input,
+    .rsvp-field textarea {
+        min-height: 44px !important;
+        font-size: 16px !important;
+    }
+}
+
+/* ===================================================== */
+/* FINAL FIX: SEPARATE EVENT ARTWORK FROM RSVP            */
+/* The event-card no longer owns the image. The image      */
+/* lives only inside .event-art-panel, so opening the RSVP */
+/* form cannot stretch the artwork.                       */
+/* ===================================================== */
+
+.event-card.event-haldi,
+.event-card.event-hindu,
+.event-card.event-christian {
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    background-image: none !important;
+    background-size: auto !important;
+    background-position: initial !important;
+    background-repeat: initial !important;
+}
+
+.event-card::before,
+.event-card::after {
+    display: none !important;
+}
+
+.event-art-panel {
+    position: relative !important;
+    z-index: 1 !important;
+    overflow: hidden !important;
+    padding: 48px 32px 28px !important;
+    border-radius: 24px 24px 0 0 !important;
+    background-size: 100% 100%, 100% 100% !important;
+    background-position: center center, center center !important;
+    background-repeat: no-repeat, no-repeat !important;
+}
+
+.event-art-panel::before {
+    content: "";
+    position: absolute;
+    inset: 13px;
+    z-index: 0;
+    border: 1px solid rgba(190, 148, 77, 0.42);
+    border-radius: 17px;
+    pointer-events: none;
+}
+
+.event-art-panel::after {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    z-index: 0;
+    border: 1px solid rgba(255, 244, 220, 0.34);
+    border-radius: 13px;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 248, 235, 0.08),
+        rgba(255, 248, 235, 0.03)
+    );
+    pointer-events: none;
+}
+
+.event-art-panel > * {
+    position: relative;
+    z-index: 1;
+}
+
+.event-haldi .event-art-panel {
+    background-image:
+        linear-gradient(
+            135deg,
+            rgba(255, 244, 220, 0.30),
+            rgba(255, 226, 124, 0.06)
+        ),
+        url("/static/images/HALDI.png") !important;
+}
+
+.event-hindu .event-art-panel {
+    background-image:
+        linear-gradient(
+            135deg,
+            rgba(255, 244, 220, 0.30),
+            rgba(128, 38, 32, 0.05)
+        ),
+        url("/static/images/WEDDING.png") !important;
+}
+
+.event-christian .event-art-panel {
+    background-image:
+        linear-gradient(
+            135deg,
+            rgba(255, 244, 220, 0.34),
+            rgba(115, 150, 102, 0.06)
+        ),
+        url("/static/images/RECEPTION.png") !important;
+}
+
+/* RSVP is now a true separate drawer/footer, not part of the image area */
+.event-card .rsvp-confirmation,
+.event-card .rsvp-form {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 0 24px 24px !important;
+    border-top: 1px solid rgba(90, 56, 37, 0.20) !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.event-card .rsvp-confirmation {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    align-items: center !important;
+    gap: 24px !important;
+    padding: 20px 34px !important;
+    text-align: left !important;
+}
+
+.event-card .rsvp-form {
+    padding: 24px 34px 28px !important;
+}
+
+.event-card .rsvp-confirmation.is-hidden,
+.event-card .rsvp-form.is-hidden {
+    display: none !important;
+}
+
+.event-card .rsvp-form.is-editing {
+    display: block !important;
+}
+
+.event-haldi .rsvp-confirmation,
+.event-haldi .rsvp-form {
+    background-color: #fff0b8 !important;
+    background-image:
+        radial-gradient(circle at top left, #fff8d8 0%, rgba(255, 248, 216, 0) 42%),
+        linear-gradient(135deg, #fff4c6 0%, #ffe082 45%, #f2bd57 100%) !important;
+}
+
+.event-hindu .rsvp-confirmation,
+.event-hindu .rsvp-form {
+    background-color: #f6d7c8 !important;
+    background-image:
+        radial-gradient(circle at top left, #fff2dc 0%, rgba(255, 242, 220, 0) 44%),
+        linear-gradient(135deg, #fff0d1 0%, #e9b690 45%, #b96558 100%) !important;
+}
+
+.event-christian .rsvp-confirmation,
+.event-christian .rsvp-form {
+    background-color: #dfe8cd !important;
+    background-image:
+        radial-gradient(circle at top left, #fff7dc 0%, rgba(255, 247, 220, 0) 42%),
+        linear-gradient(135deg, #fff4d8 0%, #dfe8cd 45%, #9eb889 100%) !important;
+}
+
+.event-card .rsvp-field select,
+.event-card .rsvp-field input,
+.event-card .rsvp-field textarea {
+    background: #fff8eb !important;
+    border: 1px solid rgba(43, 26, 18, 0.30) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.50) !important;
+}
+
+@media (max-width: 700px) {
+    .event-art-panel {
+        padding: 22px 16px 18px !important;
+        border-radius: 20px 20px 0 0 !important;
+        background-size: cover !important;
+        background-position: center top !important;
+        background-repeat: no-repeat !important;
+    }
+
+    .event-art-panel::before {
+        inset: 8px !important;
+        border-radius: 15px !important;
+    }
+
+    .event-art-panel::after {
+        inset: 12px !important;
+        border-radius: 12px !important;
+        background: linear-gradient(
+            to bottom,
+            rgba(255, 248, 235, 0.05),
+            rgba(255, 248, 235, 0.015)
+        ) !important;
+    }
+
+    .event-haldi .event-art-panel {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.16),
+                rgba(255, 226, 124, 0.03)
+            ),
+            url("/static/images/HALDI-mobile.png") !important;
+    }
+
+    .event-hindu .event-art-panel {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.14),
+                rgba(128, 38, 32, 0.03)
+            ),
+            url("/static/images/WEDDING-mobile.png") !important;
+    }
+
+    .event-christian .event-art-panel {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.16),
+                rgba(115, 150, 102, 0.03)
+            ),
+            url("/static/images/RECEPTION-mobile.png") !important;
+    }
+
+    .event-card .rsvp-confirmation,
+    .event-card .rsvp-form {
+        border-radius: 0 0 20px 20px !important;
+    }
+
+    .event-card .rsvp-confirmation {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+        padding: 18px 20px 20px !important;
+    }
+
+    .event-card .rsvp-form {
+        padding: 20px 18px 22px !important;
+    }
+
+    .event-card .rsvp-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    .event-card .edit-rsvp-btn {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .event-card .confirmation-details {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 6px !important;
+    }
+}
+

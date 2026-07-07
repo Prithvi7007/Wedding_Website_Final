@@ -74,7 +74,7 @@ EVENTS = {
         "attire_image": "images/schedule/attire-haldi.png",
         "attire_heading": "Pastel & Floral Shades",
         "attire_subheading": "Daytime Event",
-        "attire": "Festive Indian attire encouraged. Bright yellows, oranges, greens, and floral colors are perfect for the Haldi celebration."
+        "attire": "Festive Indian attire encouraged. Shades of yellow are perfect for the Haldi celebration."
     },
 
 
@@ -97,7 +97,7 @@ EVENTS = {
         "attire_image": "images/schedule/attire-hindu.png",
         "attire_heading": "Traditional Formal Wear",
         "attire_subheading": "Ceremony Event",
-        "attire": "Traditional Indian formal attire is encouraged. Sarees, lehengas, anarkalis, kurtas, sherwanis, or formal festive wear are welcome."
+        "attire": "Traditional Indian formal attire is encouraged. Floral or Pastel Sarees, lehengas, anarkalis, kurtas, sherwanis, or formal festive wear are welcome."
     },
 
     "christian_wedding_reception": {

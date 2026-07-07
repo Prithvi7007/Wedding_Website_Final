@@ -3,7 +3,7 @@
 <head>
     <title>Adlin & Prithvi</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260705e">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260707b">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -120,6 +120,7 @@
             {% if event.id == 'christian_wedding_reception' %}event-christian{% endif %}
         "
     >
+        <div class="event-art-panel">
 
         <!-- EVENT TITLE -->
         <div class="event-title-block">
@@ -230,6 +231,8 @@
             </a>
         </div>
 
+        </div>
+
         <!-- RSVP CONFIRMATION -->
         {% if has_response %}
             <div 
@@ -240,29 +243,31 @@
                     {% if saved.get('attending') == 'Maybe' %}status-maybe{% endif %}
                 "
             >
-                <div class="rsvp-status-header">
-                    {% if saved.get("attending") == "Yes" %}
-                        <span class="status-badge badge-yes">Confirmed</span>
-                        <h4>You’re Attending</h4>
-                    {% elif saved.get("attending") == "No" %}
-                        <span class="status-badge badge-no">Declined</span>
-                        <h4>You’re Not Attending</h4>
-                    {% else %}
-                        <span class="status-badge badge-maybe">Maybe</span>
-                        <h4>Response Pending</h4>
-                    {% endif %}
-                </div>
+                <div class="rsvp-confirmation-main">
+                    <div class="rsvp-status-header">
+                        {% if saved.get("attending") == "Yes" %}
+                            <span class="status-badge badge-yes">Confirmed</span>
+                            <h4>You’re Attending</h4>
+                        {% elif saved.get("attending") == "No" %}
+                            <span class="status-badge badge-no">Declined</span>
+                            <h4>You’re Not Attending</h4>
+                        {% else %}
+                            <span class="status-badge badge-maybe">Maybe</span>
+                            <h4>Response Pending</h4>
+                        {% endif %}
+                    </div>
 
-                <div class="confirmation-details">
-                    {% if saved.get("attending") != "No" %}
-                        <p><strong>Total attending:</strong> {{ saved.get("guest_count", 0) }}</p>
-                    {% else %}
-                        <p><strong>Total attending:</strong> 0</p>
-                    {% endif %}
+                    <div class="confirmation-details">
+                        {% if saved.get("attending") != "No" %}
+                            <p><strong>Total attending:</strong> {{ saved.get("guest_count", 0) }}</p>
+                        {% else %}
+                            <p><strong>Total attending:</strong> 0</p>
+                        {% endif %}
 
-                    {% if saved.get("notes") %}
-                        <p><strong>Notes:</strong> {{ saved.get("notes") }}</p>
-                    {% endif %}
+                        {% if saved.get("notes") and saved.get("notes") != "None" %}
+                            <p><strong>Notes:</strong> {{ saved.get("notes") }}</p>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <button 
@@ -292,6 +297,7 @@
             <div class="rsvp-grid">
                 <div class="rsvp-field">
                     <label>Will you attend?</label>
+
                     <select name="attending" required>
                         <option value="">Select</option>
                         <option value="Yes" {% if saved.get("attending") == "Yes" %}selected{% endif %}>Yes</option>
@@ -306,6 +312,7 @@
 
                 <div class="rsvp-field">
                     <label>Total attending, including you</label>
+
                     <input 
                         type="number" 
                         name="guest_count" 
@@ -318,7 +325,11 @@
 
             <div class="rsvp-field">
                 <label>Notes</label>
-                <textarea name="notes" placeholder="Food restrictions, accessibility needs, or other notes">{{ saved.get("notes", "") }}</textarea>
+
+                <textarea 
+                    name="notes" 
+                    placeholder="Food restrictions, accessibility needs, or other notes"
+                >{{ saved.get("notes", "") }}</textarea>
             </div>
 
             <button type="submit" class="rsvp-btn">
@@ -743,12 +754,18 @@
             const form = document.getElementById("rsvp-form-" + eventId);
             const confirmation = document.getElementById("confirmation-" + eventId);
 
-            if (form) {
-                form.classList.remove("is-hidden");
+            if (confirmation) {
+                confirmation.classList.add("is-hidden");
             }
 
-            if (confirmation) {
-                confirmation.style.display = "none";
+            if (form) {
+                form.classList.remove("is-hidden");
+                form.classList.add("is-editing");
+
+                form.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest"
+                });
             }
         };
 
