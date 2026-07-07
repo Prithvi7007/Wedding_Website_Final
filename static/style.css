@@ -3403,3 +3403,173 @@ button {
     }
 }
 
+
+/* ===================================================== */
+/* RSVP GLASSMORPHISM REFINEMENT                         */
+/* Softer event-colored glass drawer. Event artwork stays */
+/* inside .event-art-panel only, so RSVP does not stretch */
+/* or inherit the artwork.                               */
+/* ===================================================== */
+
+.event-card .rsvp-confirmation,
+.event-card .rsvp-form {
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+
+    background-color: rgba(255, 244, 220, 0.46) !important;
+    background-blend-mode: soft-light, normal !important;
+
+    backdrop-filter: blur(18px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+
+    border-top: 1px solid rgba(255, 250, 236, 0.54) !important;
+    box-shadow:
+        0 -10px 26px rgba(43, 26, 18, 0.09),
+        inset 0 1px 0 rgba(255, 255, 255, 0.62),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.20) !important;
+}
+
+.event-card .rsvp-confirmation::after,
+.event-card .rsvp-form::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.34),
+            rgba(255, 255, 255, 0.08) 42%,
+            rgba(255, 255, 255, 0.02)
+        );
+}
+
+.event-card .rsvp-confirmation > *,
+.event-card .rsvp-form > * {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Haldi: softer turmeric glass */
+.event-haldi .rsvp-confirmation,
+.event-haldi .rsvp-form {
+    background-color: rgba(255, 229, 140, 0.42) !important;
+    background-image:
+        radial-gradient(circle at top left, rgba(255, 250, 221, 0.76) 0%, rgba(255, 250, 221, 0) 44%),
+        linear-gradient(135deg, rgba(255, 244, 198, 0.52) 0%, rgba(255, 214, 103, 0.40) 52%, rgba(232, 174, 68, 0.34) 100%) !important;
+}
+
+/* Hindu wedding: softer rose-gold glass */
+.event-hindu .rsvp-confirmation,
+.event-hindu .rsvp-form {
+    background-color: rgba(237, 188, 170, 0.40) !important;
+    background-image:
+        radial-gradient(circle at top left, rgba(255, 244, 220, 0.74) 0%, rgba(255, 244, 220, 0) 45%),
+        linear-gradient(135deg, rgba(255, 238, 210, 0.54) 0%, rgba(222, 157, 132, 0.34) 54%, rgba(169, 82, 74, 0.30) 100%) !important;
+}
+
+/* Christian wedding / reception: softer sage glass */
+.event-christian .rsvp-confirmation,
+.event-christian .rsvp-form {
+    background-color: rgba(212, 226, 200, 0.42) !important;
+    background-image:
+        radial-gradient(circle at top left, rgba(255, 248, 224, 0.72) 0%, rgba(255, 248, 224, 0) 44%),
+        linear-gradient(135deg, rgba(255, 244, 216, 0.52) 0%, rgba(208, 225, 194, 0.38) 54%, rgba(134, 166, 116, 0.32) 100%) !important;
+}
+
+.event-card .rsvp-field select,
+.event-card .rsvp-field input,
+.event-card .rsvp-field textarea {
+    background: rgba(255, 250, 241, 0.78) !important;
+    border: 1px solid rgba(43, 26, 18, 0.24) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.64),
+        0 4px 12px rgba(43, 26, 18, 0.05) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.event-card .edit-rsvp-btn {
+    background: rgba(255, 250, 241, 0.68) !important;
+    backdrop-filter: blur(12px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(135%) !important;
+    border-color: rgba(90, 56, 37, 0.24) !important;
+}
+
+.event-card .rsvp-btn {
+    background: rgba(74, 45, 30, 0.84) !important;
+    border: 1px solid rgba(255, 244, 220, 0.22) !important;
+    box-shadow:
+        0 8px 20px rgba(68, 39, 22, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+.rsvp-confetti-piece {
+    position: absolute !important;
+    z-index: 9999 !important;
+    animation-name: rsvp-confetti-fall !important;
+    animation-duration: 4.2s !important;
+    animation-timing-function: cubic-bezier(0.18, 0.72, 0.26, 1) !important;
+    animation-fill-mode: forwards !important;
+}
+
+@keyframes rsvp-confetti-fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    78% {
+        opacity: 0.92;
+    }
+
+    100% {
+        transform: translateY(340px) rotate(540deg);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 700px) {
+    .event-card .rsvp-confirmation,
+    .event-card .rsvp-form {
+        backdrop-filter: blur(15px) saturate(140%) !important;
+        -webkit-backdrop-filter: blur(15px) saturate(140%) !important;
+    }
+
+    @keyframes rsvp-confetti-fall {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(280px) rotate(500deg);
+            opacity: 0;
+        }
+    }
+}
+
+/* ===================================================== */
+/* ASYNC RSVP SUBMIT STATE                               */
+/* ===================================================== */
+
+.rsvp-form.is-submitting {
+    opacity: 0.86;
+    pointer-events: none;
+}
+
+.rsvp-btn:disabled {
+    cursor: wait !important;
+    opacity: 0.72 !important;
+    transform: none !important;
+}

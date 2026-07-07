@@ -3,7 +3,7 @@
 <head>
     <title>Adlin & Prithvi</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260707b">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260707d">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -33,14 +33,14 @@
 
 
         <div class="tabs"> 
-            <button type="button" class="tab-btn active" data-tab="welcome">Welcome</button>
-            <button type="button" class="tab-btn" data-tab="schedule">Schedule</button>
-            <button type="button" class="tab-btn" data-tab="travel">Travel</button>
-            <button type="button" class="tab-btn" data-tab="registry">Registry</button>
-            <button type="button" class="tab-btn" data-tab="qa">Q&A</button>
+            <button type="button" class="tab-btn {% if active_tab == 'welcome' %}active{% endif %}" data-tab="welcome">Welcome</button>
+            <button type="button" class="tab-btn {% if active_tab == 'schedule' %}active{% endif %}" data-tab="schedule">Schedule</button>
+            <button type="button" class="tab-btn {% if active_tab == 'travel' %}active{% endif %}" data-tab="travel">Travel</button>
+            <button type="button" class="tab-btn {% if active_tab == 'registry' %}active{% endif %}" data-tab="registry">Registry</button>
+            <button type="button" class="tab-btn {% if active_tab == 'qa' %}active{% endif %}" data-tab="qa">Q&A</button>
         </div>
         <!-- Welcome Tab -->
-        <div id="welcome" class="tab-content active">
+        <div id="welcome" class="tab-content {% if active_tab == 'welcome' %}active{% endif %}">
 
             <div class="welcome-section-header">
                 <h2>Welcome, {{ guest.name if guest.name else "Dear Guest" }}</h2>
@@ -100,7 +100,7 @@
         </div>
 
         <!-- Schedule Tab -->
-        <div id="schedule" class="tab-content">
+        <div id="schedule" class="tab-content {% if active_tab == 'schedule' %}active{% endif %}">
             <h2>Wedding Schedule</h2>
         
 
@@ -348,7 +348,7 @@
         </div>
 
       <!-- Travel Tab -->
-        <div id="travel" class="tab-content">
+        <div id="travel" class="tab-content {% if active_tab == 'travel' %}active{% endif %}">
 
             <div class="travel-page-header">
                 <h2>Travel Guide</h2>
@@ -542,7 +542,7 @@
             </div>
 
         <!-- Registry Tab -->
-        <div id="registry" class="tab-content">
+        <div id="registry" class="tab-content {% if active_tab == 'registry' %}active{% endif %}">
             <h2>Registry</h2>
 
             <div class="info-card">
@@ -553,7 +553,7 @@
         </div>
 
         <!-- QA Tab -->
-        <div id="qa" class="tab-content">
+        <div id="qa" class="tab-content {% if active_tab == 'qa' %}active{% endif %}">
             <div class="qa-section-header">
                 <h2>Questions & Answers</h2>
                 <p>
@@ -664,6 +664,8 @@
 
         const shouldCelebrate = {{ 'true' if celebrate == 'yes' else 'false' }};
         const shouldShowLoginEffect = {{ 'true' if login_effect == 'success' else 'false' }};
+        const serverActiveTab = "{{ active_tab if active_tab else 'welcome' }}";
+        const celebrationEventId = "{{ celebrate_event_id if celebrate_event_id else '' }}";
 
         function activateTab(tabName) {
             tabButtons.forEach(function (btn) {
@@ -696,6 +698,8 @@
 
         if (hashTab) {
             activateTab(hashTab);
+        } else {
+            activateTab(serverActiveTab);
         }
 
         /* ============================= */
@@ -787,12 +791,29 @@
             }, 3500);
         }
 
-        function burstConfetti() {
+        function burstConfetti(eventId) {
             const container = document.getElementById("confetti-container");
 
             if (!container) {
                 return;
             }
+
+            let source = null;
+
+            if (eventId) {
+                source = document.getElementById("confirmation-" + eventId) ||
+                         document.getElementById("rsvp-form-" + eventId);
+            }
+
+            if (!source) {
+                source = document.querySelector("#schedule .event-card");
+            }
+
+            const rect = source ? source.getBoundingClientRect() : null;
+
+            const startLeft = rect ? rect.left : 0;
+            const startTop = rect ? Math.max(rect.top - 8, 12) : 0;
+            const startWidth = rect ? rect.width : window.innerWidth;
 
             const colors = [
                 "#7b3b2d",
@@ -803,13 +824,14 @@
                 "#fff1d6"
             ];
 
-            for (let i = 0; i < 55; i++) {
+            for (let i = 0; i < 65; i++) {
                 const piece = document.createElement("span");
-                piece.className = "confetti-piece";
+                piece.className = "confetti-piece rsvp-confetti-piece";
 
-                piece.style.left = Math.random() * 100 + "vw";
+                piece.style.left = startLeft + Math.random() * startWidth + "px";
+                piece.style.top = startTop + Math.random() * 10 + "px";
                 piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-                piece.style.animationDelay = Math.random() * 0.45 + "s";
+                piece.style.animationDelay = Math.random() * 0.38 + "s";
                 piece.style.width = 7 + Math.random() * 8 + "px";
                 piece.style.height = 10 + Math.random() * 12 + "px";
 
@@ -817,17 +839,168 @@
 
                 setTimeout(function () {
                     piece.remove();
-                }, 3800);
+                }, 4200);
             }
         }
 
         if (shouldCelebrate) {
             activateTab("schedule");
             showCelebrationToast();
-            burstConfetti();
 
-            history.replaceState(null, "", window.location.pathname + "#schedule");
+            const celebrationSource = document.getElementById("confirmation-" + celebrationEventId);
+
+            if (celebrationSource) {
+                celebrationSource.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+
+            setTimeout(function () {
+                burstConfetti(celebrationEventId);
+            }, 260);
+
+            history.replaceState(null, "", window.location.pathname + "?tab=schedule#schedule");
         }
+
+        /* ============================= */
+        /* ASYNC RSVP SAVE - NO RELOAD */
+        /* ============================= */
+
+        function escapeHtml(value) {
+            return String(value || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function buildConfirmationHtml(data) {
+            const safeEventId = escapeHtml(data.event_id);
+            const safeStatusClass = escapeHtml(data.status_class);
+            const safeBadgeClass = escapeHtml(data.badge_class);
+            const safeBadgeText = escapeHtml(data.badge_text);
+            const safeHeadingText = escapeHtml(data.heading_text);
+            const safeGuestCount = escapeHtml(data.guest_count);
+            const notes = String(data.notes || "").trim();
+
+            let notesHtml = "";
+
+            if (notes && notes.toLowerCase() !== "none") {
+                notesHtml = `<p><strong>Notes:</strong> ${escapeHtml(notes)}</p>`;
+            }
+
+            return `
+                <div id="confirmation-${safeEventId}" class="rsvp-confirmation ${safeStatusClass}">
+                    <div class="rsvp-confirmation-main">
+                        <div class="rsvp-status-header">
+                            <span class="status-badge ${safeBadgeClass}">${safeBadgeText}</span>
+                            <h4>${safeHeadingText}</h4>
+                        </div>
+
+                        <div class="confirmation-details">
+                            <p><strong>Total attending:</strong> ${safeGuestCount}</p>
+                            ${notesHtml}
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="edit-rsvp-btn"
+                        onclick="toggleRsvpForm('${safeEventId}')"
+                    >
+                        Edit Response
+                    </button>
+                </div>
+            `;
+        }
+
+        function updateConfirmationCard(data, form) {
+            let confirmation = document.getElementById("confirmation-" + data.event_id);
+            const confirmationHtml = buildConfirmationHtml(data);
+
+            if (confirmation) {
+                confirmation.outerHTML = confirmationHtml;
+            } else {
+                form.insertAdjacentHTML("beforebegin", confirmationHtml);
+            }
+
+            confirmation = document.getElementById("confirmation-" + data.event_id);
+
+            if (confirmation) {
+                confirmation.classList.remove("is-hidden");
+            }
+
+            return confirmation;
+        }
+
+        document.querySelectorAll(".rsvp-form").forEach(function (form) {
+            form.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const submitButton = form.querySelector(".rsvp-btn");
+                const originalButtonText = submitButton ? submitButton.textContent : "";
+                const formData = new FormData(form);
+                const eventId = formData.get("event_id");
+
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.textContent = "Saving...";
+                }
+
+                form.classList.add("is-submitting");
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Accept": "application/json"
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok || !data.success) {
+                        throw new Error(data.message || "Unable to save RSVP.");
+                    }
+
+                    activateTab("schedule");
+                    history.replaceState(null, "", window.location.pathname + "?tab=schedule#schedule");
+
+                    const confirmation = updateConfirmationCard(data, form);
+
+                    form.classList.add("is-hidden");
+                    form.classList.remove("is-editing");
+
+                    if (confirmation) {
+                        confirmation.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+                    }
+
+                    if (data.celebrate) {
+                        showCelebrationToast();
+
+                        setTimeout(function () {
+                            burstConfetti(eventId);
+                        }, 220);
+                    }
+                } catch (error) {
+                    alert(error.message || "Unable to save RSVP. Please try again.");
+                } finally {
+                    form.classList.remove("is-submitting");
+
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.textContent = originalButtonText;
+                    }
+                }
+            });
+        });
 
         /* ============================= */
         /* LOGIN EFFECT WITHOUT TOAST */

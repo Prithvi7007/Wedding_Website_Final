@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, Response
+from flask import Flask, render_template, request, redirect, url_for, session, Response, jsonify
 from pathlib import Path
 from datetime import datetime
 from openpyxl import Workbook, load_workbook
@@ -74,7 +74,7 @@ EVENTS = {
         "attire_image": "images/schedule/attire-haldi.png",
         "attire_heading": "Pastel & Floral Shades",
         "attire_subheading": "Daytime Event",
-        "attire": "Festive Indian attire encouraged. Shades of yellow are perfect for the Haldi celebration."
+        "attire": "Festive Indian attire encouraged. Bright yellows, oranges, greens, and floral colors are perfect for the Haldi celebration."
     },
 
 
@@ -97,7 +97,7 @@ EVENTS = {
         "attire_image": "images/schedule/attire-hindu.png",
         "attire_heading": "Traditional Formal Wear",
         "attire_subheading": "Ceremony Event",
-        "attire": "Traditional Indian formal attire is encouraged. Floral or Pastel Sarees, lehengas, anarkalis, kurtas, sherwanis, or formal festive wear are welcome."
+        "attire": "Traditional Indian formal attire is encouraged. Sarees, lehengas, anarkalis, kurtas, sherwanis, or formal festive wear are welcome."
     },
 
     "christian_wedding_reception": {
@@ -302,6 +302,14 @@ def dashboard():
     celebrate = request.args.get("celebrate")
     celebrate_event_id = request.args.get("event")
 
+    active_tab = request.args.get("tab", "welcome")
+
+    if celebrate == "yes":
+        active_tab = "schedule"
+
+    if active_tab not in ["welcome", "schedule", "travel", "registry", "qa"]:
+        active_tab = "welcome"
+
     return render_template(
         "dashboard.html",
         guest=guest,
@@ -309,25 +317,37 @@ def dashboard():
         saved_rsvps=saved_rsvps,
         celebrate=celebrate,
         celebrate_event_id=celebrate_event_id,
-        login_effect=login_effect
+        login_effect=login_effect,
+        active_tab=active_tab
     )
 
 @app.route("/rsvp", methods=["POST"])
 def save_rsvp():
     guest = get_current_guest()
 
+    wants_json = (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        or "application/json" in request.headers.get("Accept", "")
+    )
+
     if not guest:
+        if wants_json:
+            return jsonify({"success": False, "message": "Your session expired. Please sign in again."}), 401
         return redirect(url_for("login_page"))
 
     event_id = request.form.get("event_id")
 
     # Security check: guest can only RSVP to events they are invited to
     if event_id not in guest["allowed_events"]:
+        if wants_json:
+            return jsonify({"success": False, "message": "You are not invited to this event."}), 403
         return redirect(url_for("dashboard"))
 
     event = EVENTS.get(event_id)
 
     if not event:
+        if wants_json:
+            return jsonify({"success": False, "message": "Event not found."}), 404
         return redirect(url_for("dashboard"))
 
     attending = request.form.get("attending", "")
@@ -338,7 +358,7 @@ def save_rsvp():
         guest_count = int(guest_count)
     except ValueError:
         guest_count = 0
-    
+
     if attending == "No":
         guest_count = 0
 
@@ -354,10 +374,41 @@ def save_rsvp():
         notes=notes
     )
 
-    if attending == "Yes":
-        return redirect(url_for("dashboard", celebrate="yes", event=event["id"]) + "#schedule")
+    if wants_json:
+        if attending == "Yes":
+            status_class = "status-yes"
+            badge_class = "badge-yes"
+            badge_text = "Confirmed"
+            heading_text = "You’re Attending"
+        elif attending == "No":
+            status_class = "status-no"
+            badge_class = "badge-no"
+            badge_text = "Declined"
+            heading_text = "You’re Not Attending"
+        else:
+            status_class = "status-maybe"
+            badge_class = "badge-maybe"
+            badge_text = "Maybe"
+            heading_text = "Response Pending"
 
-    return redirect(url_for("dashboard") + "#schedule")
+        return jsonify({
+            "success": True,
+            "event_id": event["id"],
+            "event_title": event["title"],
+            "attending": attending,
+            "guest_count": guest_count,
+            "notes": notes,
+            "status_class": status_class,
+            "badge_class": badge_class,
+            "badge_text": badge_text,
+            "heading_text": heading_text,
+            "celebrate": attending == "Yes"
+        })
+
+    if attending == "Yes":
+        return redirect(url_for("dashboard", tab="schedule", celebrate="yes", event=event["id"]) + "#schedule")
+
+    return redirect(url_for("dashboard", tab="schedule") + "#schedule")
 
 
 @app.route("/logout")
