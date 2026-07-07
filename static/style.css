@@ -707,7 +707,7 @@ body.dashboard-page .top-line span:last-child {
             rgba(255, 244, 220, 0.32),
             rgba(255, 226, 124, 0.08)
         ),
-        url("/static/images/HALDI.png");
+        url("/static/images/HALDI.webp");
 
     background-size: cover;
     background-position: center center;
@@ -723,7 +723,7 @@ body.dashboard-page .top-line span:last-child {
             rgba(255, 244, 220, 0.30),
             rgba(128, 38, 32, 0.06)
         ),
-        url("/static/images/WEDDING.png");
+        url("/static/images/WEDDING.webp");
 
     background-size: cover;
     background-position: center center;
@@ -739,7 +739,7 @@ body.dashboard-page .top-line span:last-child {
             rgba(255, 244, 220, 0.32),
             rgba(115, 150, 102, 0.08)
         ),
-        url("/static/images/RECEPTION.png");
+        url("/static/images/RECEPTION.webp");
 
     background-size: cover;
     background-position: center center;
@@ -1802,7 +1802,7 @@ body.dashboard-page .top-line span:last-child {
             rgba(255, 244, 220, 0.30),
             rgba(255, 226, 124, 0.06)
         ),
-        url("/static/images/HALDI.png") !important;
+        url("/static/images/HALDI.webp") !important;
 
     background-size: 100% 100%, 100% 100% !important;
     background-position: center center, center center !important;
@@ -1816,7 +1816,7 @@ body.dashboard-page .top-line span:last-child {
             rgba(255, 244, 220, 0.30),
             rgba(128, 38, 32, 0.05)
         ),
-        url("/static/images/WEDDING.png") !important;
+        url("/static/images/WEDDING.webp") !important;
 
     background-size: 100% 100%, 100% 100% !important;
     background-position: center center, center center !important;
@@ -1830,7 +1830,7 @@ body.dashboard-page .top-line span:last-child {
             rgba(255, 244, 220, 0.34),
             rgba(115, 150, 102, 0.06)
         ),
-        url("/static/images/RECEPTION.png") !important;
+        url("/static/images/RECEPTION.webp") !important;
 
     background-size: 100% 100%, 100% 100% !important;
     background-position: center center, center center !important;
@@ -2554,7 +2554,7 @@ body.dashboard-page .top-line {
                 rgba(255, 244, 220, 0.16),
                 rgba(255, 226, 124, 0.03)
             ),
-            url("/static/images/HALDI-mobile.png") !important;
+            url("/static/images/HALDI-mobile.webp") !important;
 
         background-size: cover !important;
         background-position: center top !important;
@@ -2568,7 +2568,7 @@ body.dashboard-page .top-line {
                 rgba(255, 244, 220, 0.14),
                 rgba(128, 38, 32, 0.03)
             ),
-            url("/static/images/WEDDING-mobile.png") !important;
+            url("/static/images/WEDDING-mobile.webp") !important;
 
         background-size: cover !important;
         background-position: center top !important;
@@ -2582,7 +2582,7 @@ body.dashboard-page .top-line {
                 rgba(255, 244, 220, 0.16),
                 rgba(115, 150, 102, 0.03)
             ),
-            url("/static/images/RECEPTION-mobile.png") !important;
+            url("/static/images/RECEPTION-mobile.webp") !important;
 
         background-size: cover !important;
         background-position: center top !important;
@@ -3224,7 +3224,7 @@ button {
             rgba(255, 244, 220, 0.30),
             rgba(255, 226, 124, 0.06)
         ),
-        url("/static/images/HALDI.png") !important;
+        url("/static/images/HALDI.webp") !important;
 }
 
 .event-hindu .event-art-panel {
@@ -3234,7 +3234,7 @@ button {
             rgba(255, 244, 220, 0.30),
             rgba(128, 38, 32, 0.05)
         ),
-        url("/static/images/WEDDING.png") !important;
+        url("/static/images/WEDDING.webp") !important;
 }
 
 .event-christian .event-art-panel {
@@ -3244,7 +3244,7 @@ button {
             rgba(255, 244, 220, 0.34),
             rgba(115, 150, 102, 0.06)
         ),
-        url("/static/images/RECEPTION.png") !important;
+        url("/static/images/RECEPTION.webp") !important;
 }
 
 /* RSVP is now a true separate drawer/footer, not part of the image area */
@@ -3348,7 +3348,7 @@ button {
                 rgba(255, 244, 220, 0.16),
                 rgba(255, 226, 124, 0.03)
             ),
-            url("/static/images/HALDI-mobile.png") !important;
+            url("/static/images/HALDI-mobile.webp") !important;
     }
 
     .event-hindu .event-art-panel {
@@ -3358,7 +3358,7 @@ button {
                 rgba(255, 244, 220, 0.14),
                 rgba(128, 38, 32, 0.03)
             ),
-            url("/static/images/WEDDING-mobile.png") !important;
+            url("/static/images/WEDDING-mobile.webp") !important;
     }
 
     .event-christian .event-art-panel {
@@ -3368,7 +3368,7 @@ button {
                 rgba(255, 244, 220, 0.16),
                 rgba(115, 150, 102, 0.03)
             ),
-            url("/static/images/RECEPTION-mobile.png") !important;
+            url("/static/images/RECEPTION-mobile.webp") !important;
     }
 
     .event-card .rsvp-confirmation,
@@ -3572,4 +3572,14 @@ button {
     cursor: wait !important;
     opacity: 0.72 !important;
     transform: none !important;
+}
+
+/* ============================= */
+/* HIDE WELCOME SLIDESHOW ARROWS */
+/* ============================= */
+
+.slide-arrow,
+.left-arrow,
+.right-arrow {
+    display: none !important;
 }
