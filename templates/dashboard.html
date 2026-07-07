@@ -3,7 +3,7 @@
 <head>
     <title>Adlin & Prithvi</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260705c">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260705e">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -651,6 +651,9 @@
         const tabButtons = document.querySelectorAll(".tab-btn");
         const tabContents = document.querySelectorAll(".tab-content");
 
+        const shouldCelebrate = {{ 'true' if celebrate == 'yes' else 'false' }};
+        const shouldShowLoginEffect = {{ 'true' if login_effect == 'success' else 'false' }};
+
         function activateTab(tabName) {
             tabButtons.forEach(function (btn) {
                 btn.classList.remove("active");
@@ -674,17 +677,19 @@
                 const targetTab = button.getAttribute("data-tab");
                 activateTab(targetTab);
 
-                // Update URL hash without reloading page
                 history.replaceState(null, "", "#" + targetTab);
             });
         });
 
-        // Open tab from URL hash, for example /dashboard#schedule
         const hashTab = window.location.hash.replace("#", "");
 
         if (hashTab) {
             activateTab(hashTab);
         }
+
+        /* ============================= */
+        /* PHOTO SLIDESHOW */
+        /* ============================= */
 
         let currentSlide = 0;
         const slides = document.querySelectorAll("#welcome .slide");
@@ -730,6 +735,10 @@
             showSlideInternal(currentSlide + 1);
         }, 4000);
 
+        /* ============================= */
+        /* RSVP EDIT FORM */
+        /* ============================= */
+
         window.toggleRsvpForm = function (eventId) {
             const form = document.getElementById("rsvp-form-" + eventId);
             const confirmation = document.getElementById("confirmation-" + eventId);
@@ -743,7 +752,9 @@
             }
         };
 
-        const shouldCelebrate = {{ 'true' if celebrate == 'yes' else 'false' }};
+        /* ============================= */
+        /* RSVP CELEBRATION */
+        /* ============================= */
 
         function showCelebrationToast() {
             const toast = document.getElementById("celebration-toast");
@@ -801,6 +812,9 @@
             history.replaceState(null, "", window.location.pathname + "#schedule");
         }
 
+        /* ============================= */
+        /* LOGIN EFFECT WITHOUT TOAST */
+        /* ============================= */
 
         function burstLoginSparkles() {
             const container = document.getElementById("confetti-container");
@@ -855,41 +869,45 @@
             });
         }
 
+        /* ============================= */
+        /* COUNTDOWN TIMER */
+        /* ============================= */
+
         function updateCountdown() {
-        const weddingDate = new Date("2026-11-20T09:00:00-05:00").getTime();
-        const now = new Date().getTime();
-        const distance = weddingDate - now;
+            const weddingDate = new Date("2026-11-20T09:00:00-05:00").getTime();
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
 
-        const daysEl = document.getElementById("days");
-        const hoursEl = document.getElementById("hours");
-        const minutesEl = document.getElementById("minutes");
-        const secondsEl = document.getElementById("seconds");
+            const daysEl = document.getElementById("days");
+            const hoursEl = document.getElementById("hours");
+            const minutesEl = document.getElementById("minutes");
+            const secondsEl = document.getElementById("seconds");
 
-        if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
-            return;
+            if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
+                return;
+            }
+
+            if (distance <= 0) {
+                daysEl.innerText = "00";
+                hoursEl.innerText = "00";
+                minutesEl.innerText = "00";
+                secondsEl.innerText = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((distance / (1000 * 60)) % 60);
+            const seconds = Math.floor((distance / 1000) % 60);
+
+            daysEl.innerText = String(days).padStart(2, "0");
+            hoursEl.innerText = String(hours).padStart(2, "0");
+            minutesEl.innerText = String(minutes).padStart(2, "0");
+            secondsEl.innerText = String(seconds).padStart(2, "0");
         }
 
-        if (distance <= 0) {
-            daysEl.innerText = "00";
-            hoursEl.innerText = "00";
-            minutesEl.innerText = "00";
-            secondsEl.innerText = "00";
-            return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((distance / (1000 * 60)) % 60);
-        const seconds = Math.floor((distance / 1000) % 60);
-
-        daysEl.innerText = String(days).padStart(2, "0");
-        hoursEl.innerText = String(hours).padStart(2, "0");
-        minutesEl.innerText = String(minutes).padStart(2, "0");
-        secondsEl.innerText = String(seconds).padStart(2, "0");
-    }
-
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
     });
 </script>
 </body>
