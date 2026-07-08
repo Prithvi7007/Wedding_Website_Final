@@ -696,11 +696,25 @@
 
         /* ============================= */
         /* SCROLL TO NEXT / PREVIOUS TAB */
+        /* Requires multiple scroll attempts at top/bottom */
         /* ============================= */
 
         const tabOrder = ["welcome", "schedule", "travel", "registry", "qa"];
+
         let isAutoSwitchingTab = false;
         let touchStartY = 0;
+
+        let bottomEdgeScrollCount = 0;
+        let topEdgeScrollCount = 0;
+        let lastEdgeScrollTime = 0;
+
+        /*
+            Change this number:
+            2 = two extra scrolls at the bottom/top
+            3 = three extra scrolls at the bottom/top
+        */
+        const REQUIRED_EDGE_SCROLLS = 3;
+        const EDGE_SCROLL_COOLDOWN_MS = 320;
 
         function getActiveTabName() {
             const activeButton = document.querySelector(".tab-btn.active");
@@ -738,11 +752,42 @@
             const scrollPosition = window.innerHeight + window.scrollY;
             const pageHeight = document.documentElement.scrollHeight;
 
-            return scrollPosition >= pageHeight - 24;
+            return scrollPosition >= pageHeight - 28;
         }
 
         function isNearPageTop() {
-            return window.scrollY <= 24;
+            return window.scrollY <= 28;
+        }
+
+        function resetEdgeScrollCounts() {
+            bottomEdgeScrollCount = 0;
+            topEdgeScrollCount = 0;
+        }
+
+        function countEdgeScroll(direction) {
+            const now = Date.now();
+
+            if (now - lastEdgeScrollTime < EDGE_SCROLL_COOLDOWN_MS) {
+                return false;
+            }
+
+            lastEdgeScrollTime = now;
+
+            if (direction === "down") {
+                bottomEdgeScrollCount += 1;
+                topEdgeScrollCount = 0;
+
+                return bottomEdgeScrollCount >= REQUIRED_EDGE_SCROLLS;
+            }
+
+            if (direction === "up") {
+                topEdgeScrollCount += 1;
+                bottomEdgeScrollCount = 0;
+
+                return topEdgeScrollCount >= REQUIRED_EDGE_SCROLLS;
+            }
+
+            return false;
         }
 
         function switchTabFromScroll(tabName) {
@@ -751,6 +796,7 @@
             }
 
             isAutoSwitchingTab = true;
+            resetEdgeScrollCounts();
 
             activateTab(tabName);
             history.replaceState(null, "", "#" + tabName);
@@ -764,20 +810,35 @@
 
             setTimeout(function () {
                 isAutoSwitchingTab = false;
-            }, 850);
+                resetEdgeScrollCounts();
+            }, 900);
         }
 
         window.addEventListener("wheel", function (event) {
+            if (isAutoSwitchingTab) {
+                return;
+            }
+
             const scrollingDown = event.deltaY > 0;
             const scrollingUp = event.deltaY < 0;
 
             if (scrollingDown && isNearPageBottom()) {
-                switchTabFromScroll(getNextTabName());
+                if (countEdgeScroll("down")) {
+                    switchTabFromScroll(getNextTabName());
+                }
+
+                return;
             }
 
             if (scrollingUp && isNearPageTop()) {
-                switchTabFromScroll(getPreviousTabName());
+                if (countEdgeScroll("up")) {
+                    switchTabFromScroll(getPreviousTabName());
+                }
+
+                return;
             }
+
+            resetEdgeScrollCounts();
         }, { passive: true });
 
         window.addEventListener("touchstart", function (event) {
@@ -789,6 +850,10 @@
         }, { passive: true });
 
         window.addEventListener("touchend", function (event) {
+            if (isAutoSwitchingTab) {
+                return;
+            }
+
             if (!event.changedTouches || event.changedTouches.length === 0) {
                 return;
             }
@@ -800,12 +865,22 @@
             const swipedDown = swipeDistance < -45;
 
             if (swipedUp && isNearPageBottom()) {
-                switchTabFromScroll(getNextTabName());
+                if (countEdgeScroll("down")) {
+                    switchTabFromScroll(getNextTabName());
+                }
+
+                return;
             }
 
             if (swipedDown && isNearPageTop()) {
-                switchTabFromScroll(getPreviousTabName());
+                if (countEdgeScroll("up")) {
+                    switchTabFromScroll(getPreviousTabName());
+                }
+
+                return;
             }
+
+            resetEdgeScrollCounts();
         }, { passive: true });
 
         const hashTab = window.location.hash.replace("#", "");
