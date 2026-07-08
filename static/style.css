@@ -3639,13 +3639,29 @@ button {
 }
 
 /* ===================================================== */
-/* MOBILE LUXURY SCHEDULE REDESIGN                       */
-/* Mobile-only. Desktop remains unchanged.               */
-/* Append this at the VERY END of style.css.              */
+/* CLEAN FINAL OVERRIDE                                  */
+/* Protect tabs + mobile luxury schedule only             */
+/* Desktop keeps the established layout                   */
 /* ===================================================== */
 
+body.dashboard-page .tab-content:not(.active) {
+    display: none !important;
+}
+
+body.dashboard-page .tab-content.active {
+    display: block !important;
+}
+
+.event-date-time-combined {
+    display: none !important;
+}
+
+.mobile-event-detail-sheet {
+    display: contents;
+}
+
 @media (max-width: 700px) {
-    /* More breathing room around the schedule */
+    /* Page spacing */
     #schedule {
         padding-bottom: 18px !important;
     }
@@ -3655,6 +3671,7 @@ button {
         margin-bottom: 16px !important;
         font-size: 31px !important;
         letter-spacing: 1.5px !important;
+        text-align: center !important;
     }
 
     .schedule-intro {
@@ -3662,14 +3679,16 @@ button {
         margin: 0 auto 34px !important;
         font-size: 14px !important;
         line-height: 1.85 !important;
+        text-align: center !important;
     }
 
-    /* One clean outer invitation card */
+    /* Outer event card */
     .event-card.event-haldi,
     .event-card.event-hindu,
     .event-card.event-christian {
         width: 100% !important;
-        margin: 30px auto 42px !important;
+        max-width: 100% !important;
+        margin: 30px auto 44px !important;
         padding: 0 !important;
         overflow: hidden !important;
         border-radius: 28px !important;
@@ -3680,9 +3699,17 @@ button {
             inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
     }
 
-    /* The artwork becomes atmosphere, not the UI itself */
+    .event-card::before,
+    .event-card::after {
+        display: none !important;
+    }
+
+    /* Artwork panel contains only the invitation artwork + event details/actions. */
     .event-art-panel {
-        padding: 34px 24px 30px !important;
+        position: relative !important;
+        z-index: 1 !important;
+        overflow: hidden !important;
+        padding: 42px 30px 34px !important;
         border-radius: 28px 28px 0 0 !important;
         background-size: cover !important;
         background-position: center top !important;
@@ -3690,21 +3717,33 @@ button {
     }
 
     .event-art-panel::before {
+        content: "" !important;
+        position: absolute !important;
         inset: 12px !important;
+        z-index: 0 !important;
+        border: 1px solid rgba(255, 244, 220, 0.32) !important;
         border-radius: 21px !important;
-        border-color: rgba(255, 244, 220, 0.32) !important;
+        pointer-events: none !important;
     }
 
     .event-art-panel::after {
+        content: "" !important;
+        position: absolute !important;
         inset: 0 !important;
+        z-index: 0 !important;
         border: none !important;
         border-radius: 0 !important;
-        background:
-            linear-gradient(
-                to bottom,
-                rgba(255, 248, 235, 0.12),
-                rgba(255, 248, 235, 0.06)
-            ) !important;
+        background: linear-gradient(
+            to bottom,
+            rgba(255, 248, 235, 0.10),
+            rgba(255, 248, 235, 0.04)
+        ) !important;
+        pointer-events: none !important;
+    }
+
+    .event-art-panel > * {
+        position: relative !important;
+        z-index: 1 !important;
     }
 
     .event-haldi .event-art-panel {
@@ -3725,9 +3764,11 @@ button {
             url("/static/images/RECEPTION-mobile.webp") !important;
     }
 
-    /* Title hierarchy: only one large hero moment */
+    /* Blue-box area: title + subtitle live here. */
     .event-title-block {
-        margin: 0 auto 30px !important;
+        max-width: 96% !important;
+        margin: 34px auto 38px !important;
+        padding: 0 !important;
         text-align: center !important;
     }
 
@@ -3736,49 +3777,77 @@ button {
     .event-christian h3 {
         max-width: 100% !important;
         margin: 0 auto !important;
-        font-size: 35px !important;
-        line-height: 1.06 !important;
-        letter-spacing: 3.2px !important;
+        line-height: 1.04 !important;
         text-align: center !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+    }
+
+    .event-card h3 {
+        font-size: 37px !important;
+        letter-spacing: 3.2px !important;
+    }
+
+    .event-hindu h3,
+    .event-christian h3 {
+        font-size: 30px !important;
+        letter-spacing: 2px !important;
     }
 
     .event-kicker {
-        max-width: 88% !important;
-        margin: 14px auto 0 !important;
-        font-size: 10px !important;
-        line-height: 1.65 !important;
-        letter-spacing: 1.7px !important;
+        max-width: 92% !important;
+        margin: 15px auto 0 !important;
+        font-size: 10.5px !important;
+        line-height: 1.75 !important;
+        letter-spacing: 1.8px !important;
         text-align: center !important;
-        opacity: 0.86 !important;
+        opacity: 0.9 !important;
     }
 
-    /* Remove cards inside card. Use elegant dividers instead. */
-    .event-meta-grid {
+    /* Purple-box area: when + location + attire grouped together. */
+    .mobile-event-detail-sheet {
         display: block !important;
         width: 100% !important;
         margin: 0 auto 30px !important;
         padding: 0 !important;
-        background: rgba(255, 250, 241, 0.22) !important;
-        border-top: 1px solid rgba(43, 26, 18, 0.16) !important;
-        border-bottom: 1px solid rgba(43, 26, 18, 0.16) !important;
+        border-top: 1px solid rgba(43, 26, 18, 0.14) !important;
+        border-bottom: 1px solid rgba(43, 26, 18, 0.12) !important;
+        background: rgba(255, 250, 241, 0.10) !important;
+    }
+
+    .event-meta-grid {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+    }
+
+    .event-date-time-combined {
+        display: block !important;
+    }
+
+    .event-date-only,
+    .event-time-only {
+        display: none !important;
     }
 
     .event-meta-item {
-        display: grid !important;
-        grid-template-columns: 30px 1fr !important;
-        column-gap: 13px !important;
-        align-items: center !important;
-        padding: 18px 0 !important;
+        display: block !important;
+        padding: 24px 4px !important;
         background: transparent !important;
         border: none !important;
         border-radius: 0 !important;
         box-shadow: none !important;
+        text-align: center !important;
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
     }
 
     .event-meta-item + .event-meta-item {
-        border-top: 1px solid rgba(43, 26, 18, 0.13) !important;
+        border-top: 1px solid rgba(43, 26, 18, 0.12) !important;
     }
 
     .event-meta-item:not(:last-child)::after {
@@ -3786,94 +3855,90 @@ button {
     }
 
     .meta-icon {
-        grid-row: 1 / span 2 !important;
-        width: 26px !important;
-        height: 26px !important;
-        margin: 0 !important;
-        background: transparent !important;
-        border: none !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        color: rgba(75, 46, 31, 0.86) !important;
-    }
-
-    .meta-icon svg {
-        width: 19px !important;
-        height: 19px !important;
-        stroke-width: 1.7 !important;
+        display: none !important;
     }
 
     .meta-label {
-        margin: 0 0 5px !important;
-        color: rgba(75, 46, 31, 0.74) !important;
+        margin: 0 0 10px !important;
+        color: rgba(75, 46, 31, 0.70) !important;
         font-size: 10px !important;
-        letter-spacing: 1.7px !important;
+        letter-spacing: 2.2px !important;
         line-height: 1.1 !important;
-        text-align: left !important;
-    }
-
-    .meta-value {
-        max-width: 100% !important;
-        color: rgba(35, 22, 15, 0.95) !important;
-        font-size: 14px !important;
-        font-weight: 700 !important;
-        line-height: 1.48 !important;
-        text-align: left !important;
-    }
-
-    /* Attire becomes a section, not a second invitation card */
-    .attire-guide-card {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 auto 31px !important;
-        padding: 30px 0 2px !important;
-        background: transparent !important;
-        border: none !important;
-        border-top: 1px solid rgba(43, 26, 18, 0.15) !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
         text-align: center !important;
     }
 
+    .meta-value {
+        max-width: 94% !important;
+        margin: 0 auto !important;
+        color: rgba(35, 22, 15, 0.96) !important;
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        line-height: 1.65 !important;
+        text-align: center !important;
+    }
+
+    .event-date-time-combined .meta-value {
+        font-size: 17px !important;
+        line-height: 1.55 !important;
+    }
+
+    .event-meta-location .meta-value {
+        font-size: 16px !important;
+        line-height: 1.75 !important;
+    }
+
+    .attire-guide-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 36px 0 34px !important;
+        background: transparent !important;
+        border: none !important;
+        border-top: 1px solid rgba(43, 26, 18, 0.12) !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        text-align: center !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
     .attire-guide-label {
-        margin-bottom: 17px !important;
-        color: rgba(75, 46, 31, 0.78) !important;
+        margin-bottom: 20px !important;
+        color: rgba(75, 46, 31, 0.72) !important;
         font-size: 10px !important;
-        letter-spacing: 2.4px !important;
+        letter-spacing: 2.6px !important;
     }
 
     .attire-guide-image {
-        width: 88% !important;
-        max-height: 148px !important;
-        margin: 0 auto 14px !important;
-        opacity: 0.92 !important;
+        width: 76% !important;
+        max-height: 154px !important;
+        margin: 0 auto 20px !important;
+        mix-blend-mode: multiply !important;
+        filter: sepia(10%) contrast(103%) brightness(0.98) !important;
+        opacity: 0.96 !important;
     }
 
     .attire-guide-card strong {
         margin-top: 4px !important;
-        color: rgba(35, 22, 15, 0.96) !important;
-        font-size: 31px !important;
-        line-height: 1.05 !important;
+        font-size: 34px !important;
+        line-height: 1.02 !important;
     }
 
     .attire-guide-card small {
-        margin-top: 7px !important;
-        color: rgba(75, 46, 31, 0.72) !important;
+        margin-top: 8px !important;
         font-size: 9px !important;
-        letter-spacing: 1.8px !important;
+        letter-spacing: 1.9px !important;
     }
 
     .attire-guide-card p {
-        max-width: 88% !important;
-        margin: 15px auto 0 !important;
+        max-width: 92% !important;
+        margin: 20px auto 0 !important;
         color: rgba(75, 46, 31, 0.88) !important;
-        font-size: 13px !important;
-        line-height: 1.75 !important;
+        font-size: 13.5px !important;
+        line-height: 1.9 !important;
     }
 
-    /* Premium actions: two quiet calendar buttons + full-width directions */
+    /* Actions remain with the artwork panel, not with RSVP. */
     .event-actions {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
@@ -3885,6 +3950,7 @@ button {
     }
 
     .event-action-link {
+        min-width: 0 !important;
         min-height: 44px !important;
         display: flex !important;
         align-items: center !important;
@@ -3913,10 +3979,10 @@ button {
     .event-action-link:nth-child(3) {
         grid-column: 1 / -1 !important;
         min-height: 48px !important;
-        background: rgba(65, 40, 27, 0.86) !important;
+        background: rgba(65, 40, 27, 0.80) !important;
         border-color: rgba(255, 244, 220, 0.22) !important;
         color: #fff7ec !important;
-        box-shadow: 0 10px 22px rgba(43, 26, 18, 0.16) !important;
+        box-shadow: 0 10px 22px rgba(43, 26, 18, 0.14) !important;
     }
 
     .event-action-link:nth-child(3)::before {
@@ -3925,7 +3991,7 @@ button {
         font-size: 14px;
     }
 
-    /* RSVP area: softer, editorial, no Bootstrap feeling */
+    /* RSVP is a separate footer/drawer inside the event card. */
     .event-card .rsvp-confirmation,
     .event-card .rsvp-form {
         border-radius: 0 0 28px 28px !important;
@@ -4090,382 +4156,35 @@ button {
 }
 
 @media (max-width: 430px) {
-    .event-card h3,
+    .event-art-panel {
+        padding: 40px 26px 32px !important;
+    }
+
+    .event-card h3 {
+        font-size: 34px !important;
+        letter-spacing: 2.7px !important;
+    }
+
     .event-hindu h3,
     .event-christian h3 {
-        font-size: 31px !important;
-        letter-spacing: 2.4px !important;
-    }
-
-    .event-art-panel {
-        padding: 32px 22px 28px !important;
-    }
-
-    .attire-guide-card p,
-    .rsvp-status-header h4,
-    .rsvp-form-heading p {
-        max-width: 94% !important;
-    }
-}
-
-
-/* ===================================================== */
-/* MOBILE LUXURY REFINEMENT PASS                         */
-/* Append at the VERY END of static/style.css.            */
-/* Desktop remains unchanged.                             */
-/* ===================================================== */
-
-/* Hidden by default so desktop keeps the existing separate Date + Time layout. */
-.event-date-time-combined {
-    display: none;
-}
-
-@media (max-width: 700px) {
-    /* Give the mobile card a little more side breathing room. */
-    .event-art-panel {
-        padding: 30px 34px 38px !important;
-        background-position: center 4% !important;
-    }
-
-    .event-title-block {
-        margin-bottom: 24px !important;
-    }
-
-    .event-card h3,
-    .event-hindu h3,
-    .event-christian h3 {
-        font-size: 33px !important;
-        letter-spacing: 2.8px !important;
-    }
-
-    .event-kicker {
-        margin-top: 12px !important;
-        line-height: 1.75 !important;
-    }
-
-    /* Printed-invitation style: one elegant date/time line on mobile. */
-    .event-date-time-combined {
-        display: grid !important;
-    }
-
-    .event-date-only,
-    .event-time-only {
-        display: none !important;
-    }
-
-    .event-meta-grid {
-        margin: 0 auto 36px !important;
-        background: rgba(255, 250, 241, 0.18) !important;
-    }
-
-    .event-meta-item {
-        grid-template-columns: 28px 1fr !important;
-        column-gap: 15px !important;
-        padding: 22px 0 !important;
-    }
-
-    .meta-icon {
-        width: 25px !important;
-        height: 25px !important;
-    }
-
-    .meta-icon svg {
-        width: 18px !important;
-        height: 18px !important;
-    }
-
-    .meta-label {
-        margin-bottom: 7px !important;
-        font-size: 10px !important;
-        letter-spacing: 1.9px !important;
+        font-size: 28px !important;
+        letter-spacing: 1.7px !important;
     }
 
     .meta-value {
-        font-size: 14px !important;
-        line-height: 1.65 !important;
-    }
-
-    .event-date-time-combined .meta-value {
-        font-size: 14px !important;
-        letter-spacing: 0.1px !important;
-        line-height: 1.6 !important;
-    }
-
-    .event-meta-location .meta-value {
-        line-height: 1.7 !important;
-    }
-
-    /* Attire becomes warmer and less like a white inserted image. */
-    .attire-guide-card {
-        margin-bottom: 35px !important;
-        padding: 34px 0 4px !important;
-        border-top-color: rgba(43, 26, 18, 0.13) !important;
-    }
-
-    .attire-guide-label {
-        margin-bottom: 18px !important;
-    }
-
-    .attire-guide-image {
-        width: 82% !important;
-        max-height: 142px !important;
-        margin: 0 auto 18px !important;
-        background: transparent !important;
-        mix-blend-mode: multiply !important;
-        filter: sepia(8%) contrast(103%) brightness(0.98) !important;
-        opacity: 0.96 !important;
-    }
-
-    .attire-guide-card p {
-        max-width: 92% !important;
-        margin-top: 17px !important;
-        line-height: 1.85 !important;
-    }
-
-    /* Actions: directions stays primary, but less visually heavy. */
-    .event-actions {
-        gap: 13px !important;
-        padding-top: 32px !important;
-    }
-
-    .event-action-link {
-        min-height: 43px !important;
-        background: rgba(255, 250, 241, 0.38) !important;
-        border-color: rgba(43, 26, 18, 0.18) !important;
-    }
-
-    .event-action-link:nth-child(3) {
-        min-height: 46px !important;
-        margin-top: 2px !important;
-        background: rgba(78, 50, 35, 0.72) !important;
-        box-shadow: 0 8px 18px rgba(43, 26, 18, 0.12) !important;
-    }
-
-    /* RSVP: keep the softer invitation tone and add air. */
-    .event-card .rsvp-confirmation,
-    .event-card .rsvp-form {
-        padding-left: 30px !important;
-        padding-right: 30px !important;
-    }
-
-    .rsvp-status-header {
-        margin-bottom: 21px !important;
-    }
-
-    .status-badge {
-        font-size: 20px !important;
-        letter-spacing: 1px !important;
-    }
-
-    .rsvp-status-header h4 {
-        max-width: 92% !important;
-        margin-top: 11px !important;
-        line-height: 1.85 !important;
-    }
-
-    .confirmation-details {
-        margin-top: 20px !important;
-    }
-
-    .edit-rsvp-btn {
-        margin-top: 25px !important;
-    }
-}
-
-@media (max-width: 430px) {
-    .event-art-panel {
-        padding: 30px 30px 36px !important;
-    }
-
-    .event-card h3,
-    .event-hindu h3,
-    .event-christian h3 {
-        font-size: 30px !important;
-        letter-spacing: 2.2px !important;
-    }
-
-    .event-meta-item {
-        padding: 21px 0 !important;
-    }
-
-    .attire-guide-image {
-        width: 86% !important;
-    }
-
-    .event-card .rsvp-confirmation,
-    .event-card .rsvp-form {
-        padding-left: 24px !important;
-        padding-right: 24px !important;
-    }
-}
-
-/* ===================================================== */
-/* MOBILE EVENT CARD REFINEMENT: TITLE ZONE + DETAILS ZONE */
-/* Desktop remains unchanged                              */
-/* ===================================================== */
-
-.mobile-event-detail-sheet {
-    display: contents;
-}
-
-@media (max-width: 700px) {
-    .event-art-panel {
-        padding-top: 38px !important;
-        padding-left: 34px !important;
-        padding-right: 34px !important;
-        padding-bottom: 38px !important;
-    }
-
-    /* Move title/subtitle into the upper breathing-space area */
-    .event-title-block {
-        margin: 38px auto 34px !important;
-        padding: 0 4px !important;
-        text-align: center !important;
-    }
-
-    .event-card h3,
-    .event-hindu h3,
-    .event-christian h3 {
-        font-size: 34px !important;
-        letter-spacing: 3.4px !important;
-        line-height: 1.02 !important;
-    }
-
-    .event-kicker {
-        max-width: 92% !important;
-        margin: 15px auto 0 !important;
-        font-size: 10px !important;
-        letter-spacing: 1.9px !important;
-        line-height: 1.7 !important;
-    }
-
-    /* The purple-area content becomes one intentional detail section */
-    .mobile-event-detail-sheet {
-        display: block !important;
-        width: 100% !important;
-        margin: 0 auto 30px !important;
-        padding: 0 !important;
-        border-top: 1px solid rgba(43, 26, 18, 0.15) !important;
-        border-bottom: 1px solid rgba(43, 26, 18, 0.13) !important;
-        background: rgba(255, 250, 241, 0.10) !important;
-    }
-
-    .event-meta-grid {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: transparent !important;
-        border-top: none !important;
-        border-bottom: none !important;
-    }
-
-    .event-meta-item {
-        padding: 22px 0 !important;
-        border-top: none !important;
-    }
-
-    .event-meta-item + .event-meta-item {
-        border-top: 1px solid rgba(43, 26, 18, 0.12) !important;
-    }
-
-    .event-date-time-combined {
-        padding-top: 24px !important;
-        padding-bottom: 23px !important;
+        max-width: 96% !important;
+        font-size: 15.5px !important;
     }
 
     .event-date-time-combined .meta-value {
         font-size: 16px !important;
-        line-height: 1.45 !important;
-    }
-
-    .event-meta-location {
-        padding-top: 24px !important;
-        padding-bottom: 24px !important;
-    }
-
-    .event-meta-location .meta-value {
-        font-size: 15px !important;
-        line-height: 1.65 !important;
-    }
-
-    /* Make location feel less like a huge block */
-    .event-meta-location .meta-value br {
-        display: block;
-        content: "";
-        margin-bottom: 3px;
-    }
-
-    /* Attire becomes part of the same detail sheet, not a separate card */
-    .attire-guide-card {
-        margin: 0 !important;
-        padding: 34px 0 30px !important;
-        border-top: 1px solid rgba(43, 26, 18, 0.12) !important;
-        border-bottom: none !important;
-        background: transparent !important;
-        box-shadow: none !important;
-    }
-
-    .attire-guide-label {
-        margin-bottom: 18px !important;
-        font-size: 10px !important;
-        letter-spacing: 2.5px !important;
-    }
-
-    .attire-guide-image {
-        width: 74% !important;
-        max-height: 150px !important;
-        margin: 0 auto 18px !important;
-        mix-blend-mode: multiply !important;
-        filter: sepia(10%) contrast(102%) brightness(0.98) !important;
-        opacity: 0.96 !important;
-    }
-
-    .attire-guide-card strong {
-        font-size: 33px !important;
-        line-height: 1.05 !important;
-    }
-
-    .attire-guide-card small {
-        margin-top: 7px !important;
-    }
-
-    .attire-guide-card p {
-        max-width: 92% !important;
-        margin-top: 18px !important;
-        font-size: 13px !important;
-        line-height: 1.85 !important;
-    }
-
-    /* Actions now sit below the purple section */
-    .event-actions {
-        padding-top: 0 !important;
-        border-top: none !important;
-        margin-top: 30px !important;
-    }
-
-    .event-action-link:nth-child(3) {
-        background: rgba(78, 50, 35, 0.70) !important;
-    }
-}
-
-@media (max-width: 430px) {
-    .event-art-panel {
-        padding-left: 30px !important;
-        padding-right: 30px !important;
-    }
-
-    .event-title-block {
-        margin-top: 34px !important;
-        margin-bottom: 32px !important;
-    }
-
-    .event-card h3,
-    .event-hindu h3,
-    .event-christian h3 {
-        font-size: 31px !important;
-        letter-spacing: 2.6px !important;
     }
 
     .attire-guide-image {
         width: 80% !important;
+    }
+
+    .attire-guide-card strong {
+        font-size: 31px !important;
     }
 }
