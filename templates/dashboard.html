@@ -694,6 +694,120 @@
             });
         });
 
+        /* ============================= */
+        /* SCROLL TO NEXT / PREVIOUS TAB */
+        /* ============================= */
+
+        const tabOrder = ["welcome", "schedule", "travel", "registry", "qa"];
+        let isAutoSwitchingTab = false;
+        let touchStartY = 0;
+
+        function getActiveTabName() {
+            const activeButton = document.querySelector(".tab-btn.active");
+
+            if (!activeButton) {
+                return "welcome";
+            }
+
+            return activeButton.getAttribute("data-tab") || "welcome";
+        }
+
+        function getNextTabName() {
+            const currentTab = getActiveTabName();
+            const currentIndex = tabOrder.indexOf(currentTab);
+
+            if (currentIndex === -1 || currentIndex === tabOrder.length - 1) {
+                return null;
+            }
+
+            return tabOrder[currentIndex + 1];
+        }
+
+        function getPreviousTabName() {
+            const currentTab = getActiveTabName();
+            const currentIndex = tabOrder.indexOf(currentTab);
+
+            if (currentIndex <= 0) {
+                return null;
+            }
+
+            return tabOrder[currentIndex - 1];
+        }
+
+        function isNearPageBottom() {
+            const scrollPosition = window.innerHeight + window.scrollY;
+            const pageHeight = document.documentElement.scrollHeight;
+
+            return scrollPosition >= pageHeight - 24;
+        }
+
+        function isNearPageTop() {
+            return window.scrollY <= 24;
+        }
+
+        function switchTabFromScroll(tabName) {
+            if (!tabName || isAutoSwitchingTab) {
+                return;
+            }
+
+            isAutoSwitchingTab = true;
+
+            activateTab(tabName);
+            history.replaceState(null, "", "#" + tabName);
+
+            requestAnimationFrame(function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+
+            setTimeout(function () {
+                isAutoSwitchingTab = false;
+            }, 850);
+        }
+
+        window.addEventListener("wheel", function (event) {
+            const scrollingDown = event.deltaY > 0;
+            const scrollingUp = event.deltaY < 0;
+
+            if (scrollingDown && isNearPageBottom()) {
+                switchTabFromScroll(getNextTabName());
+            }
+
+            if (scrollingUp && isNearPageTop()) {
+                switchTabFromScroll(getPreviousTabName());
+            }
+        }, { passive: true });
+
+        window.addEventListener("touchstart", function (event) {
+            if (!event.touches || event.touches.length === 0) {
+                return;
+            }
+
+            touchStartY = event.touches[0].clientY;
+        }, { passive: true });
+
+        window.addEventListener("touchend", function (event) {
+            if (!event.changedTouches || event.changedTouches.length === 0) {
+                return;
+            }
+
+            const touchEndY = event.changedTouches[0].clientY;
+            const swipeDistance = touchStartY - touchEndY;
+
+            const swipedUp = swipeDistance > 45;
+            const swipedDown = swipeDistance < -45;
+
+            if (swipedUp && isNearPageBottom()) {
+                switchTabFromScroll(getNextTabName());
+            }
+
+            if (swipedDown && isNearPageTop()) {
+                switchTabFromScroll(getPreviousTabName());
+            }
+        }, { passive: true });
+
         const hashTab = window.location.hash.replace("#", "");
 
         if (hashTab) {
