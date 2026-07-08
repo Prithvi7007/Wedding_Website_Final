@@ -1,253 +1,111 @@
-from flask import Flask, render_template, request, redirect, url_for, session, Response, jsonify
+import os
 from pathlib import Path
 from datetime import datetime
-from openpyxl import Workbook, load_workbook
 from urllib.parse import urlencode, quote_plus
 
+import psycopg2
+import psycopg2.extras
+from flask import Flask, render_template, request, redirect, url_for, session, Response, jsonify
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None
+
+
+BASE_DIR = Path(__file__).resolve().parent
+
+if load_dotenv:
+    load_dotenv(BASE_DIR / ".env")
+
+
 app = Flask(__name__)
-
-# Required for login sessions
-app.secret_key = "temporary-dev-secret-key-change-later"
+app.secret_key = os.getenv("SECRET_KEY", "temporary-dev-secret-key-change-this")
 
 
 # =============================
-# TEMPORARY GUEST DATA
-# Later this can move to a database
+# DATABASE
 # =============================
 
-GUESTS = {
-    "prithvi7007@gmail.com": {
-        "password": "123",
-        "name": "Prithvi",
-        "allowed_events": [
-            "haldi",
-            "hindu_wedding",
-            "christian_wedding_reception"
-        ],
-        "max_guests": 2
-    },
+def get_db_connection():
+    return psycopg2.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        port=os.getenv("DB_PORT", "5432"),
+        dbname=os.getenv("DB_NAME", "wedding_db"),
+        user=os.getenv("DB_USER", "wedding_user"),
+        password=os.getenv("DB_PASSWORD"),
+        cursor_factory=psycopg2.extras.RealDictCursor
+    )
 
-    "family@example.com": {
-        "password": "123",
-        "name": "Family Guest",
-        "allowed_events": [
-            "haldi",
-            "hindu_wedding",
-            "christian_wedding_reception"
-        ],
-        "max_guests": 4
-    },
 
-    "friends@example.com": {
-        "password": "123",
-        "name": "Friend Guest",
-        "allowed_events": [
-            "christian_wedding_reception"
-        ],
-        "max_guests": 1
-    }
-}
+def fetch_one(query, params=None):
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query, params or ())
+            return cur.fetchone()
+
+
+def fetch_all(query, params=None):
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query, params or ())
+            return cur.fetchall()
+
+
+def execute_query(query, params=None):
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query, params or ())
+        conn.commit()
 
 
 # =============================
-# EVENT DATA
-# Later this can move to a database
+# HELPERS
 # =============================
 
-EVENTS = {
-    "haldi": {
-        "id": "haldi",
-        "title": "Haldi",
-        "date": "November 19, 2026",
-        "time": "11:00 AM",
-        "calendar_start": "20261119T110000",
-        "calendar_end": "20261119T140000",
-        "short_date": "Nov 19",
-        "badge_title": "Haldi",
-        "venue_name": "Private Residence",
-        "location": "5312 Windingbrook Trail, Wesley Chapel, FL 33544",
-        "description": "Join us for a joyful Haldi celebration with family, friends, traditions, and blessings.",
-        "timeline": [
-            "11:00 AM - Haldi celebration begins",
-            "2:00 PM - Celebration concludes"
-        ],
-        "attire_image": "images/schedule/attire-haldi.png",
-        "attire_heading": "Pastel & Floral Shades",
-        "attire_subheading": "Daytime Event",
-        "attire": "Festive Indian attire encouraged. Bright yellows, oranges, greens, and floral colors are perfect for the Haldi celebration."
-    },
+def format_date(value):
+    if not value:
+        return ""
+
+    return value.strftime("%B %d, %Y").replace(" 0", " ")
 
 
-    "hindu_wedding": {
-        "id": "hindu_wedding",
-        "title": "Traditional Telugu Wedding",
-        "date": "November 20, 2026",
-        "time": "9:00 AM",
-        "calendar_start": "20261120T090000",
-        "calendar_end": "20261120T120000",
-        "short_date": "Nov 20",
-        "badge_title": "Hindu Ceremony",
-        "venue_name": "Hindu Wedding Venue",
-        "location": "9338 Old Gibsonton Dr, Gibsonton, FL 33534",
-        "description": "Join us for the Hindu wedding ceremony as we celebrate our marriage with traditional rituals and blessings.",
-        "timeline": [
-            "9:00 AM - Ceremony begins",
-            "12:00 PM - Ceremony concludes"
-        ],
-        "attire_image": "images/schedule/attire-hindu.webp",
-        "attire_heading": "Traditional Formal Wear",
-        "attire_subheading": "Ceremony Event",
-        "attire": "Traditional Indian formal attire is encouraged. Sarees, lehengas, anarkalis, kurtas, sherwanis, or formal festive wear are welcome."
-    },
+def format_time(value):
+    if not value:
+        return ""
 
-    "christian_wedding_reception": {
-        "id": "christian_wedding_reception",
-        "title": "Church Wedding and Reception",
-        "date": "November 21, 2026",
-        "time": "5:00 PM",
-        "calendar_start": "20261121T170000",
-        "calendar_end": "20261121T230000",
-        "short_date": "Nov 21",
-        "badge_title": "Reception",
-        "venue_name": "Church Wedding and Reception Venue",
-        "location": "9724 Cross Creek Blvd, Tampa, FL 33647",
-        "description": "Join us for the Christian wedding ceremony followed by an evening reception, dinner, dancing, and celebration.",
-        "timeline": [
-            "5:00 PM - Ceremony begins",
-            "6:00 PM - Reception begins",
-            "11:00 PM - Celebration concludes"
-        ],
-        "attire_image": "images/schedule/attire-reception.webp",
-        "attire_heading": "Formal Evening Attire",
-        "attire_subheading": "Ceremony & Reception",
-        "attire": "Formal or semi-formal wedding attire. Evening dresses, suits, dress shirts, cocktail attire, and elegant traditional outfits are welcome."
-    }
-}
+    return value.strftime("%I:%M %p").lstrip("0")
 
 
-# =============================
-# EXCEL RSVP SETUP
-# =============================
+def calendar_timestamp(event, time_key):
+    combined = datetime.combine(event["event_date"], event[time_key])
+    return combined.strftime("%Y%m%dT%H%M%S")
 
-DATA_DIR = Path("data")
-RSVP_FILE = DATA_DIR / "rsvps.xlsx"
-
-RSVP_HEADERS = [
-    "updated_at",
-    "guest_email",
-    "guest_name",
-    "event_id",
-    "event_title",
-    "attending",
-    "guest_count",
-    "notes"
-]
-
-
-def ensure_rsvp_workbook():
-    DATA_DIR.mkdir(exist_ok=True)
-
-    if not RSVP_FILE.exists():
-        wb = Workbook()
-        ws = wb.active
-        ws.title = "RSVPs"
-        ws.append(RSVP_HEADERS)
-        wb.save(RSVP_FILE)
-
-
-def save_rsvp_to_excel(guest_email, guest_name, event_id, event_title, attending, guest_count, notes):
-    ensure_rsvp_workbook()
-
-    wb = load_workbook(RSVP_FILE)
-    ws = wb["RSVPs"]
-
-    updated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # If this guest already RSVP'd to this event, update the row instead of creating duplicates
-    existing_row = None
-
-    for row_num in range(2, ws.max_row + 1):
-        existing_email = ws.cell(row=row_num, column=2).value
-        existing_event_id = ws.cell(row=row_num, column=4).value
-
-        if existing_email == guest_email and existing_event_id == event_id:
-            existing_row = row_num
-            break
-
-    row_values = [
-        updated_at,
-        guest_email,
-        guest_name,
-        event_id,
-        event_title,
-        attending,
-        guest_count,
-        notes
-    ]
-
-    if existing_row:
-        for col_num, value in enumerate(row_values, start=1):
-            ws.cell(row=existing_row, column=col_num).value = value
-    else:
-        ws.append(row_values)
-
-    wb.save(RSVP_FILE)
-
-
-def get_saved_rsvps_for_guest(guest_email):
-    ensure_rsvp_workbook()
-
-    wb = load_workbook(RSVP_FILE)
-    ws = wb["RSVPs"]
-
-    saved = {}
-
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        updated_at, email, guest_name, event_id, event_title, attending, guest_count, notes = row
-
-        if email == guest_email:
-            saved[event_id] = {
-                "attending": attending,
-                "guest_count": guest_count,
-                "notes": notes
-            }
-
-    return saved
-
-
-def get_current_guest():
-    guest_email = session.get("guest_email")
-
-    if not guest_email:
-        return None
-
-    guest = GUESTS.get(guest_email)
-
-    if not guest:
-        return None
-
-    guest_data = guest.copy()
-    guest_data["email"] = guest_email
-
-    return guest_data
 
 def build_google_calendar_link(event):
+    calendar_start = calendar_timestamp(event, "start_time")
+    calendar_end = calendar_timestamp(event, "end_time")
+
     calendar_params = {
         "action": "TEMPLATE",
         "text": event["title"],
-        "dates": f"{event['calendar_start']}/{event['calendar_end']}",
-        "details": event["description"],
-        "location": event["location"],
-        "ctz": "America/New_York"
+        "dates": f"{calendar_start}/{calendar_end}",
+        "details": event.get("description") or "",
+        "location": event.get("location") or "",
+        "ctz": event.get("timezone") or "America/New_York"
     }
 
     return "https://calendar.google.com/calendar/render?" + urlencode(calendar_params)
 
 
 def build_directions_link(event):
-    return "https://www.google.com/maps/search/?api=1&query=" + quote_plus(event["location"])
+    return "https://www.google.com/maps/search/?api=1&query=" + quote_plus(event.get("location") or "")
+
 
 def escape_ics_text(text):
+    if not text:
+        return ""
+
     return (
         text.replace("\\", "\\\\")
             .replace(",", "\\,")
@@ -256,80 +114,259 @@ def escape_ics_text(text):
     )
 
 
+def get_current_invitation():
+    invitation_id = session.get("invitation_id")
+
+    if not invitation_id:
+        return None
+
+    invitation = fetch_one(
+        """
+        SELECT
+            invitation_id,
+            represent_side,
+            first_name,
+            last_name,
+            partner_name,
+            display_name,
+            guest_group,
+            message,
+            invite_token,
+            email,
+            phone,
+            is_active
+        FROM invitations
+        WHERE invitation_id = %s
+          AND is_active = TRUE
+        """,
+        (invitation_id,)
+    )
+
+    if not invitation:
+        session.clear()
+        return None
+
+    invitation["name"] = invitation["display_name"]
+    return invitation
+
+
+def get_allowed_events(invitation_id):
+    rows = fetch_all(
+        """
+        SELECT
+            e.event_id,
+            e.title,
+            e.event_date,
+            e.start_time,
+            e.end_time,
+            e.timezone,
+            e.short_date,
+            e.venue_name,
+            e.location,
+            e.description,
+            e.attire_image,
+            e.attire_heading,
+            e.attire_subheading,
+            e.attire,
+            e.display_order,
+            p.max_guests
+        FROM invitation_event_permissions p
+        JOIN events e
+            ON p.event_id = e.event_id
+        WHERE p.invitation_id = %s
+        ORDER BY e.display_order
+        """,
+        (invitation_id,)
+    )
+
+    events = []
+
+    for row in rows:
+        event = dict(row)
+
+        event["id"] = event["event_id"]
+        event["date"] = format_date(event["event_date"])
+        event["time"] = format_time(event["start_time"])
+        event["calendar_link"] = build_google_calendar_link(event)
+        event["directions_link"] = build_directions_link(event)
+
+        events.append(event)
+
+    return events
+
+
+def get_event_for_invitation(invitation_id, event_id):
+    return fetch_one(
+        """
+        SELECT
+            e.event_id,
+            e.title,
+            e.event_date,
+            e.start_time,
+            e.end_time,
+            e.timezone,
+            e.short_date,
+            e.venue_name,
+            e.location,
+            e.description,
+            e.attire_image,
+            e.attire_heading,
+            e.attire_subheading,
+            e.attire,
+            p.max_guests
+        FROM invitation_event_permissions p
+        JOIN events e
+            ON p.event_id = e.event_id
+        WHERE p.invitation_id = %s
+          AND e.event_id = %s
+        """,
+        (invitation_id, event_id)
+    )
+
+
+def get_saved_rsvps_for_invitation(invitation_id):
+    rows = fetch_all(
+        """
+        SELECT
+            event_id,
+            attending,
+            guest_count,
+            notes
+        FROM rsvps
+        WHERE invitation_id = %s
+        """,
+        (invitation_id,)
+    )
+
+    saved = {}
+
+    for row in rows:
+        saved[row["event_id"]] = {
+            "attending": row["attending"],
+            "guest_count": row["guest_count"],
+            "notes": row["notes"]
+        }
+
+    return saved
+
+
+def get_rsvp_ui_status(attending):
+    if attending == "Yes":
+        return {
+            "status_class": "status-yes",
+            "badge_class": "badge-yes",
+            "badge_text": "Confirmed",
+            "heading_text": "You’re Attending",
+            "celebrate": True
+        }
+
+    if attending == "No":
+        return {
+            "status_class": "status-no",
+            "badge_class": "badge-no",
+            "badge_text": "Declined",
+            "heading_text": "You’re Not Attending",
+            "celebrate": False
+        }
+
+    return {
+        "status_class": "status-maybe",
+        "badge_class": "badge-maybe",
+        "badge_text": "Maybe",
+        "heading_text": "Response Pending",
+        "celebrate": False
+    }
+
+
+def wants_json_response():
+    return (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        or "application/json" in request.headers.get("Accept", "")
+    )
+
+
+def normalize_tab(tab):
+    allowed_tabs = ["welcome", "schedule", "travel", "registry", "qa"]
+
+    if tab in allowed_tabs:
+        return tab
+
+    return "welcome"
+
+
 # =============================
 # ROUTES
 # =============================
 
 @app.route("/")
-def login_page():
-    return render_template("index.html")
+def home():
+    return render_template(
+        "index.html",
+        redirect_url=None,
+        guest_name=None,
+        invalid_invite=False
+    )
 
 
-@app.route("/login", methods=["POST"])
-def login():
-    email = request.form.get("email", "").strip().lower()
-    password = request.form.get("password", "")
+@app.route("/invite/<invite_token>")
+def invite(invite_token):
+    invitation = fetch_one(
+        """
+        SELECT
+            invitation_id,
+            display_name,
+            invite_token,
+            is_active
+        FROM invitations
+        WHERE invite_token = %s
+          AND is_active = TRUE
+        """,
+        (invite_token,)
+    )
 
-    guest = GUESTS.get(email)
-    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    if not invitation:
+        return render_template(
+            "index.html",
+            redirect_url=None,
+            guest_name=None,
+            invalid_invite=True
+        ), 404
 
-    if guest and guest["password"] == password:
-        session["guest_email"] = email
-        session["guest_name"] = guest["name"]
+    session.clear()
+    session["invitation_id"] = invitation["invitation_id"]
+    session["invite_token"] = invitation["invite_token"]
 
-        redirect_url = url_for("dashboard", login="success")
-
-        if is_ajax:
-            return jsonify({
-                "success": True,
-                "redirect_url": redirect_url
-            })
-
-        return redirect(redirect_url)
-
-    if is_ajax:
-        return jsonify({
-            "success": False,
-            "message": "Invalid email or access code."
-        }), 401
-
-    return redirect(url_for("login_page"))
+    return render_template(
+        "index.html",
+        redirect_url=url_for("dashboard", login="success"),
+        guest_name=invitation["display_name"],
+        invalid_invite=False
+    )
 
 
 @app.route("/dashboard")
 def dashboard():
-    guest = get_current_guest()
+    invitation = get_current_invitation()
 
-    login_effect = request.args.get("login")
-
-    if not guest:
-        return redirect(url_for("login_page"))
-
-    allowed_events = []
-
-    for event_id in guest["allowed_events"]:
-        if event_id in EVENTS:
-            event = EVENTS[event_id].copy()
-            event["calendar_link"] = build_google_calendar_link(event)
-            event["directions_link"] = build_directions_link(event)
-            allowed_events.append(event)
-    saved_rsvps = get_saved_rsvps_for_guest(guest["email"])
+    if not invitation:
+        return redirect(url_for("home"))
 
     celebrate = request.args.get("celebrate")
     celebrate_event_id = request.args.get("event")
+    login_effect = request.args.get("login")
 
-    active_tab = request.args.get("tab", "welcome")
+    active_tab = normalize_tab(request.args.get("tab", "welcome"))
 
     if celebrate == "yes":
         active_tab = "schedule"
 
-    if active_tab not in ["welcome", "schedule", "travel", "registry", "qa"]:
-        active_tab = "welcome"
+    events = get_allowed_events(invitation["invitation_id"])
+    saved_rsvps = get_saved_rsvps_for_invitation(invitation["invitation_id"])
 
     return render_template(
         "dashboard.html",
-        guest=guest,
-        events=allowed_events,
+        guest=invitation,
+        events=events,
         saved_rsvps=saved_rsvps,
         celebrate=celebrate,
         celebrate_event_id=celebrate_event_id,
@@ -337,120 +374,128 @@ def dashboard():
         active_tab=active_tab
     )
 
+
 @app.route("/rsvp", methods=["POST"])
 def save_rsvp():
-    guest = get_current_guest()
+    invitation = get_current_invitation()
+    wants_json = wants_json_response()
 
-    wants_json = (
-        request.headers.get("X-Requested-With") == "XMLHttpRequest"
-        or "application/json" in request.headers.get("Accept", "")
-    )
-
-    if not guest:
+    if not invitation:
         if wants_json:
-            return jsonify({"success": False, "message": "Your session expired. Please sign in again."}), 401
-        return redirect(url_for("login_page"))
+            return jsonify({
+                "success": False,
+                "message": "Your session expired. Please open your private invitation link again."
+            }), 401
 
-    event_id = request.form.get("event_id")
+        return redirect(url_for("home"))
 
-    # Security check: guest can only RSVP to events they are invited to
-    if event_id not in guest["allowed_events"]:
-        if wants_json:
-            return jsonify({"success": False, "message": "You are not invited to this event."}), 403
-        return redirect(url_for("dashboard"))
+    event_id = request.form.get("event_id", "").strip()
 
-    event = EVENTS.get(event_id)
+    event = get_event_for_invitation(invitation["invitation_id"], event_id)
 
     if not event:
         if wants_json:
-            return jsonify({"success": False, "message": "Event not found."}), 404
-        return redirect(url_for("dashboard"))
+            return jsonify({
+                "success": False,
+                "message": "You are not invited to this event."
+            }), 403
 
-    attending = request.form.get("attending", "")
-    guest_count = request.form.get("guest_count", "0")
+        return redirect(url_for("dashboard", tab="schedule") + "#schedule")
+
+    attending = request.form.get("attending", "").strip()
     notes = request.form.get("notes", "").strip()
 
+    if attending not in ["Yes", "No", "Maybe"]:
+        if wants_json:
+            return jsonify({
+                "success": False,
+                "message": "Please select Yes, No, or Maybe."
+            }), 400
+
+        return redirect(url_for("dashboard", tab="schedule") + "#schedule")
+
     try:
-        guest_count = int(guest_count)
+        guest_count = int(request.form.get("guest_count", "0"))
     except ValueError:
         guest_count = 0
 
+    max_guests = event["max_guests"]
+
     if attending == "No":
         guest_count = 0
+    else:
+        guest_count = max(0, min(guest_count, max_guests))
 
-    guest_count = max(0, min(guest_count, guest["max_guests"]))
-
-    save_rsvp_to_excel(
-        guest_email=guest["email"],
-        guest_name=guest["name"],
-        event_id=event["id"],
-        event_title=event["title"],
-        attending=attending,
-        guest_count=guest_count,
-        notes=notes
+    execute_query(
+        """
+        INSERT INTO rsvps (
+            invitation_id,
+            event_id,
+            attending,
+            guest_count,
+            notes
+        )
+        VALUES (%s, %s, %s, %s, %s)
+        ON CONFLICT (invitation_id, event_id)
+        DO UPDATE SET
+            attending = EXCLUDED.attending,
+            guest_count = EXCLUDED.guest_count,
+            notes = EXCLUDED.notes,
+            updated_at = CURRENT_TIMESTAMP
+        """,
+        (
+            invitation["invitation_id"],
+            event_id,
+            attending,
+            guest_count,
+            notes
+        )
     )
 
-    if wants_json:
-        if attending == "Yes":
-            status_class = "status-yes"
-            badge_class = "badge-yes"
-            badge_text = "Confirmed"
-            heading_text = "You’re Attending"
-        elif attending == "No":
-            status_class = "status-no"
-            badge_class = "badge-no"
-            badge_text = "Declined"
-            heading_text = "You’re Not Attending"
-        else:
-            status_class = "status-maybe"
-            badge_class = "badge-maybe"
-            badge_text = "Maybe"
-            heading_text = "Response Pending"
+    status = get_rsvp_ui_status(attending)
 
+    if wants_json:
         return jsonify({
             "success": True,
-            "event_id": event["id"],
+            "event_id": event["event_id"],
             "event_title": event["title"],
             "attending": attending,
             "guest_count": guest_count,
             "notes": notes,
-            "status_class": status_class,
-            "badge_class": badge_class,
-            "badge_text": badge_text,
-            "heading_text": heading_text,
-            "celebrate": attending == "Yes"
+            "status_class": status["status_class"],
+            "badge_class": status["badge_class"],
+            "badge_text": status["badge_text"],
+            "heading_text": status["heading_text"],
+            "celebrate": status["celebrate"]
         })
 
     if attending == "Yes":
-        return redirect(url_for("dashboard", tab="schedule", celebrate="yes", event=event["id"]) + "#schedule")
+        return redirect(
+            url_for("dashboard", tab="schedule", celebrate="yes", event=event_id) + "#schedule"
+        )
 
     return redirect(url_for("dashboard", tab="schedule") + "#schedule")
 
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("login_page"))
-
 @app.route("/calendar/<event_id>.ics")
 def apple_calendar_event(event_id):
-    guest = get_current_guest()
+    invitation = get_current_invitation()
 
-    if not guest:
-        return redirect(url_for("login_page"))
+    if not invitation:
+        return redirect(url_for("home"))
 
-    # Security check: guest can only download calendar files for invited events
-    if event_id not in guest["allowed_events"]:
-        return redirect(url_for("dashboard"))
-
-    event = EVENTS.get(event_id)
+    event = get_event_for_invitation(invitation["invitation_id"], event_id)
 
     if not event:
         return redirect(url_for("dashboard"))
 
+    calendar_start = calendar_timestamp(event, "start_time")
+    calendar_end = calendar_timestamp(event, "end_time")
+
     title = escape_ics_text(event["title"])
-    description = escape_ics_text(event["description"])
-    location = escape_ics_text(event["location"])
+    description = escape_ics_text(event.get("description") or "")
+    location = escape_ics_text(event.get("location") or "")
+    timezone = event.get("timezone") or "America/New_York"
 
     ics_content = "\r\n".join([
         "BEGIN:VCALENDAR",
@@ -460,9 +505,9 @@ def apple_calendar_event(event_id):
         "METHOD:PUBLISH",
         "BEGIN:VEVENT",
         f"UID:{event_id}@adlin-prithvi-wedding",
-        "DTSTAMP:20260701T120000Z",
-        f"DTSTART;TZID=America/New_York:{event['calendar_start']}",
-        f"DTEND;TZID=America/New_York:{event['calendar_end']}",
+        f"DTSTAMP:{datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')}",
+        f"DTSTART;TZID={timezone}:{calendar_start}",
+        f"DTEND;TZID={timezone}:{calendar_end}",
         f"SUMMARY:{title}",
         f"DESCRIPTION:{description}",
         f"LOCATION:{location}",
@@ -482,6 +527,11 @@ def apple_calendar_event(event_id):
     )
 
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("home"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
-    

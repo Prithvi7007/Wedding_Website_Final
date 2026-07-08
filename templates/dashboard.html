@@ -116,8 +116,8 @@
     <div 
         class="info-card event-card 
             {% if event.id == 'haldi' %}event-haldi{% endif %}
-            {% if event.id == 'hindu_wedding' %}event-hindu{% endif %}
-            {% if event.id == 'christian_wedding_reception' %}event-christian{% endif %}
+            {% if event.id == 'telugu_wedding' %}event-hindu{% endif %}
+            {% if event.id == 'church_wedding' %}event-christian{% endif %}
         "
     >
         <div class="event-art-panel">
@@ -128,9 +128,9 @@
 
             {% if event.id == 'haldi' %}
                 <p class="event-kicker">A joyful pre-wedding celebration</p>
-            {% elif event.id == 'hindu_wedding' %}
-                <p class="event-kicker">Traditional Hindu ceremony and blessings</p>
-            {% elif event.id == 'christian_wedding_reception' %}
+            {% elif event.id == 'telugu_wedding' %}
+                <p class="event-kicker">Traditional Telugu ceremony and blessings</p>
+            {% elif event.id == 'church_wedding' %}
                 <p class="event-kicker">Ceremony, dinner, dancing, and celebration</p>
             {% endif %}
         </div>
@@ -317,7 +317,7 @@
                         type="number" 
                         name="guest_count" 
                         min="0" 
-                        max="{{ guest.max_guests }}" 
+                        max="{{ event.max_guests }}" 
                         value="{{ saved.get('guest_count', 0) }}"
                     >
                 </div>
@@ -570,7 +570,7 @@
                     <p>
                         Please refer to the attire notes listed under each event in the Schedule tab.
                         Bright festive colors are perfect for Haldi, traditional Indian formal attire is
-                        encouraged for the Hindu ceremony, and formal or semi-formal attire is welcome
+                        encouraged for the Telugu ceremony, and formal or semi-formal attire is welcome
                         for the Christian wedding and reception.
                     </p>
                 </div>

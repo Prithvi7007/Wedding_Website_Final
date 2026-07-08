@@ -3,14 +3,13 @@
 <head>
     <title>Adlin & Prithvi | Private Invitation</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260707g">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260707h">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="login-page">
 
     <div class="login-container">
-
 
         <div class="login-private-line">
             Private Invitation
@@ -20,49 +19,45 @@
 
         <div class="login-divider"></div>
 
-        <p class="subtitle login-subtitle">
-            Sign in to view wedding details, RSVP, travel information, and event updates.
-        </p>
+        {% if invalid_invite %}
+            <p class="subtitle login-subtitle">
+                This invitation link could not be found or is no longer active.
+                Please contact Adlin or Prithvi if you believe this is a mistake.
+            </p>
+        {% elif redirect_url %}
+            <p class="subtitle login-subtitle">
+                {% if guest_name %}
+                    Welcome, {{ guest_name }}. Your private invitation is opening.
+                {% else %}
+                    Your private invitation is opening.
+                {% endif %}
+            </p>
 
-        <form action="/login" method="POST" class="login-form" id="login-form">
-            <div class="form-group">
-                <label>Invitation Email</label>
-                <input 
-                    type="email" 
-                    name="email" 
-                    placeholder="Enter your invitation email" 
-                    required
-                >
-            </div>
-
-            <div class="form-group">
-                <label>Access Code</label>
-                <input 
-                    type="password" 
-                    name="password" 
-                    placeholder="Enter your access code" 
-                    required
-                >
-            </div>
-
-            <button type="submit" class="open-invitation-btn" id="login-submit-btn">
-                <span class="btn-label">Open Invitation</span>
+            <button type="button" class="open-invitation-btn is-loading" id="open-invitation-btn">
+                <span class="btn-label">Opening Invitation</span>
                 <span class="btn-spinner" aria-hidden="true"></span>
             </button>
-            <p class="login-error-message" id="login-error-message"></p>
 
-        </form>
+            <p class="small-text">
+                Please wait while we prepare your guest portal.
+            </p>
+        {% else %}
+            <p class="subtitle login-subtitle">
+                This is a private wedding invitation portal. Please use the private invitation
+                link shared with you to view wedding details and RSVP.
+            </p>
 
-        <p class="small-text">
-            Your invitation awaits.
-        </p>
+            <p class="small-text">
+                Your invitation awaits.
+            </p>
+        {% endif %}
 
     </div>
+
+    {% if redirect_url %}
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("login-form");
-            const button = document.getElementById("login-submit-btn");
-            const errorMessage = document.getElementById("login-error-message");
+            const redirectUrl = "{{ redirect_url }}";
 
             const dashboardImages = [
                 "/static/images/site-bg.webp",
@@ -108,63 +103,18 @@
                 });
             }
 
-            function preloadDashboardImages() {
-                const preloadPromises = dashboardImages.map(preloadImage);
-                return Promise.all(preloadPromises);
-            }
-
-            function setLoading(isLoading) {
-                if (!button) {
-                    return;
-                }
-
-                if (isLoading) {
-                    button.classList.add("is-loading");
-                    button.disabled = true;
-                } else {
-                    button.classList.remove("is-loading");
-                    button.disabled = false;
-                }
-            }
-
-            form.addEventListener("submit", async function (event) {
-                event.preventDefault();
-
-                if (errorMessage) {
-                    errorMessage.textContent = "";
-                }
-
-                setLoading(true);
-
+            async function openInvitation() {
                 try {
-                    const response = await fetch(form.action, {
-                        method: "POST",
-                        body: new FormData(form),
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest",
-                            "Accept": "application/json"
-                        }
-                    });
-
-                    const data = await response.json();
-
-                    if (!response.ok || !data.success) {
-                        throw new Error(data.message || "Login failed.");
-                    }
-
-                    await preloadDashboardImages();
-
-                    window.location.href = data.redirect_url;
-                } catch (error) {
-                    setLoading(false);
-
-                    if (errorMessage) {
-                        errorMessage.textContent = error.message || "Something went wrong. Please try again.";
-                    }
+                    await Promise.all(dashboardImages.map(preloadImage));
+                } finally {
+                    window.location.href = redirectUrl;
                 }
-            });
+            }
+
+            openInvitation();
         });
     </script>
+    {% endif %}
 
 </body>
 </html>
