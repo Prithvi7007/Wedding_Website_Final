@@ -4298,3 +4298,174 @@ button {
         padding-right: 24px !important;
     }
 }
+
+/* ===================================================== */
+/* MOBILE EVENT CARD REFINEMENT: TITLE ZONE + DETAILS ZONE */
+/* Desktop remains unchanged                              */
+/* ===================================================== */
+
+.mobile-event-detail-sheet {
+    display: contents;
+}
+
+@media (max-width: 700px) {
+    .event-art-panel {
+        padding-top: 38px !important;
+        padding-left: 34px !important;
+        padding-right: 34px !important;
+        padding-bottom: 38px !important;
+    }
+
+    /* Move title/subtitle into the upper breathing-space area */
+    .event-title-block {
+        margin: 38px auto 34px !important;
+        padding: 0 4px !important;
+        text-align: center !important;
+    }
+
+    .event-card h3,
+    .event-hindu h3,
+    .event-christian h3 {
+        font-size: 34px !important;
+        letter-spacing: 3.4px !important;
+        line-height: 1.02 !important;
+    }
+
+    .event-kicker {
+        max-width: 92% !important;
+        margin: 15px auto 0 !important;
+        font-size: 10px !important;
+        letter-spacing: 1.9px !important;
+        line-height: 1.7 !important;
+    }
+
+    /* The purple-area content becomes one intentional detail section */
+    .mobile-event-detail-sheet {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 auto 30px !important;
+        padding: 0 !important;
+        border-top: 1px solid rgba(43, 26, 18, 0.15) !important;
+        border-bottom: 1px solid rgba(43, 26, 18, 0.13) !important;
+        background: rgba(255, 250, 241, 0.10) !important;
+    }
+
+    .event-meta-grid {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border-top: none !important;
+        border-bottom: none !important;
+    }
+
+    .event-meta-item {
+        padding: 22px 0 !important;
+        border-top: none !important;
+    }
+
+    .event-meta-item + .event-meta-item {
+        border-top: 1px solid rgba(43, 26, 18, 0.12) !important;
+    }
+
+    .event-date-time-combined {
+        padding-top: 24px !important;
+        padding-bottom: 23px !important;
+    }
+
+    .event-date-time-combined .meta-value {
+        font-size: 16px !important;
+        line-height: 1.45 !important;
+    }
+
+    .event-meta-location {
+        padding-top: 24px !important;
+        padding-bottom: 24px !important;
+    }
+
+    .event-meta-location .meta-value {
+        font-size: 15px !important;
+        line-height: 1.65 !important;
+    }
+
+    /* Make location feel less like a huge block */
+    .event-meta-location .meta-value br {
+        display: block;
+        content: "";
+        margin-bottom: 3px;
+    }
+
+    /* Attire becomes part of the same detail sheet, not a separate card */
+    .attire-guide-card {
+        margin: 0 !important;
+        padding: 34px 0 30px !important;
+        border-top: 1px solid rgba(43, 26, 18, 0.12) !important;
+        border-bottom: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .attire-guide-label {
+        margin-bottom: 18px !important;
+        font-size: 10px !important;
+        letter-spacing: 2.5px !important;
+    }
+
+    .attire-guide-image {
+        width: 74% !important;
+        max-height: 150px !important;
+        margin: 0 auto 18px !important;
+        mix-blend-mode: multiply !important;
+        filter: sepia(10%) contrast(102%) brightness(0.98) !important;
+        opacity: 0.96 !important;
+    }
+
+    .attire-guide-card strong {
+        font-size: 33px !important;
+        line-height: 1.05 !important;
+    }
+
+    .attire-guide-card small {
+        margin-top: 7px !important;
+    }
+
+    .attire-guide-card p {
+        max-width: 92% !important;
+        margin-top: 18px !important;
+        font-size: 13px !important;
+        line-height: 1.85 !important;
+    }
+
+    /* Actions now sit below the purple section */
+    .event-actions {
+        padding-top: 0 !important;
+        border-top: none !important;
+        margin-top: 30px !important;
+    }
+
+    .event-action-link:nth-child(3) {
+        background: rgba(78, 50, 35, 0.70) !important;
+    }
+}
+
+@media (max-width: 430px) {
+    .event-art-panel {
+        padding-left: 30px !important;
+        padding-right: 30px !important;
+    }
+
+    .event-title-block {
+        margin-top: 34px !important;
+        margin-bottom: 32px !important;
+    }
+
+    .event-card h3,
+    .event-hindu h3,
+    .event-christian h3 {
+        font-size: 31px !important;
+        letter-spacing: 2.6px !important;
+    }
+
+    .attire-guide-image {
+        width: 80% !important;
+    }
+}
