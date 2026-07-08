@@ -4297,44 +4297,27 @@ body.dashboard-page .tab-content.active {
 }
 
 /* ===================================================== */
-/* SOFTER EVENT ARTWORK BACKGROUNDS                      */
-/* Makes event card art less obvious / more transparent   */
+/* RESTORE GOOD EVENT ARTWORK + KEEP ATTIRE CLEANUP       */
+/* Keep the earlier image behavior. No 9:16 forcing.      */
 /* ===================================================== */
 
-.event-haldi .event-art-panel {
-    background-image:
-        linear-gradient(
-            rgba(255, 248, 232, 0.62),
-            rgba(255, 248, 232, 0.62)
-        ),
-        url("/static/images/HALDI.webp") !important;
-}
-
-.event-hindu .event-art-panel {
-    background-image:
-        linear-gradient(
-            rgba(255, 242, 230, 0.64),
-            rgba(255, 242, 230, 0.64)
-        ),
-        url("/static/images/WEDDING.webp") !important;
-}
-
-.event-christian .event-art-panel {
-    background-image:
-        linear-gradient(
-            rgba(248, 252, 241, 0.66),
-            rgba(248, 252, 241, 0.66)
-        ),
-        url("/static/images/RECEPTION.webp") !important;
-}
-
-/* Mobile portrait artwork */
 @media (max-width: 700px) {
+    .event-art-panel {
+        height: auto !important;
+        min-height: auto !important;
+        aspect-ratio: auto !important;
+
+        background-size: cover !important;
+        background-position: center top !important;
+        background-repeat: no-repeat !important;
+    }
+
     .event-haldi .event-art-panel {
         background-image:
             linear-gradient(
-                rgba(255, 248, 232, 0.66),
-                rgba(255, 248, 232, 0.66)
+                135deg,
+                rgba(255, 244, 220, 0.10),
+                rgba(255, 226, 124, 0.02)
             ),
             url("/static/images/HALDI-mobile.webp") !important;
     }
@@ -4342,8 +4325,9 @@ body.dashboard-page .tab-content.active {
     .event-hindu .event-art-panel {
         background-image:
             linear-gradient(
-                rgba(255, 242, 230, 0.68),
-                rgba(255, 242, 230, 0.68)
+                135deg,
+                rgba(255, 244, 220, 0.10),
+                rgba(128, 38, 32, 0.02)
             ),
             url("/static/images/WEDDING-mobile.webp") !important;
     }
@@ -4351,9 +4335,18 @@ body.dashboard-page .tab-content.active {
     .event-christian .event-art-panel {
         background-image:
             linear-gradient(
-                rgba(248, 252, 241, 0.70),
-                rgba(248, 252, 241, 0.70)
+                135deg,
+                rgba(255, 244, 220, 0.10),
+                rgba(115, 150, 102, 0.02)
             ),
             url("/static/images/RECEPTION-mobile.webp") !important;
+    }
+
+    .event-art-panel::after {
+        background: linear-gradient(
+            to bottom,
+            rgba(255, 248, 235, 0.10),
+            rgba(255, 248, 235, 0.04)
+        ) !important;
     }
 }
