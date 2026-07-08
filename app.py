@@ -77,6 +77,14 @@ def format_time(value):
     return value.strftime("%I:%M %p").lstrip("0")
 
 
+def format_date_time_line(event_date, start_time):
+    if not event_date or not start_time:
+        return ""
+
+    weekday = event_date.strftime("%A")
+    return f"{weekday} • {format_date(event_date)} • {format_time(start_time)}"
+
+
 def calendar_timestamp(event, time_key):
     combined = datetime.combine(event["event_date"], event[time_key])
     return combined.strftime("%Y%m%dT%H%M%S")
@@ -187,6 +195,7 @@ def get_allowed_events(invitation_id):
         event["id"] = event["event_id"]
         event["date"] = format_date(event["event_date"])
         event["time"] = format_time(event["start_time"])
+        event["date_time_line"] = format_date_time_line(event["event_date"], event["start_time"])
         event["calendar_link"] = build_google_calendar_link(event)
         event["directions_link"] = build_directions_link(event)
 
@@ -256,7 +265,7 @@ def get_rsvp_ui_status(attending):
             "status_class": "status-yes",
             "badge_class": "badge-yes",
             "badge_text": "Confirmed",
-            "heading_text": "You’re Attending",
+            "heading_text": "We are delighted you'll be joining us.",
             "celebrate": True
         }
 
@@ -265,7 +274,7 @@ def get_rsvp_ui_status(attending):
             "status_class": "status-no",
             "badge_class": "badge-no",
             "badge_text": "Declined",
-            "heading_text": "You’re Not Attending",
+            "heading_text": "We will miss you at this event.",
             "celebrate": False
         }
 
@@ -273,7 +282,7 @@ def get_rsvp_ui_status(attending):
         "status_class": "status-maybe",
         "badge_class": "badge-maybe",
         "badge_text": "Maybe",
-        "heading_text": "Response Pending",
+        "heading_text": "Thank you for letting us know.",
         "celebrate": False
     }
 

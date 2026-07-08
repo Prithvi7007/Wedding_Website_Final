@@ -4107,3 +4107,194 @@ button {
         max-width: 94% !important;
     }
 }
+
+
+/* ===================================================== */
+/* MOBILE LUXURY REFINEMENT PASS                         */
+/* Append at the VERY END of static/style.css.            */
+/* Desktop remains unchanged.                             */
+/* ===================================================== */
+
+/* Hidden by default so desktop keeps the existing separate Date + Time layout. */
+.event-date-time-combined {
+    display: none;
+}
+
+@media (max-width: 700px) {
+    /* Give the mobile card a little more side breathing room. */
+    .event-art-panel {
+        padding: 30px 34px 38px !important;
+        background-position: center 4% !important;
+    }
+
+    .event-title-block {
+        margin-bottom: 24px !important;
+    }
+
+    .event-card h3,
+    .event-hindu h3,
+    .event-christian h3 {
+        font-size: 33px !important;
+        letter-spacing: 2.8px !important;
+    }
+
+    .event-kicker {
+        margin-top: 12px !important;
+        line-height: 1.75 !important;
+    }
+
+    /* Printed-invitation style: one elegant date/time line on mobile. */
+    .event-date-time-combined {
+        display: grid !important;
+    }
+
+    .event-date-only,
+    .event-time-only {
+        display: none !important;
+    }
+
+    .event-meta-grid {
+        margin: 0 auto 36px !important;
+        background: rgba(255, 250, 241, 0.18) !important;
+    }
+
+    .event-meta-item {
+        grid-template-columns: 28px 1fr !important;
+        column-gap: 15px !important;
+        padding: 22px 0 !important;
+    }
+
+    .meta-icon {
+        width: 25px !important;
+        height: 25px !important;
+    }
+
+    .meta-icon svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    .meta-label {
+        margin-bottom: 7px !important;
+        font-size: 10px !important;
+        letter-spacing: 1.9px !important;
+    }
+
+    .meta-value {
+        font-size: 14px !important;
+        line-height: 1.65 !important;
+    }
+
+    .event-date-time-combined .meta-value {
+        font-size: 14px !important;
+        letter-spacing: 0.1px !important;
+        line-height: 1.6 !important;
+    }
+
+    .event-meta-location .meta-value {
+        line-height: 1.7 !important;
+    }
+
+    /* Attire becomes warmer and less like a white inserted image. */
+    .attire-guide-card {
+        margin-bottom: 35px !important;
+        padding: 34px 0 4px !important;
+        border-top-color: rgba(43, 26, 18, 0.13) !important;
+    }
+
+    .attire-guide-label {
+        margin-bottom: 18px !important;
+    }
+
+    .attire-guide-image {
+        width: 82% !important;
+        max-height: 142px !important;
+        margin: 0 auto 18px !important;
+        background: transparent !important;
+        mix-blend-mode: multiply !important;
+        filter: sepia(8%) contrast(103%) brightness(0.98) !important;
+        opacity: 0.96 !important;
+    }
+
+    .attire-guide-card p {
+        max-width: 92% !important;
+        margin-top: 17px !important;
+        line-height: 1.85 !important;
+    }
+
+    /* Actions: directions stays primary, but less visually heavy. */
+    .event-actions {
+        gap: 13px !important;
+        padding-top: 32px !important;
+    }
+
+    .event-action-link {
+        min-height: 43px !important;
+        background: rgba(255, 250, 241, 0.38) !important;
+        border-color: rgba(43, 26, 18, 0.18) !important;
+    }
+
+    .event-action-link:nth-child(3) {
+        min-height: 46px !important;
+        margin-top: 2px !important;
+        background: rgba(78, 50, 35, 0.72) !important;
+        box-shadow: 0 8px 18px rgba(43, 26, 18, 0.12) !important;
+    }
+
+    /* RSVP: keep the softer invitation tone and add air. */
+    .event-card .rsvp-confirmation,
+    .event-card .rsvp-form {
+        padding-left: 30px !important;
+        padding-right: 30px !important;
+    }
+
+    .rsvp-status-header {
+        margin-bottom: 21px !important;
+    }
+
+    .status-badge {
+        font-size: 20px !important;
+        letter-spacing: 1px !important;
+    }
+
+    .rsvp-status-header h4 {
+        max-width: 92% !important;
+        margin-top: 11px !important;
+        line-height: 1.85 !important;
+    }
+
+    .confirmation-details {
+        margin-top: 20px !important;
+    }
+
+    .edit-rsvp-btn {
+        margin-top: 25px !important;
+    }
+}
+
+@media (max-width: 430px) {
+    .event-art-panel {
+        padding: 30px 30px 36px !important;
+    }
+
+    .event-card h3,
+    .event-hindu h3,
+    .event-christian h3 {
+        font-size: 30px !important;
+        letter-spacing: 2.2px !important;
+    }
+
+    .event-meta-item {
+        padding: 21px 0 !important;
+    }
+
+    .attire-guide-image {
+        width: 86% !important;
+    }
+
+    .event-card .rsvp-confirmation,
+    .event-card .rsvp-form {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+}
