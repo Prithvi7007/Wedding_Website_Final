@@ -3,7 +3,7 @@
 <head>
     <title>Adlin & Prithvi | Private Invitation</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260707h">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260707i">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -24,22 +24,30 @@
                 This invitation link could not be found or is no longer active.
                 Please contact Adlin or Prithvi if you believe this is a mistake.
             </p>
+
+            <p class="small-text">
+                Please check the link that was shared with you.
+            </p>
         {% elif redirect_url %}
             <p class="subtitle login-subtitle">
                 {% if guest_name %}
-                    Welcome, {{ guest_name }}. Your private invitation is opening.
+                    Welcome, {{ guest_name }}.<br>
+                    This private invitation is for {{ guest_name }}.
                 {% else %}
-                    Your private invitation is opening.
+                    Welcome.<br>
+                    This is your private invitation.
                 {% endif %}
+                <br>
+                Please use this portal to view wedding details and RSVP.
             </p>
 
-            <button type="button" class="open-invitation-btn is-loading" id="open-invitation-btn">
-                <span class="btn-label">Opening Invitation</span>
+            <button type="button" class="open-invitation-btn" id="open-invitation-btn">
+                <span class="btn-label">Open Invitation</span>
                 <span class="btn-spinner" aria-hidden="true"></span>
             </button>
 
             <p class="small-text">
-                Please wait while we prepare your guest portal.
+                If this does not look like your invitation, please contact Adlin or Prithvi before continuing.
             </p>
         {% else %}
             <p class="subtitle login-subtitle">
@@ -58,6 +66,8 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const redirectUrl = "{{ redirect_url }}";
+            const button = document.getElementById("open-invitation-btn");
+            const buttonLabel = button ? button.querySelector(".btn-label") : null;
 
             const dashboardImages = [
                 "/static/images/site-bg.webp",
@@ -103,7 +113,31 @@
                 });
             }
 
+            function setLoading(isLoading) {
+                if (!button) {
+                    return;
+                }
+
+                if (isLoading) {
+                    button.classList.add("is-loading");
+                    button.disabled = true;
+
+                    if (buttonLabel) {
+                        buttonLabel.textContent = "Opening Invitation";
+                    }
+                } else {
+                    button.classList.remove("is-loading");
+                    button.disabled = false;
+
+                    if (buttonLabel) {
+                        buttonLabel.textContent = "Open Invitation";
+                    }
+                }
+            }
+
             async function openInvitation() {
+                setLoading(true);
+
                 try {
                     await Promise.all(dashboardImages.map(preloadImage));
                 } finally {
@@ -111,7 +145,9 @@
                 }
             }
 
-            openInvitation();
+            if (button) {
+                button.addEventListener("click", openInvitation);
+            }
         });
     </script>
     {% endif %}
