@@ -4190,11 +4190,27 @@ body.dashboard-page .tab-content.active {
 }
 
 /* ===================================================== */
-/* FINAL ATTIRE + ACTION BUTTON POLISH                   */
-/* Removes attire box and softens calendar button font    */
+/* FINAL CLEAN MOBILE + ATTIRE OVERRIDE                  */
+/* Keep desktop unchanged. Remove attire box. Restore     */
+/* mobile background behavior without stretching.         */
 /* ===================================================== */
 
-/* Remove the visible attire container box */
+body.dashboard-page .tab-content:not(.active) {
+    display: none !important;
+}
+
+body.dashboard-page .tab-content.active {
+    display: block !important;
+}
+
+.event-date-time-combined {
+    display: none !important;
+}
+
+.mobile-event-detail-sheet {
+    display: contents;
+}
+
 .attire-guide-card {
     background: transparent !important;
     border: none !important;
@@ -4202,13 +4218,12 @@ body.dashboard-page .tab-content.active {
     box-shadow: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-
     max-width: 560px !important;
     margin: 0 auto 28px !important;
     padding: 22px 0 24px !important;
+    text-align: center !important;
 }
 
-/* Keep the attire section organized with subtle invitation spacing */
 .attire-guide-label {
     margin-bottom: 14px !important;
     color: rgba(75, 46, 31, 0.78) !important;
@@ -4219,20 +4234,16 @@ body.dashboard-page .tab-content.active {
     text-transform: uppercase !important;
 }
 
-/* Make the image feel part of the parchment */
 .attire-guide-image {
     width: 72% !important;
     max-width: 280px !important;
     max-height: 176px !important;
     margin: 0 auto 14px !important;
     background: transparent !important;
+    object-fit: contain !important;
     mix-blend-mode: multiply !important;
     filter: sepia(8%) contrast(103%) brightness(0.99) !important;
     opacity: 0.96 !important;
-}
-
-.attire-guide-card strong {
-    margin-top: 6px !important;
 }
 
 .attire-guide-card small {
@@ -4251,7 +4262,6 @@ body.dashboard-page .tab-content.active {
     line-height: 1.75 !important;
 }
 
-/* Calendar / Directions font refinement */
 .event-action-link {
     font-family: "Cormorant Garamond", Georgia, serif !important;
     font-size: 14px !important;
@@ -4260,53 +4270,11 @@ body.dashboard-page .tab-content.active {
     text-transform: uppercase !important;
 }
 
-/* Slightly more premium button proportions */
-.event-actions {
-    gap: 14px !important;
-}
-
-.event-action-link {
-    padding: 10px 18px !important;
-}
-
-/* Mobile tuning */
-@media (max-width: 700px) {
-    .attire-guide-card {
-        max-width: 100% !important;
-        margin: 0 auto 30px !important;
-        padding: 30px 0 28px !important;
-        border-top: 1px solid rgba(43, 26, 18, 0.12) !important;
-    }
-
-    .attire-guide-image {
-        width: 76% !important;
-        max-height: 150px !important;
-        margin-bottom: 18px !important;
-    }
-
-    .attire-guide-card p {
-        max-width: 92% !important;
-        font-size: 13.5px !important;
-        line-height: 1.85 !important;
-    }
-
-    .event-action-link {
-        font-size: 12px !important;
-        letter-spacing: 1.25px !important;
-    }
-}
-
-/* ===================================================== */
-/* RESTORE GOOD EVENT ARTWORK + KEEP ATTIRE CLEANUP       */
-/* Keep the earlier image behavior. No 9:16 forcing.      */
-/* ===================================================== */
-
 @media (max-width: 700px) {
     .event-art-panel {
         height: auto !important;
         min-height: auto !important;
         aspect-ratio: auto !important;
-
         background-size: cover !important;
         background-position: center top !important;
         background-repeat: no-repeat !important;
@@ -4314,31 +4282,19 @@ body.dashboard-page .tab-content.active {
 
     .event-haldi .event-art-panel {
         background-image:
-            linear-gradient(
-                135deg,
-                rgba(255, 244, 220, 0.10),
-                rgba(255, 226, 124, 0.02)
-            ),
+            linear-gradient(135deg, rgba(255, 244, 220, 0.10), rgba(255, 226, 124, 0.02)),
             url("/static/images/HALDI-mobile.webp") !important;
     }
 
     .event-hindu .event-art-panel {
         background-image:
-            linear-gradient(
-                135deg,
-                rgba(255, 244, 220, 0.10),
-                rgba(128, 38, 32, 0.02)
-            ),
+            linear-gradient(135deg, rgba(255, 244, 220, 0.10), rgba(128, 38, 32, 0.02)),
             url("/static/images/WEDDING-mobile.webp") !important;
     }
 
     .event-christian .event-art-panel {
         background-image:
-            linear-gradient(
-                135deg,
-                rgba(255, 244, 220, 0.10),
-                rgba(115, 150, 102, 0.02)
-            ),
+            linear-gradient(135deg, rgba(255, 244, 220, 0.10), rgba(115, 150, 102, 0.02)),
             url("/static/images/RECEPTION-mobile.webp") !important;
     }
 
@@ -4348,5 +4304,43 @@ body.dashboard-page .tab-content.active {
             rgba(255, 248, 235, 0.10),
             rgba(255, 248, 235, 0.04)
         ) !important;
+    }
+
+    .event-date-time-combined {
+        display: block !important;
+    }
+
+    .event-date-only,
+    .event-time-only {
+        display: none !important;
+    }
+
+    .attire-guide-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 36px 0 34px !important;
+        background: transparent !important;
+        border: none !important;
+        border-top: 1px solid rgba(43, 26, 18, 0.12) !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .attire-guide-image {
+        width: 76% !important;
+        max-height: 154px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .attire-guide-card p {
+        max-width: 92% !important;
+        font-size: 13.5px !important;
+        line-height: 1.9 !important;
+    }
+
+    .event-action-link {
+        font-size: 11px !important;
+        letter-spacing: 1.1px !important;
     }
 }
