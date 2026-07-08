@@ -4295,3 +4295,65 @@ body.dashboard-page .tab-content.active {
         letter-spacing: 1.25px !important;
     }
 }
+
+/* ===================================================== */
+/* SOFTER EVENT ARTWORK BACKGROUNDS                      */
+/* Makes event card art less obvious / more transparent   */
+/* ===================================================== */
+
+.event-haldi .event-art-panel {
+    background-image:
+        linear-gradient(
+            rgba(255, 248, 232, 0.62),
+            rgba(255, 248, 232, 0.62)
+        ),
+        url("/static/images/HALDI.webp") !important;
+}
+
+.event-hindu .event-art-panel {
+    background-image:
+        linear-gradient(
+            rgba(255, 242, 230, 0.64),
+            rgba(255, 242, 230, 0.64)
+        ),
+        url("/static/images/WEDDING.webp") !important;
+}
+
+.event-christian .event-art-panel {
+    background-image:
+        linear-gradient(
+            rgba(248, 252, 241, 0.66),
+            rgba(248, 252, 241, 0.66)
+        ),
+        url("/static/images/RECEPTION.webp") !important;
+}
+
+/* Mobile portrait artwork */
+@media (max-width: 700px) {
+    .event-haldi .event-art-panel {
+        background-image:
+            linear-gradient(
+                rgba(255, 248, 232, 0.66),
+                rgba(255, 248, 232, 0.66)
+            ),
+            url("/static/images/HALDI-mobile.webp") !important;
+    }
+
+    .event-hindu .event-art-panel {
+        background-image:
+            linear-gradient(
+                rgba(255, 242, 230, 0.68),
+                rgba(255, 242, 230, 0.68)
+            ),
+            url("/static/images/WEDDING-mobile.webp") !important;
+    }
+
+    .event-christian .event-art-panel {
+        background-image:
+            linear-gradient(
+                rgba(248, 252, 241, 0.70),
+                rgba(248, 252, 241, 0.70)
+            ),
+            url("/static/images/RECEPTION-mobile.webp") !important;
+    }
+}
