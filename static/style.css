@@ -4631,3 +4631,60 @@ body.dashboard-page .tab-content.active {
         font-size: 10.8px !important;
     }
 }
+
+/* ===================================================== */
+/* FINAL MOBILE FIX ONLY                                 */
+/* Remove combined Date & Time row + soften background    */
+/* ===================================================== */
+
+@media (max-width: 700px) {
+    /* Remove the extra combined Date & Time row */
+    .event-date-time-combined {
+        display: none !important;
+    }
+
+    /* Keep the normal Date and Time rows visible */
+    .event-date-only,
+    .event-time-only {
+        display: block !important;
+    }
+
+    /* Make mobile event artwork slightly more transparent */
+    .event-haldi .event-art-panel {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.24),
+                rgba(255, 226, 124, 0.10)
+            ),
+            url("/static/images/HALDI-mobile.webp") !important;
+    }
+
+    .event-hindu .event-art-panel {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.24),
+                rgba(128, 38, 32, 0.10)
+            ),
+            url("/static/images/WEDDING-mobile.webp") !important;
+    }
+
+    .event-christian .event-art-panel {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.25),
+                rgba(115, 150, 102, 0.11)
+            ),
+            url("/static/images/RECEPTION-mobile.webp") !important;
+    }
+
+    .event-art-panel::after {
+        background: linear-gradient(
+            to bottom,
+            rgba(255, 248, 235, 0.14),
+            rgba(255, 248, 235, 0.055)
+        ) !important;
+    }
+}
