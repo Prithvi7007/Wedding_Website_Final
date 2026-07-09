@@ -4688,3 +4688,157 @@ body.dashboard-page .tab-content.active {
         ) !important;
     }
 }
+
+/* ===================================================== */
+/* FINAL MOBILE STABILITY FIX                            */
+/* - remove combined Date & Time row                     */
+/* - stop 9:16 clipping across phones                    */
+/* - soften event background a little                    */
+/* - improve readability                                 */
+/* ===================================================== */
+
+@media (max-width: 700px) {
+    /* 1) Remove the extra combined row */
+    .event-date-time-combined {
+        display: none !important;
+    }
+
+    /* Keep separate Date + Time visible */
+    .event-date-only,
+    .event-time-only {
+        display: block !important;
+    }
+
+    /* 2) Let panel grow naturally so buttons don't get hidden */
+    .event-art-panel {
+        aspect-ratio: auto !important;
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
+
+        background-size: cover !important;
+        background-position: center top !important;
+        background-repeat: no-repeat !important;
+    }
+
+    /* 3) Slightly softer mobile artwork */
+    .event-haldi .event-art-panel {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.20),
+                rgba(255, 226, 124, 0.08)
+            ),
+            url("/static/images/HALDI-mobile.webp") !important;
+    }
+
+    .event-hindu .event-art-panel {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.20),
+                rgba(128, 38, 32, 0.08)
+            ),
+            url("/static/images/WEDDING-mobile.webp") !important;
+    }
+
+    .event-christian .event-art-panel {
+        background-image:
+            linear-gradient(
+                135deg,
+                rgba(255, 244, 220, 0.21),
+                rgba(115, 150, 102, 0.09)
+            ),
+            url("/static/images/RECEPTION-mobile.webp") !important;
+    }
+
+    .event-art-panel::after {
+        background: linear-gradient(
+            to bottom,
+            rgba(255, 248, 235, 0.15),
+            rgba(255, 248, 235, 0.06)
+        ) !important;
+    }
+
+    /* 4) Better readability */
+    .meta-label {
+        font-size: 10px !important;
+        letter-spacing: 2px !important;
+        color: rgba(75, 46, 31, 0.82) !important;
+    }
+
+    .meta-value {
+        font-size: 15px !important;
+        line-height: 1.55 !important;
+        font-weight: 700 !important;
+        color: rgba(35, 22, 15, 0.97) !important;
+    }
+
+    .event-meta-location .meta-value {
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+    }
+
+    .attire-guide-label {
+        font-size: 10px !important;
+        letter-spacing: 2.2px !important;
+        color: rgba(75, 46, 31, 0.82) !important;
+    }
+
+    .attire-guide-card strong {
+        font-size: 29px !important;
+    }
+
+    .attire-guide-card small {
+        font-size: 9px !important;
+        letter-spacing: 1.8px !important;
+    }
+
+    .attire-guide-card p {
+        font-size: 13px !important;
+        line-height: 1.65 !important;
+        color: rgba(75, 46, 31, 0.93) !important;
+    }
+
+    .event-kicker {
+        font-size: 10.5px !important;
+        line-height: 1.6 !important;
+        letter-spacing: 1.6px !important;
+        color: rgba(75, 46, 31, 0.92) !important;
+    }
+
+    /* 5) Keep buttons visible and readable */
+    .event-actions {
+        margin-top: 18px !important;
+        padding-top: 14px !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+        width: 100% !important;
+        border-top: none !important;
+    }
+
+    .event-action-link {
+        min-height: 40px !important;
+        padding: 9px 10px !important;
+        font-family: "Cormorant Garamond", Georgia, serif !important;
+        font-size: 11.5px !important;
+        font-weight: 700 !important;
+        letter-spacing: 1.1px !important;
+        text-transform: uppercase !important;
+    }
+
+    .event-action-link:nth-child(3) {
+        grid-column: 1 / -1 !important;
+        min-height: 44px !important;
+    }
+
+    /* Slightly more breathing room */
+    .event-meta-item {
+        padding: 18px 4px !important;
+    }
+
+    .attire-guide-card {
+        padding: 24px 0 14px !important;
+    }
+}
