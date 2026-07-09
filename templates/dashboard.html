@@ -3,7 +3,7 @@
 <head>
     <title>Adlin & Prithvi</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260708finalclean1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260708finalscroll9x16">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -149,8 +149,8 @@
                                             <line x1="16" y1="3.5" x2="16" y2="7"></line>
                                         </svg>
                                     </div>
-                                    <div class="meta-label">When</div>
-                                    <div class="meta-value">{{ event.date_time_line if event.date_time_line else event.date ~ ' • ' ~ event.time }}</div>
+                                    <div class="meta-label">Date &amp; Time</div>
+                                    <div class="meta-value">{{ event.date }} • {{ event.time }}</div>
                                 </div>
 
                                 <div class="event-meta-item event-date-only">
@@ -703,6 +703,181 @@
                 history.replaceState(null, "", "#" + targetTab);
             });
         });
+
+        /* ============================= */
+        /* SCROLL TO NEXT / PREVIOUS TAB */
+        /* Requires two extra scroll attempts at the top/bottom */
+        /* ============================= */
+
+        const tabOrder = ["welcome", "schedule", "travel", "registry", "qa"];
+        const REQUIRED_EDGE_SCROLLS = 2;
+        const EDGE_SCROLL_COOLDOWN_MS = 260;
+
+        let isAutoSwitchingTab = false;
+        let touchStartY = 0;
+        let bottomEdgeScrollCount = 0;
+        let topEdgeScrollCount = 0;
+        let lastEdgeScrollTime = 0;
+
+        function getActiveTabName() {
+            const activeButton = document.querySelector(".tab-btn.active");
+            return activeButton ? activeButton.getAttribute("data-tab") : "welcome";
+        }
+
+        function getNextTabName() {
+            const currentTab = getActiveTabName();
+            const currentIndex = tabOrder.indexOf(currentTab);
+
+            if (currentIndex === -1 || currentIndex === tabOrder.length - 1) {
+                return null;
+            }
+
+            return tabOrder[currentIndex + 1];
+        }
+
+        function getPreviousTabName() {
+            const currentTab = getActiveTabName();
+            const currentIndex = tabOrder.indexOf(currentTab);
+
+            if (currentIndex <= 0) {
+                return null;
+            }
+
+            return tabOrder[currentIndex - 1];
+        }
+
+        function isNearPageBottom() {
+            const scrollPosition = window.innerHeight + window.scrollY;
+            const pageHeight = Math.max(
+                document.documentElement.scrollHeight,
+                document.body.scrollHeight
+            );
+
+            return scrollPosition >= pageHeight - 36;
+        }
+
+        function isNearPageTop() {
+            return window.scrollY <= 36;
+        }
+
+        function resetEdgeScrollCounts() {
+            bottomEdgeScrollCount = 0;
+            topEdgeScrollCount = 0;
+        }
+
+        function countEdgeScroll(direction) {
+            const now = Date.now();
+
+            if (now - lastEdgeScrollTime < EDGE_SCROLL_COOLDOWN_MS) {
+                return false;
+            }
+
+            lastEdgeScrollTime = now;
+
+            if (direction === "down") {
+                bottomEdgeScrollCount += 1;
+                topEdgeScrollCount = 0;
+                return bottomEdgeScrollCount >= REQUIRED_EDGE_SCROLLS;
+            }
+
+            if (direction === "up") {
+                topEdgeScrollCount += 1;
+                bottomEdgeScrollCount = 0;
+                return topEdgeScrollCount >= REQUIRED_EDGE_SCROLLS;
+            }
+
+            return false;
+        }
+
+        function switchTabFromScroll(tabName) {
+            if (!tabName || isAutoSwitchingTab) {
+                return;
+            }
+
+            isAutoSwitchingTab = true;
+            resetEdgeScrollCounts();
+
+            activateTab(tabName);
+            history.replaceState(null, "", "#" + tabName);
+
+            requestAnimationFrame(function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+
+            setTimeout(function () {
+                isAutoSwitchingTab = false;
+                resetEdgeScrollCounts();
+            }, 850);
+        }
+
+        window.addEventListener("wheel", function (event) {
+            if (isAutoSwitchingTab) {
+                return;
+            }
+
+            const scrollingDown = event.deltaY > 0;
+            const scrollingUp = event.deltaY < 0;
+
+            if (scrollingDown && isNearPageBottom()) {
+                if (countEdgeScroll("down")) {
+                    switchTabFromScroll(getNextTabName());
+                }
+                return;
+            }
+
+            if (scrollingUp && isNearPageTop()) {
+                if (countEdgeScroll("up")) {
+                    switchTabFromScroll(getPreviousTabName());
+                }
+                return;
+            }
+
+            resetEdgeScrollCounts();
+        }, { passive: true });
+
+        window.addEventListener("touchstart", function (event) {
+            if (!event.touches || event.touches.length === 0) {
+                return;
+            }
+
+            touchStartY = event.touches[0].clientY;
+        }, { passive: true });
+
+        window.addEventListener("touchend", function (event) {
+            if (isAutoSwitchingTab) {
+                return;
+            }
+
+            if (!event.changedTouches || event.changedTouches.length === 0) {
+                return;
+            }
+
+            const touchEndY = event.changedTouches[0].clientY;
+            const swipeDistance = touchStartY - touchEndY;
+            const swipedUp = swipeDistance > 42;
+            const swipedDown = swipeDistance < -42;
+
+            setTimeout(function () {
+                if (swipedUp && isNearPageBottom()) {
+                    if (countEdgeScroll("down")) {
+                        switchTabFromScroll(getNextTabName());
+                    }
+                    return;
+                }
+
+                if (swipedDown && isNearPageTop()) {
+                    if (countEdgeScroll("up")) {
+                        switchTabFromScroll(getPreviousTabName());
+                    }
+                    return;
+                }
+
+                resetEdgeScrollCounts();
+            }, 80);
+        }, { passive: true });
 
         const hashTab = window.location.hash.replace("#", "");
 
