@@ -4842,3 +4842,13 @@ body.dashboard-page .tab-content.active {
         padding: 24px 0 14px !important;
     }
 }
+
+@media (max-width: 700px) {
+    body.dashboard-page .tab-content.active::after {
+        content: "";
+        display: block;
+        height: 260px;
+        pointer-events: none;
+        visibility: hidden;
+    }
+}
