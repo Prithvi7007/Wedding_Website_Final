@@ -702,20 +702,31 @@ When you have a moment, please RSVP for each event listed in your schedule.
                 history.replaceState(null, "", "#" + targetTab);
             });
         });
-
+        
         /* ============================= */
         /* SCROLL TO NEXT / PREVIOUS TAB */
-        /* Requires two extra scroll attempts at the top/bottom */
+        /* Visual checkpoint version     */
         /* ============================= */
 
         const tabOrder = ["welcome", "schedule", "travel", "registry", "qa"];
-        const REQUIRED_EDGE_SCROLLS = 1;
-        const EDGE_SCROLL_COOLDOWN_MS = 260;
+
+        /*
+          Increase this if you want it even slower.
+          1 = switch as soon as checkpoint is reached and user scrolls again
+          2 = smoother / safer
+          3 = very deliberate
+        */
+        const REQUIRED_VISUAL_EDGE_SCROLLS = 2;
+
+        const EDGE_SCROLL_COOLDOWN_MS = 420;
+        const WHEEL_DELTA_THRESHOLD = 24;
+        const TOUCH_DISTANCE_THRESHOLD = 58;
+        const CHECKPOINT_TOP_PX = 22;
 
         let isAutoSwitchingTab = false;
         let touchStartY = 0;
-        let bottomEdgeScrollCount = 0;
-        let topEdgeScrollCount = 0;
+        let downEdgeScrollCount = 0;
+        let upEdgeScrollCount = 0;
         let lastEdgeScrollTime = 0;
 
         function getActiveTabName() {
@@ -745,26 +756,67 @@ When you have a moment, please RSVP for each event listed in your schedule.
             return tabOrder[currentIndex - 1];
         }
 
-        function isNearPageBottom() {
-            const scrollPosition = window.innerHeight + window.scrollY;
-            const pageHeight = Math.max(
-                document.documentElement.scrollHeight,
-                document.body.scrollHeight
-            );
+        function getScrollCheckpointForTab(tabName) {
+            if (tabName === "welcome") {
+                return document.querySelector("#welcome .welcome-hero");
+            }
 
-            return scrollPosition >= pageHeight - 36;
+            if (tabName === "schedule") {
+                const eventCards = document.querySelectorAll("#schedule .event-card");
+                return eventCards.length ? eventCards[eventCards.length - 1] : null;
+            }
+
+            if (tabName === "travel") {
+                const travelCards = document.querySelectorAll("#travel .travel-paper-card");
+                return travelCards.length ? travelCards[travelCards.length - 1] : null;
+            }
+
+            if (tabName === "registry") {
+                return document.querySelector("#registry .info-card");
+            }
+
+            if (tabName === "qa") {
+                const qaCards = document.querySelectorAll("#qa .qa-card");
+                return qaCards.length ? qaCards[qaCards.length - 1] : null;
+            }
+
+            return document.getElementById(tabName);
+        }
+
+        function hasVisualCheckpointReachedTop() {
+            const activeTabName = getActiveTabName();
+            const checkpoint = getScrollCheckpointForTab(activeTabName);
+
+            if (!checkpoint) {
+                return false;
+            }
+
+            const rect = checkpoint.getBoundingClientRect();
+
+            /*
+              This is the important part:
+              the next tab is allowed only after the main visual checkpoint
+              has reached the top area of the screen.
+
+              Welcome  -> photo reaches top
+              Schedule -> final event card reaches top
+              Travel   -> final travel card reaches top
+              Registry -> registry card reaches top
+              Q&A      -> final Q&A card reaches top
+            */
+            return rect.top <= CHECKPOINT_TOP_PX;
         }
 
         function isNearPageTop() {
-            return window.scrollY <= 36;
+            return window.scrollY <= 12;
         }
 
         function resetEdgeScrollCounts() {
-            bottomEdgeScrollCount = 0;
-            topEdgeScrollCount = 0;
+            downEdgeScrollCount = 0;
+            upEdgeScrollCount = 0;
         }
 
-        function countEdgeScroll(direction) {
+        function countVisualEdgeScroll(direction) {
             const now = Date.now();
 
             if (now - lastEdgeScrollTime < EDGE_SCROLL_COOLDOWN_MS) {
@@ -774,15 +826,17 @@ When you have a moment, please RSVP for each event listed in your schedule.
             lastEdgeScrollTime = now;
 
             if (direction === "down") {
-                bottomEdgeScrollCount += 1;
-                topEdgeScrollCount = 0;
-                return bottomEdgeScrollCount >= REQUIRED_EDGE_SCROLLS;
+                downEdgeScrollCount += 1;
+                upEdgeScrollCount = 0;
+
+                return downEdgeScrollCount >= REQUIRED_VISUAL_EDGE_SCROLLS;
             }
 
             if (direction === "up") {
-                topEdgeScrollCount += 1;
-                bottomEdgeScrollCount = 0;
-                return topEdgeScrollCount >= REQUIRED_EDGE_SCROLLS;
+                upEdgeScrollCount += 1;
+                downEdgeScrollCount = 0;
+
+                return upEdgeScrollCount >= REQUIRED_VISUAL_EDGE_SCROLLS;
             }
 
             return false;
@@ -809,7 +863,7 @@ When you have a moment, please RSVP for each event listed in your schedule.
             setTimeout(function () {
                 isAutoSwitchingTab = false;
                 resetEdgeScrollCounts();
-            }, 850);
+            }, 950);
         }
 
         window.addEventListener("wheel", function (event) {
@@ -817,24 +871,34 @@ When you have a moment, please RSVP for each event listed in your schedule.
                 return;
             }
 
+            if (Math.abs(event.deltaY) < WHEEL_DELTA_THRESHOLD) {
+                return;
+            }
+
             const scrollingDown = event.deltaY > 0;
             const scrollingUp = event.deltaY < 0;
 
-            if (scrollingDown && isNearPageBottom()) {
-                if (countEdgeScroll("down")) {
-                    switchTabFromScroll(getNextTabName());
+            if (scrollingDown) {
+                if (hasVisualCheckpointReachedTop()) {
+                    if (countVisualEdgeScroll("down")) {
+                        switchTabFromScroll(getNextTabName());
+                    }
+                } else {
+                    resetEdgeScrollCounts();
                 }
+
                 return;
             }
 
-            if (scrollingUp && isNearPageTop()) {
-                if (countEdgeScroll("up")) {
-                    switchTabFromScroll(getPreviousTabName());
+            if (scrollingUp) {
+                if (isNearPageTop()) {
+                    if (countVisualEdgeScroll("up")) {
+                        switchTabFromScroll(getPreviousTabName());
+                    }
+                } else {
+                    resetEdgeScrollCounts();
                 }
-                return;
             }
-
-            resetEdgeScrollCounts();
         }, { passive: true });
 
         window.addEventListener("touchstart", function (event) {
@@ -856,28 +920,38 @@ When you have a moment, please RSVP for each event listed in your schedule.
 
             const touchEndY = event.changedTouches[0].clientY;
             const swipeDistance = touchStartY - touchEndY;
-            const swipedUp = swipeDistance > 42;
-            const swipedDown = swipeDistance < -42;
 
+            const swipedUp = swipeDistance > TOUCH_DISTANCE_THRESHOLD;
+            const swipedDown = swipeDistance < -TOUCH_DISTANCE_THRESHOLD;
+
+            /*
+              Wait briefly so the browser finishes its natural scroll first.
+              Then we check where the visual checkpoint actually landed.
+            */
             setTimeout(function () {
-                if (swipedUp && isNearPageBottom()) {
-                    if (countEdgeScroll("down")) {
-                        switchTabFromScroll(getNextTabName());
+                if (swipedUp) {
+                    if (hasVisualCheckpointReachedTop()) {
+                        if (countVisualEdgeScroll("down")) {
+                            switchTabFromScroll(getNextTabName());
+                        }
+                    } else {
+                        resetEdgeScrollCounts();
                     }
+
                     return;
                 }
 
-                if (swipedDown && isNearPageTop()) {
-                    if (countEdgeScroll("up")) {
-                        switchTabFromScroll(getPreviousTabName());
+                if (swipedDown) {
+                    if (isNearPageTop()) {
+                        if (countVisualEdgeScroll("up")) {
+                            switchTabFromScroll(getPreviousTabName());
+                        }
+                    } else {
+                        resetEdgeScrollCounts();
                     }
-                    return;
                 }
-
-                resetEdgeScrollCounts();
-            }, 80);
+            }, 140);
         }, { passive: true });
-
         const hashTab = window.location.hash.replace("#", "");
 
         if (hashTab) {

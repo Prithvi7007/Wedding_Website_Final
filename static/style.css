@@ -4843,11 +4843,27 @@ body.dashboard-page .tab-content.active {
     }
 }
 
+/* ===================================================== */
+/* VISUAL SCROLL BUFFER FOR TAB SWITCHING                */
+/* Lets the final visual section reach the top before     */
+/* the scroll-to-next-tab behavior can activate.          */
+/* ===================================================== */
+
 @media (max-width: 700px) {
     body.dashboard-page .tab-content.active::after {
         content: "";
         display: block;
-        height: 260px;
+        height: 78vh;
+        pointer-events: none;
+        visibility: hidden;
+    }
+}
+
+@media (min-width: 701px) {
+    body.dashboard-page .tab-content.active::after {
+        content: "";
+        display: block;
+        height: 52vh;
         pointer-events: none;
         visibility: hidden;
     }
