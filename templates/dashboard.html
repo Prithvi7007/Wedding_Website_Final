@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardschedule7journeyrefined"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardschedule8fullbleed"
     >
 </head>
 
@@ -163,372 +163,34 @@
 
         <!-- Schedule Tab -->
         <section id="schedule" class="tab-content schedule-tab" aria-labelledby="schedule-heading">
-            <div class="schedule-ambient" aria-hidden="true"></div>
+            {% set first_event = events[0] if events else none %}
+            {% set first_key = first_event.id|string|lower if first_event else '' %}
+            {% set first_title_key = first_event.title|string|lower if first_event else '' %}
+            {% set first_is_haldi = 'haldi' in first_key or 'haldi' in first_title_key %}
+            {% set first_is_hindu = 'hindu' in first_key or 'telugu' in first_key or 'hindu' in first_title_key or 'telugu' in first_title_key %}
+            {% set first_is_reception = 'christian' in first_key or 'church' in first_key or 'reception' in first_key or 'christian' in first_title_key or 'church' in first_title_key or 'reception' in first_title_key %}
 
-            <header class="schedule-header schedule-reveal">
-                <p class="schedule-eyebrow">Your Wedding Weekend</p>
-                <h2 id="schedule-heading">Wedding Schedule</h2>
-                <p class="schedule-dates">November 19–21, 2026 <span aria-hidden="true">•</span> Tampa, Florida</p>
-                <p class="schedule-intro">
-                    Move through each celebration, explore the details, and RSVP for every event
-                    included with your invitation.
-                </p>
-            </header>
+            <div class="schedule-backgrounds" aria-hidden="true">
+                <div class="schedule-bg schedule-bg-haldi {% if first_is_haldi %}is-active{% endif %}" data-background-theme="haldi"></div>
+                <div class="schedule-bg schedule-bg-hindu {% if first_is_hindu %}is-active{% endif %}" data-background-theme="hindu_wedding"></div>
+                <div class="schedule-bg schedule-bg-christian {% if first_is_reception %}is-active{% endif %}" data-background-theme="christian_wedding_reception"></div>
+                <div class="schedule-bg-shade"></div>
+                <div class="schedule-bg-light"></div>
+            </div>
 
-            <div class="schedule-journey" data-journey-count="{{ events|length }}" style="--journey-count: {{ events|length }};">
-                <nav class="schedule-timeline schedule-reveal" aria-label="Wedding weekend events">
-                    <span class="journey-track" aria-hidden="true">
-                        <span class="journey-track-fill"></span>
-                    </span>
+            <div class="schedule-shell">
+                <header class="schedule-header schedule-reveal">
+                    <p class="schedule-eyebrow">Your Wedding Weekend</p>
+                    <h2 id="schedule-heading">Wedding Schedule</h2>
+                    <p class="schedule-dates">November 19–21, 2026 <span aria-hidden="true">•</span> Tampa, Florida</p>
+                </header>
 
-                    {% for event in events %}
-                        {% set event_key = event.id|string|lower %}
-                        {% set event_title_key = event.title|string|lower %}
-                        {% set is_haldi = 'haldi' in event_key or 'haldi' in event_title_key %}
-                        {% set is_hindu = 'hindu' in event_key or 'telugu' in event_key or 'hindu' in event_title_key or 'telugu' in event_title_key %}
-                        {% set is_reception = 'christian' in event_key or 'church' in event_key or 'reception' in event_key or 'christian' in event_title_key or 'church' in event_title_key or 'reception' in event_title_key %}
-                        <button
-                            type="button"
-                            class="journey-stop {% if loop.first %}is-active{% endif %}"
-                            data-journey-target="{{ event.id }}"
-                            data-journey-index="{{ loop.index0 }}"
-                            aria-controls="journey-event-{{ event.id }}"
-                            aria-current="{% if loop.first %}step{% else %}false{% endif %}"
-                        >
-                            <span class="journey-date">{{ event.short_date if event.short_date is defined else event.date }}</span>
-                            <span class="journey-dot" aria-hidden="true"></span>
-                            <span class="journey-name">
-                                {% if is_haldi %}
-                                    Haldi
-                                {% elif is_hindu %}
-                                    Telugu Wedding
-                                {% elif is_reception %}
-                                    Wedding &amp; Reception
-                                {% else %}
-                                    {{ event.title }}
-                                {% endif %}
-                            </span>
-                        </button>
-                    {% endfor %}
-                </nav>
+                <div class="schedule-journey" data-journey-count="{{ events|length }}" style="--journey-count: {{ events|length }};">
+                    <nav class="schedule-timeline schedule-reveal" aria-label="Wedding weekend events">
+                        <span class="journey-track" aria-hidden="true">
+                            <span class="journey-track-fill"></span>
+                        </span>
 
-                <div class="event-stage schedule-reveal" aria-live="polite">
-                    {% for event in events %}
-                        {% set event_key = event.id|string|lower %}
-                        {% set event_title_key = event.title|string|lower %}
-                        {% set is_haldi = 'haldi' in event_key or 'haldi' in event_title_key %}
-                        {% set is_hindu = 'hindu' in event_key or 'telugu' in event_key or 'hindu' in event_title_key or 'telugu' in event_title_key %}
-                        {% set is_reception = 'christian' in event_key or 'church' in event_key or 'reception' in event_key or 'christian' in event_title_key or 'church' in event_title_key or 'reception' in event_title_key %}
-                        {% set saved = saved_rsvps.get(event.id, {}) %}
-                        {% set has_response = saved.get("attending") %}
-
-                        <article
-                            id="journey-event-{{ event.id }}"
-                            class="event-chapter journey-event
-                                {% if loop.first %}is-active{% endif %}
-                                {% if is_haldi %}event-haldi{% endif %}
-                                {% if is_hindu %}event-hindu{% endif %}
-                                {% if is_reception %}event-christian{% endif %}
-                            "
-                            data-event-id="{{ event.id }}"
-                            data-event-theme="{% if is_haldi %}haldi{% elif is_hindu %}hindu_wedding{% elif is_reception %}christian_wedding_reception{% else %}neutral{% endif %}"
-                            data-event-index="{{ loop.index0 }}"
-                            aria-labelledby="event-title-{{ event.id }}"
-                            aria-hidden="{% if loop.first %}false{% else %}true{% endif %}"
-                        >
-                            <section class="event-artwork">
-                                <div class="event-artwork-shade" aria-hidden="true"></div>
-                                <div class="event-light-orbit" aria-hidden="true"></div>
-
-                                <div class="event-artwork-inner">
-                                    <div class="event-hero-grid">
-                                        <header class="event-title-block journey-piece" style="--journey-order: 0;">
-                                            <p class="event-date-line">{{ event.date }}</p>
-                                            <h3 id="event-title-{{ event.id }}">{{ event.title }}</h3>
-
-                                            {% if is_haldi %}
-                                                <p class="event-kicker">A joyful pre-wedding celebration</p>
-                                            {% elif is_hindu %}
-                                                <p class="event-kicker">Traditional ceremony and blessings</p>
-                                            {% elif is_reception %}
-                                                <p class="event-kicker">Ceremony, dinner, dancing, and celebration</p>
-                                            {% endif %}
-
-                                            <span class="event-title-flourish" aria-hidden="true"></span>
-                                        </header>
-
-                                        <div class="event-meta-grid journey-piece" style="--journey-order: 1;" aria-label="Event details">
-                                            <div class="event-meta-item">
-                                                <div class="meta-icon" aria-hidden="true">
-                                                    <svg viewBox="0 0 24 24">
-                                                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                                                        <line x1="3" y1="9" x2="21" y2="9"></line>
-                                                        <line x1="8" y1="3.5" x2="8" y2="7"></line>
-                                                        <line x1="16" y1="3.5" x2="16" y2="7"></line>
-                                                    </svg>
-                                                </div>
-                                                <div>
-                                                    <div class="meta-label">Date</div>
-                                                    <div class="meta-value">{{ event.date }}</div>
-                                                </div>
-                                            </div>
-
-                                            <div class="event-meta-item">
-                                                <div class="meta-icon" aria-hidden="true">
-                                                    <svg viewBox="0 0 24 24">
-                                                        <circle cx="12" cy="12" r="8.5"></circle>
-                                                        <line x1="12" y1="12" x2="12" y2="8"></line>
-                                                        <line x1="12" y1="12" x2="15" y2="13.8"></line>
-                                                    </svg>
-                                                </div>
-                                                <div>
-                                                    <div class="meta-label">Time</div>
-                                                    <div class="meta-value">{{ event.time }}</div>
-                                                </div>
-                                            </div>
-
-                                            <div class="event-meta-item event-meta-location">
-                                                <div class="meta-icon" aria-hidden="true">
-                                                    <svg viewBox="0 0 24 24">
-                                                        <path d="M12 21s-6-5.4-6-10.2A6 6 0 0 1 18 10.8C18 15.6 12 21 12 21z"></path>
-                                                        <circle cx="12" cy="10.5" r="2.3"></circle>
-                                                    </svg>
-                                                </div>
-                                                <div>
-                                                    <div class="meta-label">Location</div>
-                                                    <div class="meta-value">
-                                                        {% if event.venue_name %}
-                                                            <span class="venue-name">{{ event.venue_name }}</span>
-                                                        {% endif %}
-                                                        <span>{{ event.location }}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="event-lower-layout journey-piece" style="--journey-order: 2;">
-                                        <section class="attire-editorial" aria-label="Attire guidance">
-                                            <div class="attire-visual">
-                                                {% if event.attire_image %}
-                                                    <img
-                                                        src="{{ url_for('static', filename=event.attire_image) }}"
-                                                        alt="{{ event.title }} attire guide"
-                                                        class="attire-guide-image"
-                                                    >
-                                                {% endif %}
-                                            </div>
-
-                                            <div class="attire-copy">
-                                                <span class="attire-guide-label">Attire Guide</span>
-                                                <strong>{{ event.attire_heading if event.attire_heading else "Attire" }}</strong>
-
-                                                {% if event.attire_subheading %}
-                                                    <small>{{ event.attire_subheading }}</small>
-                                                {% endif %}
-
-                                                <p>{{ event.attire }}</p>
-                                            </div>
-                                        </section>
-
-                                        <section class="event-actions-block" aria-label="Calendar and directions">
-                                            <p class="event-actions-label">Plan Your Visit</p>
-
-                                            <div class="event-actions">
-                                                <a
-                                                    href="{{ event.calendar_link }}"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    class="event-action-link"
-                                                >
-                                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                                                        <line x1="3" y1="9" x2="21" y2="9"></line>
-                                                        <line x1="8" y1="3.5" x2="8" y2="7"></line>
-                                                        <line x1="16" y1="3.5" x2="16" y2="7"></line>
-                                                    </svg>
-                                                    <span>Google Calendar</span>
-                                                </a>
-
-                                                <a
-                                                    href="{{ url_for('apple_calendar_event', event_id=event.id) }}"
-                                                    class="event-action-link"
-                                                >
-                                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                                                        <line x1="3" y1="9" x2="21" y2="9"></line>
-                                                        <path d="M8 13h3v3H8z"></path>
-                                                        <path d="M13 13h3v3h-3z"></path>
-                                                    </svg>
-                                                    <span>Apple Calendar</span>
-                                                </a>
-
-                                                <a
-                                                    href="{{ event.directions_link }}"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    class="event-action-link event-directions-link"
-                                                >
-                                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                                        <path d="M12 21s-6-5.4-6-10.2A6 6 0 0 1 18 10.8C18 15.6 12 21 12 21z"></path>
-                                                        <circle cx="12" cy="10.5" r="2.3"></circle>
-                                                    </svg>
-                                                    <span>Directions</span>
-                                                </a>
-                                            </div>
-                                        </section>
-                                    </div>
-                                </div>
-                            </section>
-
-                            <section class="event-rsvp-shell journey-piece" style="--journey-order: 3;" aria-label="RSVP for {{ event.title }}">
-                                {% if has_response %}
-                                    <div
-                                        id="confirmation-{{ event.id }}"
-                                        class="rsvp-confirmation
-                                            {% if saved.get('attending') == 'Yes' %}status-yes{% endif %}
-                                            {% if saved.get('attending') == 'No' %}status-no{% endif %}
-                                            {% if saved.get('attending') == 'Maybe' %}status-maybe{% endif %}
-                                        "
-                                    >
-                                        <span class="rsvp-seal" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24">
-                                                <path d="M4 7.5h16v10H4z"></path>
-                                                <path d="m4 8 8 6 8-6"></path>
-                                            </svg>
-                                        </span>
-
-                                        <div class="rsvp-status-copy">
-                                            <p class="rsvp-eyebrow">Your Response</p>
-                                            {% if saved.get("attending") == "Yes" %}
-                                                <h4>You’re Attending</h4>
-                                                <p>Attending · {{ saved.get("guest_count", 0) }} guest{% if saved.get("guest_count", 0) != 1 %}s{% endif %}</p>
-                                            {% elif saved.get("attending") == "No" %}
-                                                <h4>Unable to Attend</h4>
-                                                <p>Your response has been received.</p>
-                                            {% else %}
-                                                <h4>Response Pending</h4>
-                                                <p>Please update us when your plans are final.</p>
-                                            {% endif %}
-                                        </div>
-
-                                        <button
-                                            type="button"
-                                            class="edit-rsvp-btn"
-                                            onclick="toggleRsvpForm('{{ event.id }}')"
-                                            aria-controls="rsvp-form-{{ event.id }}"
-                                            aria-expanded="false"
-                                        >
-                                            <span>Edit Response</span>
-                                        </button>
-                                    </div>
-                                {% else %}
-                                    <div id="rsvp-summary-{{ event.id }}" class="rsvp-summary">
-                                        <span class="rsvp-seal" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24">
-                                                <path d="M4 7.5h16v10H4z"></path>
-                                                <path d="m4 8 8 6 8-6"></path>
-                                            </svg>
-                                        </span>
-
-                                        <div class="rsvp-status-copy">
-                                            <p class="rsvp-eyebrow">Your Response</p>
-                                            <h4>Not Yet Submitted</h4>
-                                            <p>Please let us know if you’ll be joining us.</p>
-                                        </div>
-
-                                        <button
-                                            type="button"
-                                            class="edit-rsvp-btn"
-                                            onclick="toggleRsvpForm('{{ event.id }}')"
-                                            aria-controls="rsvp-form-{{ event.id }}"
-                                            aria-expanded="false"
-                                        >
-                                            <span>RSVP Now</span>
-                                        </button>
-                                    </div>
-                                {% endif %}
-
-                                <form
-                                    id="rsvp-form-{{ event.id }}"
-                                    action="{{ url_for('save_rsvp') }}"
-                                    method="POST"
-                                    class="rsvp-form is-hidden"
-                                >
-                                    <div class="rsvp-form-heading">
-                                        <div>
-                                            <p class="rsvp-eyebrow">RSVP</p>
-                                            <span>Your Response</span>
-                                        </div>
-                                        <p>Please confirm your plans for this celebration.</p>
-                                    </div>
-
-                                    <input type="hidden" name="event_id" value="{{ event.id }}">
-
-                                    <div class="rsvp-grid">
-                                        <div class="rsvp-field">
-                                            <label for="attending-{{ event.id }}">Will you attend?</label>
-                                            <select id="attending-{{ event.id }}" name="attending" required>
-                                                <option value="">Select</option>
-                                                <option value="Yes" {% if saved.get("attending") == "Yes" %}selected{% endif %}>Yes</option>
-                                                <option value="No" {% if saved.get("attending") == "No" %}selected{% endif %}>No</option>
-                                                <option value="Maybe" {% if saved.get("attending") == "Maybe" %}selected{% endif %}>Maybe</option>
-                                            </select>
-
-                                            <p class="rsvp-helper">
-                                                If you select Maybe, please update your RSVP once your plans are final.
-                                            </p>
-                                        </div>
-
-                                        <div class="rsvp-field">
-                                            <label for="guest-count-{{ event.id }}">Total attending, including you</label>
-                                            <input
-                                                id="guest-count-{{ event.id }}"
-                                                type="number"
-                                                name="guest_count"
-                                                min="0"
-                                                max="{{ event.max_guests if event.max_guests is defined else guest.max_guests }}"
-                                                value="{{ saved.get('guest_count', 0) }}"
-                                            >
-                                        </div>
-                                    </div>
-
-                                    <div class="rsvp-field rsvp-notes-field">
-                                        <label for="notes-{{ event.id }}">Notes</label>
-                                        <textarea
-                                            id="notes-{{ event.id }}"
-                                            name="notes"
-                                            placeholder="Food restrictions, accessibility needs, or anything else we should know"
-                                        >{{ saved.get("notes", "") }}</textarea>
-                                    </div>
-
-                                    <div class="rsvp-form-actions">
-                                        <button
-                                            type="button"
-                                            class="rsvp-cancel-btn"
-                                            onclick="closeRsvpForm('{{ event.id }}')"
-                                        >
-                                            Cancel
-                                        </button>
-
-                                        <button type="submit" class="rsvp-btn">
-                                            <span>
-                                                {% if has_response %}
-                                                    Update RSVP
-                                                {% else %}
-                                                    Save RSVP
-                                                {% endif %}
-                                            </span>
-                                        </button>
-                                    </div>
-                                </form>
-                            </section>
-                        </article>
-                    {% endfor %}
-                </div>
-
-                {% if events|length > 1 %}
-                    <div class="journey-preview-rail schedule-reveal" aria-label="Choose another celebration">
                         {% for event in events %}
                             {% set event_key = event.id|string|lower %}
                             {% set event_title_key = event.title|string|lower %}
@@ -537,47 +199,348 @@
                             {% set is_reception = 'christian' in event_key or 'church' in event_key or 'reception' in event_key or 'christian' in event_title_key or 'church' in event_title_key or 'reception' in event_title_key %}
                             <button
                                 type="button"
-                                class="journey-preview
-                                    {% if loop.first %}is-active{% endif %}
-                                    {% if is_haldi %}preview-haldi{% endif %}
-                                    {% if is_hindu %}preview-hindu{% endif %}
-                                    {% if is_reception %}preview-christian{% endif %}
-                                "
+                                class="journey-stop {% if loop.first %}is-active{% endif %}"
                                 data-journey-target="{{ event.id }}"
                                 data-journey-index="{{ loop.index0 }}"
                                 aria-controls="journey-event-{{ event.id }}"
+                                aria-current="{% if loop.first %}step{% else %}false{% endif %}"
                             >
-                                <span class="journey-preview-shade" aria-hidden="true"></span>
-                                <span class="journey-preview-copy">
-                                    <small>{{ event.date }}</small>
-                                    <strong>
-                                        {% if is_haldi %}
-                                            Haldi
-                                        {% elif is_hindu %}
-                                            Telugu Wedding
-                                        {% elif is_reception %}
-                                            Wedding &amp; Reception
-                                        {% else %}
-                                            {{ event.title }}
-                                        {% endif %}
-                                    </strong>
-                                    <span>
-                                        {% if is_haldi %}
-                                            A joyful pre-wedding celebration
-                                        {% elif is_hindu %}
-                                            Traditional ceremony and blessings
-                                        {% elif is_reception %}
-                                            Ceremony, dinner, dancing, and celebration
-                                        {% else %}
-                                            Celebration details
-                                        {% endif %}
-                                    </span>
+                                <span class="journey-date">{{ event.short_date if event.short_date is defined else event.date }}</span>
+                                <span class="journey-dot" aria-hidden="true"></span>
+                                <span class="journey-name">
+                                    {% if is_haldi %}
+                                        Haldi
+                                    {% elif is_hindu %}
+                                        Telugu Wedding
+                                    {% elif is_reception %}
+                                        Wedding &amp; Reception
+                                    {% else %}
+                                        {{ event.title }}
+                                    {% endif %}
                                 </span>
-                                <span class="journey-preview-arrow" aria-hidden="true">›</span>
                             </button>
                         {% endfor %}
+                    </nav>
+
+                    <div class="event-stage schedule-reveal" aria-live="polite">
+                        {% for event in events %}
+                            {% set event_key = event.id|string|lower %}
+                            {% set event_title_key = event.title|string|lower %}
+                            {% set is_haldi = 'haldi' in event_key or 'haldi' in event_title_key %}
+                            {% set is_hindu = 'hindu' in event_key or 'telugu' in event_key or 'hindu' in event_title_key or 'telugu' in event_title_key %}
+                            {% set is_reception = 'christian' in event_key or 'church' in event_key or 'reception' in event_key or 'christian' in event_title_key or 'church' in event_title_key or 'reception' in event_title_key %}
+                            {% set saved = saved_rsvps.get(event.id, {}) %}
+                            {% set has_response = saved.get("attending") %}
+
+                            <article
+                                id="journey-event-{{ event.id }}"
+                                class="event-chapter journey-event
+                                    {% if loop.first %}is-active{% endif %}
+                                    {% if is_haldi %}event-haldi{% endif %}
+                                    {% if is_hindu %}event-hindu{% endif %}
+                                    {% if is_reception %}event-christian{% endif %}
+                                "
+                                data-event-id="{{ event.id }}"
+                                data-event-theme="{% if is_haldi %}haldi{% elif is_hindu %}hindu_wedding{% elif is_reception %}christian_wedding_reception{% else %}neutral{% endif %}"
+                                data-event-index="{{ loop.index0 }}"
+                                aria-labelledby="event-title-{{ event.id }}"
+                                aria-hidden="{% if loop.first %}false{% else %}true{% endif %}"
+                            >
+                                <section class="event-artwork">
+                                    <div class="event-artwork-shade" aria-hidden="true"></div>
+                                    <div class="event-light-orbit" aria-hidden="true"></div>
+
+                                    <div class="event-artwork-inner">
+                                        <div class="event-hero-grid">
+                                            <header class="event-title-block journey-piece" style="--journey-order: 0;">
+                                                <p class="event-date-line">{{ event.date }}</p>
+                                                <h3 id="event-title-{{ event.id }}">{{ event.title }}</h3>
+
+                                                {% if is_haldi %}
+                                                    <p class="event-kicker">A joyful pre-wedding celebration</p>
+                                                {% elif is_hindu %}
+                                                    <p class="event-kicker">Traditional ceremony and blessings</p>
+                                                {% elif is_reception %}
+                                                    <p class="event-kicker">Ceremony, dinner, dancing, and celebration</p>
+                                                {% endif %}
+
+                                                <span class="event-title-flourish" aria-hidden="true"></span>
+                                            </header>
+
+                                            <div class="event-meta-grid journey-piece" style="--journey-order: 1;" aria-label="Event details">
+                                                <div class="event-meta-item">
+                                                    <div class="meta-icon" aria-hidden="true">
+                                                        <svg viewBox="0 0 24 24">
+                                                            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                                                            <line x1="8" y1="3.5" x2="8" y2="7"></line>
+                                                            <line x1="16" y1="3.5" x2="16" y2="7"></line>
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <div class="meta-label">Date</div>
+                                                        <div class="meta-value">{{ event.date }}</div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="event-meta-item">
+                                                    <div class="meta-icon" aria-hidden="true">
+                                                        <svg viewBox="0 0 24 24">
+                                                            <circle cx="12" cy="12" r="8.5"></circle>
+                                                            <line x1="12" y1="12" x2="12" y2="8"></line>
+                                                            <line x1="12" y1="12" x2="15" y2="13.8"></line>
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <div class="meta-label">Time</div>
+                                                        <div class="meta-value">{{ event.time }}</div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="event-meta-item event-meta-location">
+                                                    <div class="meta-icon" aria-hidden="true">
+                                                        <svg viewBox="0 0 24 24">
+                                                            <path d="M12 21s-6-5.4-6-10.2A6 6 0 0 1 18 10.8C18 15.6 12 21 12 21z"></path>
+                                                            <circle cx="12" cy="10.5" r="2.3"></circle>
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <div class="meta-label">Location</div>
+                                                        <div class="meta-value">
+                                                            {% if event.venue_name %}
+                                                                <span class="venue-name">{{ event.venue_name }}</span>
+                                                            {% endif %}
+                                                            <span>{{ event.location }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="event-lower-layout journey-piece" style="--journey-order: 2;">
+                                            <section class="attire-editorial" aria-label="Attire guidance">
+                                                <div class="attire-visual">
+                                                    {% if event.attire_image %}
+                                                        <img
+                                                            src="{{ url_for('static', filename=event.attire_image) }}"
+                                                            alt="{{ event.title }} attire guide"
+                                                            class="attire-guide-image"
+                                                        >
+                                                    {% endif %}
+                                                </div>
+
+                                                <div class="attire-copy">
+                                                    <span class="attire-guide-label">Attire Guide</span>
+                                                    <strong>{{ event.attire_heading if event.attire_heading else "Attire" }}</strong>
+
+                                                    {% if event.attire_subheading %}
+                                                        <small>{{ event.attire_subheading }}</small>
+                                                    {% endif %}
+
+                                                    <p>{{ event.attire }}</p>
+                                                </div>
+                                            </section>
+
+                                            <aside class="event-utility-dock" aria-label="Planning and RSVP">
+                                                <section class="event-actions-block" aria-label="Calendar and directions">
+                                                    <p class="event-actions-label">Plan Your Visit</p>
+
+                                                    <div class="event-actions">
+                                                        <a
+                                                            href="{{ event.calendar_link }}"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            class="event-action-link"
+                                                        >
+                                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                                                <line x1="3" y1="9" x2="21" y2="9"></line>
+                                                                <line x1="8" y1="3.5" x2="8" y2="7"></line>
+                                                                <line x1="16" y1="3.5" x2="16" y2="7"></line>
+                                                            </svg>
+                                                            <span>Google Calendar</span>
+                                                        </a>
+
+                                                        <a
+                                                            href="{{ url_for('apple_calendar_event', event_id=event.id) }}"
+                                                            class="event-action-link"
+                                                        >
+                                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                                                <line x1="3" y1="9" x2="21" y2="9"></line>
+                                                                <path d="M8 13h3v3H8z"></path>
+                                                                <path d="M13 13h3v3h-3z"></path>
+                                                            </svg>
+                                                            <span>Apple Calendar</span>
+                                                        </a>
+
+                                                        <a
+                                                            href="{{ event.directions_link }}"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            class="event-action-link event-directions-link"
+                                                        >
+                                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                                <path d="M12 21s-6-5.4-6-10.2A6 6 0 0 1 18 10.8C18 15.6 12 21 12 21z"></path>
+                                                                <circle cx="12" cy="10.5" r="2.3"></circle>
+                                                            </svg>
+                                                            <span>Directions</span>
+                                                        </a>
+                                                    </div>
+                                                </section>
+
+                                                <section class="event-rsvp-shell journey-piece" style="--journey-order: 3;" aria-label="RSVP for {{ event.title }}">
+                                                    {% if has_response %}
+                                                        <div
+                                                            id="confirmation-{{ event.id }}"
+                                                            class="rsvp-confirmation
+                                                                {% if saved.get('attending') == 'Yes' %}status-yes{% endif %}
+                                                                {% if saved.get('attending') == 'No' %}status-no{% endif %}
+                                                                {% if saved.get('attending') == 'Maybe' %}status-maybe{% endif %}
+                                                            "
+                                                        >
+                                                            <span class="rsvp-seal" aria-hidden="true">
+                                                                <svg viewBox="0 0 24 24">
+                                                                    <path d="M4 7.5h16v10H4z"></path>
+                                                                    <path d="m4 8 8 6 8-6"></path>
+                                                                </svg>
+                                                            </span>
+
+                                                            <div class="rsvp-status-copy">
+                                                                <p class="rsvp-eyebrow">Your Response</p>
+                                                                {% if saved.get("attending") == "Yes" %}
+                                                                    <h4>You’re Attending</h4>
+                                                                    <p>Attending · {{ saved.get("guest_count", 0) }} guest{% if saved.get("guest_count", 0) != 1 %}s{% endif %}</p>
+                                                                {% elif saved.get("attending") == "No" %}
+                                                                    <h4>Unable to Attend</h4>
+                                                                    <p>Your response has been received.</p>
+                                                                {% else %}
+                                                                    <h4>Response Pending</h4>
+                                                                    <p>Please update us when your plans are final.</p>
+                                                                {% endif %}
+                                                            </div>
+
+                                                            <button
+                                                                type="button"
+                                                                class="edit-rsvp-btn"
+                                                                onclick="toggleRsvpForm('{{ event.id }}')"
+                                                                aria-controls="rsvp-form-{{ event.id }}"
+                                                                aria-expanded="false"
+                                                            >
+                                                                <span>Edit Response</span>
+                                                            </button>
+                                                        </div>
+                                                    {% else %}
+                                                        <div id="rsvp-summary-{{ event.id }}" class="rsvp-summary">
+                                                            <span class="rsvp-seal" aria-hidden="true">
+                                                                <svg viewBox="0 0 24 24">
+                                                                    <path d="M4 7.5h16v10H4z"></path>
+                                                                    <path d="m4 8 8 6 8-6"></path>
+                                                                </svg>
+                                                            </span>
+
+                                                            <div class="rsvp-status-copy">
+                                                                <p class="rsvp-eyebrow">Your Response</p>
+                                                                <h4>Not Yet Submitted</h4>
+                                                                <p>Please let us know if you’ll be joining us.</p>
+                                                            </div>
+
+                                                            <button
+                                                                type="button"
+                                                                class="edit-rsvp-btn"
+                                                                onclick="toggleRsvpForm('{{ event.id }}')"
+                                                                aria-controls="rsvp-form-{{ event.id }}"
+                                                                aria-expanded="false"
+                                                            >
+                                                                <span>RSVP Now</span>
+                                                            </button>
+                                                        </div>
+                                                    {% endif %}
+
+                                                    <form
+                                                        id="rsvp-form-{{ event.id }}"
+                                                        action="{{ url_for('save_rsvp') }}"
+                                                        method="POST"
+                                                        class="rsvp-form is-hidden"
+                                                    >
+                                                        <div class="rsvp-form-heading">
+                                                            <div>
+                                                                <p class="rsvp-eyebrow">RSVP</p>
+                                                                <span>Your Response</span>
+                                                            </div>
+                                                            <p>Please confirm your plans for this celebration.</p>
+                                                        </div>
+
+                                                        <input type="hidden" name="event_id" value="{{ event.id }}">
+
+                                                        <div class="rsvp-grid">
+                                                            <div class="rsvp-field">
+                                                                <label for="attending-{{ event.id }}">Will you attend?</label>
+                                                                <select id="attending-{{ event.id }}" name="attending" required>
+                                                                    <option value="">Select</option>
+                                                                    <option value="Yes" {% if saved.get("attending") == "Yes" %}selected{% endif %}>Yes</option>
+                                                                    <option value="No" {% if saved.get("attending") == "No" %}selected{% endif %}>No</option>
+                                                                    <option value="Maybe" {% if saved.get("attending") == "Maybe" %}selected{% endif %}>Maybe</option>
+                                                                </select>
+
+                                                                <p class="rsvp-helper">
+                                                                    If you select Maybe, please update your RSVP once your plans are final.
+                                                                </p>
+                                                            </div>
+
+                                                            <div class="rsvp-field">
+                                                                <label for="guest-count-{{ event.id }}">Total attending, including you</label>
+                                                                <input
+                                                                    id="guest-count-{{ event.id }}"
+                                                                    type="number"
+                                                                    name="guest_count"
+                                                                    min="0"
+                                                                    max="{{ event.max_guests if event.max_guests is defined else guest.max_guests }}"
+                                                                    value="{{ saved.get('guest_count', 0) }}"
+                                                                >
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="rsvp-field rsvp-notes-field">
+                                                            <label for="notes-{{ event.id }}">Notes</label>
+                                                            <textarea
+                                                                id="notes-{{ event.id }}"
+                                                                name="notes"
+                                                                placeholder="Food restrictions, accessibility needs, or anything else we should know"
+                                                            >{{ saved.get("notes", "") }}</textarea>
+                                                        </div>
+
+                                                        <div class="rsvp-form-actions">
+                                                            <button
+                                                                type="button"
+                                                                class="rsvp-cancel-btn"
+                                                                onclick="closeRsvpForm('{{ event.id }}')"
+                                                            >
+                                                                Cancel
+                                                            </button>
+
+                                                            <button type="submit" class="rsvp-btn">
+                                                                <span>
+                                                                    {% if has_response %}
+                                                                        Update RSVP
+                                                                    {% else %}
+                                                                        Save RSVP
+                                                                    {% endif %}
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </section>
+                                            </aside>
+                                        </div>
+                                    </div>
+                                </section>
+                            </article>
+                        {% endfor %}
                     </div>
-                {% endif %}
+
+                    <p class="journey-gesture-hint" aria-hidden="true">Swipe or choose a day above to continue the journey</p>
+                </div>
             </div>
         </section>
 
@@ -1053,7 +1016,8 @@
         const journeyPanels = Array.from(document.querySelectorAll(".journey-event"));
         const journeyControls = Array.from(document.querySelectorAll("[data-journey-target]"));
         const journeyStops = Array.from(document.querySelectorAll(".journey-stop"));
-        const journeyPreviews = Array.from(document.querySelectorAll(".journey-preview"));
+        const journeyPreviews = [];
+        const scheduleBackgrounds = Array.from(document.querySelectorAll(".schedule-bg[data-background-theme]"));
         const journeyStage = document.querySelector(".event-stage");
         let activeJourneyEventId = journeyPanels.find(function (panel) {
             return panel.classList.contains("is-active");
@@ -1088,6 +1052,11 @@
                 const activePanel = journeyPanels[index];
                 const theme = activePanel?.dataset.eventTheme || "neutral";
                 scheduleTab.setAttribute("data-journey-theme", theme);
+                document.body.setAttribute("data-schedule-theme", theme);
+
+                scheduleBackgrounds.forEach(function (layer) {
+                    layer.classList.toggle("is-active", layer.dataset.backgroundTheme === theme);
+                });
             }
         }
 
@@ -1149,10 +1118,6 @@
                 return stop.dataset.journeyTarget === eventId;
             });
 
-            const activePreview = journeyPreviews.find(function (preview) {
-                return preview.dataset.journeyTarget === eventId;
-            });
-
             if (window.innerWidth <= 700) {
                 if (activeStop) {
                     activeStop.scrollIntoView({
@@ -1162,13 +1127,6 @@
                     });
                 }
 
-                if (activePreview) {
-                    activePreview.scrollIntoView({
-                        behavior: settings.instant ? "auto" : "smooth",
-                        block: "nearest",
-                        inline: "center"
-                    });
-                }
             }
 
             if (settings.scroll && journeyStage) {
@@ -1190,6 +1148,40 @@
 
         if (scheduleTab && journeyPanels.length) {
             activateJourneyEvent(activeJourneyEventId, { instant: true });
+
+            let journeyTouchStartX = 0;
+            let journeyTouchStartY = 0;
+
+            if (journeyStage) {
+                journeyStage.addEventListener("touchstart", function (event) {
+                    const touch = event.changedTouches[0];
+                    journeyTouchStartX = touch.clientX;
+                    journeyTouchStartY = touch.clientY;
+                }, { passive: true });
+
+                journeyStage.addEventListener("touchend", function (event) {
+                    const touch = event.changedTouches[0];
+                    const deltaX = touch.clientX - journeyTouchStartX;
+                    const deltaY = touch.clientY - journeyTouchStartY;
+
+                    if (Math.abs(deltaX) < 54 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+                        return;
+                    }
+
+                    const activeIndex = journeyPanels.findIndex(function (panel) {
+                        return panel.dataset.eventId === activeJourneyEventId;
+                    });
+                    const direction = deltaX < 0 ? 1 : -1;
+                    const nextIndex = Math.min(
+                        journeyPanels.length - 1,
+                        Math.max(0, activeIndex + direction)
+                    );
+
+                    if (nextIndex !== activeIndex) {
+                        activateJourneyEvent(journeyPanels[nextIndex].dataset.eventId, { scroll: false });
+                    }
+                }, { passive: true });
+            }
 
             scheduleTab.addEventListener("keydown", function (event) {
                 if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
