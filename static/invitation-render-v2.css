@@ -1,9 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600;1,700&family=Manrope:wght@400;500;600;700&display=swap");
 
 /* ===================================================== */
-/* INVITATION PAGE RESET                                 */
-/* This page no longer depends on style.css               */
+/* PRIVATE INVITATION — FINAL CLEAN VERSION V2           */
+/* Higher-scoring refinement + more aggressive transparency */
+/* Scoped only to body.invitation-render-v2              */
 /* ===================================================== */
+
+/* ----------------------------------------------------- */
+/* PAGE RESET                                             */
+/* ----------------------------------------------------- */
 
 *,
 *::before,
@@ -31,41 +36,12 @@ button {
     -webkit-appearance: none;
 }
 
-.btn-spinner {
-    display: none;
-    width: 16px;
-    height: 16px;
-
-    border: 2px solid rgba(255, 242, 210, 0.32);
-    border-top-color: var(--invite-gold-bright);
-    border-radius: 50%;
-
-    animation: invitation-spinner 0.75s linear infinite;
-}
-
-.open-invitation-btn.is-loading .btn-spinner {
-    display: inline-block;
-}
-
-@keyframes invitation-spinner {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-
-/* ===================================================== */
-/* PRIVATE INVITATION — FINAL CLEAN VERSION              */
-/* Scoped only to body.invitation-render-v2              */
-/* No stacked overrides or duplicate desktop selectors   */
-/* ===================================================== */
-
 body.invitation-render-v2 {
     --invite-gold: #d8aa4f;
     --invite-gold-bright: #f2c96e;
     --invite-cream: #fff1d8;
-    --invite-copy: rgba(255, 238, 214, 0.84);
-    --invite-muted: rgba(232, 218, 200, 0.70);
+    --invite-copy: rgba(255, 238, 214, 0.88);
+    --invite-muted: rgba(239, 227, 208, 0.78);
 
     min-height: 100vh;
     display: flex;
@@ -93,8 +69,8 @@ body.invitation-render-v2::before {
 
     filter:
         blur(1px)
-        brightness(0.80)
-        saturate(1.02)
+        brightness(0.82)
+        saturate(1.03)
         contrast(1.02);
 
     transform: scale(1.015);
@@ -109,15 +85,15 @@ body.invitation-render-v2::after {
     background:
         radial-gradient(
             circle at 50% 42%,
-            rgba(255, 211, 133, 0.05) 0%,
-            rgba(255, 211, 133, 0.015) 36%,
+            rgba(255, 211, 133, 0.045) 0%,
+            rgba(255, 211, 133, 0.012) 36%,
             rgba(255, 211, 133, 0) 66%
         ),
         linear-gradient(
             135deg,
-            rgba(122, 73, 31, 0.05) 0%,
-            rgba(34, 29, 26, 0.05) 55%,
-            rgba(8, 12, 12, 0.22) 100%
+            rgba(122, 73, 31, 0.04) 0%,
+            rgba(34, 29, 26, 0.04) 55%,
+            rgba(8, 12, 12, 0.19) 100%
         );
 }
 
@@ -131,8 +107,8 @@ body.invitation-render-v2 .login-container {
     overflow: hidden;
 
     width: min(620px, 92vw);
-    min-height: 580px;
-    padding: 58px 58px 34px;
+    min-height: 562px;
+    padding: 56px 58px 28px;
 
     display: flex;
     flex-direction: column;
@@ -140,56 +116,58 @@ body.invitation-render-v2 .login-container {
     justify-content: flex-start;
 
     text-align: center;
+    transform: translateY(-7px);
 
+    /* More aggressive transparency while retaining readability */
     background:
         radial-gradient(
             circle at 14% 4%,
-            rgba(201, 131, 57, 0.22) 0%,
-            rgba(201, 131, 57, 0.05) 34%,
-            rgba(201, 131, 57, 0) 62%
+            rgba(201, 131, 57, 0.18) 0%,
+            rgba(201, 131, 57, 0.04) 35%,
+            rgba(201, 131, 57, 0) 63%
         ),
         radial-gradient(
             circle at 52% 57%,
-            rgba(181, 116, 53, 0.06) 0%,
-            rgba(181, 116, 53, 0.015) 39%,
-            rgba(181, 116, 53, 0) 68%
+            rgba(181, 116, 53, 0.05) 0%,
+            rgba(181, 116, 53, 0.012) 40%,
+            rgba(181, 116, 53, 0) 69%
         ),
         radial-gradient(
             circle at 96% 94%,
-            rgba(56, 78, 69, 0.06) 0%,
-            rgba(56, 78, 69, 0.012) 43%,
+            rgba(56, 78, 69, 0.05) 0%,
+            rgba(56, 78, 69, 0.010) 43%,
             rgba(56, 78, 69, 0) 70%
         ),
         linear-gradient(
             145deg,
-            rgba(73, 50, 33, 0.52) 0%,
-            rgba(43, 34, 31, 0.57) 47%,
-            rgba(20, 24, 24, 0.61) 100%
+            rgba(73, 50, 33, 0.43) 0%,
+            rgba(43, 34, 31, 0.47) 47%,
+            rgba(20, 24, 24, 0.51) 100%
         );
 
     border: none;
     border-radius: 34px;
 
     backdrop-filter:
-        blur(26px)
-        saturate(132%)
-        brightness(1.02);
+        blur(29px)
+        saturate(136%)
+        brightness(1.03);
 
     -webkit-backdrop-filter:
-        blur(26px)
-        saturate(132%)
-        brightness(1.02);
+        blur(29px)
+        saturate(136%)
+        brightness(1.03);
 
     box-shadow:
-        0 38px 96px rgba(7, 10, 10, 0.35),
-        0 14px 36px rgba(18, 13, 10, 0.22),
-        inset 0 1px 0 rgba(255, 231, 181, 0.16),
-        inset 1px 0 0 rgba(255, 215, 135, 0.06),
-        inset -1px 0 0 rgba(8, 11, 11, 0.18),
-        inset 0 -1px 0 rgba(7, 10, 10, 0.28);
+        0 34px 84px rgba(7, 10, 10, 0.30),
+        0 12px 30px rgba(18, 13, 10, 0.18),
+        inset 0 1px 0 rgba(255, 231, 181, 0.14),
+        inset 1px 0 0 rgba(255, 215, 135, 0.05),
+        inset -1px 0 0 rgba(8, 11, 11, 0.15),
+        inset 0 -1px 0 rgba(7, 10, 10, 0.24);
 }
 
-/* Soft refractive rim without a visible external border */
+/* Soft refractive rim without a hard external border */
 body.invitation-render-v2 .login-container::before {
     content: "";
     position: absolute;
@@ -203,14 +181,14 @@ body.invitation-render-v2 .login-container::before {
     background:
         linear-gradient(
             138deg,
-            rgba(255, 230, 166, 0.88) 0%,
-            rgba(255, 213, 127, 0.25) 22%,
-            rgba(255, 255, 255, 0.025) 49%,
-            rgba(166, 119, 51, 0.12) 76%,
-            rgba(255, 216, 128, 0.42) 100%
+            rgba(255, 230, 166, 0.80) 0%,
+            rgba(255, 213, 127, 0.18) 22%,
+            rgba(255, 255, 255, 0.020) 49%,
+            rgba(166, 119, 51, 0.10) 76%,
+            rgba(255, 216, 128, 0.34) 100%
         );
 
-    opacity: 0.55;
+    opacity: 0.48;
 
     -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
@@ -233,14 +211,14 @@ body.invitation-render-v2 .login-container::after {
     background:
         radial-gradient(
             ellipse 70% 28% at 50% 0%,
-            rgba(255, 224, 163, 0.08) 0%,
-            rgba(255, 224, 163, 0.018) 58%,
+            rgba(255, 224, 163, 0.06) 0%,
+            rgba(255, 224, 163, 0.015) 58%,
             rgba(255, 224, 163, 0) 100%
         ),
         radial-gradient(
             circle 240px at 50% 58%,
-            rgba(211, 145, 67, 0.045) 0%,
-            rgba(211, 145, 67, 0.012) 53%,
+            rgba(211, 145, 67, 0.035) 0%,
+            rgba(211, 145, 67, 0.010) 53%,
             rgba(211, 145, 67, 0) 78%
         );
 }
@@ -280,7 +258,6 @@ body.invitation-render-v2 .login-private-line::after {
 
 /* ----------------------------------------------------- */
 /* COUPLE NAME                                            */
-/* One line when it fits, exactly three lines otherwise   */
 /* ----------------------------------------------------- */
 
 body.invitation-render-v2 .login-title {
@@ -306,7 +283,7 @@ body.invitation-render-v2 .login-title {
 
     text-shadow:
         0 1px 0 rgba(255, 255, 255, 0.10),
-        0 0 22px rgba(229, 177, 88, 0.13);
+        0 0 20px rgba(229, 177, 88, 0.12);
 }
 
 body.invitation-render-v2 .login-title > span {
@@ -321,10 +298,8 @@ body.invitation-render-v2 .couple-name:first-child {
 
 body.invitation-render-v2 .couple-ampersand {
     margin: 0 0.085em;
-
     font-size: 0.74em;
     line-height: 1;
-
     transform: translateY(-0.025em);
 }
 
@@ -350,7 +325,6 @@ body.invitation-render-v2 .login-title.is-stacked .couple-ampersand {
 body.invitation-render-v2 .login-title.is-stacked .couple-ampersand {
     margin-top: 0.08em;
     margin-bottom: 0.07em;
-
     font-size: 0.58em;
     transform: none;
 }
@@ -361,23 +335,22 @@ body.invitation-render-v2 .login-title.is-stacked .couple-ampersand {
 
 body.invitation-render-v2 .login-divider {
     position: relative;
-
     width: min(100%, 260px);
     height: 1px;
-    margin: 34px auto 38px;
+    margin: 34px auto 36px;
 
     background:
         linear-gradient(
             90deg,
             rgba(216, 170, 79, 0) 0%,
-            rgba(216, 170, 79, 0.38) 27%,
-            rgba(242, 201, 110, 0.97) 50%,
-            rgba(216, 170, 79, 0.38) 73%,
+            rgba(216, 170, 79, 0.34) 27%,
+            rgba(242, 201, 110, 0.93) 50%,
+            rgba(216, 170, 79, 0.34) 73%,
             rgba(216, 170, 79, 0) 100%
         );
 
     box-shadow:
-        0 0 11px rgba(226, 177, 83, 0.28);
+        0 0 10px rgba(226, 177, 83, 0.24);
 }
 
 body.invitation-render-v2 .login-divider::before {
@@ -386,7 +359,7 @@ body.invitation-render-v2 .login-divider::before {
     top: 50%;
     left: 50%;
 
-    width: 48px;
+    width: 46px;
     height: 8px;
 
     border-radius: 50%;
@@ -395,8 +368,8 @@ body.invitation-render-v2 .login-divider::before {
     background:
         radial-gradient(
             ellipse,
-            rgba(255, 220, 139, 0.64) 0%,
-            rgba(236, 184, 86, 0.18) 43%,
+            rgba(255, 220, 139, 0.58) 0%,
+            rgba(236, 184, 86, 0.16) 43%,
             rgba(236, 184, 86, 0) 76%
         );
 
@@ -416,7 +389,7 @@ body.invitation-render-v2 .login-divider::after {
 body.invitation-render-v2 .login-subtitle {
     width: 100%;
     max-width: 500px;
-    margin: 0 auto 31px;
+    margin: 0 auto 27px;
 
     color: var(--invite-copy);
 
@@ -424,7 +397,7 @@ body.invitation-render-v2 .login-subtitle {
     font-size: 16px;
     font-weight: 400;
     letter-spacing: 0;
-    line-height: 1.72;
+    line-height: 1.70;
     text-transform: none;
 }
 
@@ -435,10 +408,9 @@ body.invitation-render-v2 .welcome-invitation {
 }
 
 body.invitation-render-v2 .welcome-name {
-    margin-bottom: 19px;
+    margin-bottom: 17px;
 
     color: var(--invite-cream);
-
     font-family: "Cormorant Garamond", Georgia, serif;
     font-size: 25px;
     font-style: italic;
@@ -453,7 +425,7 @@ body.invitation-render-v2 .welcome-message {
 
 body.invitation-render-v2 .welcome-invitation {
     max-width: 470px;
-    margin: 3px auto 0;
+    margin: 2px auto 0;
 }
 
 body.invitation-render-v2 .welcome-heart {
@@ -468,7 +440,7 @@ body.invitation-render-v2 .open-invitation-btn {
     position: relative;
     overflow: hidden;
 
-    width: min(100%, 430px);
+    width: min(100%, 432px);
     min-height: 56px;
     margin: 0 auto;
     padding: 16px 25px;
@@ -481,35 +453,35 @@ body.invitation-render-v2 .open-invitation-btn {
     background:
         radial-gradient(
             circle at 50% -34%,
-            rgba(255, 217, 138, 0.06) 0%,
-            rgba(255, 217, 138, 0.012) 46%,
+            rgba(255, 217, 138, 0.05) 0%,
+            rgba(255, 217, 138, 0.010) 46%,
             rgba(255, 217, 138, 0) 74%
         ),
         linear-gradient(
             180deg,
-            rgba(83, 65, 51, 0.34) 0%,
-            rgba(48, 43, 39, 0.42) 52%,
-            rgba(27, 29, 28, 0.50) 100%
+            rgba(83, 65, 51, 0.30) 0%,
+            rgba(48, 43, 39, 0.38) 52%,
+            rgba(27, 29, 28, 0.46) 100%
         );
 
     color: var(--invite-cream);
 
-    border: 1px solid rgba(225, 176, 79, 0.86);
+    border: 1px solid rgba(225, 176, 79, 0.82);
     border-radius: 999px;
 
     backdrop-filter:
-        blur(17px)
-        saturate(130%);
+        blur(18px)
+        saturate(132%);
 
     -webkit-backdrop-filter:
-        blur(17px)
-        saturate(130%);
+        blur(18px)
+        saturate(132%);
 
     box-shadow:
-        0 16px 34px rgba(5, 8, 8, 0.32),
-        0 0 22px rgba(216, 170, 79, 0.07),
-        inset 0 1px 0 rgba(255, 233, 185, 0.12),
-        inset 0 -1px 0 rgba(6, 9, 9, 0.42);
+        0 14px 30px rgba(5, 8, 8, 0.29),
+        0 0 20px rgba(216, 170, 79, 0.06),
+        inset 0 1px 0 rgba(255, 233, 185, 0.10),
+        inset 0 -1px 0 rgba(6, 9, 9, 0.38);
 
     font-family: "Manrope", Arial, sans-serif;
     font-size: 14px;
@@ -535,14 +507,14 @@ body.invitation-render-v2 .open-invitation-btn::before {
     right: 16%;
     z-index: 0;
 
-    height: 18%;
+    height: 16%;
     border-radius: 999px;
     pointer-events: none;
 
     background:
         linear-gradient(
             180deg,
-            rgba(255, 231, 181, 0.07),
+            rgba(255, 231, 181, 0.05),
             rgba(255, 231, 181, 0)
         );
 }
@@ -563,7 +535,7 @@ body.invitation-render-v2 .open-invitation-btn::after {
     background:
         radial-gradient(
             ellipse,
-            rgba(214, 165, 75, 0.055) 0%,
+            rgba(214, 165, 75, 0.045) 0%,
             rgba(214, 165, 75, 0) 70%
         );
 
@@ -579,24 +551,24 @@ body.invitation-render-v2 .open-invitation-btn:hover {
     background:
         radial-gradient(
             circle at 50% -34%,
-            rgba(255, 219, 137, 0.12) 0%,
-            rgba(255, 219, 137, 0.025) 47%,
+            rgba(255, 219, 137, 0.10) 0%,
+            rgba(255, 219, 137, 0.020) 47%,
             rgba(255, 219, 137, 0) 74%
         ),
         linear-gradient(
             180deg,
-            rgba(106, 78, 54, 0.46) 0%,
-            rgba(60, 50, 43, 0.52) 52%,
-            rgba(29, 31, 29, 0.60) 100%
+            rgba(106, 78, 54, 0.40) 0%,
+            rgba(60, 50, 43, 0.47) 52%,
+            rgba(29, 31, 29, 0.55) 100%
         );
 
-    border-color: rgba(245, 201, 105, 1);
+    border-color: rgba(245, 201, 105, 0.96);
 
     box-shadow:
-        0 18px 40px rgba(5, 8, 8, 0.33),
-        0 0 27px rgba(217, 170, 77, 0.10),
-        inset 0 1px 0 rgba(255, 233, 185, 0.17),
-        inset 0 -1px 0 rgba(6, 9, 9, 0.40);
+        0 16px 36px rgba(5, 8, 8, 0.31),
+        0 0 24px rgba(217, 170, 77, 0.09),
+        inset 0 1px 0 rgba(255, 233, 185, 0.14),
+        inset 0 -1px 0 rgba(6, 9, 9, 0.36);
 
     transform: translateY(-2px);
 }
@@ -606,12 +578,12 @@ body.invitation-render-v2 .open-invitation-btn:active {
 }
 
 body.invitation-render-v2 .open-invitation-btn:focus-visible {
-    outline: 2px solid rgba(255, 244, 215, 0.98);
+    outline: 2px solid rgba(255, 244, 215, 0.96);
     outline-offset: 4px;
 
     box-shadow:
-        0 0 0 5px rgba(216, 170, 79, 0.27),
-        0 16px 36px rgba(5, 8, 8, 0.31);
+        0 0 0 5px rgba(216, 170, 79, 0.24),
+        0 16px 36px rgba(5, 8, 8, 0.29);
 }
 
 body.invitation-render-v2 .open-invitation-btn:disabled {
@@ -619,8 +591,25 @@ body.invitation-render-v2 .open-invitation-btn:disabled {
 }
 
 body.invitation-render-v2 .btn-spinner {
-    border-color: rgba(255, 242, 210, 0.32);
+    display: none;
+    width: 16px;
+    height: 16px;
+
+    border: 2px solid rgba(255, 242, 210, 0.32);
     border-top-color: var(--invite-gold-bright);
+    border-radius: 50%;
+
+    animation: invitation-spinner 0.75s linear infinite;
+}
+
+body.invitation-render-v2 .open-invitation-btn.is-loading .btn-spinner {
+    display: inline-block;
+}
+
+@keyframes invitation-spinner {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ----------------------------------------------------- */
@@ -629,13 +618,12 @@ body.invitation-render-v2 .btn-spinner {
 
 body.invitation-render-v2 .small-text {
     width: 100%;
-    max-width: 480px;
-    margin: 25px auto 0;
+    max-width: 490px;
+    margin: 22px auto 0;
 
     color: var(--invite-muted);
-
     font-family: "Manrope", Arial, sans-serif;
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 500;
     line-height: 1.55;
     text-transform: none;
@@ -648,8 +636,9 @@ body.invitation-render-v2 .small-text {
 @media (max-width: 900px) {
     body.invitation-render-v2 .login-container {
         width: min(590px, 92vw);
-        min-height: 570px;
-        padding: 54px 48px 38px;
+        min-height: 552px;
+        padding: 52px 46px 28px;
+        transform: translateY(-6px);
     }
 
     body.invitation-render-v2 .login-title {
@@ -669,8 +658,8 @@ body.invitation-render-v2 .small-text {
     body.invitation-render-v2::before {
         filter:
             blur(1px)
-            brightness(0.72)
-            saturate(1)
+            brightness(0.74)
+            saturate(1.01)
             contrast(1.03);
 
         transform: scale(1.015);
@@ -679,43 +668,44 @@ body.invitation-render-v2 .small-text {
     body.invitation-render-v2 .login-container {
         width: 100%;
         max-width: 490px;
-        min-height: 550px;
-        padding: 43px 24px 30px;
+        min-height: 542px;
+        padding: 42px 24px 28px;
+        transform: none;
 
+        /* Mobile needs slightly more opacity to preserve readability */
         background:
             radial-gradient(
                 circle at 14% 4%,
-                rgba(201, 131, 57, 0.23) 0%,
-                rgba(201, 131, 57, 0.055) 35%,
+                rgba(201, 131, 57, 0.20) 0%,
+                rgba(201, 131, 57, 0.050) 35%,
                 rgba(201, 131, 57, 0) 63%
             ),
             radial-gradient(
                 circle at 52% 57%,
-                rgba(181, 116, 53, 0.055) 0%,
+                rgba(181, 116, 53, 0.05) 0%,
                 rgba(181, 116, 53, 0.012) 40%,
                 rgba(181, 116, 53, 0) 69%
             ),
             linear-gradient(
                 145deg,
-                rgba(73, 50, 33, 0.59) 0%,
-                rgba(43, 34, 31, 0.64) 47%,
-                rgba(20, 24, 24, 0.68) 100%
+                rgba(73, 50, 33, 0.50) 0%,
+                rgba(43, 34, 31, 0.55) 47%,
+                rgba(20, 24, 24, 0.59) 100%
             );
 
         backdrop-filter:
-            blur(23px)
-            saturate(128%)
-            brightness(1.01);
+            blur(24px)
+            saturate(130%)
+            brightness(1.02);
 
         -webkit-backdrop-filter:
-            blur(23px)
-            saturate(128%)
-            brightness(1.01);
+            blur(24px)
+            saturate(130%)
+            brightness(1.02);
     }
 
     body.invitation-render-v2 .login-private-line {
         margin-bottom: 23px;
-
         font-size: 10px;
         letter-spacing: 3.1px;
     }
@@ -731,20 +721,18 @@ body.invitation-render-v2 .small-text {
 
     body.invitation-render-v2 .login-divider {
         width: min(100%, 220px);
-        margin: 30px auto 33px;
+        margin: 29px auto 31px;
     }
 
     body.invitation-render-v2 .login-subtitle {
         max-width: 400px;
-        margin-bottom: 28px;
-
+        margin-bottom: 26px;
         font-size: 14px;
         line-height: 1.70;
     }
 
     body.invitation-render-v2 .welcome-name {
         margin-bottom: 16px;
-
         font-size: 22px;
     }
 
@@ -756,14 +744,12 @@ body.invitation-render-v2 .small-text {
     body.invitation-render-v2 .open-invitation-btn {
         width: min(100%, 365px);
         min-height: 54px;
-
         font-size: 12px;
         letter-spacing: 2.1px;
     }
 
     body.invitation-render-v2 .small-text {
-        margin-top: 23px;
-
+        margin-top: 20px;
         font-size: 10px;
     }
 }
@@ -778,8 +764,8 @@ body.invitation-render-v2 .small-text {
     }
 
     body.invitation-render-v2 .login-container {
-        min-height: 525px;
-        padding: 39px 18px 28px;
+        min-height: 518px;
+        padding: 39px 18px 26px;
     }
 
     body.invitation-render-v2 .login-title {
