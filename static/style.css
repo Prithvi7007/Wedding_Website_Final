@@ -213,7 +213,7 @@ body.login-page {
 .login-title {
     margin: 0 0 8px;
     font-family: 'Parisienne', cursive;
-    font-size: clamp(40px, 7vw, 78px);
+    font-size: clamp(30px, 5.5vw, 56px);
     font-weight: 400;
     color: var(--ink);
     line-height: 1.05;
@@ -246,7 +246,16 @@ body.login-page {
     line-height: 1.75;
 }
 
-.welcome-name { display: block; font-weight: 600; color: var(--ink); }
+.welcome-name {
+    display: block;
+    margin-bottom: 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: 0.2px;
+    color: var(--ink);
+}
 .welcome-message { display: block; margin-top: 4px; }
 .welcome-invitation { display: block; margin-top: 4px; }
 .welcome-heart { color: var(--rose); margin-left: 3px; }
@@ -1036,9 +1045,9 @@ body.dashboard-page .top-line span:last-child { text-align: right; }
     .celebration-toast-inner { min-width: auto; width: 100%; }
 
     .login-container { padding: 36px 24px 30px; }
-    .login-title { font-size: clamp(30px, 9vw, 48px); }
+    .login-title { font-size: clamp(24px, 8vw, 40px); }
 }
 
 @media (max-width: 390px) {
-    .login-title { font-size: clamp(26px, 10.5vw, 40px); }
+    .login-title { font-size: clamp(20px, 9vw, 32px); }
 }
