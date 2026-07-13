@@ -118,52 +118,53 @@ body.invitation-render-v2 .login-container {
     text-align: center;
     transform: translateY(-7px);
 
+    /* More aggressive transparency while retaining readability */
     background:
         radial-gradient(
             circle at 14% 4%,
-            rgba(201, 131, 57, 0.15) 0%,
-            rgba(201, 131, 57, 0.03) 35%,
+            rgba(201, 131, 57, 0.18) 0%,
+            rgba(201, 131, 57, 0.04) 35%,
             rgba(201, 131, 57, 0) 63%
         ),
         radial-gradient(
             circle at 52% 57%,
-            rgba(181, 116, 53, 0.04) 0%,
-            rgba(181, 116, 53, 0.010) 40%,
+            rgba(181, 116, 53, 0.05) 0%,
+            rgba(181, 116, 53, 0.012) 40%,
             rgba(181, 116, 53, 0) 69%
         ),
         radial-gradient(
             circle at 96% 94%,
-            rgba(56, 78, 69, 0.04) 0%,
-            rgba(56, 78, 69, 0.008) 43%,
+            rgba(56, 78, 69, 0.05) 0%,
+            rgba(56, 78, 69, 0.010) 43%,
             rgba(56, 78, 69, 0) 70%
         ),
         linear-gradient(
             145deg,
-            rgba(73, 50, 33, 0.35) 0%,
-            rgba(43, 34, 31, 0.39) 47%,
-            rgba(20, 24, 24, 0.43) 100%
+            rgba(73, 50, 33, 0.43) 0%,
+            rgba(43, 34, 31, 0.47) 47%,
+            rgba(20, 24, 24, 0.51) 100%
         );
 
     border: none;
     border-radius: 34px;
 
     backdrop-filter:
-        blur(32px)
-        saturate(140%)
-        brightness(1.04);
+        blur(29px)
+        saturate(136%)
+        brightness(1.03);
 
     -webkit-backdrop-filter:
-        blur(32px)
-        saturate(140%)
-        brightness(1.04);
+        blur(29px)
+        saturate(136%)
+        brightness(1.03);
 
     box-shadow:
-        0 28px 72px rgba(7, 10, 10, 0.24),
-        0 10px 24px rgba(18, 13, 10, 0.14),
-        inset 0 1px 0 rgba(255, 231, 181, 0.12),
-        inset 1px 0 0 rgba(255, 215, 135, 0.04),
-        inset -1px 0 0 rgba(8, 11, 11, 0.12),
-        inset 0 -1px 0 rgba(7, 10, 10, 0.20);
+        0 34px 84px rgba(7, 10, 10, 0.30),
+        0 12px 30px rgba(18, 13, 10, 0.18),
+        inset 0 1px 0 rgba(255, 231, 181, 0.14),
+        inset 1px 0 0 rgba(255, 215, 135, 0.05),
+        inset -1px 0 0 rgba(8, 11, 11, 0.15),
+        inset 0 -1px 0 rgba(7, 10, 10, 0.24);
 }
 
 /* Soft refractive rim without a hard external border */
@@ -187,7 +188,7 @@ body.invitation-render-v2 .login-container::before {
             rgba(255, 216, 128, 0.34) 100%
         );
 
-    opacity: 0.40;
+    opacity: 0.48;
 
     -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
@@ -210,14 +211,14 @@ body.invitation-render-v2 .login-container::after {
     background:
         radial-gradient(
             ellipse 70% 28% at 50% 0%,
-            rgba(255, 224, 163, 0.05) 0%,
-            rgba(255, 224, 163, 0.012) 58%,
+            rgba(255, 224, 163, 0.06) 0%,
+            rgba(255, 224, 163, 0.015) 58%,
             rgba(255, 224, 163, 0) 100%
         ),
         radial-gradient(
             circle 240px at 50% 58%,
-            rgba(211, 145, 67, 0.028) 0%,
-            rgba(211, 145, 67, 0.008) 53%,
+            rgba(211, 145, 67, 0.035) 0%,
+            rgba(211, 145, 67, 0.010) 53%,
             rgba(211, 145, 67, 0) 78%
         );
 }
@@ -432,259 +433,215 @@ body.invitation-render-v2 .welcome-heart {
 }
 
 /* ----------------------------------------------------- */
-/* BUTTON                                                 */
-/* ----------------------------------------------------- */
-
-/* ----------------------------------------------------- */
-/* LIQUID-GLASS OPEN INVITATION BUTTON                   */
-/* Inspired by the referenced Webflow interaction        */
+/* BUTTON — CLEAR OPTICAL GLASS TEST                      */
 /* ----------------------------------------------------- */
 
 body.invitation-render-v2 .open-invitation-btn {
+    --optic-rim: rgba(255, 255, 255, 0.68);
+    --optic-rim-soft: rgba(255, 255, 255, 0.22);
+    --optic-shadow: rgba(4, 7, 7, 0.30);
+
     position: relative;
     isolation: isolate;
     overflow: hidden;
 
-    width: min(100%, 432px);
-    min-height: 58px;
+    width: min(100%, 404px);
+    min-height: 60px;
     margin: 0 auto;
-    padding: 16px 26px;
+    padding: 16px 28px;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
 
-    color: var(--invite-cream);
-
-    /*
-     * Transparent smoked glass:
-     * the photograph can subtly influence the button.
-     */
+    /* Intentionally colorless: the surface receives its color from what is behind it. */
     background:
-        radial-gradient(
-            circle at 50% -45%,
-            rgba(255, 231, 178, 0.20) 0%,
-            rgba(255, 218, 147, 0.065) 34%,
-            rgba(255, 218, 147, 0) 68%
-        ),
         linear-gradient(
             180deg,
-            rgba(110, 86, 65, 0.25) 0%,
-            rgba(55, 48, 43, 0.32) 48%,
-            rgba(24, 27, 27, 0.42) 100%
+            rgba(255, 255, 255, 0.075) 0%,
+            rgba(255, 255, 255, 0.018) 44%,
+            rgba(255, 255, 255, 0.035) 100%
         );
 
-    border: 1px solid rgba(229, 181, 89, 0.82);
+    color: var(--invite-cream);
+    border: 0;
     border-radius: 999px;
 
     backdrop-filter:
-        blur(19px)
-        saturate(145%)
-        brightness(1.04);
+        blur(7px)
+        saturate(154%)
+        brightness(1.11)
+        contrast(1.03);
 
     -webkit-backdrop-filter:
-        blur(19px)
-        saturate(145%)
-        brightness(1.04);
+        blur(7px)
+        saturate(154%)
+        brightness(1.11)
+        contrast(1.03);
 
     box-shadow:
-        0 14px 30px rgba(4, 7, 7, 0.28),
-        0 0 20px rgba(216, 170, 79, 0.055),
-
-        inset 0 1px 0 rgba(255, 240, 203, 0.32),
-        inset 1px 0 0 rgba(255, 220, 151, 0.09),
-        inset -1px 0 0 rgba(10, 12, 12, 0.14),
-        inset 0 -1px 0 rgba(5, 8, 8, 0.48),
-        inset 0 -9px 20px rgba(6, 9, 9, 0.08);
+        0 15px 34px var(--optic-shadow),
+        0 3px 7px rgba(4, 7, 7, 0.22),
+        0 0 0 1px rgba(255, 255, 255, 0.22),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.72),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.16),
+        inset 2px 0 2px rgba(255, 255, 255, 0.12),
+        inset -2px 0 2px rgba(255, 255, 255, 0.08);
 
     font-family: "Manrope", Arial, sans-serif;
     font-size: 14px;
     font-weight: 700;
-    letter-spacing: 2.6px;
+    letter-spacing: 2.5px;
     line-height: 1;
     text-transform: uppercase;
+    text-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.24),
+        0 0 12px rgba(255, 255, 255, 0.08);
 
     cursor: pointer;
-
-    transform:
-        translateY(0)
-        scale(1);
+    transform: translateZ(0);
 
     transition:
-        transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
-        background 320ms ease,
-        border-color 320ms ease,
-        box-shadow 320ms ease,
-        backdrop-filter 320ms ease,
-        -webkit-backdrop-filter 320ms ease;
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+        backdrop-filter 220ms ease,
+        -webkit-backdrop-filter 220ms ease,
+        box-shadow 220ms ease;
 }
 
-/*
- * Curved highlight along the upper interior.
- * This creates the convex glass appearance.
- */
+/* Uneven molded rim: neutral white only, never gold or bronze. */
 body.invitation-render-v2 .open-invitation-btn::before {
     content: "";
     position: absolute;
-    top: 2px;
-    left: 7%;
-    right: 7%;
+    inset: -1px;
     z-index: 0;
 
-    height: 43%;
-    border-radius: 999px;
+    padding: 1.5px;
+    border-radius: inherit;
     pointer-events: none;
 
     background:
-        linear-gradient(
-            180deg,
-            rgba(255, 244, 216, 0.24) 0%,
-            rgba(255, 231, 184, 0.08) 42%,
-            rgba(255, 231, 184, 0) 100%
+        conic-gradient(
+            from -62deg at 50% 50%,
+            rgba(255, 255, 255, 0.82) 0deg,
+            rgba(255, 255, 255, 0.18) 42deg,
+            rgba(255, 255, 255, 0.05) 112deg,
+            rgba(255, 255, 255, 0.48) 182deg,
+            rgba(255, 255, 255, 0.08) 246deg,
+            rgba(255, 255, 255, 0.70) 360deg
         );
 
-    opacity: 0.66;
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
 
-    transition:
-        opacity 320ms ease,
-        transform 320ms ease;
+    opacity: 0.86;
+    transition: opacity 220ms ease, transform 420ms ease;
 }
 
-/*
- * Narrow light sweep that travels through the glass
- * when the button is hovered.
- */
+/* Convex internal reflection and soft caustic sweep. */
 body.invitation-render-v2 .open-invitation-btn::after {
     content: "";
     position: absolute;
-    top: -145%;
-    left: -38%;
-    z-index: 1;
+    inset: 2px;
+    z-index: 0;
 
-    width: 25%;
-    height: 390%;
-
+    border-radius: inherit;
     pointer-events: none;
 
     background:
+        radial-gradient(
+            ellipse 72% 42% at 50% -3%,
+            rgba(255, 255, 255, 0.44) 0%,
+            rgba(255, 255, 255, 0.13) 34%,
+            rgba(255, 255, 255, 0) 72%
+        ),
         linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 244, 215, 0.06) 24%,
-            rgba(255, 244, 215, 0.42) 50%,
-            rgba(255, 244, 215, 0.06) 76%,
-            rgba(255, 255, 255, 0) 100%
+            108deg,
+            rgba(255, 255, 255, 0) 17%,
+            rgba(255, 255, 255, 0.19) 43%,
+            rgba(255, 255, 255, 0.035) 51%,
+            rgba(255, 255, 255, 0) 68%
         );
 
-    filter: blur(1px);
-
-    opacity: 0;
-    transform: rotate(18deg);
+    background-size: 100% 100%, 220% 100%;
+    background-position: center, 110% center;
+    mix-blend-mode: screen;
+    opacity: 0.72;
 
     transition:
-        left 720ms cubic-bezier(0.2, 0.75, 0.2, 1),
+        background-position 520ms cubic-bezier(0.22, 1, 0.36, 1),
         opacity 220ms ease;
 }
 
-/* Keep the label and spinner above the glass layers */
 body.invitation-render-v2 .open-invitation-btn > * {
     position: relative;
-    z-index: 3;
+    z-index: 2;
 }
 
-body.invitation-render-v2 .open-invitation-btn .btn-label {
-    transition:
-        letter-spacing 320ms ease,
-        text-shadow 320ms ease;
-}
-
-/* Desktop hover interaction */
 body.invitation-render-v2 .open-invitation-btn:hover {
-    background:
-        radial-gradient(
-            circle at 50% -45%,
-            rgba(255, 234, 185, 0.28) 0%,
-            rgba(255, 220, 151, 0.095) 36%,
-            rgba(255, 220, 151, 0) 70%
-        ),
-        linear-gradient(
-            180deg,
-            rgba(126, 94, 66, 0.32) 0%,
-            rgba(65, 53, 45, 0.38) 48%,
-            rgba(27, 30, 29, 0.47) 100%
-        );
-
-    border-color: rgba(248, 207, 118, 0.98);
-
     backdrop-filter:
-        blur(22px)
-        saturate(158%)
-        brightness(1.07);
+        blur(5px)
+        saturate(168%)
+        brightness(1.15)
+        contrast(1.04);
 
     -webkit-backdrop-filter:
-        blur(22px)
-        saturate(158%)
-        brightness(1.07);
+        blur(5px)
+        saturate(168%)
+        brightness(1.15)
+        contrast(1.04);
 
     box-shadow:
-        0 19px 40px rgba(4, 7, 7, 0.34),
-        0 0 27px rgba(222, 174, 78, 0.12),
+        0 12px 28px rgba(4, 7, 7, 0.27),
+        0 2px 5px rgba(4, 7, 7, 0.20),
+        0 0 0 1px rgba(255, 255, 255, 0.30),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.82),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.20),
+        inset 2px 0 2px rgba(255, 255, 255, 0.14),
+        inset -2px 0 2px rgba(255, 255, 255, 0.10);
 
-        inset 0 1px 0 rgba(255, 246, 220, 0.44),
-        inset 1px 0 0 rgba(255, 224, 160, 0.12),
-        inset -1px 0 0 rgba(10, 12, 12, 0.11),
-        inset 0 -1px 0 rgba(5, 8, 8, 0.43),
-        inset 0 -9px 20px rgba(6, 9, 9, 0.055);
-
-    transform:
-        translateY(-3px)
-        scale(1.012);
+    transform: translateY(1px) scale(0.982);
 }
 
 body.invitation-render-v2 .open-invitation-btn:hover::before {
-    opacity: 0.88;
-    transform: translateY(-1px);
+    opacity: 1;
+    transform: rotate(0.4deg);
 }
 
 body.invitation-render-v2 .open-invitation-btn:hover::after {
-    left: 116%;
-    opacity: 0.86;
+    background-position: center, 20% center;
+    opacity: 0.88;
 }
 
-body.invitation-render-v2 .open-invitation-btn:hover .btn-label {
-    letter-spacing: 2.85px;
-
-    text-shadow:
-        0 0 14px rgba(255, 225, 164, 0.20);
-}
-
-/* Physical press response */
 body.invitation-render-v2 .open-invitation-btn:active {
     transform:
-        translateY(0)
-        scale(0.985);
+        perspective(650px)
+        rotateX(4deg)
+        translateY(2px)
+        scale(0.975);
 
     box-shadow:
-        0 8px 18px rgba(4, 7, 7, 0.24),
-
-        inset 0 2px 5px rgba(5, 8, 8, 0.30),
-        inset 0 1px 0 rgba(255, 240, 203, 0.22);
+        0 7px 18px rgba(4, 7, 7, 0.24),
+        0 1px 3px rgba(4, 7, 7, 0.18),
+        0 0 0 1px rgba(255, 255, 255, 0.26),
+        inset 0 2px 3px rgba(0, 0, 0, 0.10),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.36);
 }
 
-/* Keyboard accessibility */
 body.invitation-render-v2 .open-invitation-btn:focus-visible {
-    outline: 2px solid rgba(255, 245, 218, 0.98);
-    outline-offset: 4px;
+    outline: 2px solid rgba(255, 255, 255, 0.92);
+    outline-offset: 5px;
 
     box-shadow:
-        0 0 0 5px rgba(216, 170, 79, 0.27),
-        0 18px 38px rgba(4, 7, 7, 0.31),
-
-        inset 0 1px 0 rgba(255, 246, 220, 0.38);
+        0 0 0 5px rgba(255, 255, 255, 0.13),
+        0 15px 34px rgba(4, 7, 7, 0.30),
+        0 0 0 1px rgba(255, 255, 255, 0.26),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.74);
 }
 
-/* Loading state */
 body.invitation-render-v2 .open-invitation-btn:disabled {
     cursor: wait;
 }
@@ -693,72 +650,25 @@ body.invitation-render-v2 .open-invitation-btn.is-loading {
     transform: none;
 }
 
-body.invitation-render-v2 .open-invitation-btn.is-loading::after {
-    opacity: 0;
-}
-
 body.invitation-render-v2 .btn-spinner {
     display: none;
-
     width: 16px;
     height: 16px;
 
-    border: 2px solid rgba(255, 242, 210, 0.30);
-    border-top-color: var(--invite-gold-bright);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-top-color: rgba(255, 255, 255, 0.95);
     border-radius: 50%;
 
     animation: invitation-spinner 0.75s linear infinite;
 }
 
-body.invitation-render-v2
-.open-invitation-btn.is-loading
-.btn-spinner {
+body.invitation-render-v2 .open-invitation-btn.is-loading .btn-spinner {
     display: inline-block;
 }
 
 @keyframes invitation-spinner {
     to {
         transform: rotate(360deg);
-    }
-}
-
-/* Touch devices should not retain desktop hover movement */
-@media (hover: none), (pointer: coarse) {
-    body.invitation-render-v2 .open-invitation-btn:hover {
-        transform: none;
-    }
-
-    body.invitation-render-v2 .open-invitation-btn::after {
-        display: none;
-    }
-}
-
-/* Small-screen sizing */
-@media (max-width: 700px) {
-    body.invitation-render-v2 .open-invitation-btn {
-        width: min(100%, 365px);
-        min-height: 54px;
-
-        padding: 15px 20px;
-
-        font-size: 12px;
-        letter-spacing: 2.1px;
-    }
-}
-
-/* Reduced-motion accessibility */
-@media (prefers-reduced-motion: reduce) {
-    body.invitation-render-v2 .open-invitation-btn,
-    body.invitation-render-v2 .open-invitation-btn::before,
-    body.invitation-render-v2 .open-invitation-btn::after,
-    body.invitation-render-v2 .open-invitation-btn .btn-label,
-    body.invitation-render-v2 .btn-spinner {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-    }
-
-    body.invitation-render-v2 .open-invitation-btn::after {
-        display: none;
     }
 }
 
