@@ -21,11 +21,11 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardwelcome1"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardwelcome2"
     >
 </head>
 
-{% set guest_display_name = guest.get('display_name') or guest.get('name') or 'Dear Guest' %}
+{% set guest_display_name = (guest.get('display_name') or guest.get('name') or 'Dear Guest') | title %}
 
 <body class="dashboard-page dashboard-v2" data-active-tab="welcome">
 
@@ -75,12 +75,12 @@
             <section id="welcome" class="tab-content active" aria-labelledby="welcome-heading">
                 <div class="welcome-hero">
                     <div class="welcome-slides" aria-hidden="true">
-                        <img class="slide active-slide" src="{{ url_for('static', filename='images/DSC06660.webp') }}" alt="">
-                        <img class="slide" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="">
-                        <img class="slide" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="">
-                        <img class="slide" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
-                        <img class="slide" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="">
-                        <img class="slide" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="">
+                        <img class="slide slide-1 active-slide" src="{{ url_for('static', filename='images/DSC06660.webp') }}" alt="">
+                        <img class="slide slide-2" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="">
+                        <img class="slide slide-3" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="">
+                        <img class="slide slide-4" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
+                        <img class="slide slide-5" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="">
+                        <img class="slide slide-6" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="">
                     </div>
 
                     <div class="welcome-hero-shade" aria-hidden="true"></div>
@@ -766,48 +766,85 @@
         }
 
         let currentSlide = 0;
-        const slides = document.querySelectorAll("#welcome .slide");
-        const dots = document.querySelectorAll("#welcome .dot");
+        let slideTransitionInProgress = false;
+        let slideshowTimer = null;
 
-        function showSlideInternal(index) {
+        const slides = Array.from(document.querySelectorAll("#welcome .slide"));
+        const dots = Array.from(document.querySelectorAll("#welcome .dot"));
+        const SLIDE_INTERVAL_MS = 5600;
+        const FADE_OUT_MS = 340;
+        const FADE_IN_MS = 480;
+
+        function normalizeSlideIndex(index) {
             if (slides.length === 0) {
+                return 0;
+            }
+
+            return (index + slides.length) % slides.length;
+        }
+
+        function updateSlideDots(index) {
+            dots.forEach(function (dot, dotIndex) {
+                dot.classList.toggle("active-dot", dotIndex === index);
+            });
+        }
+
+        function showSlideInternal(index, restartTimer) {
+            if (slides.length === 0 || slideTransitionInProgress) {
                 return;
             }
 
-            if (index >= slides.length) {
-                currentSlide = 0;
-            } else if (index < 0) {
-                currentSlide = slides.length - 1;
-            } else {
-                currentSlide = index;
+            const nextSlide = normalizeSlideIndex(index);
+
+            if (nextSlide === currentSlide) {
+                updateSlideDots(currentSlide);
+                return;
             }
 
-            slides.forEach(function (slide) {
-                slide.classList.remove("active-slide");
-            });
+            slideTransitionInProgress = true;
 
-            dots.forEach(function (dot) {
-                dot.classList.remove("active-dot");
-            });
+            const outgoingSlide = slides[currentSlide];
+            outgoingSlide.classList.remove("active-slide");
+            outgoingSlide.classList.add("is-leaving");
 
-            slides[currentSlide].classList.add("active-slide");
+            window.setTimeout(function () {
+                outgoingSlide.classList.remove("is-leaving");
+                currentSlide = nextSlide;
 
-            if (dots[currentSlide]) {
-                dots[currentSlide].classList.add("active-dot");
+                const incomingSlide = slides[currentSlide];
+                incomingSlide.classList.add("active-slide");
+                updateSlideDots(currentSlide);
+
+                window.setTimeout(function () {
+                    slideTransitionInProgress = false;
+                }, FADE_IN_MS);
+            }, FADE_OUT_MS);
+
+            if (restartTimer) {
+                startSlideshowTimer();
             }
         }
 
+        function startSlideshowTimer() {
+            if (slideshowTimer) {
+                window.clearInterval(slideshowTimer);
+            }
+
+            slideshowTimer = window.setInterval(function () {
+                showSlideInternal(currentSlide + 1, false);
+            }, SLIDE_INTERVAL_MS);
+        }
+
         window.changeSlide = function (direction) {
-            showSlideInternal(currentSlide + direction);
+            showSlideInternal(currentSlide + direction, true);
         };
 
         window.showSlide = function (index) {
-            showSlideInternal(index);
+            showSlideInternal(index, true);
         };
 
-        setInterval(function () {
-            showSlideInternal(currentSlide + 1);
-        }, 4000);
+        updateSlideDots(currentSlide);
+        startSlideshowTimer();
 
         window.toggleRsvpForm = function (eventId) {
             const form = document.getElementById("rsvp-form-" + eventId);
