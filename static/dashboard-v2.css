@@ -197,17 +197,45 @@ body[data-active-tab="welcome"] .dashboard-header {
     right: 0;
     left: 0;
 
+    /* Warm, lightly smoked canopy: still transparent enough to show the photo. */
     background:
         linear-gradient(
             180deg,
-            rgba(7, 9, 10, 0.34) 0%,
-            rgba(7, 9, 10, 0.12) 62%,
-            rgba(7, 9, 10, 0) 100%
+            rgba(24, 19, 15, 0.24) 0%,
+            rgba(20, 17, 14, 0.075) 62%,
+            rgba(16, 14, 12, 0) 100%
         );
 
-    backdrop-filter: blur(8px) saturate(144%) brightness(0.97) contrast(1.025);
-    -webkit-backdrop-filter: blur(8px) saturate(144%) brightness(0.97) contrast(1.025);
+    backdrop-filter:
+        blur(7px)
+        saturate(148%)
+        brightness(1.01)
+        contrast(1.015);
+
+    -webkit-backdrop-filter:
+        blur(7px)
+        saturate(148%)
+        brightness(1.01)
+        contrast(1.015);
 }
+
+body[data-active-tab="welcome"] .dashboard-header::before {
+    background:
+        radial-gradient(
+            ellipse 72% 45% at 50% -8%,
+            rgba(255, 255, 255, 0.15) 0%,
+            rgba(255, 255, 255, 0.045) 38%,
+            rgba(255, 255, 255, 0.008) 62%,
+            transparent 82%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(24, 19, 15, 0.12),
+            rgba(20, 17, 14, 0.035) 68%,
+            transparent
+        );
+}
+
 
 body:not([data-active-tab="welcome"]) .dashboard-header {
     position: sticky;
@@ -512,15 +540,18 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 
     width: 100%;
     height: 100%;
+
     object-fit: cover;
     object-position: var(--slide-position-desktop, 64% center);
 
     opacity: 0;
     transform: none;
+
+    /* Let more of the original golden-hour warmth show through. */
     filter:
-        brightness(0.84)
-        saturate(1.04)
-        contrast(1.04);
+        brightness(0.91)
+        saturate(1.07)
+        contrast(1.02);
 
     pointer-events: none;
     will-change: opacity;
@@ -572,22 +603,23 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     z-index: 4;
     pointer-events: none;
 
+    /* Warm espresso shading instead of near-black. */
     background:
         linear-gradient(
             90deg,
-            rgba(7, 8, 8, 0.96) 0%,
-            rgba(8, 9, 9, 0.91) 22%,
-            rgba(9, 9, 9, 0.73) 39%,
-            rgba(10, 10, 10, 0.29) 61%,
-            rgba(10, 10, 10, 0.06) 78%,
-            rgba(10, 10, 10, 0.04) 100%
+            rgba(22, 17, 13, 0.80) 0%,
+            rgba(21, 16, 13, 0.68) 22%,
+            rgba(19, 15, 12, 0.47) 39%,
+            rgba(16, 13, 11, 0.18) 61%,
+            rgba(14, 12, 10, 0.035) 78%,
+            rgba(12, 11, 10, 0.015) 100%
         ),
         linear-gradient(
             180deg,
-            rgba(8, 8, 8, 0.30) 0%,
-            rgba(8, 8, 8, 0.02) 32%,
-            rgba(8, 8, 8, 0.05) 70%,
-            rgba(8, 8, 8, 0.52) 100%
+            rgba(18, 15, 12, 0.18) 0%,
+            rgba(15, 13, 11, 0.01) 32%,
+            rgba(15, 13, 11, 0.035) 70%,
+            rgba(16, 13, 11, 0.34) 100%
         );
 }
 
@@ -609,11 +641,12 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     z-index: 5;
     pointer-events: none;
 
+    /* Softer lower vignette. */
     background:
         linear-gradient(
             180deg,
-            rgba(8, 8, 8, 0) 74%,
-            rgba(8, 8, 8, 0.35) 100%
+            rgba(14, 12, 10, 0) 74%,
+            rgba(15, 12, 10, 0.22) 100%
         );
 }
 
@@ -645,26 +678,47 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     bottom: 11%;
     left: -64px;
     z-index: -1;
+
     pointer-events: none;
 
-    /* Clear optical haze, not a dark panel. */
+    /* Lighter optical haze only behind the copy. */
     background:
         radial-gradient(
             ellipse 78% 72% at 24% 46%,
-            rgba(255, 255, 255, 0.040) 0%,
-            rgba(255, 255, 255, 0.014) 34%,
-            rgba(7, 9, 10, 0.085) 62%,
-            rgba(7, 9, 10, 0.020) 76%,
+            rgba(255, 255, 255, 0.045) 0%,
+            rgba(255, 255, 255, 0.016) 34%,
+            rgba(20, 16, 13, 0.055) 62%,
+            rgba(16, 13, 11, 0.012) 76%,
             transparent 88%
         );
 
-    backdrop-filter: blur(9px) saturate(144%) brightness(0.94) contrast(1.035);
-    -webkit-backdrop-filter: blur(9px) saturate(144%) brightness(0.94) contrast(1.035);
+    backdrop-filter:
+        blur(8px)
+        saturate(148%)
+        brightness(0.98)
+        contrast(1.025);
+
+    -webkit-backdrop-filter:
+        blur(8px)
+        saturate(148%)
+        brightness(0.98)
+        contrast(1.025);
 
     -webkit-mask-image:
-        radial-gradient(ellipse 78% 70% at 25% 47%, #000 0%, rgba(0,0,0,0.98) 49%, transparent 84%);
+        radial-gradient(
+            ellipse 78% 70% at 25% 47%,
+            #000 0%,
+            rgba(0, 0, 0, 0.98) 49%,
+            transparent 84%
+        );
+
     mask-image:
-        radial-gradient(ellipse 78% 70% at 25% 47%, #000 0%, rgba(0,0,0,0.98) 49%, transparent 84%);
+        radial-gradient(
+            ellipse 78% 70% at 25% 47%,
+            #000 0%,
+            rgba(0, 0, 0, 0.98) 49%,
+            transparent 84%
+        );
 }
 
 .welcome-copy::after {
@@ -706,6 +760,10 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     font-weight: 600;
     letter-spacing: 0.3px;
     line-height: 1;
+
+    text-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.48),
+        0 0 20px rgba(0, 0, 0, 0.22);
 }
 
 .welcome-copy h2 {
@@ -720,7 +778,9 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     line-height: 0.98;
     text-transform: none;
 
-    text-shadow: 0 3px 24px rgba(0, 0, 0, 0.38);
+    text-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.48),
+        0 0 20px rgba(0, 0, 0, 0.22);
 }
 
 .welcome-message {
@@ -733,7 +793,9 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     font-weight: 500;
     line-height: 1.48;
 
-    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.44);
+    text-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.62),
+        0 0 14px rgba(0, 0, 0, 0.20);
 }
 
 .welcome-message p + p {
@@ -2760,13 +2822,22 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         background:
             linear-gradient(
                 180deg,
-                rgba(7, 9, 10, 0.34) 0%,
-                rgba(7, 9, 10, 0.12) 62%,
-                rgba(7, 9, 10, 0) 100%
+                rgba(24, 19, 15, 0.25) 0%,
+                rgba(20, 17, 14, 0.085) 62%,
+                rgba(16, 14, 12, 0) 100%
             );
 
-        backdrop-filter: blur(8px) saturate(144%) brightness(0.97) contrast(1.025);
-        -webkit-backdrop-filter: blur(8px) saturate(144%) brightness(0.97) contrast(1.025);
+        backdrop-filter:
+            blur(7px)
+            saturate(148%)
+            brightness(1.01)
+            contrast(1.015);
+
+        -webkit-backdrop-filter:
+            blur(7px)
+            saturate(148%)
+            brightness(1.01)
+            contrast(1.015);
     }
 
     .dashboard-meta {
@@ -2816,27 +2887,28 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 
     .welcome-hero .slide {
         object-position: var(--slide-position-mobile, 68% center);
+
         filter:
-            brightness(0.72)
-            saturate(1.02)
-            contrast(1.04);
+            brightness(0.82)
+            saturate(1.06)
+            contrast(1.025);
     }
 
     .welcome-hero-shade {
         background:
             linear-gradient(
                 90deg,
-                rgba(7, 8, 8, 0.96) 0%,
-                rgba(8, 9, 9, 0.89) 34%,
-                rgba(9, 9, 9, 0.54) 62%,
-                rgba(10, 10, 10, 0.14) 100%
+                rgba(22, 17, 13, 0.84) 0%,
+                rgba(21, 16, 13, 0.72) 34%,
+                rgba(19, 15, 12, 0.42) 62%,
+                rgba(15, 13, 11, 0.10) 100%
             ),
             linear-gradient(
                 180deg,
-                rgba(8, 8, 8, 0.24) 0%,
-                rgba(8, 8, 8, 0.04) 36%,
-                rgba(8, 8, 8, 0.10) 68%,
-                rgba(8, 8, 8, 0.72) 100%
+                rgba(18, 15, 12, 0.16) 0%,
+                rgba(15, 13, 11, 0.025) 36%,
+                rgba(15, 13, 11, 0.06) 68%,
+                rgba(16, 13, 11, 0.56) 100%
             );
     }
 
@@ -2918,20 +2990,40 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         background:
             radial-gradient(
                 ellipse 86% 70% at 18% 44%,
-                rgba(255, 255, 255, 0.040) 0%,
-                rgba(255, 255, 255, 0.014) 34%,
-                rgba(7, 9, 10, 0.085) 62%,
-                rgba(7, 9, 10, 0.020) 76%,
+                rgba(255, 255, 255, 0.045) 0%,
+                rgba(255, 255, 255, 0.016) 34%,
+                rgba(20, 16, 13, 0.055) 62%,
+                rgba(16, 13, 11, 0.012) 76%,
                 transparent 88%
             );
 
-        backdrop-filter: blur(9px) saturate(144%) brightness(0.94) contrast(1.035);
-        -webkit-backdrop-filter: blur(9px) saturate(144%) brightness(0.94) contrast(1.035);
+        backdrop-filter:
+            blur(8px)
+            saturate(148%)
+            brightness(0.98)
+            contrast(1.025);
+
+        -webkit-backdrop-filter:
+            blur(8px)
+            saturate(148%)
+            brightness(0.98)
+            contrast(1.025);
 
         -webkit-mask-image:
-            radial-gradient(ellipse 86% 70% at 18% 44%, #000 0%, rgba(0,0,0,0.98) 49%, transparent 84%);
+            radial-gradient(
+                ellipse 86% 70% at 18% 44%,
+                #000 0%,
+                rgba(0, 0, 0, 0.98) 49%,
+                transparent 84%
+            );
+
         mask-image:
-            radial-gradient(ellipse 86% 70% at 18% 44%, #000 0%, rgba(0,0,0,0.98) 49%, transparent 84%);
+            radial-gradient(
+                ellipse 86% 70% at 18% 44%,
+                #000 0%,
+                rgba(0, 0, 0, 0.98) 49%,
+                transparent 84%
+            );
     }
 
     .countdown-inline > div {
