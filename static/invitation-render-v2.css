@@ -1140,3 +1140,236 @@ body.invitation-render-v2 .small-text {
         font-size: 20px !important;
     }
 }
+
+/* ===================================================== */
+/* FINAL TRANSPARENT SMOKED-GLASS REFINEMENT             */
+/* Paste at the very bottom of invitation-render-v2.css   */
+/* ===================================================== */
+
+/* Keep the photograph visible and natural behind the glass */
+body.invitation-render-v2::before {
+    filter:
+        blur(1px)
+        brightness(0.80)
+        saturate(1.02)
+        contrast(1.02)
+        sepia(0%) !important;
+
+    transform: scale(1.015) !important;
+}
+
+/* Subtle cinematic overlay without washing out the photograph */
+body.invitation-render-v2::after {
+    background:
+        radial-gradient(
+            circle at 50% 42%,
+            rgba(255, 211, 133, 0.05) 0%,
+            rgba(255, 211, 133, 0.015) 36%,
+            rgba(255, 211, 133, 0) 66%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(122, 73, 31, 0.05) 0%,
+            rgba(34, 29, 26, 0.05) 55%,
+            rgba(8, 12, 12, 0.22) 100%
+        ) !important;
+}
+
+/* Main transparent smoked-glass invitation card */
+body.invitation-render-v2 .login-container {
+    width: min(620px, 92vw) !important;
+    min-height: 580px !important;
+    padding: 58px 58px 34px !important;
+
+    background:
+        radial-gradient(
+            circle at 14% 4%,
+            rgba(201, 131, 57, 0.22) 0%,
+            rgba(201, 131, 57, 0.05) 34%,
+            rgba(201, 131, 57, 0) 62%
+        ),
+        radial-gradient(
+            circle at 52% 57%,
+            rgba(181, 116, 53, 0.06) 0%,
+            rgba(181, 116, 53, 0.015) 39%,
+            rgba(181, 116, 53, 0) 68%
+        ),
+        radial-gradient(
+            circle at 96% 94%,
+            rgba(56, 78, 69, 0.06) 0%,
+            rgba(56, 78, 69, 0.012) 43%,
+            rgba(56, 78, 69, 0) 70%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(73, 50, 33, 0.52) 0%,
+            rgba(43, 34, 31, 0.57) 47%,
+            rgba(20, 24, 24, 0.61) 100%
+        ) !important;
+
+    border: 1px solid rgba(226, 177, 81, 0.60) !important;
+    border-radius: 34px !important;
+
+    backdrop-filter:
+        blur(26px)
+        saturate(132%)
+        brightness(1.02) !important;
+
+    -webkit-backdrop-filter:
+        blur(26px)
+        saturate(132%)
+        brightness(1.02) !important;
+
+    box-shadow:
+        0 38px 96px rgba(7, 10, 10, 0.35),
+        0 14px 36px rgba(18, 13, 10, 0.22),
+        inset 0 1px 0 rgba(255, 231, 181, 0.15),
+        inset 1px 0 0 rgba(255, 215, 135, 0.05),
+        inset -1px 0 0 rgba(8, 11, 11, 0.18),
+        inset 0 -1px 0 rgba(7, 10, 10, 0.26) !important;
+}
+
+/* Soft gold refraction around the card edge */
+body.invitation-render-v2 .login-container::before {
+    background:
+        linear-gradient(
+            138deg,
+            rgba(255, 230, 166, 0.88) 0%,
+            rgba(255, 213, 127, 0.25) 22%,
+            rgba(255, 255, 255, 0.025) 49%,
+            rgba(166, 119, 51, 0.12) 76%,
+            rgba(255, 216, 128, 0.42) 100%
+        ) !important;
+}
+
+/* Gentle upper reflection and warm interior glow */
+body.invitation-render-v2 .login-container::after {
+    content: "" !important;
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+
+    border-radius: inherit !important;
+    pointer-events: none !important;
+
+    background:
+        radial-gradient(
+            ellipse 70% 28% at 50% 0%,
+            rgba(255, 224, 163, 0.08) 0%,
+            rgba(255, 224, 163, 0.018) 58%,
+            rgba(255, 224, 163, 0) 100%
+        ),
+        radial-gradient(
+            circle 240px at 50% 58%,
+            rgba(211, 145, 67, 0.045) 0%,
+            rgba(211, 145, 67, 0.012) 53%,
+            rgba(211, 145, 67, 0) 78%
+        ) !important;
+}
+
+/* Keep invitation content above the glass effects */
+body.invitation-render-v2 .login-container > * {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Wider, more transparent smoked-glass button */
+body.invitation-render-v2 .open-invitation-btn {
+    width: min(100%, 430px) !important;
+    min-height: 56px !important;
+
+    background:
+        radial-gradient(
+            circle at 50% -34%,
+            rgba(255, 217, 138, 0.06) 0%,
+            rgba(255, 217, 138, 0.012) 46%,
+            rgba(255, 217, 138, 0) 74%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(83, 65, 51, 0.34) 0%,
+            rgba(48, 43, 39, 0.42) 52%,
+            rgba(27, 29, 28, 0.50) 100%
+        ) !important;
+
+    border-color: rgba(225, 176, 79, 0.86) !important;
+
+    backdrop-filter:
+        blur(17px)
+        saturate(130%) !important;
+
+    -webkit-backdrop-filter:
+        blur(17px)
+        saturate(130%) !important;
+
+    box-shadow:
+        0 16px 34px rgba(5, 8, 8, 0.32),
+        0 0 22px rgba(216, 170, 79, 0.07),
+        inset 0 1px 0 rgba(255, 233, 185, 0.12),
+        inset 0 -1px 0 rgba(6, 9, 9, 0.42) !important;
+}
+
+/* Reduce the plastic-looking button highlight */
+body.invitation-render-v2 .open-invitation-btn::before {
+    left: 16% !important;
+    right: 16% !important;
+    height: 18% !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 231, 181, 0.07),
+            rgba(255, 231, 181, 0)
+        ) !important;
+}
+
+/* Slightly brighter disclaimer for readability */
+body.invitation-render-v2 .small-text {
+    color: rgba(232, 218, 200, 0.70) !important;
+    margin-top: 25px !important;
+}
+
+/* Mobile: a little more opacity so the text remains readable */
+@media (max-width: 700px) {
+    body.invitation-render-v2 .login-container {
+        width: 100% !important;
+        max-width: 490px !important;
+        min-height: 550px !important;
+        padding: 43px 24px 30px !important;
+
+        background:
+            radial-gradient(
+                circle at 14% 4%,
+                rgba(201, 131, 57, 0.23) 0%,
+                rgba(201, 131, 57, 0.055) 35%,
+                rgba(201, 131, 57, 0) 63%
+            ),
+            radial-gradient(
+                circle at 52% 57%,
+                rgba(181, 116, 53, 0.055) 0%,
+                rgba(181, 116, 53, 0.012) 40%,
+                rgba(181, 116, 53, 0) 69%
+            ),
+            linear-gradient(
+                145deg,
+                rgba(73, 50, 33, 0.59) 0%,
+                rgba(43, 34, 31, 0.64) 47%,
+                rgba(20, 24, 24, 0.68) 100%
+            ) !important;
+
+        backdrop-filter:
+            blur(23px)
+            saturate(128%)
+            brightness(1.01) !important;
+
+        -webkit-backdrop-filter:
+            blur(23px)
+            saturate(128%)
+            brightness(1.01) !important;
+    }
+
+    body.invitation-render-v2 .open-invitation-btn {
+        width: min(100%, 365px) !important;
+    }
+}
