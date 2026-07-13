@@ -9,7 +9,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
-    <meta name="theme-color" content="#3f2a22">
+    <meta name="theme-color" content="#4b263d">
 
     <link
         rel="icon"
@@ -27,9 +27,15 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}?v=glassb2"
     >
+
+    <!-- Temporary invitation-page palette test. Remove this line to revert. -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='invitation-test.css') }}?v=plumglass1"
+    >
 </head>
 
-<body class="login-page">
+<body class="login-page invitation-plum-test">
 
     <main class="login-container">
 
