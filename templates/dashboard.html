@@ -75,7 +75,7 @@
             <section id="welcome" class="tab-content active" aria-labelledby="welcome-heading">
                 <div class="welcome-hero">
                     <div class="welcome-slides" aria-hidden="true">
-                        <img class="slide slide-1 active-slide" src="{{ url_for('static', filename='images/DSC06660.webp') }}" alt="">
+                        <img class="slide slide-1 active-slide" src="{{ url_for('static', filename='images/site-bg.webp') }}" alt="">
                         <img class="slide slide-2" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="">
                         <img class="slide slide-3" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="">
                         <img class="slide slide-4" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
@@ -771,7 +771,8 @@
 
         const slides = Array.from(document.querySelectorAll("#welcome .slide"));
         const dots = Array.from(document.querySelectorAll("#welcome .dot"));
-        const SLIDE_INTERVAL_MS = 5600;
+        const SLIDE_INTERVAL_MS = 9000;
+        const AUTO_SLIDESHOW_ENABLED = false;
         const FADE_OUT_MS = 340;
         const FADE_IN_MS = 480;
 
@@ -828,6 +829,17 @@
         function startSlideshowTimer() {
             if (slideshowTimer) {
                 window.clearInterval(slideshowTimer);
+                slideshowTimer = null;
+            }
+
+            /*
+             * Keep the strongest opening photograph locked while we match the
+             * approved composition. Arrows and dots still provide the complete
+             * slideshow manually. Change this flag to true when automatic
+             * rotation is ready to return.
+             */
+            if (!AUTO_SLIDESHOW_ENABLED) {
+                return;
             }
 
             slideshowTimer = window.setInterval(function () {

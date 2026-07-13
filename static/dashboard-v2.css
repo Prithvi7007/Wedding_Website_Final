@@ -1,8 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Manrope:wght@400;500;600;700&display=swap");
 
 /* ===================================================== */
-/* DASHBOARD V2 — PHASE 1                                */
-/* Final header + Welcome tab direction                   */
+/* DASHBOARD V2 - FULL-BLEED WELCOME                     */
+/* One continuous photograph behind header and hero      */
 /* Standalone dashboard stylesheet                        */
 /* ===================================================== */
 
@@ -27,11 +27,12 @@ html {
 
 body.dashboard-v2 {
     --dash-cream: #fff0d5;
-    --dash-copy: rgba(255, 239, 214, 0.88);
-    --dash-muted: rgba(236, 216, 187, 0.70);
+    --dash-copy: rgba(255, 239, 214, 0.90);
+    --dash-muted: rgba(236, 216, 187, 0.72);
     --dash-gold: #d6a84e;
-    --dash-gold-soft: rgba(214, 168, 78, 0.55);
-    --dash-gold-faint: rgba(214, 168, 78, 0.24);
+    --dash-gold-bright: #efc56f;
+    --dash-gold-soft: rgba(214, 168, 78, 0.58);
+    --dash-gold-faint: rgba(214, 168, 78, 0.25);
     --dash-ink: #171513;
     --dash-glass: rgba(24, 22, 20, 0.74);
     --dash-glass-soft: rgba(30, 26, 23, 0.58);
@@ -45,6 +46,7 @@ body.dashboard-v2 {
     font-family: "Manrope", Arial, sans-serif;
 }
 
+/* Background used by the other tabs. Welcome supplies its own full-bleed image. */
 body.dashboard-v2::before {
     content: "";
     position: fixed;
@@ -56,10 +58,10 @@ body.dashboard-v2::before {
         center center / cover no-repeat;
 
     filter:
-        blur(5px)
-        brightness(0.34)
-        saturate(0.96)
-        contrast(1.06);
+        blur(4px)
+        brightness(0.40)
+        saturate(1.00)
+        contrast(1.05);
 
     transform: scale(1.04);
 }
@@ -108,27 +110,57 @@ a {
 }
 
 /* ----------------------------------------------------- */
-/* HEADER + EDITORIAL GOLD LINE SYSTEM                    */
+/* HEADER - OVERLAYS THE WELCOME PHOTOGRAPH               */
 /* ----------------------------------------------------- */
 
 .dashboard-header {
     position: relative;
     z-index: 50;
-
-    width: min(100% - 56px, 1500px);
-    margin: 0 auto;
-    padding-top: 22px;
+    width: 100%;
+    padding: 16px clamp(26px, 4.5vw, 82px) 0;
 
     background:
         linear-gradient(
             180deg,
-            rgba(18, 16, 14, 0.76),
-            rgba(18, 16, 14, 0.48) 72%,
-            rgba(18, 16, 14, 0.18)
+            rgba(9, 9, 8, 0.86) 0%,
+            rgba(10, 10, 9, 0.50) 62%,
+            rgba(10, 10, 9, 0.05) 100%
+        );
+}
+
+body[data-active-tab="welcome"] .dashboard-header {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(8, 8, 7, 0.73) 0%,
+            rgba(10, 9, 8, 0.38) 62%,
+            rgba(10, 9, 8, 0) 100%
         );
 
+    backdrop-filter: blur(4px) saturate(112%);
+    -webkit-backdrop-filter: blur(4px) saturate(112%);
+}
+
+body:not([data-active-tab="welcome"]) .dashboard-header {
+    position: sticky;
+    top: 0;
+
+    background: rgba(18, 16, 14, 0.88);
     backdrop-filter: blur(18px) saturate(124%);
     -webkit-backdrop-filter: blur(18px) saturate(124%);
+}
+
+.dashboard-meta,
+.dashboard-title,
+.tabs {
+    width: min(100%, 1500px);
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .dashboard-meta {
@@ -136,8 +168,8 @@ a {
     grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
 
-    min-height: 36px;
-    padding: 0 4px;
+    min-height: 34px;
+    padding: 0 3px;
 
     border-top: 1px solid var(--dash-gold-soft);
     border-bottom: 1px solid var(--dash-gold-soft);
@@ -164,18 +196,24 @@ a {
     text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    font-size: 13px;
+    letter-spacing: 1.1px;
+    text-transform: none;
 }
 
 .dashboard-title {
-    margin: 14px auto 16px;
+    margin-top: 8px;
+    margin-bottom: 10px;
 
     color: var(--dash-cream);
     font-family: "Parisienne", cursive;
-    font-size: clamp(66px, 6vw, 88px);
+    font-size: clamp(60px, 5.15vw, 80px);
     font-weight: 400;
     letter-spacing: 0;
     line-height: 0.98;
     text-align: center;
+
     text-shadow:
         0 1px 0 rgba(255, 255, 255, 0.08),
         0 0 24px rgba(229, 177, 88, 0.12);
@@ -185,9 +223,9 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(36px, 6vw, 86px);
+    gap: clamp(34px, 5.5vw, 82px);
 
-    min-height: 56px;
+    min-height: 48px;
     padding: 0 18px;
 
     border-top: 1px solid var(--dash-gold-soft);
@@ -198,16 +236,16 @@ a {
     position: relative;
     flex: 0 0 auto;
 
-    min-height: 55px;
+    min-height: 47px;
     padding: 0 2px;
 
     background: transparent;
-    color: rgba(255, 238, 210, 0.78);
+    color: rgba(255, 238, 210, 0.80);
 
     font-family: "Cormorant Garamond", Georgia, serif;
     font-size: 16px;
     font-weight: 600;
-    letter-spacing: 3.5px;
+    letter-spacing: 3.4px;
     line-height: 1;
     text-transform: uppercase;
 
@@ -242,7 +280,7 @@ a {
 .tab-btn:hover,
 .tab-btn.active {
     color: var(--dash-cream);
-    text-shadow: 0 0 14px rgba(226, 177, 83, 0.13);
+    text-shadow: 0 0 14px rgba(226, 177, 83, 0.14);
 }
 
 .tab-btn.active::after {
@@ -285,12 +323,12 @@ a {
 }
 
 /* ----------------------------------------------------- */
-/* WELCOME — ONE INTEGRATED CINEMATIC HERO                */
+/* WELCOME - TRUE FULL-BLEED CINEMATIC COMPOSITION        */
 /* ----------------------------------------------------- */
 
 #welcome {
-    width: min(100% - 56px, 1500px);
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
 }
 
 .welcome-hero {
@@ -299,14 +337,12 @@ a {
     overflow: hidden;
 
     width: 100%;
-    min-height: max(610px, calc(100svh - 228px));
+    min-height: 780px;
+    height: 100vh;
+    height: 100svh;
 
-    background: #1a1714;
-    border-bottom: 1px solid var(--dash-gold-faint);
-
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.28),
-        inset 0 1px 0 rgba(255, 223, 157, 0.035);
+    background: #171411;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.34);
 }
 
 .welcome-slides,
@@ -328,127 +364,182 @@ a {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center center;
+    object-position: var(--slide-position-desktop, 64% center);
 
     opacity: 0;
-    transform: scale(1.035);
+    transform: none;
     filter:
-        brightness(0.87)
+        brightness(0.84)
         saturate(1.04)
-        contrast(1.03);
+        contrast(1.04);
 
-    transition:
-        opacity 1.2s ease-in-out,
-        transform 5.2s ease-in-out;
+    pointer-events: none;
+    will-change: opacity;
+    transition: opacity 0.32s ease-in-out;
 }
 
 .welcome-hero .slide.active-slide {
+    z-index: 2;
     opacity: 1;
-    transform: scale(1);
+}
+
+.welcome-hero .slide.is-leaving {
+    z-index: 3;
+    opacity: 0;
+}
+
+/* The approved first impression uses the same golden portrait as the invite. */
+.welcome-hero .slide-1 {
+    --slide-position-desktop: 61% 48%;
+    --slide-position-mobile: 68% center;
+}
+
+.welcome-hero .slide-2 {
+    --slide-position-desktop: 63% 45%;
+    --slide-position-mobile: 68% center;
+}
+
+.welcome-hero .slide-3 {
+    --slide-position-desktop: 68% 50%;
+    --slide-position-mobile: 72% center;
+}
+
+.welcome-hero .slide-4 {
+    --slide-position-desktop: 59% 48%;
+    --slide-position-mobile: 65% center;
+}
+
+.welcome-hero .slide-5 {
+    --slide-position-desktop: 64% 44%;
+    --slide-position-mobile: 69% center;
+}
+
+.welcome-hero .slide-6 {
+    --slide-position-desktop: 67% 50%;
+    --slide-position-mobile: 71% center;
 }
 
 .welcome-hero-shade {
-    z-index: 1;
+    z-index: 4;
     pointer-events: none;
 
     background:
         linear-gradient(
             90deg,
-            rgba(8, 10, 10, 0.97) 0%,
-            rgba(11, 12, 12, 0.91) 20%,
-            rgba(17, 15, 13, 0.72) 39%,
-            rgba(17, 15, 13, 0.30) 58%,
-            rgba(10, 10, 10, 0.04) 76%
+            rgba(7, 8, 8, 0.96) 0%,
+            rgba(8, 9, 9, 0.91) 22%,
+            rgba(9, 9, 9, 0.73) 39%,
+            rgba(10, 10, 10, 0.29) 61%,
+            rgba(10, 10, 10, 0.06) 78%,
+            rgba(10, 10, 10, 0.04) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(8, 8, 8, 0.30) 0%,
+            rgba(8, 8, 8, 0.02) 32%,
+            rgba(8, 8, 8, 0.05) 70%,
+            rgba(8, 8, 8, 0.52) 100%
         );
 }
 
 .welcome-hero::before {
     content: "";
-    z-index: 2;
+    z-index: 5;
     pointer-events: none;
 
     background:
-        linear-gradient(
-            180deg,
-            rgba(12, 11, 10, 0.20) 0%,
-            transparent 23%,
-            transparent 72%,
-            rgba(8, 9, 9, 0.42) 100%
+        radial-gradient(
+            circle at 74% 28%,
+            rgba(235, 174, 83, 0.09),
+            transparent 34%
         );
 }
 
 .welcome-hero::after {
     content: "";
-    z-index: 2;
+    z-index: 5;
     pointer-events: none;
 
     background:
-        radial-gradient(
-            circle at 23% 50%,
-            rgba(210, 148, 60, 0.08),
-            transparent 45%
+        linear-gradient(
+            180deg,
+            rgba(8, 8, 8, 0) 74%,
+            rgba(8, 8, 8, 0.35) 100%
         );
 }
 
 .welcome-copy {
     position: relative;
-    z-index: 5;
+    z-index: 7;
 
-    width: min(48%, 640px);
-    padding: clamp(70px, 8vh, 112px) 0 54px clamp(38px, 5vw, 84px);
+    width: min(42vw, 630px);
+    min-height: 100vh;
+    min-height: 100svh;
+    margin-left: clamp(68px, 7vw, 132px);
+    padding: 226px 0 78px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
 
     text-align: left;
 }
 
 .welcome-eyebrow {
-    margin-bottom: 7px;
+    margin-bottom: 6px;
 
-    color: var(--dash-gold);
+    color: var(--dash-gold-bright);
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(20px, 1.7vw, 28px);
+    font-size: clamp(24px, 2vw, 31px);
     font-style: italic;
     font-weight: 600;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.3px;
+    line-height: 1;
 }
 
 .welcome-copy h2 {
-    max-width: 620px;
-    margin-bottom: 28px;
+    max-width: 100%;
+    margin-bottom: 22px;
 
     color: var(--dash-cream);
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(48px, 4.3vw, 70px);
+    font-size: clamp(51px, 4.2vw, 72px);
     font-weight: 500;
-    letter-spacing: 2px;
+    letter-spacing: 0.2px;
     line-height: 0.98;
-    text-transform: uppercase;
+    text-transform: none;
+
+    text-shadow: 0 3px 24px rgba(0, 0, 0, 0.38);
 }
 
 .welcome-message {
-    max-width: 590px;
-    margin-bottom: 30px;
+    max-width: 570px;
+    margin-bottom: 28px;
 
     color: var(--dash-copy);
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(18px, 1.45vw, 24px);
+    font-size: clamp(19px, 1.45vw, 23px);
     font-weight: 500;
-    line-height: 1.55;
+    line-height: 1.48;
+
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.44);
 }
 
 .welcome-message p + p {
-    margin-top: 13px;
+    margin-top: 12px;
 }
 
-/* Liquid glass CTA — related to the locked invitation button */
+/* Liquid-glass CTA, aligned with the invitation-page interaction language. */
 .welcome-schedule-btn {
     position: relative;
     isolation: isolate;
     overflow: hidden;
 
     width: min(100%, 500px);
-    min-height: 60px;
-    margin-bottom: 34px;
-    padding: 17px 26px;
+    min-height: 58px;
+    margin-bottom: 33px;
+    padding: 16px 27px;
 
     display: inline-flex;
     align-items: center;
@@ -456,109 +547,110 @@ a {
 
     background:
         radial-gradient(
-            circle at 50% -55%,
-            rgba(255, 232, 183, 0.20),
-            rgba(255, 216, 142, 0.05) 38%,
-            transparent 70%
+            circle at 50% -45%,
+            rgba(255, 231, 178, 0.18),
+            rgba(255, 218, 147, 0.055) 34%,
+            transparent 68%
         ),
         linear-gradient(
             180deg,
-            rgba(96, 74, 56, 0.25),
-            rgba(46, 42, 38, 0.36) 52%,
-            rgba(19, 23, 23, 0.44)
+            rgba(110, 86, 65, 0.22),
+            rgba(55, 48, 43, 0.30) 48%,
+            rgba(24, 27, 27, 0.40)
         );
 
     color: var(--dash-cream);
-    border: 1px solid rgba(226, 177, 80, 0.88);
+    border: 1px solid rgba(229, 181, 89, 0.86);
     border-radius: 999px;
 
-    backdrop-filter: blur(19px) saturate(146%);
-    -webkit-backdrop-filter: blur(19px) saturate(146%);
+    backdrop-filter: blur(18px) saturate(145%) brightness(1.04);
+    -webkit-backdrop-filter: blur(18px) saturate(145%) brightness(1.04);
 
     box-shadow:
-        0 15px 32px rgba(0, 0, 0, 0.26),
-        0 0 20px rgba(219, 170, 78, 0.06),
-        inset 0 1px 0 rgba(255, 241, 209, 0.26),
-        inset 0 -1px 0 rgba(4, 7, 7, 0.42);
+        0 14px 30px rgba(4, 7, 7, 0.28),
+        inset 0 1px 0 rgba(255, 240, 203, 0.28),
+        inset 0 -1px 0 rgba(5, 8, 8, 0.46);
 
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 3.2px;
-    line-height: 1;
+    letter-spacing: 3px;
     text-transform: uppercase;
 
     cursor: pointer;
     transition:
-        transform 260ms ease,
-        border-color 260ms ease,
-        box-shadow 260ms ease,
-        background 260ms ease;
+        transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        border-color 300ms ease,
+        box-shadow 300ms ease;
 }
 
 .welcome-schedule-btn::before {
     content: "";
     position: absolute;
     top: 2px;
-    left: 10%;
-    right: 10%;
+    left: 9%;
+    right: 9%;
+    z-index: 0;
 
-    height: 36%;
+    height: 34%;
     border-radius: 999px;
+    pointer-events: none;
 
     background:
         linear-gradient(
             180deg,
-            rgba(255, 244, 216, 0.20),
-            transparent
+            rgba(255, 244, 216, 0.22),
+            rgba(255, 231, 184, 0.06) 52%,
+            transparent 100%
         );
-
-    pointer-events: none;
 }
 
 .welcome-schedule-btn::after {
     content: "";
     position: absolute;
-    top: -160%;
-    left: -35%;
+    top: -145%;
+    left: -38%;
+    z-index: 1;
 
-    width: 24%;
-    height: 420%;
+    width: 25%;
+    height: 390%;
+    pointer-events: none;
 
     background:
         linear-gradient(
             90deg,
             transparent,
-            rgba(255, 242, 210, 0.36),
+            rgba(255, 244, 215, 0.38) 50%,
             transparent
         );
 
     opacity: 0;
     filter: blur(1px);
-    pointer-events: none;
     transform: rotate(18deg);
     transition:
-        left 680ms cubic-bezier(0.2, 0.75, 0.2, 1),
-        opacity 180ms ease;
+        left 700ms cubic-bezier(0.2, 0.75, 0.2, 1),
+        opacity 210ms ease;
 }
 
-.welcome-schedule-btn span {
+.welcome-schedule-btn > span {
     position: relative;
-    z-index: 2;
+    z-index: 3;
 }
 
 .welcome-schedule-btn:hover {
-    border-color: rgba(244, 202, 111, 1);
+    border-color: rgba(248, 207, 118, 0.98);
+
     box-shadow:
-        0 20px 42px rgba(0, 0, 0, 0.31),
-        0 0 28px rgba(222, 173, 78, 0.11),
-        inset 0 1px 0 rgba(255, 245, 219, 0.38),
-        inset 0 -1px 0 rgba(4, 7, 7, 0.38);
+        0 19px 40px rgba(4, 7, 7, 0.34),
+        0 0 27px rgba(222, 174, 78, 0.12),
+        inset 0 1px 0 rgba(255, 246, 220, 0.40),
+        inset 0 -1px 0 rgba(5, 8, 8, 0.42);
+
     transform: translateY(-3px) scale(1.01);
 }
 
 .welcome-schedule-btn:hover::after {
     left: 116%;
-    opacity: 0.86;
+    opacity: 0.85;
 }
 
 .welcome-schedule-btn:active {
@@ -566,18 +658,40 @@ a {
 }
 
 .welcome-schedule-btn:focus-visible {
-    outline: 2px solid var(--dash-cream);
+    outline: 2px solid rgba(255, 245, 218, 0.98);
     outline-offset: 4px;
 }
 
 .countdown-inline {
+    position: relative;
+    width: min(100%, 600px);
+    padding: 25px 0 18px;
+
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
 
-    width: min(100%, 610px);
-    padding: 26px 0 21px;
+    border-top: 1px solid rgba(214, 168, 78, 0.48);
+}
 
-    border-top: 1px solid var(--dash-gold-soft);
+.countdown-inline::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 50%;
+
+    width: 90px;
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(249, 205, 114, 0.96),
+            transparent
+        );
+
+    box-shadow: 0 0 9px rgba(235, 181, 80, 0.40);
+    transform: translateX(-50%);
 }
 
 .countdown-inline > div {
@@ -589,67 +703,72 @@ a {
 .countdown-inline > div:not(:last-child)::after {
     content: "";
     position: absolute;
-    top: 2px;
+    top: 50%;
     right: 0;
 
     width: 1px;
-    height: 62px;
+    height: 56px;
 
     background:
         linear-gradient(
             180deg,
             transparent,
-            rgba(214, 168, 78, 0.64),
+            rgba(214, 168, 78, 0.56),
             transparent
         );
+
+    transform: translateY(-50%);
 }
 
 .countdown-inline span {
     display: block;
 
-    color: #e8b65b;
+    color: var(--dash-gold-bright);
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(39px, 3.3vw, 54px);
+    font-size: clamp(38px, 3.6vw, 55px);
     font-weight: 600;
-    line-height: 0.94;
+    letter-spacing: 1px;
+    line-height: 0.92;
+
+    text-shadow: 0 0 18px rgba(225, 169, 70, 0.13);
 }
 
 .countdown-inline small {
     display: block;
-    margin-top: 9px;
+    margin-top: 8px;
 
     color: var(--dash-muted);
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 600;
-    letter-spacing: 2.2px;
+    letter-spacing: 1.7px;
     line-height: 1;
     text-transform: uppercase;
 }
 
 .slide-arrow {
     position: absolute;
-    top: 50%;
-    z-index: 8;
+    top: 59%;
+    z-index: 9;
 
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
 
     display: grid;
     place-items: center;
 
-    background: rgba(18, 17, 15, 0.28);
+    background: rgba(31, 27, 23, 0.32);
     color: var(--dash-cream);
-    border: 1px solid rgba(217, 170, 80, 0.58);
+    border: 1px solid rgba(218, 171, 80, 0.75);
     border-radius: 50%;
 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 
-    font-size: 24px;
+    font-size: 22px;
     line-height: 1;
 
-    opacity: 0;
+    opacity: 0.42;
     cursor: pointer;
     transform: translateY(-50%);
     transition:
@@ -668,18 +787,18 @@ a {
 }
 
 .left-arrow {
-    left: 18px;
+    left: 26px;
 }
 
 .right-arrow {
-    right: 18px;
+    right: 26px;
 }
 
 .slide-dots {
     position: absolute;
     left: 50%;
-    bottom: 22px;
-    z-index: 8;
+    bottom: 25px;
+    z-index: 9;
 
     display: flex;
     align-items: center;
@@ -689,11 +808,11 @@ a {
 }
 
 .dot {
-    width: 11px;
-    height: 11px;
+    width: 10px;
+    height: 10px;
     padding: 0;
 
-    background: rgba(255, 244, 223, 0.38);
+    background: rgba(255, 244, 223, 0.34);
     border: 1px solid rgba(255, 241, 211, 0.25);
     border-radius: 50%;
 
@@ -717,16 +836,17 @@ a {
 
 @keyframes welcome-login-glow {
     0%, 100% {
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.34);
     }
 
     50% {
         box-shadow:
-            0 0 0 1px rgba(226, 177, 82, 0.56),
-            0 0 44px rgba(220, 166, 72, 0.14),
-            0 30px 80px rgba(0, 0, 0, 0.32);
+            inset 0 0 0 1px rgba(226, 177, 82, 0.36),
+            0 0 48px rgba(220, 166, 72, 0.13),
+            0 30px 90px rgba(0, 0, 0, 0.38);
     }
 }
+
 
 /* ----------------------------------------------------- */
 /* NON-WELCOME TAB FOUNDATION                            */
@@ -1481,37 +1601,42 @@ a {
     line-height: 1.45;
 }
 
+
 /* ----------------------------------------------------- */
 /* TABLET                                                 */
 /* ----------------------------------------------------- */
 
-@media (max-width: 1000px) {
-    .dashboard-header,
-    #welcome,
-    .tab-content:not(#welcome) {
-        width: min(100% - 32px, 1100px);
+@media (max-width: 1100px) {
+    .dashboard-header {
+        padding-right: 28px;
+        padding-left: 28px;
     }
 
     .dashboard-title {
-        font-size: clamp(58px, 9vw, 76px);
+        font-size: clamp(56px, 8vw, 74px);
     }
 
     .tabs {
-        gap: 32px;
+        gap: 30px;
     }
 
     .tab-btn {
         font-size: 14px;
-        letter-spacing: 2.7px;
-    }
-
-    .welcome-hero {
-        min-height: max(630px, calc(100svh - 210px));
+        letter-spacing: 2.6px;
     }
 
     .welcome-copy {
-        width: 56%;
-        padding-left: 42px;
+        width: min(49vw, 570px);
+        margin-left: clamp(42px, 5vw, 72px);
+    }
+
+    .welcome-copy h2 {
+        font-size: clamp(47px, 5.4vw, 64px);
+    }
+
+
+    .tab-content:not(#welcome) {
+        width: min(100% - 32px, 1100px);
     }
 
     .travel-paper-grid,
@@ -1535,6 +1660,7 @@ a {
         height: 180px;
         margin: 12px 0 16px;
     }
+
 }
 
 /* ----------------------------------------------------- */
@@ -1545,38 +1671,49 @@ a {
     body.dashboard-v2::before {
         filter:
             blur(4px)
-            brightness(0.28)
+            brightness(0.27)
             saturate(0.95)
             contrast(1.05);
     }
 
     .dashboard-header {
-        width: 100%;
         padding: 10px 14px 0;
+    }
 
-        background: rgba(17, 16, 14, 0.88);
-        backdrop-filter: blur(20px) saturate(120%);
-        -webkit-backdrop-filter: blur(20px) saturate(120%);
+    body[data-active-tab="welcome"] .dashboard-header {
+        background:
+            linear-gradient(
+                180deg,
+                rgba(9, 9, 8, 0.79) 0%,
+                rgba(10, 10, 9, 0.44) 68%,
+                rgba(10, 10, 9, 0) 100%
+            );
+
+        backdrop-filter: blur(3px) saturate(110%);
+        -webkit-backdrop-filter: blur(3px) saturate(110%);
     }
 
     .dashboard-meta {
         min-height: 29px;
         padding: 0;
-
         font-size: 8px;
-        letter-spacing: 0.9px;
+        letter-spacing: 0.85px;
+    }
+
+    .dashboard-meta span:last-child {
+        font-size: 8.5px;
+        letter-spacing: 0.55px;
     }
 
     .dashboard-title {
-        margin: 11px auto 12px;
-        font-size: clamp(44px, 14vw, 62px);
+        margin: 10px auto 11px;
+        font-size: clamp(43px, 13.6vw, 60px);
     }
 
     .tabs {
         justify-content: flex-start;
-        gap: 25px;
-
-        min-height: 48px;
+        gap: 24px;
+        min-height: 47px;
         padding: 0 4px;
 
         overflow-x: auto;
@@ -1590,26 +1727,21 @@ a {
     }
 
     .tab-btn {
-        min-height: 47px;
-
+        min-height: 46px;
         font-size: 11px;
-        letter-spacing: 1.8px;
+        letter-spacing: 1.75px;
         white-space: nowrap;
     }
 
-    #welcome {
-        width: 100%;
-    }
-
     .welcome-hero {
-        min-height: max(690px, calc(100svh - 146px));
-        border-bottom: 1px solid rgba(214, 168, 78, 0.28);
+        min-height: 820px;
+        height: max(100svh, 820px);
     }
 
     .welcome-hero .slide {
-        object-position: 64% center;
+        object-position: var(--slide-position-mobile, 68% center);
         filter:
-            brightness(0.75)
+            brightness(0.72)
             saturate(1.02)
             contrast(1.04);
     }
@@ -1618,48 +1750,46 @@ a {
         background:
             linear-gradient(
                 90deg,
-                rgba(8, 9, 9, 0.94) 0%,
-                rgba(10, 10, 10, 0.86) 38%,
-                rgba(10, 10, 10, 0.37) 70%,
-                rgba(10, 10, 10, 0.12) 100%
+                rgba(7, 8, 8, 0.96) 0%,
+                rgba(8, 9, 9, 0.89) 34%,
+                rgba(9, 9, 9, 0.54) 62%,
+                rgba(10, 10, 10, 0.14) 100%
             ),
             linear-gradient(
                 180deg,
-                rgba(8, 9, 9, 0.18),
-                rgba(8, 9, 9, 0.06) 42%,
-                rgba(8, 9, 9, 0.72) 100%
+                rgba(8, 8, 8, 0.24) 0%,
+                rgba(8, 8, 8, 0.04) 36%,
+                rgba(8, 8, 8, 0.10) 68%,
+                rgba(8, 8, 8, 0.72) 100%
             );
     }
 
     .welcome-copy {
         width: 100%;
-        min-height: max(690px, calc(100svh - 146px));
-        padding: clamp(58px, 8vh, 84px) 22px 86px;
+        min-height: 820px;
+        margin-left: 0;
+        padding: 225px 18px 88px;
 
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        justify-content: flex-start;
     }
 
     .welcome-eyebrow {
+        width: 64%;
         margin-bottom: 6px;
-        font-size: 18px;
+        font-size: 20px;
     }
 
     .welcome-copy h2 {
-        width: 58%;
-        margin-bottom: 22px;
-
-        font-size: clamp(43px, 13vw, 58px);
-        letter-spacing: 1px;
+        width: 66%;
+        margin-bottom: 20px;
+        font-size: clamp(42px, 12.6vw, 57px);
         line-height: 0.96;
     }
 
     .welcome-message {
-        width: 62%;
-        margin-bottom: 24px;
-
-        font-size: 17px;
+        width: 64%;
+        margin-bottom: 28px;
+        font-size: 16px;
         line-height: 1.48;
     }
 
@@ -1668,18 +1798,19 @@ a {
     }
 
     .welcome-schedule-btn {
-        width: min(100%, 440px);
+        width: min(100%, 420px);
         min-height: 55px;
         margin-top: auto;
-        margin-bottom: 22px;
+        margin-bottom: 28px;
 
+        align-self: center;
         font-size: 12px;
         letter-spacing: 2.4px;
     }
 
     .countdown-inline {
         width: 100%;
-        padding: 21px 0 18px;
+        padding: 23px 0 18px;
     }
 
     .countdown-inline > div:not(:last-child)::after {
@@ -1687,13 +1818,13 @@ a {
     }
 
     .countdown-inline span {
-        font-size: clamp(31px, 10vw, 43px);
+        font-size: clamp(31px, 9.8vw, 43px);
     }
 
     .countdown-inline small {
         margin-top: 7px;
         font-size: 8px;
-        letter-spacing: 1.1px;
+        letter-spacing: 1px;
     }
 
     .slide-arrow {
@@ -1709,6 +1840,7 @@ a {
         width: 9px;
         height: 9px;
     }
+
 
     .tab-content:not(#welcome) {
         width: calc(100% - 24px);
@@ -1783,11 +1915,9 @@ a {
 
     .event-meta-item {
         padding: 13px;
-
         display: grid;
         grid-template-columns: 38px 1fr;
         column-gap: 11px;
-
         background: rgba(255, 249, 235, 0.55);
         border: 1px solid rgba(89, 57, 37, 0.17);
         border-radius: 12px;
@@ -1878,6 +2008,7 @@ a {
     .login-toast-inner {
         width: 100%;
     }
+
 }
 
 /* ----------------------------------------------------- */
@@ -1886,36 +2017,41 @@ a {
 
 @media (max-width: 430px) {
     .dashboard-meta {
-        font-size: 7.5px;
-        letter-spacing: 0.6px;
+        font-size: 7.4px;
+        letter-spacing: 0.5px;
     }
 
     .dashboard-title {
-        font-size: clamp(40px, 14vw, 54px);
+        font-size: clamp(40px, 13.8vw, 53px);
     }
 
     .tabs {
-        gap: 21px;
+        gap: 20px;
     }
 
     .tab-btn {
         font-size: 10px;
-        letter-spacing: 1.35px;
+        letter-spacing: 1.25px;
     }
 
     .welcome-copy {
-        padding-right: 16px;
-        padding-left: 16px;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .welcome-eyebrow {
+        width: 67%;
+        font-size: 18px;
     }
 
     .welcome-copy h2 {
-        width: 62%;
-        font-size: clamp(40px, 13vw, 52px);
+        width: 69%;
+        font-size: clamp(39px, 12.8vw, 50px);
     }
 
     .welcome-message {
-        width: 66%;
-        font-size: 15.5px;
+        width: 68%;
+        font-size: 15px;
     }
 
     .welcome-schedule-btn {
@@ -1924,7 +2060,7 @@ a {
     }
 
     .countdown-inline small {
-        letter-spacing: 0.7px;
+        letter-spacing: 0.65px;
     }
 }
 
