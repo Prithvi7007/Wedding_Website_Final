@@ -1,8 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Manrope:wght@400;500;600;700&display=swap");
 
 /* ===================================================== */
-/* DASHBOARD V2 - FULL-BLEED WELCOME                     */
-/* One continuous photograph behind header and hero      */
+/* DASHBOARD V2 - FULL-BLEED GLASS WELCOME               */
+/* Cinematic photography with restrained liquid glass    */
 /* Standalone dashboard stylesheet                        */
 /* ===================================================== */
 
@@ -116,15 +116,69 @@ a {
 .dashboard-header {
     position: relative;
     z-index: 50;
+    isolation: isolate;
     width: 100%;
     padding: 16px clamp(26px, 4.5vw, 82px) 0;
 
     background:
         linear-gradient(
             180deg,
-            rgba(9, 9, 8, 0.86) 0%,
-            rgba(10, 10, 9, 0.50) 62%,
-            rgba(10, 10, 9, 0.05) 100%
+            rgba(9, 9, 8, 0.78) 0%,
+            rgba(10, 10, 9, 0.42) 62%,
+            rgba(10, 10, 9, 0.035) 100%
+        );
+}
+
+/* A borderless smoked-glass canopy. The mask lets the blur dissolve
+   into the photograph instead of creating another visible panel. */
+.dashboard-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse 48% 58% at 50% 0%,
+            rgba(232, 177, 87, 0.08) 0%,
+            rgba(232, 177, 87, 0.018) 55%,
+            transparent 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(24, 21, 18, 0.28),
+            rgba(19, 18, 16, 0.10) 70%,
+            transparent
+        );
+
+    backdrop-filter: blur(15px) saturate(128%) brightness(0.98);
+    -webkit-backdrop-filter: blur(15px) saturate(128%) brightness(0.98);
+
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 68%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 68%, transparent 100%);
+}
+
+/* Fine internal reflection rather than a hard outer border. */
+.dashboard-header::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 5%;
+    left: 5%;
+    z-index: -1;
+
+    height: 1px;
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 232, 180, 0.08) 18%,
+            rgba(255, 240, 207, 0.24) 50%,
+            rgba(255, 232, 180, 0.08) 82%,
+            transparent
         );
 }
 
@@ -142,8 +196,8 @@ body[data-active-tab="welcome"] .dashboard-header {
             rgba(10, 9, 8, 0) 100%
         );
 
-    backdrop-filter: blur(4px) saturate(112%);
-    -webkit-backdrop-filter: blur(4px) saturate(112%);
+    backdrop-filter: blur(9px) saturate(124%) brightness(0.98);
+    -webkit-backdrop-filter: blur(9px) saturate(124%) brightness(0.98);
 }
 
 body:not([data-active-tab="welcome"]) .dashboard-header {
@@ -171,8 +225,17 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     min-height: 34px;
     padding: 0 3px;
 
-    border-top: 1px solid var(--dash-gold-soft);
-    border-bottom: 1px solid var(--dash-gold-soft);
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-image:
+        linear-gradient(
+            90deg,
+            rgba(214, 168, 78, 0.08),
+            rgba(242, 202, 116, 0.70) 18%,
+            rgba(242, 202, 116, 0.42) 50%,
+            rgba(242, 202, 116, 0.70) 82%,
+            rgba(214, 168, 78, 0.08)
+        ) 1;
 
     color: var(--dash-muted);
     font-family: "Cormorant Garamond", Georgia, serif;
@@ -228,12 +291,22 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     min-height: 48px;
     padding: 0 18px;
 
-    border-top: 1px solid var(--dash-gold-soft);
-    border-bottom: 1px solid var(--dash-gold-soft);
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-image:
+        linear-gradient(
+            90deg,
+            rgba(214, 168, 78, 0.08),
+            rgba(242, 202, 116, 0.70) 18%,
+            rgba(242, 202, 116, 0.42) 50%,
+            rgba(242, 202, 116, 0.70) 82%,
+            rgba(214, 168, 78, 0.08)
+        ) 1;
 }
 
 .tab-btn {
     position: relative;
+    isolation: isolate;
     flex: 0 0 auto;
 
     min-height: 47px;
@@ -252,7 +325,48 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     cursor: pointer;
     transition:
         color 220ms ease,
-        text-shadow 220ms ease;
+        text-shadow 220ms ease,
+        transform 220ms ease;
+}
+
+/* A soft refractive lens appears behind a tab only while it is useful. */
+.tab-btn::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+
+    width: calc(100% + 30px);
+    height: 31px;
+    border-radius: 999px;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 18%,
+            rgba(255, 236, 194, 0.10),
+            rgba(221, 169, 78, 0.025) 48%,
+            transparent 74%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(94, 73, 54, 0.18),
+            rgba(28, 27, 25, 0.12)
+        );
+
+    border: 1px solid rgba(242, 205, 125, 0.00);
+    box-shadow: inset 0 1px 0 rgba(255, 244, 217, 0.00);
+    backdrop-filter: blur(10px) saturate(130%);
+    -webkit-backdrop-filter: blur(10px) saturate(130%);
+
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.86);
+    transition:
+        opacity 220ms ease,
+        transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        border-color 220ms ease,
+        box-shadow 220ms ease;
 }
 
 .tab-btn::after {
@@ -281,6 +395,20 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 .tab-btn.active {
     color: var(--dash-cream);
     text-shadow: 0 0 14px rgba(226, 177, 83, 0.14);
+}
+
+.tab-btn:hover::before,
+.tab-btn.active::before {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    border-color: rgba(242, 205, 125, 0.08);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 244, 217, 0.10),
+        0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.tab-btn.active::before {
+    opacity: 0.72;
 }
 
 .tab-btn.active::after {
@@ -313,12 +441,14 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 @keyframes dashboard-tab-in {
     from {
         opacity: 0;
-        transform: translateY(8px);
+        filter: blur(6px);
+        transform: translateY(8px) scale(0.997);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        filter: blur(0);
+        transform: translateY(0) scale(1);
     }
 }
 
@@ -486,6 +616,40 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     text-align: left;
 }
 
+/* Borderless glass fog: blur is concentrated behind the copy and
+   dissolves completely before reaching the couple. */
+.welcome-copy::before {
+    content: "";
+    position: absolute;
+    top: 19%;
+    right: -42px;
+    bottom: 12%;
+    left: -58px;
+    z-index: -1;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse 78% 70% at 25% 46%,
+            rgba(31, 27, 23, 0.25) 0%,
+            rgba(24, 23, 21, 0.13) 50%,
+            transparent 78%
+        );
+
+    backdrop-filter: blur(15px) saturate(118%) brightness(0.95);
+    -webkit-backdrop-filter: blur(15px) saturate(118%) brightness(0.95);
+
+    -webkit-mask-image:
+        radial-gradient(ellipse 76% 68% at 28% 48%, #000 0%, rgba(0,0,0,0.95) 48%, transparent 82%);
+    mask-image:
+        radial-gradient(ellipse 76% 68% at 28% 48%, #000 0%, rgba(0,0,0,0.95) 48%, transparent 82%);
+}
+
+.welcome-copy > * {
+    position: relative;
+    z-index: 1;
+}
+
 .welcome-eyebrow {
     margin-bottom: 6px;
 
@@ -554,9 +718,9 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         ),
         linear-gradient(
             180deg,
-            rgba(110, 86, 65, 0.22),
-            rgba(55, 48, 43, 0.30) 48%,
-            rgba(24, 27, 27, 0.40)
+            rgba(120, 91, 66, 0.18),
+            rgba(58, 50, 44, 0.25) 48%,
+            rgba(22, 25, 25, 0.34)
         );
 
     color: var(--dash-cream);
@@ -567,9 +731,13 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     -webkit-backdrop-filter: blur(18px) saturate(145%) brightness(1.04);
 
     box-shadow:
-        0 14px 30px rgba(4, 7, 7, 0.28),
-        inset 0 1px 0 rgba(255, 240, 203, 0.28),
-        inset 0 -1px 0 rgba(5, 8, 8, 0.46);
+        0 16px 34px rgba(4, 7, 7, 0.25),
+        0 0 24px rgba(216, 170, 79, 0.045),
+        inset 0 1px 0 rgba(255, 240, 203, 0.34),
+        inset 1px 0 0 rgba(255, 221, 151, 0.08),
+        inset -1px 0 0 rgba(9, 11, 11, 0.12),
+        inset 0 -1px 0 rgba(5, 8, 8, 0.44),
+        inset 0 -12px 24px rgba(6, 9, 9, 0.06);
 
     font-size: 13px;
     font-weight: 700;
@@ -579,8 +747,11 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     cursor: pointer;
     transition:
         transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        background 300ms ease,
         border-color 300ms ease,
-        box-shadow 300ms ease;
+        box-shadow 300ms ease,
+        backdrop-filter 300ms ease,
+        -webkit-backdrop-filter 300ms ease;
 }
 
 .welcome-schedule-btn::before {
@@ -637,7 +808,24 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 }
 
 .welcome-schedule-btn:hover {
+    background:
+        radial-gradient(
+            circle at 50% -45%,
+            rgba(255, 236, 190, 0.26),
+            rgba(255, 222, 151, 0.085) 36%,
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(130, 96, 68, 0.25),
+            rgba(66, 54, 46, 0.31) 48%,
+            rgba(25, 28, 27, 0.40)
+        );
+
     border-color: rgba(248, 207, 118, 0.98);
+
+    backdrop-filter: blur(22px) saturate(160%) brightness(1.07);
+    -webkit-backdrop-filter: blur(22px) saturate(160%) brightness(1.07);
 
     box-shadow:
         0 19px 40px rgba(4, 7, 7, 0.34),
@@ -696,8 +884,50 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 
 .countdown-inline > div {
     position: relative;
+    isolation: isolate;
     min-width: 0;
+    min-height: 92px;
+    padding: 14px 8px 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
     text-align: center;
+}
+
+/* Each time unit is a lens, not a card: no perimeter, only localized
+   blur, a convex top reflection, and a faint warm core. */
+.countdown-inline > div::before {
+    content: "";
+    position: absolute;
+    inset: 2px 9px;
+    z-index: -1;
+    border-radius: 18px;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 8%,
+            rgba(255, 240, 203, 0.11) 0%,
+            rgba(235, 183, 92, 0.028) 42%,
+            transparent 74%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(80, 65, 51, 0.10),
+            rgba(26, 26, 24, 0.07)
+        );
+
+    backdrop-filter: blur(10px) saturate(125%);
+    -webkit-backdrop-filter: blur(10px) saturate(125%);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 242, 214, 0.10),
+        0 10px 28px rgba(0, 0, 0, 0.035);
+
+    opacity: 0.72;
 }
 
 .countdown-inline > div:not(:last-child)::after {
@@ -757,13 +987,28 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     display: grid;
     place-items: center;
 
-    background: rgba(31, 27, 23, 0.32);
+    overflow: hidden;
+    isolation: isolate;
+
+    background:
+        radial-gradient(
+            circle at 48% 3%,
+            rgba(255, 239, 202, 0.17),
+            rgba(230, 177, 84, 0.03) 48%,
+            transparent 72%
+        ),
+        rgba(31, 27, 23, 0.24);
     color: var(--dash-cream);
-    border: 1px solid rgba(218, 171, 80, 0.75);
+    border: 1px solid rgba(218, 171, 80, 0.64);
     border-radius: 50%;
 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px) saturate(138%) brightness(1.03);
+    -webkit-backdrop-filter: blur(16px) saturate(138%) brightness(1.03);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.16),
+        inset 0 1px 0 rgba(255, 240, 204, 0.22),
+        inset 0 -1px 0 rgba(6, 8, 8, 0.28);
 
     font-size: 22px;
     line-height: 1;
@@ -774,7 +1019,41 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     transition:
         opacity 220ms ease,
         background 220ms ease,
-        transform 220ms ease;
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.slide-arrow::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 16%;
+    left: 16%;
+    z-index: -1;
+
+    height: 28%;
+    border-radius: 999px;
+    pointer-events: none;
+
+    background: linear-gradient(180deg, rgba(255, 247, 222, 0.22), transparent);
+}
+
+.slide-arrow::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    z-index: -1;
+
+    width: 45%;
+    height: 210%;
+    pointer-events: none;
+
+    background: linear-gradient(90deg, transparent, rgba(255, 240, 204, 0.28), transparent);
+    opacity: 0;
+    transform: rotate(18deg);
+    transition: left 560ms ease, opacity 180ms ease;
 }
 
 .welcome-hero:hover .slide-arrow,
@@ -783,7 +1062,28 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 }
 
 .slide-arrow:hover {
-    background: rgba(53, 42, 33, 0.58);
+    background:
+        radial-gradient(
+            circle at 48% 3%,
+            rgba(255, 242, 211, 0.24),
+            rgba(230, 177, 84, 0.06) 48%,
+            transparent 72%
+        ),
+        rgba(53, 42, 33, 0.42);
+
+    border-color: rgba(242, 201, 112, 0.90);
+    box-shadow:
+        0 16px 36px rgba(0, 0, 0, 0.22),
+        0 0 18px rgba(220, 169, 75, 0.08),
+        inset 0 1px 0 rgba(255, 244, 217, 0.31),
+        inset 0 -1px 0 rgba(6, 8, 8, 0.24);
+
+    transform: translateY(-50%) scale(1.07);
+}
+
+.slide-arrow:hover::after {
+    left: 145%;
+    opacity: 0.78;
 }
 
 .left-arrow {
@@ -812,22 +1112,38 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     height: 10px;
     padding: 0;
 
-    background: rgba(255, 244, 223, 0.34);
-    border: 1px solid rgba(255, 241, 211, 0.25);
+    background:
+        radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.36), transparent 28%),
+        rgba(255, 244, 223, 0.18);
+    border: 1px solid rgba(255, 241, 211, 0.22);
     border-radius: 50%;
+
+    backdrop-filter: blur(8px) saturate(130%);
+    -webkit-backdrop-filter: blur(8px) saturate(130%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        0 4px 12px rgba(0, 0, 0, 0.12);
 
     cursor: pointer;
     transition:
-        transform 200ms ease,
-        background 200ms ease,
-        box-shadow 200ms ease;
+        transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        background 220ms ease,
+        border-color 220ms ease,
+        box-shadow 220ms ease;
 }
 
 .dot:hover,
 .dot.active-dot {
-    background: #e6b354;
-    box-shadow: 0 0 12px rgba(229, 177, 80, 0.35);
-    transform: scale(1.14);
+    background:
+        radial-gradient(circle at 35% 26%, rgba(255, 255, 255, 0.48), transparent 25%),
+        linear-gradient(145deg, rgba(244, 196, 105, 0.94), rgba(194, 133, 42, 0.88));
+    border-color: rgba(255, 222, 151, 0.72);
+    box-shadow:
+        inset 0 1px 1px rgba(255, 248, 227, 0.38),
+        0 0 14px rgba(229, 177, 80, 0.34),
+        0 5px 14px rgba(0, 0, 0, 0.18);
+    transform: scale(1.20);
 }
 
 .welcome-hero.login-glow {
@@ -1689,8 +2005,8 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
                 rgba(10, 10, 9, 0) 100%
             );
 
-        backdrop-filter: blur(3px) saturate(110%);
-        -webkit-backdrop-filter: blur(3px) saturate(110%);
+        backdrop-filter: blur(8px) saturate(122%);
+        -webkit-backdrop-filter: blur(8px) saturate(122%);
     }
 
     .dashboard-meta {
@@ -1825,6 +2141,32 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         margin-top: 7px;
         font-size: 8px;
         letter-spacing: 1px;
+    }
+
+    .welcome-copy::before {
+        top: 23%;
+        right: 22%;
+        bottom: 24%;
+        left: -24px;
+
+        backdrop-filter: blur(12px) saturate(116%) brightness(0.94);
+        -webkit-backdrop-filter: blur(12px) saturate(116%) brightness(0.94);
+
+        -webkit-mask-image:
+            radial-gradient(ellipse 86% 68% at 18% 44%, #000 0%, rgba(0,0,0,0.94) 50%, transparent 84%);
+        mask-image:
+            radial-gradient(ellipse 86% 68% at 18% 44%, #000 0%, rgba(0,0,0,0.94) 50%, transparent 84%);
+    }
+
+    .countdown-inline > div {
+        min-height: 78px;
+        padding: 11px 3px 8px;
+    }
+
+    .countdown-inline > div::before {
+        inset: 3px 4px;
+        border-radius: 14px;
+        opacity: 0.58;
     }
 
     .slide-arrow {
@@ -2069,11 +2411,16 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 /* ----------------------------------------------------- */
 
 @media (hover: none), (pointer: coarse) {
+    .tab-btn:not(.active)::before {
+        opacity: 0;
+    }
+
     .welcome-schedule-btn:hover {
         transform: none;
     }
 
-    .welcome-schedule-btn::after {
+    .welcome-schedule-btn::after,
+    .slide-arrow::after {
         display: none;
     }
 }
