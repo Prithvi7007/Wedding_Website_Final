@@ -9,7 +9,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
-    <meta name="theme-color" content="#4b263d">
+    <meta name="theme-color" content="#1f1c19">
 
     <link
         rel="icon"
@@ -30,7 +30,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='invitation-render-v2.css') }}?v=render22"
+        href="{{ url_for('static', filename='invitation-render-v2.css') }}?v=darkgold1"
     >
 </head>
 
@@ -42,7 +42,11 @@
             Private Invitation
         </div>
 
-        <h1 class="login-title">Adlin & Prithvi</h1>
+        <h1 class="login-title" aria-label="Adlin and Prithvi">
+            <span class="couple-name">Adlin</span>
+            <span class="couple-ampersand" aria-hidden="true">&amp;</span>
+            <span class="couple-name">Prithvi</span>
+        </h1>
 
         <div class="login-divider" aria-hidden="true"></div>
 
@@ -67,12 +71,11 @@
                 {% endif %}
 
                 <span class="welcome-message">
-                    We’re so excited to celebrate with you.
-                    <span class="welcome-heart" aria-hidden="true">♡</span>
+                    We’re so glad you’ll be with us.
                 </span>
 
                 <span class="welcome-invitation">
-                    Your private invitation and RSVP await.
+                    Your invitation and RSVP await.
                 </span>
             </p>
 
