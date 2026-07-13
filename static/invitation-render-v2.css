@@ -435,52 +435,68 @@ body.invitation-render-v2 .welcome-heart {
 /* BUTTON                                                 */
 /* ----------------------------------------------------- */
 
+/* ----------------------------------------------------- */
+/* LIQUID-GLASS OPEN INVITATION BUTTON                   */
+/* Inspired by the referenced Webflow interaction        */
+/* ----------------------------------------------------- */
+
 body.invitation-render-v2 .open-invitation-btn {
     position: relative;
+    isolation: isolate;
     overflow: hidden;
 
     width: min(100%, 432px);
-    min-height: 56px;
+    min-height: 58px;
     margin: 0 auto;
-    padding: 16px 25px;
+    padding: 16px 26px;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
 
+    color: var(--invite-cream);
+
+    /*
+     * Transparent smoked glass:
+     * the photograph can subtly influence the button.
+     */
     background:
         radial-gradient(
-            circle at 50% -34%,
-            rgba(255, 217, 138, 0.04) 0%,
-            rgba(255, 217, 138, 0.008) 46%,
-            rgba(255, 217, 138, 0) 74%
+            circle at 50% -45%,
+            rgba(255, 231, 178, 0.20) 0%,
+            rgba(255, 218, 147, 0.065) 34%,
+            rgba(255, 218, 147, 0) 68%
         ),
         linear-gradient(
             180deg,
-            rgba(83, 65, 51, 0.24) 0%,
-            rgba(48, 43, 39, 0.31) 52%,
-            rgba(27, 29, 28, 0.39) 100%
+            rgba(110, 86, 65, 0.25) 0%,
+            rgba(55, 48, 43, 0.32) 48%,
+            rgba(24, 27, 27, 0.42) 100%
         );
 
-    color: var(--invite-cream);
-
-    border: 1px solid rgba(225, 176, 79, 0.82);
+    border: 1px solid rgba(229, 181, 89, 0.82);
     border-radius: 999px;
 
     backdrop-filter:
-        blur(18px)
-        saturate(132%);
+        blur(19px)
+        saturate(145%)
+        brightness(1.04);
 
     -webkit-backdrop-filter:
-        blur(18px)
-        saturate(132%);
+        blur(19px)
+        saturate(145%)
+        brightness(1.04);
 
     box-shadow:
-        0 14px 30px rgba(5, 8, 8, 0.29),
-        0 0 20px rgba(216, 170, 79, 0.06),
-        inset 0 1px 0 rgba(255, 233, 185, 0.10),
-        inset 0 -1px 0 rgba(6, 9, 9, 0.38);
+        0 14px 30px rgba(4, 7, 7, 0.28),
+        0 0 20px rgba(216, 170, 79, 0.055),
+
+        inset 0 1px 0 rgba(255, 240, 203, 0.32),
+        inset 1px 0 0 rgba(255, 220, 151, 0.09),
+        inset -1px 0 0 rgba(10, 12, 12, 0.14),
+        inset 0 -1px 0 rgba(5, 8, 8, 0.48),
+        inset 0 -9px 20px rgba(6, 9, 9, 0.08);
 
     font-family: "Manrope", Arial, sans-serif;
     font-size: 14px;
@@ -491,123 +507,258 @@ body.invitation-render-v2 .open-invitation-btn {
 
     cursor: pointer;
 
+    transform:
+        translateY(0)
+        scale(1);
+
     transition:
-        transform 0.24s ease,
-        background 0.24s ease,
-        border-color 0.24s ease,
-        box-shadow 0.24s ease;
+        transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        background 320ms ease,
+        border-color 320ms ease,
+        box-shadow 320ms ease,
+        backdrop-filter 320ms ease,
+        -webkit-backdrop-filter 320ms ease;
 }
 
+/*
+ * Curved highlight along the upper interior.
+ * This creates the convex glass appearance.
+ */
 body.invitation-render-v2 .open-invitation-btn::before {
     content: "";
     position: absolute;
     top: 2px;
-    left: 16%;
-    right: 16%;
+    left: 7%;
+    right: 7%;
     z-index: 0;
 
-    height: 16%;
+    height: 43%;
     border-radius: 999px;
     pointer-events: none;
 
     background:
         linear-gradient(
             180deg,
-            rgba(255, 231, 181, 0.05),
-            rgba(255, 231, 181, 0)
+            rgba(255, 244, 216, 0.24) 0%,
+            rgba(255, 231, 184, 0.08) 42%,
+            rgba(255, 231, 184, 0) 100%
         );
+
+    opacity: 0.66;
+
+    transition:
+        opacity 320ms ease,
+        transform 320ms ease;
 }
 
+/*
+ * Narrow light sweep that travels through the glass
+ * when the button is hovered.
+ */
 body.invitation-render-v2 .open-invitation-btn::after {
     content: "";
     position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 0;
+    top: -145%;
+    left: -38%;
+    z-index: 1;
 
-    width: 74%;
-    height: 110%;
+    width: 25%;
+    height: 390%;
 
-    border-radius: 999px;
     pointer-events: none;
 
     background:
-        radial-gradient(
-            ellipse,
-            rgba(214, 165, 75, 0.045) 0%,
-            rgba(214, 165, 75, 0) 70%
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 244, 215, 0.06) 24%,
+            rgba(255, 244, 215, 0.42) 50%,
+            rgba(255, 244, 215, 0.06) 76%,
+            rgba(255, 255, 255, 0) 100%
         );
 
-    transform: translate(-50%, -50%);
+    filter: blur(1px);
+
+    opacity: 0;
+    transform: rotate(18deg);
+
+    transition:
+        left 720ms cubic-bezier(0.2, 0.75, 0.2, 1),
+        opacity 220ms ease;
 }
 
+/* Keep the label and spinner above the glass layers */
 body.invitation-render-v2 .open-invitation-btn > * {
     position: relative;
-    z-index: 2;
+    z-index: 3;
 }
 
+body.invitation-render-v2 .open-invitation-btn .btn-label {
+    transition:
+        letter-spacing 320ms ease,
+        text-shadow 320ms ease;
+}
+
+/* Desktop hover interaction */
 body.invitation-render-v2 .open-invitation-btn:hover {
     background:
         radial-gradient(
-            circle at 50% -34%,
-            rgba(255, 219, 137, 0.10) 0%,
-            rgba(255, 219, 137, 0.020) 47%,
-            rgba(255, 219, 137, 0) 74%
+            circle at 50% -45%,
+            rgba(255, 234, 185, 0.28) 0%,
+            rgba(255, 220, 151, 0.095) 36%,
+            rgba(255, 220, 151, 0) 70%
         ),
         linear-gradient(
             180deg,
-            rgba(106, 78, 54, 0.40) 0%,
-            rgba(60, 50, 43, 0.47) 52%,
-            rgba(29, 31, 29, 0.55) 100%
+            rgba(126, 94, 66, 0.32) 0%,
+            rgba(65, 53, 45, 0.38) 48%,
+            rgba(27, 30, 29, 0.47) 100%
         );
 
-    border-color: rgba(245, 201, 105, 0.96);
+    border-color: rgba(248, 207, 118, 0.98);
+
+    backdrop-filter:
+        blur(22px)
+        saturate(158%)
+        brightness(1.07);
+
+    -webkit-backdrop-filter:
+        blur(22px)
+        saturate(158%)
+        brightness(1.07);
 
     box-shadow:
-        0 16px 36px rgba(5, 8, 8, 0.31),
-        0 0 24px rgba(217, 170, 77, 0.09),
-        inset 0 1px 0 rgba(255, 233, 185, 0.14),
-        inset 0 -1px 0 rgba(6, 9, 9, 0.36);
+        0 19px 40px rgba(4, 7, 7, 0.34),
+        0 0 27px rgba(222, 174, 78, 0.12),
 
-    transform: translateY(-2px);
+        inset 0 1px 0 rgba(255, 246, 220, 0.44),
+        inset 1px 0 0 rgba(255, 224, 160, 0.12),
+        inset -1px 0 0 rgba(10, 12, 12, 0.11),
+        inset 0 -1px 0 rgba(5, 8, 8, 0.43),
+        inset 0 -9px 20px rgba(6, 9, 9, 0.055);
+
+    transform:
+        translateY(-3px)
+        scale(1.012);
 }
 
+body.invitation-render-v2 .open-invitation-btn:hover::before {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+body.invitation-render-v2 .open-invitation-btn:hover::after {
+    left: 116%;
+    opacity: 0.86;
+}
+
+body.invitation-render-v2 .open-invitation-btn:hover .btn-label {
+    letter-spacing: 2.85px;
+
+    text-shadow:
+        0 0 14px rgba(255, 225, 164, 0.20);
+}
+
+/* Physical press response */
 body.invitation-render-v2 .open-invitation-btn:active {
-    transform: translateY(0) scale(0.99);
+    transform:
+        translateY(0)
+        scale(0.985);
+
+    box-shadow:
+        0 8px 18px rgba(4, 7, 7, 0.24),
+
+        inset 0 2px 5px rgba(5, 8, 8, 0.30),
+        inset 0 1px 0 rgba(255, 240, 203, 0.22);
 }
 
+/* Keyboard accessibility */
 body.invitation-render-v2 .open-invitation-btn:focus-visible {
-    outline: 2px solid rgba(255, 244, 215, 0.96);
+    outline: 2px solid rgba(255, 245, 218, 0.98);
     outline-offset: 4px;
 
     box-shadow:
-        0 0 0 5px rgba(216, 170, 79, 0.24),
-        0 16px 36px rgba(5, 8, 8, 0.29);
+        0 0 0 5px rgba(216, 170, 79, 0.27),
+        0 18px 38px rgba(4, 7, 7, 0.31),
+
+        inset 0 1px 0 rgba(255, 246, 220, 0.38);
 }
 
+/* Loading state */
 body.invitation-render-v2 .open-invitation-btn:disabled {
     cursor: wait;
 }
 
+body.invitation-render-v2 .open-invitation-btn.is-loading {
+    transform: none;
+}
+
+body.invitation-render-v2 .open-invitation-btn.is-loading::after {
+    opacity: 0;
+}
+
 body.invitation-render-v2 .btn-spinner {
     display: none;
+
     width: 16px;
     height: 16px;
 
-    border: 2px solid rgba(255, 242, 210, 0.32);
+    border: 2px solid rgba(255, 242, 210, 0.30);
     border-top-color: var(--invite-gold-bright);
     border-radius: 50%;
 
     animation: invitation-spinner 0.75s linear infinite;
 }
 
-body.invitation-render-v2 .open-invitation-btn.is-loading .btn-spinner {
+body.invitation-render-v2
+.open-invitation-btn.is-loading
+.btn-spinner {
     display: inline-block;
 }
 
 @keyframes invitation-spinner {
     to {
         transform: rotate(360deg);
+    }
+}
+
+/* Touch devices should not retain desktop hover movement */
+@media (hover: none), (pointer: coarse) {
+    body.invitation-render-v2 .open-invitation-btn:hover {
+        transform: none;
+    }
+
+    body.invitation-render-v2 .open-invitation-btn::after {
+        display: none;
+    }
+}
+
+/* Small-screen sizing */
+@media (max-width: 700px) {
+    body.invitation-render-v2 .open-invitation-btn {
+        width: min(100%, 365px);
+        min-height: 54px;
+
+        padding: 15px 20px;
+
+        font-size: 12px;
+        letter-spacing: 2.1px;
+    }
+}
+
+/* Reduced-motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+    body.invitation-render-v2 .open-invitation-btn,
+    body.invitation-render-v2 .open-invitation-btn::before,
+    body.invitation-render-v2 .open-invitation-btn::after,
+    body.invitation-render-v2 .open-invitation-btn .btn-label,
+    body.invitation-render-v2 .btn-spinner {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    body.invitation-render-v2 .open-invitation-btn::after {
+        display: none;
     }
 }
 
