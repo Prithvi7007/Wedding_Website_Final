@@ -30,7 +30,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='invitation-render-v2.css') }}?v=darkgold1"
+        href="{{ url_for('static', filename='invitation-render-v2.css') }}?v=darkgoldmagic2"
     >
 </head>
 
@@ -248,6 +248,42 @@
         });
     </script>
     {% endif %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const title = document.querySelector(".login-title");
+
+            function fitCoupleName() {
+                if (!title) {
+                    return;
+                }
+
+                /*
+                 * Try the single-line layout first. When the rendered script
+                 * does not fit inside the available title width, switch to
+                 * exactly three lines: Adlin / & / Prithvi.
+                 */
+                title.classList.remove("is-stacked");
+
+                window.requestAnimationFrame(function () {
+                    const availableWidth = title.clientWidth;
+                    const requiredWidth = title.scrollWidth;
+
+                    title.classList.toggle(
+                        "is-stacked",
+                        requiredWidth > availableWidth + 1
+                    );
+                });
+            }
+
+            fitCoupleName();
+            window.addEventListener("resize", fitCoupleName);
+
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(fitCoupleName);
+            }
+        });
+    </script>
 
 </body>
 </html>
