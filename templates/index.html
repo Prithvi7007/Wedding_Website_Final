@@ -1,15 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+
     <title>Adlin & Prithvi | Private Invitation</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=27292t ">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <meta name="theme-color" content="#3f2a22">
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="{{ url_for('static', filename='images/favicon.png') }}"
+    >
+
+    <link
+        rel="preload"
+        as="image"
+        href="{{ url_for('static', filename='images/site-bg.webp') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}?v=20260712b"
+    >
 </head>
 
 <body class="login-page">
 
-    <div class="login-container">
+    <main class="login-container">
 
         <div class="login-private-line">
             Private Invitation
@@ -17,59 +39,79 @@
 
         <h1 class="login-title">Adlin & Prithvi</h1>
 
-        <div class="login-divider"></div>
+        <div class="login-divider" aria-hidden="true"></div>
 
         {% if invalid_invite %}
+
             <p class="subtitle login-subtitle">
                 This invitation link could not be found or is no longer active.
                 Please contact Adlin or Prithvi if you believe this is a mistake.
             </p>
 
             <p class="small-text">
-                Please check the link that was shared with you.
-            </p>
-        {% elif redirect_url %}
-            <p class="subtitle login-subtitle">
-                {% if guest_name %}
-                    Welcome, {{ guest_name }}.<br>
-                    We’re so excited to celebrate with you.
-                {% else %}
-                    Welcome.<br>
-                    We’re so excited to celebrate with you.
-                {% endif %}
-                <br>
-                Please use this portal to view wedding details and RSVP.
+                Please check the private link that was shared with you.
             </p>
 
-            <button type="button" class="open-invitation-btn" id="open-invitation-btn">
+        {% elif redirect_url %}
+
+            <p class="subtitle login-subtitle">
+                {% if guest_name %}
+                    <span class="welcome-name">Welcome, {{ guest_name }}.</span>
+                {% else %}
+                    <span class="welcome-name">Welcome.</span>
+                {% endif %}
+
+                <span class="welcome-message">
+                    We’re so excited to celebrate with you.
+                    <span class="welcome-heart" aria-hidden="true">♡</span>
+                </span>
+
+                <span class="welcome-invitation">
+                    Your private invitation and RSVP await.
+                </span>
+            </p>
+
+            <button
+                type="button"
+                class="open-invitation-btn"
+                id="open-invitation-btn"
+                aria-label="Open your private wedding invitation"
+                aria-busy="false"
+            >
                 <span class="btn-label">Open Invitation</span>
                 <span class="btn-spinner" aria-hidden="true"></span>
             </button>
 
             <p class="small-text">
-                If this does not look like your invitation, please contact Adlin or Prithvi before continuing.
+                Not your invitation? Please contact Adlin or Prithvi before continuing.
             </p>
+
         {% else %}
+
             <p class="subtitle login-subtitle">
-                This is a private wedding invitation portal. Please use the private invitation
-                link shared with you to view wedding details and RSVP.
+                This is a private wedding invitation.
+                Please open the personal invitation link that was shared with you.
             </p>
 
             <p class="small-text">
                 Your invitation awaits.
             </p>
+
         {% endif %}
 
-    </div>
+    </main>
 
     {% if redirect_url %}
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const redirectUrl = "{{ redirect_url }}";
-            const button = document.getElementById("open-invitation-btn");
-            const buttonLabel = button ? button.querySelector(".btn-label") : null;
+            const redirectUrl = {{ redirect_url | tojson }};
 
-            const dashboardImages = [
+            const button = document.getElementById("open-invitation-btn");
+            const buttonLabel = button
+                ? button.querySelector(".btn-label")
+                : null;
+
+            const commonImages = [
                 "/static/images/site-bg.webp",
 
                 "/static/images/DSC06660.webp",
@@ -78,14 +120,6 @@
                 "/static/images/DSC06785.webp",
                 "/static/images/DSC06855.webp",
                 "/static/images/DSC06882.webp",
-
-                "/static/images/HALDI.webp",
-                "/static/images/WEDDING.webp",
-                "/static/images/RECEPTION.webp",
-
-                "/static/images/HALDI-mobile.webp",
-                "/static/images/WEDDING-mobile.webp",
-                "/static/images/RECEPTION-mobile.webp",
 
                 "/static/images/schedule/attire-haldi.webp",
                 "/static/images/schedule/attire-hindu.webp",
@@ -97,19 +131,54 @@
                 "/static/images/travel/restaurants.webp"
             ];
 
+            const desktopEventImages = [
+                "/static/images/HALDI.webp",
+                "/static/images/WEDDING.webp",
+                "/static/images/RECEPTION.webp"
+            ];
+
+            const mobileEventImages = [
+                "/static/images/HALDI-mobile.webp",
+                "/static/images/WEDDING-mobile.webp",
+                "/static/images/RECEPTION-mobile.webp"
+            ];
+
+            const eventImages = window.matchMedia("(max-width: 700px)").matches
+                ? mobileEventImages
+                : desktopEventImages;
+
+            const dashboardImages = [
+                ...commonImages,
+                ...eventImages
+            ];
+
             function preloadImage(src) {
                 return new Promise(function (resolve) {
-                    const img = new Image();
+                    const image = new Image();
+                    let settled = false;
 
-                    img.onload = function () {
+                    function finish() {
+                        if (settled) {
+                            return;
+                        }
+
+                        settled = true;
                         resolve();
-                    };
+                    }
 
-                    img.onerror = function () {
-                        resolve();
-                    };
+                    image.onload = finish;
+                    image.onerror = finish;
+                    image.src = src;
 
-                    img.src = src;
+                    if (image.complete) {
+                        finish();
+                    }
+                });
+            }
+
+            function wait(milliseconds) {
+                return new Promise(function (resolve) {
+                    window.setTimeout(resolve, milliseconds);
                 });
             }
 
@@ -118,36 +187,56 @@
                     return;
                 }
 
-                if (isLoading) {
-                    button.classList.add("is-loading");
-                    button.disabled = true;
+                button.classList.toggle("is-loading", isLoading);
+                button.disabled = isLoading;
+                button.setAttribute(
+                    "aria-busy",
+                    isLoading ? "true" : "false"
+                );
 
-                    if (buttonLabel) {
-                        buttonLabel.textContent = "Opening Invitation";
-                    }
-                } else {
-                    button.classList.remove("is-loading");
-                    button.disabled = false;
-
-                    if (buttonLabel) {
-                        buttonLabel.textContent = "Open Invitation";
-                    }
+                if (buttonLabel) {
+                    buttonLabel.textContent = isLoading
+                        ? "Opening Invitation"
+                        : "Open Invitation";
                 }
             }
 
+            /*
+             * Begin warming the browser cache as soon as the page is ready.
+             * The button still opens after a maximum wait of five seconds.
+             */
+            const preloadPromise = Promise.allSettled(
+                dashboardImages.map(preloadImage)
+            );
+
             async function openInvitation() {
+                if (!button || button.disabled) {
+                    return;
+                }
+
                 setLoading(true);
 
                 try {
-                    await Promise.all(dashboardImages.map(preloadImage));
+                    await Promise.race([
+                        preloadPromise,
+                        wait(5000)
+                    ]);
                 } finally {
-                    window.location.href = redirectUrl;
+                    window.location.assign(redirectUrl);
                 }
             }
 
             if (button) {
                 button.addEventListener("click", openInvitation);
             }
+
+            /*
+             * Reset the button when this page is restored by the browser's
+             * Back button from the back-forward cache.
+             */
+            window.addEventListener("pageshow", function () {
+                setLoading(false);
+            });
         });
     </script>
     {% endif %}
