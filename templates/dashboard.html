@@ -1,107 +1,164 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Adlin & Prithvi</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=glassb2">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Adlin & Prithvi | Wedding Weekend</title>
+    <meta name="theme-color" content="#171513">
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="{{ url_for('static', filename='images/favicon.png') }}"
+    >
+
+    <link
+        rel="preload"
+        as="image"
+        href="{{ url_for('static', filename='images/DSC06660.webp') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardwelcome1"
+    >
 </head>
 
-<body class="dashboard-page">
+{% set guest_display_name = guest.get('display_name') or guest.get('name') or 'Dear Guest' %}
 
+<body class="dashboard-page dashboard-v2" data-active-tab="welcome">
+
+    <div id="login-toast" class="login-toast" role="status" aria-live="polite">
+        <div class="login-toast-inner">
+            <span class="login-icon" aria-hidden="true">✦</span>
+            <div>
+                <strong>Welcome</strong>
+                <p>Your private wedding portal is ready.</p>
+            </div>
+        </div>
+    </div>
 
     <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
 
-    <div id="celebration-toast" class="celebration-toast">
+    <div id="celebration-toast" class="celebration-toast" role="status" aria-live="polite">
         <div class="celebration-toast-inner">
-            <span class="celebration-icon">🎉</span>
+            <span class="celebration-icon" aria-hidden="true">✦</span>
             <div>
-                <strong>RSVP Confirmed!</strong>
+                <strong>RSVP Confirmed</strong>
                 <p>We can’t wait to celebrate with you.</p>
             </div>
         </div>
     </div>
-    <div class="dashboard-container">
 
-        <div class="top-line">
-            <span>Nov, 2026</span>
-            <span>Tampa, FL</span>
-            <span>{{ guest.name if guest.name else "Guest Edition" }}</span>
-        </div>
-
-        <h1 class="dashboard-title">Adlin & Prithvi</h1>
-
-
-        <div class="tabs"> 
-            <button type="button" class="tab-btn {% if active_tab == 'welcome' %}active{% endif %}" data-tab="welcome">Welcome</button>
-            <button type="button" class="tab-btn {% if active_tab == 'schedule' %}active{% endif %}" data-tab="schedule">Schedule</button>
-            <button type="button" class="tab-btn {% if active_tab == 'travel' %}active{% endif %}" data-tab="travel">Travel</button>
-            <button type="button" class="tab-btn {% if active_tab == 'registry' %}active{% endif %}" data-tab="registry">Registry</button>
-            <button type="button" class="tab-btn {% if active_tab == 'qa' %}active{% endif %}" data-tab="qa">Q&A</button>
-        </div>
-        <!-- Welcome Tab -->
-        <div id="welcome" class="tab-content {% if active_tab == 'welcome' %}active{% endif %}">
-
-            <div class="welcome-section-header">
-                <h2>Welcome, {{ guest.name if guest.name else "Dear Guest" }}</h2>
-                <p>
-                   With joyous hearts, we invite you to celebrate the beginning of our life together. We’ve put together everything you’ll need to join us and celebrate this special occasion.<br><br>
-
-Please take a moment to RSVP and let us know if you’ll be able to join us. We can’t wait to celebrate with you!
-
-                </p>
+    <div class="dashboard-app">
+        <header class="dashboard-header">
+            <div class="dashboard-meta" aria-label="Wedding details">
+                <span>Nov, 2026</span>
+                <span>Tampa, FL</span>
+                <span>{{ guest_display_name }}</span>
             </div>
 
-            <div class="countdown-section-header">
-                <!-- <h2>Countdown to the Wedding Day</h2> -->
+            <h1 class="dashboard-title">Adlin &amp; Prithvi</h1>
 
-                <div class="countdown-inline">
-                    <div>
-                        <span id="days">00</span>
-                        <small>Days</small>
+            <nav class="tabs" aria-label="Wedding portal navigation">
+                <button type="button" class="tab-btn active" data-tab="welcome">Welcome</button>
+                <button type="button" class="tab-btn" data-tab="schedule">Schedule</button>
+                <button type="button" class="tab-btn" data-tab="travel">Travel</button>
+                <button type="button" class="tab-btn" data-tab="registry">Registry</button>
+                <button type="button" class="tab-btn" data-tab="qa">Q&amp;A</button>
+            </nav>
+        </header>
+
+        <main class="dashboard-main">
+            <!-- Welcome Tab -->
+            <section id="welcome" class="tab-content active" aria-labelledby="welcome-heading">
+                <div class="welcome-hero">
+                    <div class="welcome-slides" aria-hidden="true">
+                        <img class="slide active-slide" src="{{ url_for('static', filename='images/DSC06660.webp') }}" alt="">
+                        <img class="slide" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="">
+                        <img class="slide" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="">
+                        <img class="slide" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
+                        <img class="slide" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="">
+                        <img class="slide" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="">
                     </div>
 
-                    <div>
-                        <span id="hours">00</span>
-                        <small>Hours</small>
+                    <div class="welcome-hero-shade" aria-hidden="true"></div>
+
+                    <div class="welcome-copy">
+                        <p class="welcome-eyebrow">Welcome,</p>
+                        <h2 id="welcome-heading">{{ guest_display_name }}</h2>
+
+                        <div class="welcome-message">
+                            <p>
+                                With joyous hearts, we invite you to celebrate the beginning
+                                of our life together.
+                            </p>
+                            <p>
+                                Please take a moment to RSVP and let us know if you’ll be able
+                                to join us. We can’t wait to celebrate with you!
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="welcome-schedule-btn"
+                            id="welcome-schedule-btn"
+                        >
+                            <span>View Your Schedule</span>
+                        </button>
+
+                        <div class="countdown-inline" aria-label="Countdown to the wedding">
+                            <div>
+                                <span id="days">00</span>
+                                <small>Days</small>
+                            </div>
+                            <div>
+                                <span id="hours">00</span>
+                                <small>Hours</small>
+                            </div>
+                            <div>
+                                <span id="minutes">00</span>
+                                <small>Minutes</small>
+                            </div>
+                            <div>
+                                <span id="seconds">00</span>
+                                <small>Seconds</small>
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <span id="minutes">00</span>
-                        <small>Minutes</small>
-                    </div>
+                    <button
+                        type="button"
+                        class="slide-arrow left-arrow"
+                        onclick="changeSlide(-1)"
+                        aria-label="Previous photograph"
+                    >
+                        &#10094;
+                    </button>
 
-                    <div>
-                        <span id="seconds">00</span>
-                        <small>Seconds</small>
+                    <button
+                        type="button"
+                        class="slide-arrow right-arrow"
+                        onclick="changeSlide(1)"
+                        aria-label="Next photograph"
+                    >
+                        &#10095;
+                    </button>
+
+                    <div class="slide-dots" aria-label="Choose a photograph">
+                        <button type="button" class="dot active-dot" onclick="showSlide(0)" aria-label="Photograph 1"></button>
+                        <button type="button" class="dot" onclick="showSlide(1)" aria-label="Photograph 2"></button>
+                        <button type="button" class="dot" onclick="showSlide(2)" aria-label="Photograph 3"></button>
+                        <button type="button" class="dot" onclick="showSlide(3)" aria-label="Photograph 4"></button>
+                        <button type="button" class="dot" onclick="showSlide(4)" aria-label="Photograph 5"></button>
+                        <button type="button" class="dot" onclick="showSlide(5)" aria-label="Photograph 6"></button>
                     </div>
                 </div>
-            </div>
-
-            <div class="welcome-hero">
-                <img class="slide active-slide" src="{{ url_for('static', filename='images/DSC06660.webp') }}" alt="Wedding image 1">
-                <img class="slide" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="Wedding image 2">
-                <img class="slide" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="Wedding image 3">
-                <img class="slide" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="Wedding image 4">
-                <img class="slide" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="Wedding image 5">
-                <img class="slide" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="Wedding image 6">
-
-                <button class="slide-arrow left-arrow" onclick="changeSlide(-1)">&#10094;</button>
-                <button class="slide-arrow right-arrow" onclick="changeSlide(1)">&#10095;</button>
-            </div>
-
-            <div class="slide-dots">
-                <span class="dot active-dot" onclick="showSlide(0)"></span>
-                <span class="dot" onclick="showSlide(1)"></span>
-                <span class="dot" onclick="showSlide(2)"></span>
-                <span class="dot" onclick="showSlide(3)"></span>
-                <span class="dot" onclick="showSlide(4)"></span>
-                <span class="dot" onclick="showSlide(5)"></span>
-            </div>
-        </div>
+            </section>
 
         <!-- Schedule Tab -->
-        <div id="schedule" class="tab-content {% if active_tab == 'schedule' %}active{% endif %}">
+        <div id="schedule" class="tab-content">
             <h2>Wedding Schedule</h2>
         
 
@@ -111,255 +168,234 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
             </p>
 
             {% for event in events %}
-                {% set saved = saved_rsvps.get(event.id, {}) %}
-                {% set has_response = saved.get("attending") %}
+    {% set saved = saved_rsvps.get(event.id, {}) %}
+    {% set has_response = saved.get("attending") %}
 
-                <div 
-                    class="info-card event-card 
-                        {% if event.id == 'haldi' %}event-haldi{% endif %}
-                        {% if event.id == 'telugu_wedding' %}event-hindu{% endif %}
-                        {% if event.id == 'church_wedding' %}event-christian{% endif %}
-                    "
+    <div 
+        class="info-card event-card 
+            {% if event.id == 'haldi' %}event-haldi{% endif %}
+            {% if event.id == 'hindu_wedding' %}event-hindu{% endif %}
+            {% if event.id == 'christian_wedding_reception' %}event-christian{% endif %}
+        "
+    >
+
+        <!-- EVENT TITLE -->
+        <div class="event-title-block">
+            <h3>{{ event.title }}</h3>
+
+            {% if event.id == 'haldi' %}
+                <p class="event-kicker">A joyful pre-wedding celebration</p>
+            {% elif event.id == 'hindu_wedding' %}
+                <p class="event-kicker">Traditional Hindu ceremony and blessings</p>
+            {% elif event.id == 'christian_wedding_reception' %}
+                <p class="event-kicker">Ceremony, dinner, dancing, and celebration</p>
+            {% endif %}
+        </div>
+
+        <!-- DATE / TIME / LOCATION -->
+        <div class="event-meta-grid">
+            <div class="event-meta-item">
+                <div class="meta-icon" aria-hidden="true">
+                    <!-- Calendar icon -->
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="8" y1="3.5" x2="8" y2="7"></line>
+                        <line x1="16" y1="3.5" x2="16" y2="7"></line>
+                    </svg>
+                </div>
+                <div class="meta-label">Date</div>
+                <div class="meta-value">{{ event.date }}</div>
+            </div>
+
+            <div class="event-meta-item">
+                <div class="meta-icon" aria-hidden="true">
+                    <!-- Clock icon -->
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="8.5"></circle>
+                        <line x1="12" y1="12" x2="12" y2="8"></line>
+                        <line x1="12" y1="12" x2="15" y2="13.8"></line>
+                    </svg>
+                </div>
+                <div class="meta-label">Time</div>
+                <div class="meta-value">{{ event.time }}</div>
+            </div>
+
+            <div class="event-meta-item event-meta-location">
+                <div class="meta-icon" aria-hidden="true">
+                    <!-- Location pin icon -->
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 21s-6-5.4-6-10.2A6 6 0 0 1 18 10.8C18 15.6 12 21 12 21z"></path>
+                        <circle cx="12" cy="10.5" r="2.3"></circle>
+                    </svg>
+                </div>
+                <div class="meta-label">Location</div>
+                <div class="meta-value">
+                    {% if event.venue_name %}{{ event.venue_name }}<br>{% endif %}
+                    {{ event.location }}
+                </div>
+            </div>
+        </div>
+
+        <!-- ATTIRE GUIDE -->
+        <div class="attire-guide-card">
+            <span class="attire-guide-label">Attire Guide</span>
+
+            {% if event.attire_image %}
+                <img 
+                    src="{{ url_for('static', filename=event.attire_image) }}" 
+                    alt="{{ event.title }} attire guide"
+                    class="attire-guide-image"
                 >
-                    <div class="event-art-panel">
+            {% endif %}
 
-                        <!-- EVENT TITLE -->
-                        <div class="event-title-block">
-                            <h3>{{ event.title }}</h3>
+            <strong>
+                {{ event.attire_heading if event.attire_heading else "Attire" }}
+            </strong>
 
-                            {% if event.id == 'haldi' %}
-                                <p class="event-kicker">A joyful pre-wedding celebration</p>
-                            {% elif event.id == 'telugu_wedding' %}
-                                <p class="event-kicker">Traditional Telugu ceremony, Lunch and blessings</p>
-                            {% elif event.id == 'church_wedding' %}
-                                <p class="event-kicker">Ceremony, dinner, dancing, and celebration</p>
-                            {% endif %}
-                        </div>
+            {% if event.attire_subheading %}
+                <small>{{ event.attire_subheading }}</small>
+            {% endif %}
 
-                        <!-- DETAILS + ATTIRE -->
-                        <div class="mobile-event-detail-sheet">
+            <p>{{ event.attire }}</p>
+        </div>
 
-                            <!-- DATE / TIME / LOCATION -->
-                            <div class="event-meta-grid">
-                                <div class="event-meta-item event-date-time-combined">
-                                    <div class="meta-icon" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24">
-                                            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                                            <line x1="3" y1="9" x2="21" y2="9"></line>
-                                            <line x1="8" y1="3.5" x2="8" y2="7"></line>
-                                            <line x1="16" y1="3.5" x2="16" y2="7"></line>
-                                        </svg>
-                                    </div>
-                                    <div class="meta-label">Date &amp; Time</div>
-                                    <div class="meta-value">{{ event.date }} • {{ event.time }}</div>
-                                </div>
+        <!-- CALENDAR / DIRECTIONS -->
+        <div class="event-actions">
+            <a 
+                href="{{ event.calendar_link }}" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="event-action-link"
+            >
+                Google Calendar
+            </a>
 
-                                <div class="event-meta-item event-date-only">
-                                    <div class="meta-icon" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24">
-                                            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                                            <line x1="3" y1="9" x2="21" y2="9"></line>
-                                            <line x1="8" y1="3.5" x2="8" y2="7"></line>
-                                            <line x1="16" y1="3.5" x2="16" y2="7"></line>
-                                        </svg>
-                                    </div>
-                                    <div class="meta-label">Date</div>
-                                    <div class="meta-value">{{ event.date }}</div>
-                                </div>
+            <a 
+                href="{{ url_for('apple_calendar_event', event_id=event.id) }}" 
+                class="event-action-link"
+            >
+                Apple Calendar
+            </a>
 
-                                <div class="event-meta-item event-time-only">
-                                    <div class="meta-icon" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24">
-                                            <circle cx="12" cy="12" r="8.5"></circle>
-                                            <line x1="12" y1="12" x2="12" y2="8"></line>
-                                            <line x1="12" y1="12" x2="15" y2="13.8"></line>
-                                        </svg>
-                                    </div>
-                                    <div class="meta-label">Time</div>
-                                    <div class="meta-value">{{ event.time }}</div>
-                                </div>
+            <a 
+                href="{{ event.directions_link }}" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="event-action-link"
+            >
+                Directions
+            </a>
+        </div>
 
-                                <div class="event-meta-item event-meta-location">
-                                    <div class="meta-icon" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24">
-                                            <path d="M12 21s-6-5.4-6-10.2A6 6 0 0 1 18 10.8C18 15.6 12 21 12 21z"></path>
-                                            <circle cx="12" cy="10.5" r="2.3"></circle>
-                                        </svg>
-                                    </div>
-                                    <div class="meta-label">Location</div>
-                                    <div class="meta-value">
-                                        {{ event.venue_name }}<br>
-                                        {{ event.location }}
-                                    </div>
-                                </div>
-                            </div>
+        <!-- RSVP CONFIRMATION -->
+        {% if has_response %}
+            <div 
+                id="confirmation-{{ event.id }}" 
+                class="rsvp-confirmation 
+                    {% if saved.get('attending') == 'Yes' %}status-yes{% endif %}
+                    {% if saved.get('attending') == 'No' %}status-no{% endif %}
+                    {% if saved.get('attending') == 'Maybe' %}status-maybe{% endif %}
+                "
+            >
+                <div class="rsvp-status-header">
+                    {% if saved.get("attending") == "Yes" %}
+                        <span class="status-badge badge-yes">Confirmed</span>
+                        <h4>You’re Attending</h4>
+                    {% elif saved.get("attending") == "No" %}
+                        <span class="status-badge badge-no">Declined</span>
+                        <h4>You’re Not Attending</h4>
+                    {% else %}
+                        <span class="status-badge badge-maybe">Maybe</span>
+                        <h4>Response Pending</h4>
+                    {% endif %}
+                </div>
 
-                            <!-- ATTIRE GUIDE -->
-                            <div class="attire-guide-card">
-                                <span class="attire-guide-label">Attire Guide</span>
-
-                                {% if event.attire_image %}
-                                    <img 
-                                        src="{{ url_for('static', filename=event.attire_image) }}" 
-                                        alt="{{ event.title }} attire guide"
-                                        class="attire-guide-image"
-                                    >
-                                {% endif %}
-
-                                <strong>{{ event.attire_heading if event.attire_heading else "Attire" }}</strong>
-
-                                {% if event.attire_subheading %}
-                                    <small>{{ event.attire_subheading }}</small>
-                                {% endif %}
-
-                                <p>{{ event.attire }}</p>
-                            </div>
-                        </div>
-
-                        <!-- CALENDAR / DIRECTIONS -->
-                        <div class="event-actions">
-                            <a 
-                                href="{{ event.calendar_link }}" 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                class="event-action-link"
-                            >
-                                Google Calendar
-                            </a>
-
-                            <a 
-                                href="{{ url_for('apple_calendar_event', event_id=event.id) }}" 
-                                class="event-action-link"
-                            >
-                                Apple Calendar
-                            </a>
-
-                            <a 
-                                href="{{ event.directions_link }}" 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                class="event-action-link"
-                            >
-                                Directions
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- RSVP CONFIRMATION -->
-                    {% if has_response %}
-                        <div 
-                            id="confirmation-{{ event.id }}" 
-                            class="rsvp-confirmation 
-                                {% if saved.get('attending') == 'Yes' %}status-yes{% endif %}
-                                {% if saved.get('attending') == 'No' %}status-no{% endif %}
-                                {% if saved.get('attending') == 'Maybe' %}status-maybe{% endif %}
-                            "
-                        >
-                            <div class="rsvp-confirmation-main">
-                                <div class="rsvp-status-header">
-                                    {% if saved.get("attending") == "Yes" %}
-                                        <span class="status-badge badge-yes">Confirmed</span>
-                                        <h4>We are delighted you'll be joining us.</h4>
-                                    {% elif saved.get("attending") == "No" %}
-                                        <span class="status-badge badge-no">Declined</span>
-                                        <h4>We will miss you at this event.</h4>
-                                    {% else %}
-                                        <span class="status-badge badge-maybe">Maybe</span>
-                                        <h4>Thank you for letting us know.</h4>
-                                    {% endif %}
-                                </div>
-
-                                <div class="confirmation-details">
-                                    {% if saved.get("attending") != "No" %}
-                                        <p><strong>Total attending:</strong> {{ saved.get("guest_count", 0) }}</p>
-                                    {% else %}
-                                        <p><strong>Total attending:</strong> 0</p>
-                                    {% endif %}
-
-                                    {% if saved.get("notes") and saved.get("notes") != "None" %}
-                                        <p><strong>Notes:</strong> {{ saved.get("notes") }}</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <button 
-                                type="button" 
-                                class="edit-rsvp-btn" 
-                                onclick="toggleRsvpForm('{{ event.id }}')"
-                            >
-                                Edit Response
-                            </button>
-                        </div>
+                <div class="confirmation-details">
+                    {% if saved.get("attending") != "No" %}
+                        <p><strong>Total attending:</strong> {{ saved.get("guest_count", 0) }}</p>
+                    {% else %}
+                        <p><strong>Total attending:</strong> 0</p>
                     {% endif %}
 
-                    <!-- RSVP FORM -->
-                    <form 
-                        id="rsvp-form-{{ event.id }}" 
-                        action="{{ url_for('save_rsvp') }}" 
-                        method="POST" 
-                        class="rsvp-form {% if has_response %}is-hidden{% endif %}"
-                    >
-                        <div class="rsvp-form-heading">
-                            <span>Your Response</span>
-                            <p>Please confirm your plans for this event.</p>
-                        </div>
-
-                        <input type="hidden" name="event_id" value="{{ event.id }}">
-
-                        <div class="rsvp-grid">
-                            <div class="rsvp-field">
-                                <label>Will you attend?</label>
-
-                                <select name="attending" required>
-                                    <option value="">Select</option>
-                                    <option value="Yes" {% if saved.get("attending") == "Yes" %}selected{% endif %}>Yes</option>
-                                    <option value="No" {% if saved.get("attending") == "No" %}selected{% endif %}>No</option>
-                                    <option value="Maybe" {% if saved.get("attending") == "Maybe" %}selected{% endif %}>Maybe</option>
-                                </select>
-
-                                <p class="rsvp-helper">
-                                    If you select Maybe, please update your RSVP once your plans are final.
-                                </p>
-                            </div>
-
-                            <div class="rsvp-field">
-                                <label>Total attending, including you</label>
-
-                                <input 
-                                    type="number" 
-                                    name="guest_count" 
-                                    min="0" 
-                                    max="{{ event.max_guests }}" 
-                                    value="{{ saved.get('guest_count', 0) }}"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="rsvp-field">
-                            <label>Notes</label>
-
-                            <textarea 
-                                name="notes" 
-                                placeholder="Food restrictions, accessibility needs, or other notes"
-                            >{{ saved.get("notes", "") }}</textarea>
-                        </div>
-
-                        <button type="submit" class="rsvp-btn">
-                            {% if has_response %}
-                                Update RSVP
-                            {% else %}
-                                Save RSVP
-                            {% endif %}
-                        </button>
-                    </form>
+                    {% if saved.get("notes") %}
+                        <p><strong>Notes:</strong> {{ saved.get("notes") }}</p>
+                    {% endif %}
                 </div>
-            {% endfor %}
+
+                <button 
+                    type="button" 
+                    class="edit-rsvp-btn" 
+                    onclick="toggleRsvpForm('{{ event.id }}')"
+                >
+                    Edit Response
+                </button>
+            </div>
+        {% endif %}
+
+        <!-- RSVP FORM -->
+        <form 
+            id="rsvp-form-{{ event.id }}" 
+            action="{{ url_for('save_rsvp') }}" 
+            method="POST" 
+            class="rsvp-form {% if has_response %}is-hidden{% endif %}"
+        >
+            <div class="rsvp-form-heading">
+                <span>Your Response</span>
+                <p>Please confirm your plans for this event.</p>
+            </div>
+
+            <input type="hidden" name="event_id" value="{{ event.id }}">
+
+            <div class="rsvp-grid">
+                <div class="rsvp-field">
+                    <label>Will you attend?</label>
+                    <select name="attending" required>
+                        <option value="">Select</option>
+                        <option value="Yes" {% if saved.get("attending") == "Yes" %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if saved.get("attending") == "No" %}selected{% endif %}>No</option>
+                        <option value="Maybe" {% if saved.get("attending") == "Maybe" %}selected{% endif %}>Maybe</option>
+                    </select>
+
+                    <p class="rsvp-helper">
+                        If you select Maybe, please update your RSVP once your plans are final.
+                    </p>
+                </div>
+
+                <div class="rsvp-field">
+                    <label>Total attending, including you</label>
+                    <input 
+                        type="number" 
+                        name="guest_count" 
+                        min="0" 
+                        max="{{ event.max_guests if event.max_guests is defined else guest.max_guests }}" 
+                        value="{{ saved.get('guest_count', 0) }}"
+                    >
+                </div>
+            </div>
+
+            <div class="rsvp-field">
+                <label>Notes</label>
+                <textarea name="notes" placeholder="Food restrictions, accessibility needs, or other notes">{{ saved.get("notes", "") }}</textarea>
+            </div>
+
+            <button type="submit" class="rsvp-btn">
+                {% if has_response %}
+                    Update RSVP
+                {% else %}
+                    Save RSVP
+                {% endif %}
+            </button>
+        </form>
+
+    </div>
+{% endfor %}
 
             
         </div>
 
       <!-- Travel Tab -->
-        <div id="travel" class="tab-content {% if active_tab == 'travel' %}active{% endif %}">
+        <div id="travel" class="tab-content">
 
             <div class="travel-page-header">
                 <h2>Travel Guide</h2>
@@ -382,7 +418,7 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
 
                         <div class="paper-image-wrap feature-image">
                             <img 
-                                src="{{ url_for('static', filename='images/travel/airport.webp') }}" 
+                                src="{{ url_for('static', filename='images/travel/airport.png') }}" 
                                 alt="Airport illustration"
                                 class="paper-image"
                             >
@@ -459,7 +495,7 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
 
                             <div class="paper-image-wrap side-image">
                                 <img 
-                                    src="{{ url_for('static', filename='images/travel/hotel.webp') }}" 
+                                    src="{{ url_for('static', filename='images/travel/hotel.png') }}" 
                                     alt="Hotel illustration"
                                     class="paper-image"
                                 >
@@ -474,7 +510,7 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
 
                         <div class="paper-image-wrap clipping-image">
                             <img 
-                                src="{{ url_for('static', filename='images/travel/tampa.webp') }}" 
+                                src="{{ url_for('static', filename='images/travel/tampa.png') }}" 
                                 alt="Tampa illustration"
                                 class="paper-image"
                             >
@@ -542,7 +578,7 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
 
                         <div class="paper-image-wrap bottom-ad-image">
                             <img 
-                                src="{{ url_for('static', filename='images/travel/restaurants.webp') }}" 
+                                src="{{ url_for('static', filename='images/travel/restaurants.png') }}" 
                                 alt="Restaurant illustration"
                                 class="paper-image"
                             >
@@ -553,7 +589,7 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
             </div>
 
         <!-- Registry Tab -->
-        <div id="registry" class="tab-content {% if active_tab == 'registry' %}active{% endif %}">
+        <div id="registry" class="tab-content">
             <h2>Registry</h2>
 
             <div class="info-card">
@@ -564,7 +600,7 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
         </div>
 
         <!-- QA Tab -->
-        <div id="qa" class="tab-content {% if active_tab == 'qa' %}active{% endif %}">
+        <div id="qa" class="tab-content">
             <div class="qa-section-header">
                 <h2>Questions & Answers</h2>
                 <p>
@@ -581,7 +617,7 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
                     <p>
                         Please refer to the attire notes listed under each event in the Schedule tab.
                         Bright festive colors are perfect for Haldi, traditional Indian formal attire is
-                        encouraged for the Telugu ceremony, and formal or semi-formal attire is welcome
+                        encouraged for the Hindu ceremony, and formal or semi-formal attire is welcome
                         for the Christian wedding and reception.
                     </p>
                 </div>
@@ -666,17 +702,13 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
 
         <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
 
+        </main>
     </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const tabButtons = document.querySelectorAll(".tab-btn");
         const tabContents = document.querySelectorAll(".tab-content");
-
-        const shouldCelebrate = {{ 'true' if celebrate == 'yes' else 'false' }};
-        const shouldShowLoginEffect = {{ 'true' if login_effect == 'success' else 'false' }};
-        const serverActiveTab = "{{ active_tab if active_tab else 'welcome' }}";
-        const celebrationEventId = "{{ celebrate_event_id if celebrate_event_id else '' }}";
 
         function activateTab(tabName) {
             tabButtons.forEach(function (btn) {
@@ -693,6 +725,7 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
             if (targetButton && targetContent) {
                 targetButton.classList.add("active");
                 targetContent.classList.add("active");
+                document.body.setAttribute("data-active-tab", tabName);
             }
         }
 
@@ -701,274 +734,40 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
                 const targetTab = button.getAttribute("data-tab");
                 activateTab(targetTab);
 
+                // Update URL hash without reloading page
                 history.replaceState(null, "", "#" + targetTab);
-            });
-        });
 
-        /* ============================= */
-        /* SCROLL TO NEXT / PREVIOUS TAB */
-        /* Visual checkpoint version     */
-        /* ============================= */
-
-        const tabOrder = ["welcome", "schedule", "travel", "registry", "qa"];
-
-        /*
-          Increase this if you want it even slower.
-          1 = switch as soon as checkpoint is reached and user scrolls again
-          2 = smoother / safer
-          3 = very deliberate
-        */
-        const REQUIRED_VISUAL_EDGE_SCROLLS = 2;
-
-        const EDGE_SCROLL_COOLDOWN_MS = 420;
-        const WHEEL_DELTA_THRESHOLD = 24;
-        const TOUCH_DISTANCE_THRESHOLD = 58;
-        const CHECKPOINT_TOP_PX = 22;
-
-        let isAutoSwitchingTab = false;
-        let touchStartY = 0;
-        let downEdgeScrollCount = 0;
-        let upEdgeScrollCount = 0;
-        let lastEdgeScrollTime = 0;
-
-        function getActiveTabName() {
-            const activeButton = document.querySelector(".tab-btn.active");
-            return activeButton ? activeButton.getAttribute("data-tab") : "welcome";
-        }
-
-        function getNextTabName() {
-            const currentTab = getActiveTabName();
-            const currentIndex = tabOrder.indexOf(currentTab);
-
-            if (currentIndex === -1 || currentIndex === tabOrder.length - 1) {
-                return null;
-            }
-
-            return tabOrder[currentIndex + 1];
-        }
-
-        function getPreviousTabName() {
-            const currentTab = getActiveTabName();
-            const currentIndex = tabOrder.indexOf(currentTab);
-
-            if (currentIndex <= 0) {
-                return null;
-            }
-
-            return tabOrder[currentIndex - 1];
-        }
-
-        function getScrollCheckpointForTab(tabName) {
-            if (tabName === "welcome") {
-                return document.querySelector("#welcome .welcome-hero");
-            }
-
-            if (tabName === "schedule") {
-                const eventCards = document.querySelectorAll("#schedule .event-card");
-                return eventCards.length ? eventCards[eventCards.length - 1] : null;
-            }
-
-            if (tabName === "travel") {
-                const travelCards = document.querySelectorAll("#travel .travel-paper-card");
-                return travelCards.length ? travelCards[travelCards.length - 1] : null;
-            }
-
-            if (tabName === "registry") {
-                return document.querySelector("#registry .info-card");
-            }
-
-            if (tabName === "qa") {
-                const qaCards = document.querySelectorAll("#qa .qa-card");
-                return qaCards.length ? qaCards[qaCards.length - 1] : null;
-            }
-
-            return document.getElementById(tabName);
-        }
-
-        function hasVisualCheckpointReachedTop() {
-            const activeTabName = getActiveTabName();
-            const checkpoint = getScrollCheckpointForTab(activeTabName);
-
-            if (!checkpoint) {
-                return false;
-            }
-
-            const rect = checkpoint.getBoundingClientRect();
-
-            /*
-              This is the important part:
-              the next tab is allowed only after the main visual checkpoint
-              has reached the top area of the screen.
-
-              Welcome  -> photo reaches top
-              Schedule -> final event card reaches top
-              Travel   -> final travel card reaches top
-              Registry -> registry card reaches top
-              Q&A      -> final Q&A card reaches top
-            */
-            return rect.top <= CHECKPOINT_TOP_PX;
-        }
-
-        function isNearPageTop() {
-            return window.scrollY <= 12;
-        }
-
-        function resetEdgeScrollCounts() {
-            downEdgeScrollCount = 0;
-            upEdgeScrollCount = 0;
-        }
-
-        function countVisualEdgeScroll(direction) {
-            const now = Date.now();
-
-            if (now - lastEdgeScrollTime < EDGE_SCROLL_COOLDOWN_MS) {
-                return false;
-            }
-
-            lastEdgeScrollTime = now;
-
-            if (direction === "down") {
-                downEdgeScrollCount += 1;
-                upEdgeScrollCount = 0;
-
-                return downEdgeScrollCount >= REQUIRED_VISUAL_EDGE_SCROLLS;
-            }
-
-            if (direction === "up") {
-                upEdgeScrollCount += 1;
-                downEdgeScrollCount = 0;
-
-                return upEdgeScrollCount >= REQUIRED_VISUAL_EDGE_SCROLLS;
-            }
-
-            return false;
-        }
-
-        function switchTabFromScroll(tabName) {
-            if (!tabName || isAutoSwitchingTab) {
-                return;
-            }
-
-            isAutoSwitchingTab = true;
-            resetEdgeScrollCounts();
-
-            activateTab(tabName);
-            history.replaceState(null, "", "#" + tabName);
-
-            requestAnimationFrame(function () {
                 window.scrollTo({
                     top: 0,
                     behavior: "smooth"
                 });
             });
+        });
 
-            setTimeout(function () {
-                isAutoSwitchingTab = false;
-                resetEdgeScrollCounts();
-            }, 950);
+        const welcomeScheduleButton = document.getElementById("welcome-schedule-btn");
+
+        if (welcomeScheduleButton) {
+            welcomeScheduleButton.addEventListener("click", function () {
+                activateTab("schedule");
+                history.replaceState(null, "", "#schedule");
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
         }
 
-        window.addEventListener("wheel", function (event) {
-            if (isAutoSwitchingTab) {
-                return;
-            }
-
-            if (Math.abs(event.deltaY) < WHEEL_DELTA_THRESHOLD) {
-                return;
-            }
-
-            const scrollingDown = event.deltaY > 0;
-            const scrollingUp = event.deltaY < 0;
-
-            if (scrollingDown) {
-                if (hasVisualCheckpointReachedTop()) {
-                    if (countVisualEdgeScroll("down")) {
-                        switchTabFromScroll(getNextTabName());
-                    }
-                } else {
-                    resetEdgeScrollCounts();
-                }
-
-                return;
-            }
-
-            if (scrollingUp) {
-                if (isNearPageTop()) {
-                    if (countVisualEdgeScroll("up")) {
-                        switchTabFromScroll(getPreviousTabName());
-                    }
-                } else {
-                    resetEdgeScrollCounts();
-                }
-            }
-        }, { passive: true });
-
-        window.addEventListener("touchstart", function (event) {
-            if (!event.touches || event.touches.length === 0) {
-                return;
-            }
-
-            touchStartY = event.touches[0].clientY;
-        }, { passive: true });
-
-        window.addEventListener("touchend", function (event) {
-            if (isAutoSwitchingTab) {
-                return;
-            }
-
-            if (!event.changedTouches || event.changedTouches.length === 0) {
-                return;
-            }
-
-            const touchEndY = event.changedTouches[0].clientY;
-            const swipeDistance = touchStartY - touchEndY;
-
-            const swipedUp = swipeDistance > TOUCH_DISTANCE_THRESHOLD;
-            const swipedDown = swipeDistance < -TOUCH_DISTANCE_THRESHOLD;
-
-            /*
-              Wait briefly so the browser finishes its natural scroll first.
-              Then we check where the visual checkpoint actually landed.
-            */
-            setTimeout(function () {
-                if (swipedUp) {
-                    if (hasVisualCheckpointReachedTop()) {
-                        if (countVisualEdgeScroll("down")) {
-                            switchTabFromScroll(getNextTabName());
-                        }
-                    } else {
-                        resetEdgeScrollCounts();
-                    }
-
-                    return;
-                }
-
-                if (swipedDown) {
-                    if (isNearPageTop()) {
-                        if (countVisualEdgeScroll("up")) {
-                            switchTabFromScroll(getPreviousTabName());
-                        }
-                    } else {
-                        resetEdgeScrollCounts();
-                    }
-                }
-            }, 140);
-        }, { passive: true });
+        // Open tab from URL hash, for example /dashboard#schedule
         const hashTab = window.location.hash.replace("#", "");
 
         if (hashTab) {
             activateTab(hashTab);
-        } else {
-            activateTab(serverActiveTab);
         }
-
-        /* ============================= */
-        /* PHOTO SLIDESHOW */
-        /* ============================= */
 
         let currentSlide = 0;
         const slides = document.querySelectorAll("#welcome .slide");
-        const dots = document.querySelectorAll(".dot");
+        const dots = document.querySelectorAll("#welcome .dot");
 
         function showSlideInternal(index) {
             if (slides.length === 0) {
@@ -1010,32 +809,20 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
             showSlideInternal(currentSlide + 1);
         }, 4000);
 
-        /* ============================= */
-        /* RSVP EDIT FORM */
-        /* ============================= */
-
         window.toggleRsvpForm = function (eventId) {
             const form = document.getElementById("rsvp-form-" + eventId);
             const confirmation = document.getElementById("confirmation-" + eventId);
 
-            if (confirmation) {
-                confirmation.classList.add("is-hidden");
-            }
-
             if (form) {
                 form.classList.remove("is-hidden");
-                form.classList.add("is-editing");
+            }
 
-                form.scrollIntoView({
-                    behavior: "smooth",
-                    block: "nearest"
-                });
+            if (confirmation) {
+                confirmation.style.display = "none";
             }
         };
 
-        /* ============================= */
-        /* RSVP CELEBRATION */
-        /* ============================= */
+        const shouldCelebrate = {{ 'true' if celebrate == 'yes' else 'false' }};
 
         function showCelebrationToast() {
             const toast = document.getElementById("celebration-toast");
@@ -1051,29 +838,12 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
             }, 3500);
         }
 
-        function burstConfetti(eventId) {
+        function burstConfetti() {
             const container = document.getElementById("confetti-container");
 
             if (!container) {
                 return;
             }
-
-            let source = null;
-
-            if (eventId) {
-                source = document.getElementById("confirmation-" + eventId) ||
-                         document.getElementById("rsvp-form-" + eventId);
-            }
-
-            if (!source) {
-                source = document.querySelector("#schedule .event-card");
-            }
-
-            const rect = source ? source.getBoundingClientRect() : null;
-
-            const startLeft = rect ? rect.left : 0;
-            const startTop = rect ? Math.max(rect.top - 8, 12) : 0;
-            const startWidth = rect ? rect.width : window.innerWidth;
 
             const colors = [
                 "#7b3b2d",
@@ -1084,14 +854,13 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
                 "#fff1d6"
             ];
 
-            for (let i = 0; i < 65; i++) {
+            for (let i = 0; i < 55; i++) {
                 const piece = document.createElement("span");
-                piece.className = "confetti-piece rsvp-confetti-piece";
+                piece.className = "confetti-piece";
 
-                piece.style.left = startLeft + Math.random() * startWidth + "px";
-                piece.style.top = startTop + Math.random() * 10 + "px";
+                piece.style.left = Math.random() * 100 + "vw";
                 piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-                piece.style.animationDelay = Math.random() * 0.38 + "s";
+                piece.style.animationDelay = Math.random() * 0.45 + "s";
                 piece.style.width = 7 + Math.random() * 8 + "px";
                 piece.style.height = 10 + Math.random() * 12 + "px";
 
@@ -1099,182 +868,32 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
 
                 setTimeout(function () {
                     piece.remove();
-                }, 4200);
+                }, 3800);
             }
         }
 
         if (shouldCelebrate) {
             activateTab("schedule");
             showCelebrationToast();
+            burstConfetti();
 
-            const celebrationSource = document.getElementById("confirmation-" + celebrationEventId);
+            history.replaceState(null, "", window.location.pathname + "#schedule");
+        }
+        const shouldShowLoginEffect = {{ 'true' if login_effect == 'success' else 'false' }};
 
-            if (celebrationSource) {
-                celebrationSource.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
+        function showLoginToast() {
+            const toast = document.getElementById("login-toast");
+
+            if (!toast) {
+                return;
             }
+
+            toast.classList.add("show");
 
             setTimeout(function () {
-                burstConfetti(celebrationEventId);
-            }, 260);
-
-            history.replaceState(null, "", window.location.pathname + "?tab=schedule#schedule");
+                toast.classList.remove("show");
+            }, 3200);
         }
-
-        /* ============================= */
-        /* ASYNC RSVP SAVE - NO RELOAD */
-        /* ============================= */
-
-        function escapeHtml(value) {
-            return String(value || "")
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        function buildConfirmationHtml(data) {
-            const safeEventId = escapeHtml(data.event_id);
-            const safeStatusClass = escapeHtml(data.status_class);
-            const safeBadgeClass = escapeHtml(data.badge_class);
-            const safeBadgeText = escapeHtml(data.badge_text);
-            let confirmationMessage = "Thank you for your response.";
-
-            if (data.attending === "Yes") {
-                confirmationMessage = "We are delighted you'll be joining us.";
-            } else if (data.attending === "No") {
-                confirmationMessage = "We will miss you at this event.";
-            } else if (data.attending === "Maybe") {
-                confirmationMessage = "Thank you for letting us know.";
-            }
-
-            const safeHeadingText = escapeHtml(confirmationMessage);
-            const safeGuestCount = escapeHtml(data.guest_count);
-            const notes = String(data.notes || "").trim();
-
-            let notesHtml = "";
-
-            if (notes && notes.toLowerCase() !== "none") {
-                notesHtml = `<p><strong>Notes:</strong> ${escapeHtml(notes)}</p>`;
-            }
-
-            return `
-                <div id="confirmation-${safeEventId}" class="rsvp-confirmation ${safeStatusClass}">
-                    <div class="rsvp-confirmation-main">
-                        <div class="rsvp-status-header">
-                            <span class="status-badge ${safeBadgeClass}">${safeBadgeText}</span>
-                            <h4>${safeHeadingText}</h4>
-                        </div>
-
-                        <div class="confirmation-details">
-                            <p><strong>Total attending:</strong> ${safeGuestCount}</p>
-                            ${notesHtml}
-                        </div>
-                    </div>
-
-                    <button
-                        type="button"
-                        class="edit-rsvp-btn"
-                        onclick="toggleRsvpForm('${safeEventId}')"
-                    >
-                        Edit Response
-                    </button>
-                </div>
-            `;
-        }
-
-        function updateConfirmationCard(data, form) {
-            let confirmation = document.getElementById("confirmation-" + data.event_id);
-            const confirmationHtml = buildConfirmationHtml(data);
-
-            if (confirmation) {
-                confirmation.outerHTML = confirmationHtml;
-            } else {
-                form.insertAdjacentHTML("beforebegin", confirmationHtml);
-            }
-
-            confirmation = document.getElementById("confirmation-" + data.event_id);
-
-            if (confirmation) {
-                confirmation.classList.remove("is-hidden");
-            }
-
-            return confirmation;
-        }
-
-        document.querySelectorAll(".rsvp-form").forEach(function (form) {
-            form.addEventListener("submit", async function (event) {
-                event.preventDefault();
-
-                const submitButton = form.querySelector(".rsvp-btn");
-                const originalButtonText = submitButton ? submitButton.textContent : "";
-                const formData = new FormData(form);
-                const eventId = formData.get("event_id");
-
-                if (submitButton) {
-                    submitButton.disabled = true;
-                    submitButton.textContent = "Saving...";
-                }
-
-                form.classList.add("is-submitting");
-
-                try {
-                    const response = await fetch(form.action, {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest",
-                            "Accept": "application/json"
-                        }
-                    });
-
-                    const data = await response.json();
-
-                    if (!response.ok || !data.success) {
-                        throw new Error(data.message || "Unable to save RSVP.");
-                    }
-
-                    activateTab("schedule");
-                    history.replaceState(null, "", window.location.pathname + "?tab=schedule#schedule");
-
-                    const confirmation = updateConfirmationCard(data, form);
-
-                    form.classList.add("is-hidden");
-                    form.classList.remove("is-editing");
-
-                    if (confirmation) {
-                        confirmation.scrollIntoView({
-                            behavior: "smooth",
-                            block: "center"
-                        });
-                    }
-
-                    if (data.celebrate) {
-                        showCelebrationToast();
-
-                        setTimeout(function () {
-                            burstConfetti(eventId);
-                        }, 220);
-                    }
-                } catch (error) {
-                    alert(error.message || "Unable to save RSVP. Please try again.");
-                } finally {
-                    form.classList.remove("is-submitting");
-
-                    if (submitButton) {
-                        submitButton.disabled = false;
-                        submitButton.textContent = originalButtonText;
-                    }
-                }
-            });
-        });
-
-        /* ============================= */
-        /* LOGIN EFFECT WITHOUT TOAST */
-        /* ============================= */
 
         function burstLoginSparkles() {
             const container = document.getElementById("confetti-container");
@@ -1310,6 +929,7 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
 
         if (shouldShowLoginEffect) {
             activateTab("welcome");
+            showLoginToast();
             burstLoginSparkles();
 
             const hero = document.querySelector(".welcome-hero");
@@ -1322,52 +942,44 @@ Please take a moment to RSVP and let us know if you’ll be able to join us. We 
                 }, 3500);
             }
 
-            history.replaceState(null, "", window.location.pathname);
-
-            requestAnimationFrame(function () {
-                window.scrollTo(0, 0);
-            });
+            history.replaceState(null, "", window.location.pathname + "#welcome");
         }
-
-        /* ============================= */
-        /* COUNTDOWN TIMER */
-        /* ============================= */
 
         function updateCountdown() {
-            const weddingDate = new Date("2026-11-20T09:00:00-05:00").getTime();
-            const now = new Date().getTime();
-            const distance = weddingDate - now;
+        const weddingDate = new Date("2026-11-20T09:00:00-05:00").getTime();
+        const now = new Date().getTime();
+        const distance = weddingDate - now;
 
-            const daysEl = document.getElementById("days");
-            const hoursEl = document.getElementById("hours");
-            const minutesEl = document.getElementById("minutes");
-            const secondsEl = document.getElementById("seconds");
+        const daysEl = document.getElementById("days");
+        const hoursEl = document.getElementById("hours");
+        const minutesEl = document.getElementById("minutes");
+        const secondsEl = document.getElementById("seconds");
 
-            if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
-                return;
-            }
-
-            if (distance <= 0) {
-                daysEl.innerText = "00";
-                hoursEl.innerText = "00";
-                minutesEl.innerText = "00";
-                secondsEl.innerText = "00";
-                return;
-            }
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((distance / (1000 * 60)) % 60);
-            const seconds = Math.floor((distance / 1000) % 60);
-
-            daysEl.innerText = String(days).padStart(2, "0");
-            hoursEl.innerText = String(hours).padStart(2, "0");
-            minutesEl.innerText = String(minutes).padStart(2, "0");
-            secondsEl.innerText = String(seconds).padStart(2, "0");
+        if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
+            return;
         }
 
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
+        if (distance <= 0) {
+            daysEl.innerText = "00";
+            hoursEl.innerText = "00";
+            minutesEl.innerText = "00";
+            secondsEl.innerText = "00";
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((distance / (1000 * 60)) % 60);
+        const seconds = Math.floor((distance / 1000) % 60);
+
+        daysEl.innerText = String(days).padStart(2, "0");
+        hoursEl.innerText = String(hours).padStart(2, "0");
+        minutesEl.innerText = String(minutes).padStart(2, "0");
+        secondsEl.innerText = String(seconds).padStart(2, "0");
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
     });
 </script>
 </body>

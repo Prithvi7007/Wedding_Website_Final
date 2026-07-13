@@ -1,0 +1,1954 @@
+@import url("https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Manrope:wght@400;500;600;700&display=swap");
+
+/* ===================================================== */
+/* DASHBOARD V2 — PHASE 1                                */
+/* Final header + Welcome tab direction                   */
+/* Standalone dashboard stylesheet                        */
+/* ===================================================== */
+
+/* ----------------------------------------------------- */
+/* RESET + DESIGN TOKENS                                  */
+/* ----------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    min-width: 320px;
+    min-height: 100%;
+    background: #141210;
+    scroll-behavior: smooth;
+}
+
+body.dashboard-v2 {
+    --dash-cream: #fff0d5;
+    --dash-copy: rgba(255, 239, 214, 0.88);
+    --dash-muted: rgba(236, 216, 187, 0.70);
+    --dash-gold: #d6a84e;
+    --dash-gold-soft: rgba(214, 168, 78, 0.55);
+    --dash-gold-faint: rgba(214, 168, 78, 0.24);
+    --dash-ink: #171513;
+    --dash-glass: rgba(24, 22, 20, 0.74);
+    --dash-glass-soft: rgba(30, 26, 23, 0.58);
+
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow-x: hidden;
+
+    background: #171411;
+    color: var(--dash-copy);
+    font-family: "Manrope", Arial, sans-serif;
+}
+
+body.dashboard-v2::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+
+    background:
+        url("/static/images/site-bg.webp")
+        center center / cover no-repeat;
+
+    filter:
+        blur(5px)
+        brightness(0.34)
+        saturate(0.96)
+        contrast(1.06);
+
+    transform: scale(1.04);
+}
+
+body.dashboard-v2::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+
+    background:
+        radial-gradient(
+            circle at 76% 20%,
+            rgba(220, 157, 66, 0.12),
+            transparent 38%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(12, 12, 11, 0.42),
+            rgba(20, 16, 13, 0.54) 48%,
+            rgba(10, 11, 10, 0.72)
+        );
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    border: 0;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+a {
+    color: inherit;
+}
+
+.dashboard-app {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+}
+
+/* ----------------------------------------------------- */
+/* HEADER + EDITORIAL GOLD LINE SYSTEM                    */
+/* ----------------------------------------------------- */
+
+.dashboard-header {
+    position: relative;
+    z-index: 50;
+
+    width: min(100% - 56px, 1500px);
+    margin: 0 auto;
+    padding-top: 22px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(18, 16, 14, 0.76),
+            rgba(18, 16, 14, 0.48) 72%,
+            rgba(18, 16, 14, 0.18)
+        );
+
+    backdrop-filter: blur(18px) saturate(124%);
+    -webkit-backdrop-filter: blur(18px) saturate(124%);
+}
+
+.dashboard-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+
+    min-height: 36px;
+    padding: 0 4px;
+
+    border-top: 1px solid var(--dash-gold-soft);
+    border-bottom: 1px solid var(--dash-gold-soft);
+
+    color: var(--dash-muted);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.dashboard-meta span:first-child {
+    text-align: left;
+}
+
+.dashboard-meta span:nth-child(2) {
+    text-align: center;
+}
+
+.dashboard-meta span:last-child {
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dashboard-title {
+    margin: 14px auto 16px;
+
+    color: var(--dash-cream);
+    font-family: "Parisienne", cursive;
+    font-size: clamp(66px, 6vw, 88px);
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 0.98;
+    text-align: center;
+    text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 24px rgba(229, 177, 88, 0.12);
+}
+
+.tabs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(36px, 6vw, 86px);
+
+    min-height: 56px;
+    padding: 0 18px;
+
+    border-top: 1px solid var(--dash-gold-soft);
+    border-bottom: 1px solid var(--dash-gold-soft);
+}
+
+.tab-btn {
+    position: relative;
+    flex: 0 0 auto;
+
+    min-height: 55px;
+    padding: 0 2px;
+
+    background: transparent;
+    color: rgba(255, 238, 210, 0.78);
+
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 3.5px;
+    line-height: 1;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    transition:
+        color 220ms ease,
+        text-shadow 220ms ease;
+}
+
+.tab-btn::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+
+    width: 0;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(214, 168, 78, 0),
+            rgba(242, 202, 116, 1),
+            rgba(214, 168, 78, 0)
+        );
+
+    box-shadow: 0 0 10px rgba(232, 180, 82, 0.32);
+    transform: translateX(-50%);
+    transition: width 240ms ease;
+}
+
+.tab-btn:hover,
+.tab-btn.active {
+    color: var(--dash-cream);
+    text-shadow: 0 0 14px rgba(226, 177, 83, 0.13);
+}
+
+.tab-btn.active::after {
+    width: calc(100% + 14px);
+}
+
+.tab-btn:focus-visible {
+    outline: 1px solid var(--dash-gold);
+    outline-offset: 5px;
+}
+
+/* ----------------------------------------------------- */
+/* TAB SYSTEM                                             */
+/* ----------------------------------------------------- */
+
+.dashboard-main {
+    position: relative;
+    z-index: 1;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: dashboard-tab-in 420ms ease both;
+}
+
+@keyframes dashboard-tab-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ----------------------------------------------------- */
+/* WELCOME — ONE INTEGRATED CINEMATIC HERO                */
+/* ----------------------------------------------------- */
+
+#welcome {
+    width: min(100% - 56px, 1500px);
+    margin: 0 auto;
+}
+
+.welcome-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    width: 100%;
+    min-height: max(610px, calc(100svh - 228px));
+
+    background: #1a1714;
+    border-bottom: 1px solid var(--dash-gold-faint);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 223, 157, 0.035);
+}
+
+.welcome-slides,
+.welcome-hero-shade,
+.welcome-hero::before,
+.welcome-hero::after {
+    position: absolute;
+    inset: 0;
+}
+
+.welcome-slides {
+    z-index: 0;
+}
+
+.welcome-hero .slide {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+
+    opacity: 0;
+    transform: scale(1.035);
+    filter:
+        brightness(0.87)
+        saturate(1.04)
+        contrast(1.03);
+
+    transition:
+        opacity 1.2s ease-in-out,
+        transform 5.2s ease-in-out;
+}
+
+.welcome-hero .slide.active-slide {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.welcome-hero-shade {
+    z-index: 1;
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(8, 10, 10, 0.97) 0%,
+            rgba(11, 12, 12, 0.91) 20%,
+            rgba(17, 15, 13, 0.72) 39%,
+            rgba(17, 15, 13, 0.30) 58%,
+            rgba(10, 10, 10, 0.04) 76%
+        );
+}
+
+.welcome-hero::before {
+    content: "";
+    z-index: 2;
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(12, 11, 10, 0.20) 0%,
+            transparent 23%,
+            transparent 72%,
+            rgba(8, 9, 9, 0.42) 100%
+        );
+}
+
+.welcome-hero::after {
+    content: "";
+    z-index: 2;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 23% 50%,
+            rgba(210, 148, 60, 0.08),
+            transparent 45%
+        );
+}
+
+.welcome-copy {
+    position: relative;
+    z-index: 5;
+
+    width: min(48%, 640px);
+    padding: clamp(70px, 8vh, 112px) 0 54px clamp(38px, 5vw, 84px);
+
+    text-align: left;
+}
+
+.welcome-eyebrow {
+    margin-bottom: 7px;
+
+    color: var(--dash-gold);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(20px, 1.7vw, 28px);
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+}
+
+.welcome-copy h2 {
+    max-width: 620px;
+    margin-bottom: 28px;
+
+    color: var(--dash-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(48px, 4.3vw, 70px);
+    font-weight: 500;
+    letter-spacing: 2px;
+    line-height: 0.98;
+    text-transform: uppercase;
+}
+
+.welcome-message {
+    max-width: 590px;
+    margin-bottom: 30px;
+
+    color: var(--dash-copy);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(18px, 1.45vw, 24px);
+    font-weight: 500;
+    line-height: 1.55;
+}
+
+.welcome-message p + p {
+    margin-top: 13px;
+}
+
+/* Liquid glass CTA — related to the locked invitation button */
+.welcome-schedule-btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    width: min(100%, 500px);
+    min-height: 60px;
+    margin-bottom: 34px;
+    padding: 17px 26px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at 50% -55%,
+            rgba(255, 232, 183, 0.20),
+            rgba(255, 216, 142, 0.05) 38%,
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(96, 74, 56, 0.25),
+            rgba(46, 42, 38, 0.36) 52%,
+            rgba(19, 23, 23, 0.44)
+        );
+
+    color: var(--dash-cream);
+    border: 1px solid rgba(226, 177, 80, 0.88);
+    border-radius: 999px;
+
+    backdrop-filter: blur(19px) saturate(146%);
+    -webkit-backdrop-filter: blur(19px) saturate(146%);
+
+    box-shadow:
+        0 15px 32px rgba(0, 0, 0, 0.26),
+        0 0 20px rgba(219, 170, 78, 0.06),
+        inset 0 1px 0 rgba(255, 241, 209, 0.26),
+        inset 0 -1px 0 rgba(4, 7, 7, 0.42);
+
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3.2px;
+    line-height: 1;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    transition:
+        transform 260ms ease,
+        border-color 260ms ease,
+        box-shadow 260ms ease,
+        background 260ms ease;
+}
+
+.welcome-schedule-btn::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 10%;
+    right: 10%;
+
+    height: 36%;
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 244, 216, 0.20),
+            transparent
+        );
+
+    pointer-events: none;
+}
+
+.welcome-schedule-btn::after {
+    content: "";
+    position: absolute;
+    top: -160%;
+    left: -35%;
+
+    width: 24%;
+    height: 420%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 242, 210, 0.36),
+            transparent
+        );
+
+    opacity: 0;
+    filter: blur(1px);
+    pointer-events: none;
+    transform: rotate(18deg);
+    transition:
+        left 680ms cubic-bezier(0.2, 0.75, 0.2, 1),
+        opacity 180ms ease;
+}
+
+.welcome-schedule-btn span {
+    position: relative;
+    z-index: 2;
+}
+
+.welcome-schedule-btn:hover {
+    border-color: rgba(244, 202, 111, 1);
+    box-shadow:
+        0 20px 42px rgba(0, 0, 0, 0.31),
+        0 0 28px rgba(222, 173, 78, 0.11),
+        inset 0 1px 0 rgba(255, 245, 219, 0.38),
+        inset 0 -1px 0 rgba(4, 7, 7, 0.38);
+    transform: translateY(-3px) scale(1.01);
+}
+
+.welcome-schedule-btn:hover::after {
+    left: 116%;
+    opacity: 0.86;
+}
+
+.welcome-schedule-btn:active {
+    transform: scale(0.985);
+}
+
+.welcome-schedule-btn:focus-visible {
+    outline: 2px solid var(--dash-cream);
+    outline-offset: 4px;
+}
+
+.countdown-inline {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    width: min(100%, 610px);
+    padding: 26px 0 21px;
+
+    border-top: 1px solid var(--dash-gold-soft);
+}
+
+.countdown-inline > div {
+    position: relative;
+    min-width: 0;
+    text-align: center;
+}
+
+.countdown-inline > div:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 0;
+
+    width: 1px;
+    height: 62px;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent,
+            rgba(214, 168, 78, 0.64),
+            transparent
+        );
+}
+
+.countdown-inline span {
+    display: block;
+
+    color: #e8b65b;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(39px, 3.3vw, 54px);
+    font-weight: 600;
+    line-height: 0.94;
+}
+
+.countdown-inline small {
+    display: block;
+    margin-top: 9px;
+
+    color: var(--dash-muted);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2.2px;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.slide-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 8;
+
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(18, 17, 15, 0.28);
+    color: var(--dash-cream);
+    border: 1px solid rgba(217, 170, 80, 0.58);
+    border-radius: 50%;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    font-size: 24px;
+    line-height: 1;
+
+    opacity: 0;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition:
+        opacity 220ms ease,
+        background 220ms ease,
+        transform 220ms ease;
+}
+
+.welcome-hero:hover .slide-arrow,
+.slide-arrow:focus-visible {
+    opacity: 1;
+}
+
+.slide-arrow:hover {
+    background: rgba(53, 42, 33, 0.58);
+}
+
+.left-arrow {
+    left: 18px;
+}
+
+.right-arrow {
+    right: 18px;
+}
+
+.slide-dots {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    z-index: 8;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    transform: translateX(-50%);
+}
+
+.dot {
+    width: 11px;
+    height: 11px;
+    padding: 0;
+
+    background: rgba(255, 244, 223, 0.38);
+    border: 1px solid rgba(255, 241, 211, 0.25);
+    border-radius: 50%;
+
+    cursor: pointer;
+    transition:
+        transform 200ms ease,
+        background 200ms ease,
+        box-shadow 200ms ease;
+}
+
+.dot:hover,
+.dot.active-dot {
+    background: #e6b354;
+    box-shadow: 0 0 12px rgba(229, 177, 80, 0.35);
+    transform: scale(1.14);
+}
+
+.welcome-hero.login-glow {
+    animation: welcome-login-glow 1.5s ease-in-out 2;
+}
+
+@keyframes welcome-login-glow {
+    0%, 100% {
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+    }
+
+    50% {
+        box-shadow:
+            0 0 0 1px rgba(226, 177, 82, 0.56),
+            0 0 44px rgba(220, 166, 72, 0.14),
+            0 30px 80px rgba(0, 0, 0, 0.32);
+    }
+}
+
+/* ----------------------------------------------------- */
+/* NON-WELCOME TAB FOUNDATION                            */
+/* Schedule, Travel, Registry and Q&A remain functional   */
+/* and will receive their dedicated redesign next.        */
+/* ----------------------------------------------------- */
+
+.tab-content:not(#welcome) {
+    width: min(100% - 56px, 1220px);
+    margin: 34px auto 56px;
+    padding: clamp(26px, 4vw, 48px);
+
+    background:
+        radial-gradient(
+            circle at 0% 0%,
+            rgba(171, 107, 45, 0.13),
+            transparent 34%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(46, 34, 26, 0.74),
+            rgba(24, 23, 22, 0.82)
+        );
+
+    border: 1px solid rgba(215, 167, 75, 0.34);
+    border-radius: 28px;
+
+    backdrop-filter: blur(22px) saturate(120%);
+    -webkit-backdrop-filter: blur(22px) saturate(120%);
+
+    box-shadow:
+        0 28px 70px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 231, 180, 0.07);
+}
+
+.tab-content:not(#welcome) > h2,
+.travel-page-header h2,
+.qa-section-header h2 {
+    margin-bottom: 14px;
+
+    color: var(--dash-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(34px, 4vw, 52px);
+    font-weight: 600;
+    letter-spacing: 2px;
+    line-height: 1.05;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.schedule-intro,
+.travel-page-header p,
+.qa-section-header p,
+#registry > .info-card p {
+    max-width: 780px;
+    margin: 0 auto 30px;
+
+    color: var(--dash-copy);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 18px;
+    line-height: 1.65;
+    text-align: center;
+}
+
+.info-card {
+    position: relative;
+}
+
+/* ----------------------------------------------------- */
+/* SCHEDULE — FUNCTIONAL PHASE-1 PRESENTATION             */
+/* ----------------------------------------------------- */
+
+.event-card {
+    overflow: hidden;
+    max-width: 1050px;
+    margin: 28px auto 42px;
+    padding: 46px 36px 30px;
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+
+    color: #3d2a1f;
+    border: 1px solid rgba(238, 206, 145, 0.58);
+    border-radius: 24px;
+
+    box-shadow:
+        0 22px 54px rgba(0, 0, 0, 0.24),
+        inset 0 0 0 7px rgba(255, 246, 226, 0.20);
+}
+
+.event-haldi {
+    background-image:
+        linear-gradient(rgba(255, 248, 229, 0.22), rgba(255, 244, 219, 0.15)),
+        url("/static/images/HALDI.webp");
+}
+
+.event-hindu {
+    background-image:
+        linear-gradient(rgba(255, 248, 229, 0.20), rgba(255, 244, 219, 0.14)),
+        url("/static/images/WEDDING.webp");
+}
+
+.event-christian {
+    background-image:
+        linear-gradient(rgba(255, 248, 229, 0.22), rgba(255, 244, 219, 0.16)),
+        url("/static/images/RECEPTION.webp");
+}
+
+.event-title-block {
+    max-width: 860px;
+    margin: 0 auto 28px;
+    text-align: center;
+}
+
+.event-card h3 {
+    color: #4b3023;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(38px, 5vw, 58px);
+    font-weight: 700;
+    letter-spacing: 5px;
+    line-height: 1.02;
+    text-transform: uppercase;
+}
+
+.event-kicker {
+    margin-top: 12px;
+
+    color: rgba(82, 52, 36, 0.82);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.event-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.35fr;
+    max-width: 880px;
+    margin: 0 auto 30px;
+}
+
+.event-meta-item {
+    position: relative;
+    padding: 0 22px;
+    text-align: center;
+}
+
+.event-meta-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    right: 0;
+
+    width: 1px;
+    height: 96px;
+
+    background: rgba(104, 68, 44, 0.28);
+}
+
+.meta-icon {
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 9px;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(220, 176, 93, 0.27);
+    border: 1px solid rgba(126, 83, 46, 0.18);
+    border-radius: 50%;
+}
+
+.meta-icon svg {
+    width: 18px;
+    height: 18px;
+
+    fill: none;
+    stroke: #725032;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+}
+
+.meta-label {
+    margin-bottom: 5px;
+
+    color: rgba(86, 55, 37, 0.76);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.meta-value {
+    color: #3d2a1f;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.attire-guide-card {
+    max-width: 440px;
+    margin: 0 auto 24px;
+    padding: 18px 20px 20px;
+
+    background: rgba(255, 248, 231, 0.52);
+    border: 1px solid rgba(122, 82, 47, 0.28);
+    border-radius: 18px;
+
+    text-align: center;
+}
+
+.attire-guide-label {
+    color: #5b3c28;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.attire-guide-image {
+    display: block;
+    width: 100%;
+    max-height: 175px;
+    margin: 9px auto;
+    object-fit: contain;
+}
+
+.attire-guide-card strong {
+    display: block;
+
+    color: #5a3825;
+    font-family: "Parisienne", cursive;
+    font-size: 32px;
+    font-weight: 400;
+}
+
+.attire-guide-card small {
+    display: block;
+    margin-top: 3px;
+
+    color: rgba(83, 54, 37, 0.75);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+}
+
+.attire-guide-card p {
+    margin-top: 9px;
+
+    color: #583d2b;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.event-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 11px;
+    margin-bottom: 24px;
+}
+
+.event-action-link,
+.edit-rsvp-btn,
+.rsvp-btn {
+    min-height: 42px;
+    padding: 11px 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 248, 232, 0.62);
+    color: #4e3424;
+    border: 1px solid rgba(92, 60, 39, 0.30);
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    transition:
+        transform 180ms ease,
+        background 180ms ease,
+        color 180ms ease;
+}
+
+.event-action-link:hover,
+.edit-rsvp-btn:hover {
+    background: rgba(57, 40, 29, 0.88);
+    color: #fff0d5;
+    transform: translateY(-2px);
+}
+
+.rsvp-confirmation,
+.rsvp-form {
+    margin-top: 18px;
+    padding: 18px;
+
+    background: rgba(255, 248, 232, 0.58);
+    border: 1px solid rgba(103, 73, 48, 0.24);
+    border-radius: 18px;
+}
+
+.rsvp-confirmation {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.rsvp-status-header,
+.confirmation-details {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.rsvp-status-header h4,
+.rsvp-form-heading span {
+    color: #422d20;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.confirmation-details {
+    margin-right: auto;
+}
+
+.confirmation-details p,
+.rsvp-form-heading p,
+.rsvp-helper {
+    color: #5a3f2e;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.status-badge {
+    padding: 7px 12px;
+
+    color: #fffaf1;
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.badge-yes {
+    background: #71865d;
+}
+
+.badge-no {
+    background: #8b675d;
+}
+
+.badge-maybe {
+    background: #a98c54;
+}
+
+.edit-rsvp-btn {
+    margin-left: auto;
+}
+
+.rsvp-form.is-hidden {
+    display: none;
+}
+
+.rsvp-form-heading {
+    margin-bottom: 16px;
+}
+
+.rsvp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.rsvp-field {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.rsvp-field label {
+    display: block;
+    margin-bottom: 7px;
+
+    color: #4c3323;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.rsvp-field select,
+.rsvp-field input,
+.rsvp-field textarea {
+    width: 100%;
+    padding: 12px 13px;
+
+    background: rgba(255, 252, 242, 0.72);
+    color: #35241a;
+    border: 1px solid rgba(82, 54, 36, 0.24);
+    border-radius: 12px;
+    outline: none;
+
+    font-family: "Manrope", Arial, sans-serif;
+    font-size: 14px;
+}
+
+.rsvp-field textarea {
+    min-height: 84px;
+    resize: vertical;
+}
+
+.rsvp-field select:focus,
+.rsvp-field input:focus,
+.rsvp-field textarea:focus {
+    border-color: #9b7538;
+    box-shadow: 0 0 0 3px rgba(166, 121, 52, 0.16);
+}
+
+.rsvp-btn {
+    width: 100%;
+    margin-top: 4px;
+
+    background: linear-gradient(90deg, #4f3525, #725038);
+    color: #fff2dc;
+    border-radius: 14px;
+}
+
+.rsvp-btn:hover {
+    background: linear-gradient(90deg, #62412d, #845d41);
+    transform: translateY(-2px);
+}
+
+/* ----------------------------------------------------- */
+/* TRAVEL — FUNCTIONAL PHASE-1 PRESENTATION               */
+/* ----------------------------------------------------- */
+
+.travel-page-header,
+.qa-section-header {
+    margin-bottom: 28px;
+}
+
+.travel-paper-grid,
+.mixed-newspaper-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 20px;
+}
+
+.travel-paper-card,
+.qa-card,
+#registry .info-card {
+    padding: 24px;
+
+    background: rgba(22, 22, 21, 0.58);
+    color: var(--dash-copy);
+    border: 1px solid rgba(216, 168, 78, 0.24);
+    border-radius: 20px;
+
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 233, 190, 0.04);
+}
+
+.paper-label,
+.qa-label,
+.mini-stamp {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px 9px;
+
+    color: var(--dash-gold);
+    border: 1px solid rgba(214, 168, 78, 0.34);
+    border-radius: 999px;
+
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.travel-paper-card h3,
+.qa-card h3,
+.paper-item h4 {
+    color: var(--dash-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 700;
+}
+
+.travel-paper-card h3,
+.qa-card h3 {
+    margin-bottom: 15px;
+    font-size: 25px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.newspaper-split-title,
+.restaurant-ad-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.paper-image-wrap {
+    overflow: hidden;
+    width: 100%;
+    height: 190px;
+    margin: 12px 0 18px;
+
+    border: 1px solid rgba(214, 168, 78, 0.23);
+    border-radius: 14px;
+}
+
+.paper-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    filter: sepia(16%) brightness(0.82) contrast(1.04);
+}
+
+.paper-columns,
+.hotel-side-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.hotel-side-layout {
+    grid-template-columns: 1fr 160px;
+}
+
+.paper-item {
+    padding: 13px 0;
+    border-top: 1px solid rgba(214, 168, 78, 0.16);
+}
+
+.paper-item:first-child,
+.no-top-border {
+    border-top: 0;
+}
+
+.paper-item h4 {
+    margin-bottom: 6px;
+    font-size: 18px;
+}
+
+.paper-item p,
+.qa-card p {
+    color: var(--dash-copy);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+.paper-item a {
+    display: inline-block;
+    margin-top: 8px;
+
+    color: var(--dash-gold);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.clipping-image {
+    float: left;
+    width: 44%;
+    height: 150px;
+    margin: 0 16px 10px 0;
+}
+
+.bottom-ad-image {
+    height: 140px;
+}
+
+.ad-circle {
+    width: 54px;
+    height: 54px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--dash-cream);
+    border: 1px solid rgba(214, 168, 78, 0.44);
+    border-radius: 50%;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ----------------------------------------------------- */
+/* REGISTRY + Q&A                                        */
+/* ----------------------------------------------------- */
+
+#registry .info-card {
+    max-width: 850px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.qa-newspaper-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.featured-qa {
+    grid-column: span 2;
+}
+
+/* ----------------------------------------------------- */
+/* LOGOUT + TOASTS + CONFETTI                            */
+/* ----------------------------------------------------- */
+
+.logout-link {
+    display: block;
+    width: max-content;
+    margin: 28px auto 0;
+
+    color: var(--dash-muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.logout-link:hover {
+    color: var(--dash-cream);
+}
+
+.confetti-container {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: -24px;
+
+    border-radius: 2px;
+    opacity: 0.9;
+    animation: confetti-fall 5.8s ease-out forwards;
+}
+
+@keyframes confetti-fall {
+    0% {
+        opacity: 0;
+        transform: translateY(0) rotate(0deg);
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(112vh) rotate(520deg);
+    }
+}
+
+.celebration-toast,
+.login-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-16px);
+    transition:
+        opacity 320ms ease,
+        transform 320ms ease;
+}
+
+.celebration-toast.show,
+.login-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.celebration-toast-inner,
+.login-toast-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+
+    width: min(390px, calc(100vw - 40px));
+    padding: 15px 17px;
+
+    background: rgba(29, 26, 23, 0.84);
+    color: var(--dash-copy);
+    border: 1px solid rgba(214, 168, 78, 0.42);
+    border-radius: 16px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.30);
+}
+
+.celebration-icon,
+.login-icon {
+    color: var(--dash-gold);
+    font-size: 20px;
+}
+
+.celebration-toast strong,
+.login-toast strong {
+    display: block;
+    margin-bottom: 3px;
+
+    color: var(--dash-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.celebration-toast p,
+.login-toast p {
+    color: var(--dash-muted);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+/* ----------------------------------------------------- */
+/* TABLET                                                 */
+/* ----------------------------------------------------- */
+
+@media (max-width: 1000px) {
+    .dashboard-header,
+    #welcome,
+    .tab-content:not(#welcome) {
+        width: min(100% - 32px, 1100px);
+    }
+
+    .dashboard-title {
+        font-size: clamp(58px, 9vw, 76px);
+    }
+
+    .tabs {
+        gap: 32px;
+    }
+
+    .tab-btn {
+        font-size: 14px;
+        letter-spacing: 2.7px;
+    }
+
+    .welcome-hero {
+        min-height: max(630px, calc(100svh - 210px));
+    }
+
+    .welcome-copy {
+        width: 56%;
+        padding-left: 42px;
+    }
+
+    .travel-paper-grid,
+    .mixed-newspaper-grid,
+    .paper-columns,
+    .hotel-side-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .qa-newspaper-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .featured-qa {
+        grid-column: span 2;
+    }
+
+    .clipping-image {
+        float: none;
+        width: 100%;
+        height: 180px;
+        margin: 12px 0 16px;
+    }
+}
+
+/* ----------------------------------------------------- */
+/* MOBILE                                                 */
+/* ----------------------------------------------------- */
+
+@media (max-width: 700px) {
+    body.dashboard-v2::before {
+        filter:
+            blur(4px)
+            brightness(0.28)
+            saturate(0.95)
+            contrast(1.05);
+    }
+
+    .dashboard-header {
+        width: 100%;
+        padding: 10px 14px 0;
+
+        background: rgba(17, 16, 14, 0.88);
+        backdrop-filter: blur(20px) saturate(120%);
+        -webkit-backdrop-filter: blur(20px) saturate(120%);
+    }
+
+    .dashboard-meta {
+        min-height: 29px;
+        padding: 0;
+
+        font-size: 8px;
+        letter-spacing: 0.9px;
+    }
+
+    .dashboard-title {
+        margin: 11px auto 12px;
+        font-size: clamp(44px, 14vw, 62px);
+    }
+
+    .tabs {
+        justify-content: flex-start;
+        gap: 25px;
+
+        min-height: 48px;
+        padding: 0 4px;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-btn {
+        min-height: 47px;
+
+        font-size: 11px;
+        letter-spacing: 1.8px;
+        white-space: nowrap;
+    }
+
+    #welcome {
+        width: 100%;
+    }
+
+    .welcome-hero {
+        min-height: max(690px, calc(100svh - 146px));
+        border-bottom: 1px solid rgba(214, 168, 78, 0.28);
+    }
+
+    .welcome-hero .slide {
+        object-position: 64% center;
+        filter:
+            brightness(0.75)
+            saturate(1.02)
+            contrast(1.04);
+    }
+
+    .welcome-hero-shade {
+        background:
+            linear-gradient(
+                90deg,
+                rgba(8, 9, 9, 0.94) 0%,
+                rgba(10, 10, 10, 0.86) 38%,
+                rgba(10, 10, 10, 0.37) 70%,
+                rgba(10, 10, 10, 0.12) 100%
+            ),
+            linear-gradient(
+                180deg,
+                rgba(8, 9, 9, 0.18),
+                rgba(8, 9, 9, 0.06) 42%,
+                rgba(8, 9, 9, 0.72) 100%
+            );
+    }
+
+    .welcome-copy {
+        width: 100%;
+        min-height: max(690px, calc(100svh - 146px));
+        padding: clamp(58px, 8vh, 84px) 22px 86px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .welcome-eyebrow {
+        margin-bottom: 6px;
+        font-size: 18px;
+    }
+
+    .welcome-copy h2 {
+        width: 58%;
+        margin-bottom: 22px;
+
+        font-size: clamp(43px, 13vw, 58px);
+        letter-spacing: 1px;
+        line-height: 0.96;
+    }
+
+    .welcome-message {
+        width: 62%;
+        margin-bottom: 24px;
+
+        font-size: 17px;
+        line-height: 1.48;
+    }
+
+    .welcome-message p + p {
+        margin-top: 10px;
+    }
+
+    .welcome-schedule-btn {
+        width: min(100%, 440px);
+        min-height: 55px;
+        margin-top: auto;
+        margin-bottom: 22px;
+
+        font-size: 12px;
+        letter-spacing: 2.4px;
+    }
+
+    .countdown-inline {
+        width: 100%;
+        padding: 21px 0 18px;
+    }
+
+    .countdown-inline > div:not(:last-child)::after {
+        height: 52px;
+    }
+
+    .countdown-inline span {
+        font-size: clamp(31px, 10vw, 43px);
+    }
+
+    .countdown-inline small {
+        margin-top: 7px;
+        font-size: 8px;
+        letter-spacing: 1.1px;
+    }
+
+    .slide-arrow {
+        display: none;
+    }
+
+    .slide-dots {
+        bottom: 24px;
+        gap: 10px;
+    }
+
+    .dot {
+        width: 9px;
+        height: 9px;
+    }
+
+    .tab-content:not(#welcome) {
+        width: calc(100% - 24px);
+        margin: 18px auto 34px;
+        padding: 24px 16px;
+        border-radius: 22px;
+    }
+
+    .tab-content:not(#welcome) > h2,
+    .travel-page-header h2,
+    .qa-section-header h2 {
+        font-size: 31px;
+    }
+
+    .schedule-intro,
+    .travel-page-header p,
+    .qa-section-header p,
+    #registry > .info-card p {
+        margin-bottom: 22px;
+        font-size: 16px;
+    }
+
+    .event-card {
+        margin: 20px auto 28px;
+        padding: 28px 17px 22px;
+        border-radius: 20px;
+    }
+
+    .event-haldi {
+        background-image:
+            linear-gradient(rgba(255, 248, 229, 0.22), rgba(255, 244, 219, 0.15)),
+            url("/static/images/HALDI-mobile.webp");
+    }
+
+    .event-hindu {
+        background-image:
+            linear-gradient(rgba(255, 248, 229, 0.20), rgba(255, 244, 219, 0.14)),
+            url("/static/images/WEDDING-mobile.webp");
+    }
+
+    .event-christian {
+        background-image:
+            linear-gradient(rgba(255, 248, 229, 0.22), rgba(255, 244, 219, 0.16)),
+            url("/static/images/RECEPTION-mobile.webp");
+    }
+
+    .event-title-block,
+    .event-card h3,
+    .event-kicker {
+        text-align: left;
+    }
+
+    .event-card h3 {
+        font-size: 33px;
+        letter-spacing: 2px;
+    }
+
+    .event-kicker {
+        font-size: 9px;
+        letter-spacing: 1.2px;
+    }
+
+    .event-meta-grid,
+    .rsvp-grid,
+    .qa-newspaper-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .event-meta-grid {
+        gap: 10px;
+    }
+
+    .event-meta-item {
+        padding: 13px;
+
+        display: grid;
+        grid-template-columns: 38px 1fr;
+        column-gap: 11px;
+
+        background: rgba(255, 249, 235, 0.55);
+        border: 1px solid rgba(89, 57, 37, 0.17);
+        border-radius: 12px;
+        text-align: left;
+    }
+
+    .event-meta-item:not(:last-child)::after {
+        display: none;
+    }
+
+    .meta-icon {
+        grid-row: span 2;
+        width: 36px;
+        height: 36px;
+        margin: 0;
+    }
+
+    .meta-label,
+    .meta-value {
+        text-align: left;
+    }
+
+    .attire-guide-card {
+        max-width: 100%;
+    }
+
+    .event-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .event-action-link,
+    .edit-rsvp-btn {
+        width: 100%;
+    }
+
+    .rsvp-confirmation {
+        align-items: flex-start;
+    }
+
+    .rsvp-status-header,
+    .confirmation-details {
+        width: 100%;
+    }
+
+    .edit-rsvp-btn {
+        margin-left: 0;
+    }
+
+    .travel-paper-grid,
+    .mixed-newspaper-grid,
+    .paper-columns,
+    .hotel-side-layout,
+    .qa-newspaper-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .featured-qa {
+        grid-column: span 1;
+    }
+
+    .travel-paper-card,
+    .qa-card,
+    #registry .info-card {
+        padding: 19px 16px;
+    }
+
+    .paper-image-wrap,
+    .clipping-image,
+    .bottom-ad-image {
+        height: 170px;
+    }
+
+    .clipping-image {
+        float: none;
+        width: 100%;
+        margin: 12px 0 16px;
+    }
+
+    .celebration-toast,
+    .login-toast {
+        top: 12px;
+        right: 12px;
+        left: 12px;
+    }
+
+    .celebration-toast-inner,
+    .login-toast-inner {
+        width: 100%;
+    }
+}
+
+/* ----------------------------------------------------- */
+/* SMALL PHONES                                           */
+/* ----------------------------------------------------- */
+
+@media (max-width: 430px) {
+    .dashboard-meta {
+        font-size: 7.5px;
+        letter-spacing: 0.6px;
+    }
+
+    .dashboard-title {
+        font-size: clamp(40px, 14vw, 54px);
+    }
+
+    .tabs {
+        gap: 21px;
+    }
+
+    .tab-btn {
+        font-size: 10px;
+        letter-spacing: 1.35px;
+    }
+
+    .welcome-copy {
+        padding-right: 16px;
+        padding-left: 16px;
+    }
+
+    .welcome-copy h2 {
+        width: 62%;
+        font-size: clamp(40px, 13vw, 52px);
+    }
+
+    .welcome-message {
+        width: 66%;
+        font-size: 15.5px;
+    }
+
+    .welcome-schedule-btn {
+        font-size: 11px;
+        letter-spacing: 2px;
+    }
+
+    .countdown-inline small {
+        letter-spacing: 0.7px;
+    }
+}
+
+/* ----------------------------------------------------- */
+/* TOUCH + ACCESSIBILITY                                  */
+/* ----------------------------------------------------- */
+
+@media (hover: none), (pointer: coarse) {
+    .welcome-schedule-btn:hover {
+        transform: none;
+    }
+
+    .welcome-schedule-btn::after {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
