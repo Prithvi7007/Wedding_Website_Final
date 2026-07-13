@@ -62,11 +62,9 @@ body::before {
     position: fixed;
     inset: 0;
     z-index: -2;
-    background:
-        radial-gradient(circle at 12% 18%, var(--blush) 0%, transparent 52%),
-        radial-gradient(circle at 88% 12%, var(--peach) 0%, transparent 52%),
-        radial-gradient(circle at 50% 92%, var(--lavender) 0%, transparent 58%),
-        linear-gradient(160deg, #fbeef5 0%, #eee3fb 50%, #fff1e2 100%);
+    background: url("/static/images/site-bg.webp") center center / cover no-repeat;
+    filter: blur(6px) brightness(0.92) saturate(1.05);
+    transform: scale(1.04);
 }
 
 body::after {
@@ -74,9 +72,12 @@ body::after {
     position: fixed;
     inset: 0;
     z-index: -1;
-    background: url("/static/images/site-bg.webp") center center / cover no-repeat;
-    opacity: 0.14;
-    filter: blur(4px) saturate(70%);
+    background:
+        radial-gradient(circle at 12% 18%, var(--blush) 0%, transparent 55%),
+        radial-gradient(circle at 88% 12%, var(--peach) 0%, transparent 55%),
+        radial-gradient(circle at 50% 92%, var(--lavender) 0%, transparent 60%);
+    mix-blend-mode: soft-light;
+    opacity: 0.85;
 }
 
 button {
@@ -187,10 +188,11 @@ body.login-page {
 .login-title {
     margin: 0 0 8px;
     font-family: 'Parisienne', cursive;
-    font-size: clamp(44px, 8vw, 78px);
+    font-size: clamp(40px, 7vw, 78px);
     font-weight: 400;
     color: var(--ink);
     line-height: 1.05;
+    white-space: nowrap;
 }
 
 .login-divider {
@@ -997,4 +999,11 @@ body.dashboard-page .top-line span:last-child { text-align: right; }
 
     .celebration-toast { top: 16px; right: 16px; left: 16px; }
     .celebration-toast-inner { min-width: auto; width: 100%; }
+
+    .login-container { padding: 36px 24px 30px; }
+    .login-title { font-size: clamp(30px, 9vw, 48px); }
+}
+
+@media (max-width: 390px) {
+    .login-title { font-size: clamp(26px, 10.5vw, 40px); }
 }
