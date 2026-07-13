@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardschedule1"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardschedule3clearcta"
     >
 </head>
 
@@ -100,13 +100,17 @@
                             </p>
                         </div>
 
-                        <button
-                            type="button"
-                            class="welcome-schedule-btn"
-                            id="welcome-schedule-btn"
-                        >
-                            <span>View Your Schedule</span>
-                        </button>
+                        <div class="welcome-schedule-wrap">
+                            <span class="welcome-schedule-shadow" aria-hidden="true"></span>
+
+                            <button
+                                type="button"
+                                class="welcome-schedule-btn"
+                                id="welcome-schedule-btn"
+                            >
+                                <span class="welcome-schedule-label">View Your Schedule</span>
+                            </button>
+                        </div>
 
                         <div class="countdown-inline" aria-label="Countdown to the wedding">
                             <div>
