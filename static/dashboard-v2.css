@@ -1788,7 +1788,7 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 
 
 .preview-haldi {
-    background-image: url("/static/images/HALDI.webp");
+    background-image: url("/static/images/schedule/schedule-haldi-desktop.webp");
 }
 
 .preview-hindu {
@@ -2273,6 +2273,309 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 /* ----------------------------------------------------- */
 
 @media (max-width: 700px) {
+    .schedule-bg-haldi {
+        background-image: url("/static/images/schedule/schedule-haldi-mobile.webp");
+        background-position: center top;
+    }
+
+    .schedule-tab[data-journey-theme="haldi"] .schedule-header {
+        display: none;
+    }
+
+    .schedule-tab[data-journey-theme="haldi"] .schedule-timeline {
+        width: 76px;
+        grid-template-columns: repeat(var(--journey-count), 1fr);
+        gap: 8px;
+        margin: 4px auto 10px;
+    }
+
+    .schedule-tab[data-journey-theme="haldi"] .journey-track,
+    .schedule-tab[data-journey-theme="haldi"] .journey-date,
+    .schedule-tab[data-journey-theme="haldi"] .journey-name {
+        display: none;
+    }
+
+    .schedule-tab[data-journey-theme="haldi"] .journey-stop {
+        padding: 0;
+        gap: 0;
+    }
+
+    .schedule-tab[data-journey-theme="haldi"] .journey-dot,
+    .schedule-tab[data-journey-theme="haldi"] .journey-stop.is-active .journey-dot {
+        width: 6px;
+        height: 6px;
+        border: 0;
+        background: rgba(255, 239, 209, 0.34);
+        box-shadow: none;
+    }
+
+    .schedule-tab[data-journey-theme="haldi"] .journey-stop.is-active .journey-dot {
+        background: #e6b45e;
+        box-shadow: 0 0 9px rgba(230, 180, 94, 0.68);
+    }
+
+    .event-haldi .event-artwork,
+    .event-haldi .event-artwork-inner {
+        min-height: calc(100svh - 138px);
+    }
+
+    .event-haldi .event-artwork-inner {
+        position: relative;
+        display: block;
+        padding: clamp(52vh, 58vh, 62vh) 18px 28px;
+    }
+
+    .event-haldi .event-hero-grid,
+    .event-haldi .event-lower-layout {
+        display: block;
+    }
+
+    .event-haldi .attire-visual {
+        position: absolute;
+        top: 20px;
+        right: 0;
+        left: 0;
+        z-index: 1;
+        min-height: 0;
+        height: min(54vh, 590px);
+        padding: 0 6px;
+        pointer-events: none;
+    }
+
+    .event-haldi .attire-guide-image-haldi {
+        width: 100%;
+        max-width: 520px;
+        max-height: 100%;
+        margin: 0 auto;
+        object-fit: contain;
+        object-position: center bottom;
+        filter:
+            drop-shadow(0 24px 22px rgba(55, 31, 9, 0.28))
+            drop-shadow(0 5px 5px rgba(36, 20, 7, 0.18));
+    }
+
+    .event-haldi .event-title-block {
+        position: relative;
+        z-index: 3;
+        max-width: none;
+        margin: 0 0 14px;
+        text-shadow: 0 3px 24px rgba(0,0,0,0.42);
+    }
+
+    .event-haldi .event-date-line {
+        margin-bottom: 6px;
+        color: #e6a43b;
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 18px;
+        font-style: italic;
+        font-weight: 600;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    .event-haldi .event-title-block h3 {
+        color: #fff4df;
+        font-size: clamp(48px, 14vw, 66px);
+        line-height: 0.95;
+    }
+
+    .event-haldi .event-kicker,
+    .event-haldi .event-title-flourish {
+        display: none;
+    }
+
+    .event-haldi .event-meta-grid {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        gap: 0;
+        width: 100%;
+        margin: 0 0 13px;
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .event-haldi .event-meta-grid::before,
+    .event-haldi .event-meta-item::after,
+    .event-haldi .meta-icon,
+    .event-haldi .meta-label {
+        display: none;
+    }
+
+    .event-haldi .event-meta-item {
+        display: block;
+        min-height: 0;
+        padding: 0;
+    }
+
+    .event-haldi .event-meta-item:first-child {
+        display: none;
+    }
+
+    .event-haldi .event-meta-item:nth-child(2) {
+        flex: 0 0 auto;
+    }
+
+    .event-haldi .event-meta-item:nth-child(2)::after {
+        content: "·";
+        display: inline;
+        position: static;
+        margin: 0 10px;
+        color: #d79a3a;
+        background: none;
+    }
+
+    .event-haldi .event-meta-location {
+        flex: 1 1 auto;
+    }
+
+    .event-haldi .meta-value {
+        display: inline;
+        color: rgba(255, 244, 225, 0.90);
+        font-family: "Manrope", Arial, sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .event-haldi .meta-value span {
+        display: inline;
+    }
+
+    .event-haldi .venue-name {
+        display: none !important;
+    }
+
+    .event-haldi .attire-editorial {
+        position: relative;
+        z-index: 3;
+        display: block;
+        min-height: 0;
+        margin-bottom: 20px;
+    }
+
+    .event-haldi .attire-copy {
+        max-width: none;
+        padding: 0;
+        text-shadow: 0 2px 18px rgba(0,0,0,0.52);
+    }
+
+    .event-haldi .attire-guide-label,
+    .event-haldi .attire-copy strong,
+    .event-haldi .attire-copy p {
+        display: none;
+    }
+
+    .event-haldi .attire-copy small {
+        margin: 0;
+        padding-bottom: 5px;
+        display: inline-block;
+        border-bottom: 1px solid rgba(222, 166, 76, 0.64);
+        color: rgba(255, 244, 225, 0.72);
+        font-size: 11px;
+        letter-spacing: 1.1px;
+    }
+
+    .event-haldi .attire-copy small::before {
+        content: "Attire — ";
+    }
+
+    .event-haldi .event-utility-dock {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .event-haldi .event-utility-dock::before,
+    .event-haldi .event-actions-label,
+    .event-haldi .event-actions-block {
+        border: 0;
+    }
+
+    .event-haldi .event-actions-block {
+        padding: 0;
+    }
+
+    .event-haldi .event-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .event-haldi .event-action-link {
+        min-height: 48px;
+        color: #fff4df;
+        background: linear-gradient(-75deg, rgba(255,255,255,0.025), rgba(255,255,255,0.10), rgba(255,255,255,0.025));
+        border-color: rgba(255, 239, 214, 0.32);
+    }
+
+    .event-haldi .event-action-link:first-child,
+    .event-haldi .event-action-link:nth-child(2) {
+        display: none;
+    }
+
+    .event-haldi .event-directions-link {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .event-haldi .event-rsvp-shell {
+        padding: 0;
+    }
+
+    .event-haldi .rsvp-summary,
+    .event-haldi .rsvp-confirmation {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: -48px;
+    }
+
+    .event-haldi .rsvp-seal,
+    .event-haldi .rsvp-eyebrow,
+    .event-haldi .rsvp-status-copy > p:last-child {
+        display: none;
+    }
+
+    .event-haldi .rsvp-status-copy {
+        grid-column: 2;
+        display: flex;
+        align-items: center;
+        padding-left: 12px;
+    }
+
+    .event-haldi .rsvp-status-copy h4 {
+        color: rgba(255, 244, 225, 0.68);
+        font-family: "Manrope", Arial, sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .event-haldi .edit-rsvp-btn {
+        grid-column: 1;
+        grid-row: 1;
+        min-height: 48px;
+        margin: 0;
+        color: #17100a;
+        background: linear-gradient(-75deg, rgba(214,165,82,0.48), rgba(239,199,123,0.62), rgba(214,165,82,0.48));
+        border-color: rgba(244, 215, 159, 0.48);
+    }
+
+
     body.dashboard-v2::before {
         filter:
             blur(4px)
@@ -2889,7 +3192,7 @@ body[data-active-tab="schedule"] .dashboard-header::before {
 }
 
 .schedule-bg-haldi {
-    background-image: url("/static/images/HALDI.webp");
+    background-image: url("/static/images/schedule/schedule-haldi-desktop.webp");
     filter: brightness(0.90) saturate(1.07) contrast(1.015);
 }
 
@@ -3819,6 +4122,97 @@ body[data-active-tab="schedule"] .dashboard-header::before {
 @keyframes schedule-light-breathe {
     from { transform: scale(0.96); opacity: 0.34; }
     to { transform: scale(1.06); opacity: 0.64; }
+}
+
+
+/* ===================================================== */
+/* HALDI CINEMATIC ASSET PASS                            */
+/* Uses dedicated scene + transparent couture tableau   */
+/* ===================================================== */
+
+.schedule-tab[data-journey-theme="haldi"] .schedule-bg-haldi {
+    background-position: center center;
+    filter: brightness(0.94) saturate(1.02) contrast(1.02);
+}
+
+.schedule-tab[data-journey-theme="haldi"] .schedule-bg-shade {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(17, 11, 6, 0.64) 0%,
+            rgba(24, 15, 7, 0.18) 19%,
+            rgba(33, 20, 8, 0.015) 46%,
+            rgba(33, 20, 8, 0.025) 68%,
+            rgba(20, 12, 7, 0.28) 100%
+        ),
+        linear-gradient(
+            90deg,
+            rgba(31, 18, 7, 0.18) 0%,
+            rgba(31, 18, 7, 0.06) 34%,
+            transparent 62%,
+            rgba(31, 18, 7, 0.04) 100%
+        );
+}
+
+.event-haldi .event-artwork,
+.event-haldi .event-artwork-inner {
+    min-height: clamp(650px, 70vh, 830px);
+}
+
+.event-haldi .event-artwork-inner {
+    gap: clamp(26px, 4vh, 52px);
+}
+
+.event-haldi .event-lower-layout {
+    grid-template-columns: minmax(0, 1.52fr) minmax(340px, 0.48fr);
+    gap: clamp(28px, 4vw, 58px);
+}
+
+.event-haldi .attire-editorial {
+    grid-template-columns: minmax(480px, 1.35fr) minmax(230px, 0.65fr);
+    gap: clamp(18px, 2.5vw, 38px);
+}
+
+.event-haldi .attire-visual {
+    min-height: 390px;
+    align-items: end;
+}
+
+.event-haldi .attire-guide-image-haldi {
+    width: min(100%, 760px);
+    max-height: 520px;
+    object-position: center bottom;
+    filter:
+        drop-shadow(0 34px 34px rgba(74, 42, 10, 0.28))
+        drop-shadow(0 8px 8px rgba(52, 29, 8, 0.18));
+}
+
+.event-haldi .attire-copy {
+    max-width: 300px;
+    padding-bottom: 42px;
+}
+
+.event-haldi .event-meta-grid,
+.event-haldi .event-utility-dock {
+    backdrop-filter: blur(9px) saturate(132%) brightness(1.025);
+    -webkit-backdrop-filter: blur(9px) saturate(132%) brightness(1.025);
+    background:
+        linear-gradient(145deg, rgba(255,255,255,0.115), rgba(255,255,255,0.035) 58%, rgba(118,67,10,0.055));
+}
+
+.event-haldi .event-utility-dock {
+    align-self: end;
+    margin-bottom: 30px;
+}
+
+.event-haldi .event-title-block h3 {
+    text-transform: none;
+    font-style: italic;
+    letter-spacing: 0.4px;
+}
+
+.event-haldi .event-date-line {
+    color: #d48c24;
 }
 
 @media (max-width: 1180px) {

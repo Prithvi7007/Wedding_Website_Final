@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardschedule8fullbleed"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardschedule9haldicinematic"
     >
 </head>
 
@@ -320,7 +320,13 @@
                                         <div class="event-lower-layout journey-piece" style="--journey-order: 2;">
                                             <section class="attire-editorial" aria-label="Attire guidance">
                                                 <div class="attire-visual">
-                                                    {% if event.attire_image %}
+                                                    {% if is_haldi %}
+                                                        <img
+                                                            src="{{ url_for('static', filename='images/schedule/outfits-haldi.png') }}"
+                                                            alt="Haldi attire inspiration: yellow lehenga, saree, and sherwani"
+                                                            class="attire-guide-image attire-guide-image-haldi"
+                                                        >
+                                                    {% elif event.attire_image %}
                                                         <img
                                                             src="{{ url_for('static', filename=event.attire_image) }}"
                                                             alt="{{ event.title }} attire guide"
