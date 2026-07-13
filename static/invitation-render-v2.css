@@ -1,3 +1,875 @@
+/*
+=========================================================
+PRIVATE INVITATION — ROMANTIC GLASS V3
+=========================================================
+This file only changes the invitation page.
+It deliberately neutralizes the older champagne/hybrid
+invitation overrides already present in style.css.
+*/
+
+body.invitation-render-v2 {
+    color: #4f3444 !important;
+}
+
+/* ----------------------------------------------------- */
+/* BACKGROUND                                             */
+/* ----------------------------------------------------- */
+
+body.invitation-render-v2::before {
+    content: "" !important;
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: -2 !important;
+
+    background:
+        url("/static/images/site-bg.webp")
+        center center / cover no-repeat !important;
+
+    filter:
+        blur(4px)
+        brightness(0.77)
+        saturate(0.94)
+        contrast(1.01)
+        sepia(0%) !important;
+
+    transform: scale(1.035) !important;
+}
+
+body.invitation-render-v2::after {
+    content: "" !important;
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: -1 !important;
+
+    background:
+        radial-gradient(
+            circle at 50% 43%,
+            rgba(255, 247, 239, 0.10) 0%,
+            rgba(255, 247, 239, 0.03) 42%,
+            rgba(255, 247, 239, 0) 68%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(255, 220, 192, 0.14) 0%,
+            rgba(188, 127, 143, 0.08) 55%,
+            rgba(52, 27, 43, 0.23) 100%
+        ) !important;
+}
+
+/* ----------------------------------------------------- */
+/* CARD                                                   */
+/* ----------------------------------------------------- */
+
+body.invitation-render-v2 .login-container {
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+
+    width: min(690px, 92vw) !important;
+    padding: 52px 54px 43px !important;
+
+    background:
+        radial-gradient(
+            circle at 16% 4%,
+            rgba(255, 238, 220, 0.50) 0%,
+            rgba(255, 238, 220, 0.12) 34%,
+            rgba(255, 238, 220, 0) 60%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 251, 246, 0.92) 0%,
+            rgba(249, 238, 234, 0.89) 52%,
+            rgba(237, 218, 224, 0.84) 100%
+        ) !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.82) !important;
+    border-radius: 28px !important;
+
+    backdrop-filter:
+        blur(22px)
+        saturate(118%)
+        brightness(1.02) !important;
+
+    -webkit-backdrop-filter:
+        blur(22px)
+        saturate(118%)
+        brightness(1.02) !important;
+
+    box-shadow:
+        0 30px 78px rgba(48, 24, 39, 0.28),
+        0 10px 28px rgba(48, 24, 39, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+/* Remove the previous double rim / gloss layers. */
+body.invitation-render-v2 .login-container::before,
+body.invitation-render-v2 .login-container::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* ----------------------------------------------------- */
+/* PRIVATE INVITATION LABEL                              */
+/* ----------------------------------------------------- */
+
+body.invitation-render-v2 .login-private-line {
+    position: relative !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    max-width: 550px !important;
+
+    margin: 0 auto 22px !important;
+    padding: 0 !important;
+
+    color: #5a334b !important;
+    background: transparent !important;
+
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 3.15px !important;
+    line-height: 1.2 !important;
+    text-transform: uppercase !important;
+}
+
+body.invitation-render-v2 .login-private-line::before,
+body.invitation-render-v2 .login-private-line::after {
+    content: "" !important;
+    display: block !important;
+    position: static !important;
+
+    flex: 1 1 auto !important;
+    width: auto !important;
+    height: 1px !important;
+
+    margin: 0 17px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(90, 51, 75, 0),
+            rgba(90, 51, 75, 0.50)
+        ) !important;
+
+    transform: none !important;
+}
+
+body.invitation-render-v2 .login-private-line::after {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(90, 51, 75, 0.50),
+            rgba(90, 51, 75, 0)
+        ) !important;
+}
+
+/* ----------------------------------------------------- */
+/* TITLE + DIVIDER                                        */
+/* ----------------------------------------------------- */
+
+body.invitation-render-v2 .login-title {
+    margin: 0 !important;
+
+    color: #422238 !important;
+
+    font-family: "Parisienne", cursive !important;
+    font-size: clamp(48px, 7.3vw, 80px) !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+    line-height: 1.02 !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+
+    text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.55),
+        0 4px 16px rgba(66, 34, 56, 0.08) !important;
+}
+
+body.invitation-render-v2 .login-divider {
+    position: relative !important;
+
+    width: min(100%, 550px) !important;
+    height: 1px !important;
+    margin: 26px auto 24px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(90, 51, 75, 0.10) 0%,
+            rgba(190, 132, 145, 0.64) 50%,
+            rgba(90, 51, 75, 0.10) 100%
+        ) !important;
+
+    box-shadow: none !important;
+}
+
+body.invitation-render-v2 .login-divider::before {
+    content: none !important;
+    display: none !important;
+}
+
+body.invitation-render-v2 .login-divider::after {
+    content: "◆" !important;
+    display: block !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+
+    padding: 0 8px !important;
+
+    color: #c58b97 !important;
+    background: rgba(249, 238, 234, 0.92) !important;
+
+    font-family: Georgia, serif !important;
+    font-size: 8px !important;
+    line-height: 1 !important;
+
+    transform: translate(-50%, -50%) rotate(45deg) !important;
+}
+
+/* ----------------------------------------------------- */
+/* COPY                                                   */
+/* ----------------------------------------------------- */
+
+body.invitation-render-v2 .login-subtitle {
+    max-width: 500px !important;
+    margin: 0 auto 27px !important;
+
+    color: #664e5c !important;
+
+    font-family: "Libre Baskerville", Georgia, serif !important;
+    font-size: 15px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+    line-height: 1.80 !important;
+    text-transform: none !important;
+}
+
+body.invitation-render-v2 .welcome-name,
+body.invitation-render-v2 .welcome-message,
+body.invitation-render-v2 .welcome-invitation {
+    display: block !important;
+}
+
+body.invitation-render-v2 .welcome-name {
+    color: #5a3b50 !important;
+}
+
+body.invitation-render-v2 .welcome-message,
+body.invitation-render-v2 .welcome-invitation {
+    margin-top: 2px !important;
+}
+
+body.invitation-render-v2 .welcome-heart {
+    color: #bd7f8d !important;
+    text-shadow: 0 0 10px rgba(189, 127, 141, 0.18) !important;
+}
+
+/* ----------------------------------------------------- */
+/* BUTTON                                                 */
+/* ----------------------------------------------------- */
+
+body.invitation-render-v2 .open-invitation-btn {
+    position: relative !important;
+    overflow: hidden !important;
+
+    width: 100% !important;
+    min-height: 52px !important;
+    margin-top: 8px !important;
+    padding: 14px 22px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #64364f 0%,
+            #4d273f 55%,
+            #3c1d31 100%
+        ) !important;
+
+    color: #fff9f4 !important;
+
+    border: 1px solid rgba(255, 238, 230, 0.30) !important;
+    border-radius: 999px !important;
+
+    box-shadow:
+        0 13px 30px rgba(52, 24, 42, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.8px !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+
+    transition:
+        transform 0.22s ease,
+        background 0.22s ease,
+        box-shadow 0.22s ease !important;
+}
+
+/* Remove the old glossy strip. */
+body.invitation-render-v2 .open-invitation-btn::before,
+body.invitation-render-v2 .open-invitation-btn::after {
+    content: none !important;
+    display: none !important;
+}
+
+body.invitation-render-v2 .open-invitation-btn:hover {
+    background:
+        linear-gradient(
+            180deg,
+            #73415d 0%,
+            #5a2e48 55%,
+            #472038 100%
+        ) !important;
+
+    box-shadow:
+        0 16px 35px rgba(52, 24, 42, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
+
+    transform: translateY(-2px) !important;
+}
+
+body.invitation-render-v2 .open-invitation-btn:focus-visible {
+    outline: 2px solid rgba(255, 249, 244, 0.98) !important;
+    outline-offset: 3px !important;
+
+    box-shadow:
+        0 0 0 5px rgba(189, 127, 141, 0.30),
+        0 15px 34px rgba(52, 24, 42, 0.27) !important;
+}
+
+body.invitation-render-v2 .btn-spinner {
+    border-color: rgba(255, 249, 244, 0.38) !important;
+    border-top-color: #fff9f4 !important;
+}
+
+/* ----------------------------------------------------- */
+/* FOOTER COPY                                            */
+/* ----------------------------------------------------- */
+
+body.invitation-render-v2 .small-text {
+    max-width: 520px !important;
+    margin: 21px auto 0 !important;
+
+    color: #78616d !important;
+
+    font-family: "Libre Baskerville", Georgia, serif !important;
+    font-size: 11.3px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.08px !important;
+    line-height: 1.62 !important;
+    text-transform: none !important;
+}
+
+/* ----------------------------------------------------- */
+/* MOBILE                                                 */
+/* ----------------------------------------------------- */
+
+@media (max-width: 700px) {
+    body.invitation-render-v2 {
+        padding: 18px !important;
+    }
+
+    body.invitation-render-v2::before {
+        filter:
+            blur(3px)
+            brightness(0.74)
+            saturate(0.93)
+            contrast(1.01)
+            sepia(0%) !important;
+    }
+
+    body.invitation-render-v2 .login-container {
+        width: 100% !important;
+        max-width: 570px !important;
+        padding: 40px 25px 32px !important;
+        border-radius: 25px !important;
+
+        backdrop-filter:
+            blur(20px)
+            saturate(114%)
+            brightness(1.02) !important;
+
+        -webkit-backdrop-filter:
+            blur(20px)
+            saturate(114%)
+            brightness(1.02) !important;
+
+        box-shadow:
+            0 24px 54px rgba(48, 24, 39, 0.25),
+            0 6px 19px rgba(48, 24, 39, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.70) !important;
+    }
+
+    body.invitation-render-v2 .login-private-line {
+        margin-bottom: 19px !important;
+
+        font-size: 10.5px !important;
+        letter-spacing: 2.3px !important;
+    }
+
+    body.invitation-render-v2 .login-private-line::before,
+    body.invitation-render-v2 .login-private-line::after {
+        margin: 0 10px !important;
+    }
+
+    body.invitation-render-v2 .login-title {
+        font-size: clamp(39px, 12vw, 59px) !important;
+    }
+
+    body.invitation-render-v2 .login-divider {
+        margin: 21px auto !important;
+    }
+
+    body.invitation-render-v2 .login-subtitle {
+        margin-bottom: 24px !important;
+        font-size: 14px !important;
+        line-height: 1.76 !important;
+    }
+
+    body.invitation-render-v2 .open-invitation-btn {
+        min-height: 50px !important;
+        padding: 13px 17px !important;
+
+        font-size: 13px !important;
+        letter-spacing: 1.5px !important;
+    }
+
+    body.invitation-render-v2 .small-text {
+        margin-top: 19px !important;
+
+        font-size: 10.7px !important;
+        line-height: 1.60 !important;
+    }
+}
+
+@media (max-width: 390px) {
+    body.invitation-render-v2 {
+        padding: 14px !important;
+    }
+
+    body.invitation-render-v2 .login-container {
+        padding: 35px 20px 29px !important;
+    }
+
+    body.invitation-render-v2 .login-private-line {
+        font-size: 9.8px !important;
+        letter-spacing: 1.8px !important;
+    }
+
+    body.invitation-render-v2 .login-private-line::before,
+    body.invitation-render-v2 .login-private-line::after {
+        margin: 0 7px !important;
+    }
+
+    body.invitation-render-v2 .login-title {
+        font-size: clamp(35px, 11.7vw, 49px) !important;
+    }
+
+    body.invitation-render-v2 .login-subtitle {
+        font-size: 13px !important;
+    }
+}
+/* ===================================================== */
+/* WEBFLOW-INSPIRED GLASS REFINEMENT                     */
+/* Single refraction rim + responsive light + glass CTA  */
+/* ===================================================== */
+
+body.invitation-render-v2 .login-container {
+    --glass-x: 50%;
+    --glass-y: 12%;
+
+    overflow: hidden !important;
+
+    background:
+        radial-gradient(
+            circle 260px at var(--glass-x) var(--glass-y),
+            rgba(255, 255, 255, 0.22) 0%,
+            rgba(255, 255, 255, 0.07) 37%,
+            rgba(255, 255, 255, 0) 70%
+        ),
+        radial-gradient(
+            circle at 14% 2%,
+            rgba(255, 238, 220, 0.45) 0%,
+            rgba(255, 238, 220, 0.11) 34%,
+            rgba(255, 238, 220, 0) 61%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 251, 247, 0.87) 0%,
+            rgba(248, 235, 232, 0.82) 52%,
+            rgba(232, 210, 218, 0.77) 100%
+        ) !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.42) !important;
+
+    backdrop-filter:
+        blur(29px)
+        saturate(132%)
+        brightness(1.035)
+        contrast(1.01) !important;
+
+    -webkit-backdrop-filter:
+        blur(29px)
+        saturate(132%)
+        brightness(1.035)
+        contrast(1.01) !important;
+
+    box-shadow:
+        0 31px 82px rgba(48, 24, 39, 0.27),
+        0 10px 28px rgba(48, 24, 39, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.70),
+        inset 1px 0 0 rgba(255, 255, 255, 0.16),
+        inset -1px 0 0 rgba(78, 37, 61, 0.07),
+        inset 0 -1px 0 rgba(66, 31, 53, 0.13) !important;
+
+    transition:
+        transform 0.38s ease,
+        box-shadow 0.38s ease,
+        background 0.18s linear !important;
+}
+
+/* A single curved refraction rim, not a second visible outline. */
+body.invitation-render-v2 .login-container::before {
+    content: "" !important;
+    display: block !important;
+
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+
+    border-radius: inherit !important;
+    padding: 1px !important;
+    pointer-events: none !important;
+
+    background:
+        linear-gradient(
+            138deg,
+            rgba(255, 255, 255, 0.90) 0%,
+            rgba(255, 255, 255, 0.22) 22%,
+            rgba(255, 255, 255, 0.04) 47%,
+            rgba(189, 127, 141, 0.18) 76%,
+            rgba(255, 255, 255, 0.47) 100%
+        ) !important;
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0) !important;
+
+    -webkit-mask-composite: xor !important;
+    mask-composite: exclude !important;
+}
+
+/* Soft interactive illumination that follows the cursor. */
+body.invitation-render-v2 .login-container::after {
+    content: "" !important;
+    display: block !important;
+
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+
+    border-radius: inherit !important;
+    pointer-events: none !important;
+
+    background:
+        radial-gradient(
+            circle 250px at var(--glass-x) var(--glass-y),
+            rgba(255, 255, 255, 0.17) 0%,
+            rgba(255, 255, 255, 0.045) 48%,
+            rgba(255, 255, 255, 0) 74%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.10) 0%,
+            rgba(255, 255, 255, 0.025) 31%,
+            rgba(255, 255, 255, 0) 55%
+        ) !important;
+
+    opacity: 0.74 !important;
+    transition: opacity 0.32s ease !important;
+}
+
+body.invitation-render-v2 .login-container:hover {
+    transform: translateY(-1px) !important;
+
+    box-shadow:
+        0 35px 90px rgba(48, 24, 39, 0.30),
+        0 12px 31px rgba(48, 24, 39, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.74),
+        inset 1px 0 0 rgba(255, 255, 255, 0.18),
+        inset -1px 0 0 rgba(78, 37, 61, 0.07),
+        inset 0 -1px 0 rgba(66, 31, 53, 0.14) !important;
+}
+
+body.invitation-render-v2 .login-container:hover::after {
+    opacity: 1 !important;
+}
+
+body.invitation-render-v2 .login-container > * {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* ----------------------------------------------------- */
+/* Liquid-glass invitation button                        */
+/* ----------------------------------------------------- */
+
+body.invitation-render-v2 .open-invitation-btn {
+    --button-x: 50%;
+    --button-y: 0%;
+
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+
+    background:
+        radial-gradient(
+            circle 115px at var(--button-x) var(--button-y),
+            rgba(255, 255, 255, 0.25) 0%,
+            rgba(255, 255, 255, 0.075) 42%,
+            rgba(255, 255, 255, 0) 72%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(119, 65, 95, 0.91) 0%,
+            rgba(80, 40, 65, 0.94) 55%,
+            rgba(57, 26, 47, 0.97) 100%
+        ) !important;
+
+    border: 1px solid rgba(255, 240, 233, 0.42) !important;
+
+    backdrop-filter:
+        blur(17px)
+        saturate(145%)
+        brightness(1.03) !important;
+
+    -webkit-backdrop-filter:
+        blur(17px)
+        saturate(145%)
+        brightness(1.03) !important;
+
+    box-shadow:
+        0 14px 32px rgba(52, 24, 42, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.43),
+        inset 1px 0 0 rgba(255, 255, 255, 0.12),
+        inset -1px 0 0 rgba(32, 13, 26, 0.10),
+        inset 0 -1px 0 rgba(30, 12, 25, 0.42),
+        inset 0 -8px 18px rgba(29, 12, 24, 0.12) !important;
+
+    transition:
+        transform 0.30s cubic-bezier(0.2, 0.8, 0.2, 1),
+        box-shadow 0.30s ease,
+        border-color 0.30s ease,
+        background 0.16s linear !important;
+}
+
+/* Convex highlight across the upper interior. */
+body.invitation-render-v2 .open-invitation-btn::before {
+    content: "" !important;
+    display: block !important;
+
+    position: absolute !important;
+    top: 2px !important;
+    left: 5% !important;
+    right: 5% !important;
+    z-index: 0 !important;
+
+    width: auto !important;
+    height: 48% !important;
+    border-radius: 999px !important;
+
+    pointer-events: none !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.31) 0%,
+            rgba(255, 255, 255, 0.09) 48%,
+            rgba(255, 255, 255, 0) 100%
+        ) !important;
+
+    opacity: 0.72 !important;
+}
+
+/* Narrow moving light sweep inspired by the reference interaction. */
+body.invitation-render-v2 .open-invitation-btn::after {
+    content: "" !important;
+    display: block !important;
+
+    position: absolute !important;
+    top: -135% !important;
+    left: -36% !important;
+    z-index: 0 !important;
+
+    width: 24% !important;
+    height: 370% !important;
+
+    pointer-events: none !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.34) 50%,
+            rgba(255, 255, 255, 0) 100%
+        ) !important;
+
+    filter: blur(1px) !important;
+    opacity: 0 !important;
+    transform: rotate(19deg) !important;
+
+    transition:
+        left 0.68s cubic-bezier(0.2, 0.75, 0.2, 1),
+        opacity 0.25s ease !important;
+}
+
+body.invitation-render-v2 .open-invitation-btn > * {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+body.invitation-render-v2 .open-invitation-btn:hover {
+    background:
+        radial-gradient(
+            circle 125px at var(--button-x) var(--button-y),
+            rgba(255, 255, 255, 0.30) 0%,
+            rgba(255, 255, 255, 0.09) 44%,
+            rgba(255, 255, 255, 0) 72%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(134, 75, 106, 0.94) 0%,
+            rgba(92, 45, 74, 0.96) 55%,
+            rgba(67, 30, 54, 0.98) 100%
+        ) !important;
+
+    border-color: rgba(255, 242, 235, 0.61) !important;
+
+    box-shadow:
+        0 17px 38px rgba(52, 24, 42, 0.31),
+        0 0 23px rgba(189, 127, 141, 0.11),
+        inset 0 1px 0 rgba(255, 255, 255, 0.50),
+        inset 1px 0 0 rgba(255, 255, 255, 0.14),
+        inset -1px 0 0 rgba(32, 13, 26, 0.09),
+        inset 0 -1px 0 rgba(30, 12, 25, 0.38),
+        inset 0 -8px 18px rgba(29, 12, 24, 0.09) !important;
+
+    transform: translateY(-2px) scale(1.006) !important;
+}
+
+body.invitation-render-v2 .open-invitation-btn:hover::after {
+    left: 114% !important;
+    opacity: 0.82 !important;
+}
+
+body.invitation-render-v2 .open-invitation-btn:active {
+    transform: translateY(0) scale(0.985) !important;
+
+    box-shadow:
+        0 8px 19px rgba(52, 24, 42, 0.23),
+        inset 0 2px 5px rgba(25, 10, 21, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.31) !important;
+}
+
+body.invitation-render-v2 .open-invitation-btn.is-loading::after {
+    opacity: 0 !important;
+}
+
+/* Disable hover-only flourishes on touch devices. */
+@media (hover: none), (pointer: coarse) {
+    body.invitation-render-v2 .login-container:hover {
+        transform: none !important;
+    }
+
+    body.invitation-render-v2 .login-container::after {
+        opacity: 0.65 !important;
+    }
+
+    body.invitation-render-v2 .open-invitation-btn::after {
+        display: none !important;
+    }
+
+    body.invitation-render-v2 .open-invitation-btn:hover {
+        transform: none !important;
+    }
+}
+
+/* Mobile glass is slightly more opaque for reliable readability. */
+@media (max-width: 700px) {
+    body.invitation-render-v2 .login-container {
+        background:
+            radial-gradient(
+                circle 210px at 50% 4%,
+                rgba(255, 255, 255, 0.18) 0%,
+                rgba(255, 255, 255, 0.05) 42%,
+                rgba(255, 255, 255, 0) 72%
+            ),
+            radial-gradient(
+                circle at 14% 2%,
+                rgba(255, 238, 220, 0.41) 0%,
+                rgba(255, 238, 220, 0.10) 36%,
+                rgba(255, 238, 220, 0) 62%
+            ),
+            linear-gradient(
+                145deg,
+                rgba(255, 251, 247, 0.90) 0%,
+                rgba(248, 235, 232, 0.86) 52%,
+                rgba(232, 210, 218, 0.82) 100%
+            ) !important;
+
+        backdrop-filter:
+            blur(24px)
+            saturate(125%)
+            brightness(1.03) !important;
+
+        -webkit-backdrop-filter:
+            blur(24px)
+            saturate(125%)
+            brightness(1.03) !important;
+    }
+
+    body.invitation-render-v2 .open-invitation-btn {
+        backdrop-filter:
+            blur(14px)
+            saturate(138%) !important;
+
+        -webkit-backdrop-filter:
+            blur(14px)
+            saturate(138%) !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.invitation-render-v2 .login-container,
+    body.invitation-render-v2 .login-container::after,
+    body.invitation-render-v2 .open-invitation-btn,
+    body.invitation-render-v2 .open-invitation-btn::after {
+        transition-duration: 0.01ms !important;
+    }
+
+    body.invitation-render-v2 .open-invitation-btn::after {
+        display: none !important;
+    }
+}
+
 /* ===================================================== */
 /* STRONGER GLASS EFFECT — INVITATION CARD               */
 /* ===================================================== */
