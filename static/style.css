@@ -143,7 +143,6 @@ body.login-page {
     padding: 52px 46px 44px;
     text-align: center;
     overflow: hidden;
-    background: linear-gradient(160deg, rgba(255, 250, 235, 0.58) 0%, rgba(240, 209, 144, 0.34) 55%, rgba(217, 164, 65, 0.22) 100%);
     box-shadow:
         0 30px 80px -20px rgba(199, 106, 131, 0.32),
         0 16px 46px -12px rgba(217, 164, 65, 0.24),
@@ -223,6 +222,7 @@ body.login-page {
     color: var(--ink);
     line-height: 1.05;
     white-space: nowrap;
+    text-shadow: 0 2px 18px rgba(217, 164, 65, 0.35);
 }
 
 .login-divider {
@@ -276,22 +276,22 @@ body.login-page {
     gap: 10px;
     padding: 15px 20px;
     border-radius: 999px;
-    background: var(--glass-strong);
-    border: 1px solid var(--glass-border);
+    background: linear-gradient(135deg, rgba(240, 209, 144, 0.75), rgba(217, 164, 65, 0.55));
+    border: 1px solid rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(14px);
     color: var(--ink);
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 1.8px;
     text-transform: uppercase;
-    box-shadow: var(--shadow-glass);
+    box-shadow: 0 10px 26px rgba(217, 164, 65, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.5);
     transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
 .open-invitation-btn:hover {
     transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.55);
-    box-shadow: var(--shadow-glass-lift);
+    background: linear-gradient(135deg, rgba(243, 216, 158, 0.85), rgba(217, 164, 65, 0.68));
+    box-shadow: 0 14px 32px rgba(217, 164, 65, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .open-invitation-btn:disabled,
