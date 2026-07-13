@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardschedule6journey"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardschedule7journeyrefined"
     >
 </head>
 
@@ -182,6 +182,11 @@
                     </span>
 
                     {% for event in events %}
+                        {% set event_key = event.id|string|lower %}
+                        {% set event_title_key = event.title|string|lower %}
+                        {% set is_haldi = 'haldi' in event_key or 'haldi' in event_title_key %}
+                        {% set is_hindu = 'hindu' in event_key or 'telugu' in event_key or 'hindu' in event_title_key or 'telugu' in event_title_key %}
+                        {% set is_reception = 'christian' in event_key or 'church' in event_key or 'reception' in event_key or 'christian' in event_title_key or 'church' in event_title_key or 'reception' in event_title_key %}
                         <button
                             type="button"
                             class="journey-stop {% if loop.first %}is-active{% endif %}"
@@ -193,12 +198,14 @@
                             <span class="journey-date">{{ event.short_date if event.short_date is defined else event.date }}</span>
                             <span class="journey-dot" aria-hidden="true"></span>
                             <span class="journey-name">
-                                {% if event.id == 'haldi' %}
+                                {% if is_haldi %}
                                     Haldi
-                                {% elif event.id == 'hindu_wedding' %}
-                                    Hindu Wedding
-                                {% else %}
+                                {% elif is_hindu %}
+                                    Telugu Wedding
+                                {% elif is_reception %}
                                     Wedding &amp; Reception
+                                {% else %}
+                                    {{ event.title }}
                                 {% endif %}
                             </span>
                         </button>
@@ -207,6 +214,11 @@
 
                 <div class="event-stage schedule-reveal" aria-live="polite">
                     {% for event in events %}
+                        {% set event_key = event.id|string|lower %}
+                        {% set event_title_key = event.title|string|lower %}
+                        {% set is_haldi = 'haldi' in event_key or 'haldi' in event_title_key %}
+                        {% set is_hindu = 'hindu' in event_key or 'telugu' in event_key or 'hindu' in event_title_key or 'telugu' in event_title_key %}
+                        {% set is_reception = 'christian' in event_key or 'church' in event_key or 'reception' in event_key or 'christian' in event_title_key or 'church' in event_title_key or 'reception' in event_title_key %}
                         {% set saved = saved_rsvps.get(event.id, {}) %}
                         {% set has_response = saved.get("attending") %}
 
@@ -214,11 +226,12 @@
                             id="journey-event-{{ event.id }}"
                             class="event-chapter journey-event
                                 {% if loop.first %}is-active{% endif %}
-                                {% if event.id == 'haldi' %}event-haldi{% endif %}
-                                {% if event.id == 'hindu_wedding' %}event-hindu{% endif %}
-                                {% if event.id == 'christian_wedding_reception' %}event-christian{% endif %}
+                                {% if is_haldi %}event-haldi{% endif %}
+                                {% if is_hindu %}event-hindu{% endif %}
+                                {% if is_reception %}event-christian{% endif %}
                             "
                             data-event-id="{{ event.id }}"
+                            data-event-theme="{% if is_haldi %}haldi{% elif is_hindu %}hindu_wedding{% elif is_reception %}christian_wedding_reception{% else %}neutral{% endif %}"
                             data-event-index="{{ loop.index0 }}"
                             aria-labelledby="event-title-{{ event.id }}"
                             aria-hidden="{% if loop.first %}false{% else %}true{% endif %}"
@@ -233,11 +246,11 @@
                                             <p class="event-date-line">{{ event.date }}</p>
                                             <h3 id="event-title-{{ event.id }}">{{ event.title }}</h3>
 
-                                            {% if event.id == 'haldi' %}
+                                            {% if is_haldi %}
                                                 <p class="event-kicker">A joyful pre-wedding celebration</p>
-                                            {% elif event.id == 'hindu_wedding' %}
+                                            {% elif is_hindu %}
                                                 <p class="event-kicker">Traditional ceremony and blessings</p>
-                                            {% elif event.id == 'christian_wedding_reception' %}
+                                            {% elif is_reception %}
                                                 <p class="event-kicker">Ceremony, dinner, dancing, and celebration</p>
                                             {% endif %}
 
@@ -517,13 +530,18 @@
                 {% if events|length > 1 %}
                     <div class="journey-preview-rail schedule-reveal" aria-label="Choose another celebration">
                         {% for event in events %}
+                            {% set event_key = event.id|string|lower %}
+                            {% set event_title_key = event.title|string|lower %}
+                            {% set is_haldi = 'haldi' in event_key or 'haldi' in event_title_key %}
+                            {% set is_hindu = 'hindu' in event_key or 'telugu' in event_key or 'hindu' in event_title_key or 'telugu' in event_title_key %}
+                            {% set is_reception = 'christian' in event_key or 'church' in event_key or 'reception' in event_key or 'christian' in event_title_key or 'church' in event_title_key or 'reception' in event_title_key %}
                             <button
                                 type="button"
                                 class="journey-preview
                                     {% if loop.first %}is-active{% endif %}
-                                    {% if event.id == 'haldi' %}preview-haldi{% endif %}
-                                    {% if event.id == 'hindu_wedding' %}preview-hindu{% endif %}
-                                    {% if event.id == 'christian_wedding_reception' %}preview-christian{% endif %}
+                                    {% if is_haldi %}preview-haldi{% endif %}
+                                    {% if is_hindu %}preview-hindu{% endif %}
+                                    {% if is_reception %}preview-christian{% endif %}
                                 "
                                 data-journey-target="{{ event.id }}"
                                 data-journey-index="{{ loop.index0 }}"
@@ -533,21 +551,25 @@
                                 <span class="journey-preview-copy">
                                     <small>{{ event.date }}</small>
                                     <strong>
-                                        {% if event.id == 'haldi' %}
+                                        {% if is_haldi %}
                                             Haldi
-                                        {% elif event.id == 'hindu_wedding' %}
-                                            Hindu Wedding
-                                        {% else %}
+                                        {% elif is_hindu %}
+                                            Telugu Wedding
+                                        {% elif is_reception %}
                                             Wedding &amp; Reception
+                                        {% else %}
+                                            {{ event.title }}
                                         {% endif %}
                                     </strong>
                                     <span>
-                                        {% if event.id == 'haldi' %}
+                                        {% if is_haldi %}
                                             A joyful pre-wedding celebration
-                                        {% elif event.id == 'hindu_wedding' %}
+                                        {% elif is_hindu %}
                                             Traditional ceremony and blessings
-                                        {% else %}
+                                        {% elif is_reception %}
                                             Ceremony, dinner, dancing, and celebration
+                                        {% else %}
+                                            Celebration details
                                         {% endif %}
                                     </span>
                                 </span>
@@ -1063,7 +1085,9 @@
             updateJourneyProgress(index);
 
             if (scheduleTab) {
-                scheduleTab.setAttribute("data-journey-theme", eventId);
+                const activePanel = journeyPanels[index];
+                const theme = activePanel?.dataset.eventTheme || "neutral";
+                scheduleTab.setAttribute("data-journey-theme", theme);
             }
         }
 
