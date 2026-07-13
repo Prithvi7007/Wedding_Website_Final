@@ -1052,3 +1052,76 @@ body.invitation-render-v2 .login-container > * {
             brightness(1.05) !important;
     }
 }
+
+/* ===================================================== */
+/* FINAL GLASS REFINEMENT                                */
+/* ===================================================== */
+
+body.invitation-render-v2 .login-container {
+    background:
+        radial-gradient(
+            circle at 15% 3%,
+            rgba(255, 255, 255, 0.34) 0%,
+            rgba(255, 255, 255, 0.08) 35%,
+            rgba(255, 255, 255, 0) 62%
+        ),
+        radial-gradient(
+            circle at 92% 92%,
+            rgba(190, 132, 148, 0.13) 0%,
+            rgba(190, 132, 148, 0.03) 44%,
+            rgba(190, 132, 148, 0) 68%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 251, 247, 0.57) 0%,
+            rgba(247, 234, 231, 0.48) 54%,
+            rgba(226, 207, 214, 0.39) 100%
+        ) !important;
+}
+
+/* Improve readability without losing softness */
+body.invitation-render-v2 .login-subtitle {
+    color: rgba(82, 57, 73, 0.96) !important;
+}
+
+body.invitation-render-v2 .small-text {
+    color: rgba(91, 66, 80, 0.84) !important;
+}
+
+/* Make the border feel like light refraction */
+body.invitation-render-v2 .login-container::before {
+    background:
+        linear-gradient(
+            140deg,
+            rgba(255, 255, 255, 0.96) 0%,
+            rgba(255, 255, 255, 0.24) 25%,
+            rgba(255, 255, 255, 0.03) 52%,
+            rgba(190, 126, 143, 0.16) 78%,
+            rgba(255, 255, 255, 0.36) 100%
+        ) !important;
+}
+
+/* Reduce the plastic-looking button highlight */
+body.invitation-render-v2 .open-invitation-btn::before {
+    top: 2px !important;
+    left: 8% !important;
+    right: 8% !important;
+    height: 34% !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.18),
+            rgba(255, 255, 255, 0)
+        ) !important;
+
+    opacity: 0.58 !important;
+}
+
+/* Slightly more elegant button depth */
+body.invitation-render-v2 .open-invitation-btn {
+    box-shadow:
+        0 13px 29px rgba(52, 24, 42, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.32),
+        inset 0 -1px 0 rgba(25, 10, 21, 0.36) !important;
+}
