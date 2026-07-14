@@ -21,26 +21,13 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard13scheduleintro"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardschedule11cinematiccards"
     >
 </head>
 
 {% set guest_display_name = (guest.get('display_name') or guest.get('name') or 'Dear Guest') | title %}
 
 <body class="dashboard-page dashboard-v2" data-active-tab="welcome">
-
-    <!-- Permanent couple-photo background shared by every dashboard tab -->
-    <div class="dashboard-background" aria-hidden="true">
-        <div class="dashboard-background-slides">
-            <img class="slide slide-1 active-slide" src="{{ url_for('static', filename='images/site-bg.webp') }}" alt="">
-            <img class="slide slide-2" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="">
-            <img class="slide slide-3" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="">
-            <img class="slide slide-4" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
-            <img class="slide slide-5" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="">
-            <img class="slide slide-6" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="">
-        </div>
-        <div class="dashboard-background-treatment"></div>
-    </div>
 
     <div id="login-toast" class="login-toast" role="status" aria-live="polite">
         <div class="login-toast-inner">
@@ -87,6 +74,15 @@
             <!-- Welcome Tab -->
             <section id="welcome" class="tab-content active" aria-labelledby="welcome-heading">
                 <div class="welcome-hero">
+                    <div class="welcome-slides" aria-hidden="true">
+                        <img class="slide slide-1 active-slide" src="{{ url_for('static', filename='images/site-bg.webp') }}" alt="">
+                        <img class="slide slide-2" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="">
+                        <img class="slide slide-3" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="">
+                        <img class="slide slide-4" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
+                        <img class="slide slide-5" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="">
+                        <img class="slide slide-6" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="">
+                    </div>
+
                     <div class="welcome-hero-shade" aria-hidden="true"></div>
 
                     <div class="welcome-copy">
@@ -176,33 +172,12 @@
                 </p>
             </header>
 
-            <nav class="schedule-journey" aria-label="Your available wedding events">
-                {% for event in events %}
-                    <button
-                        type="button"
-                        class="schedule-journey-stop {% if loop.first %}is-active{% endif %}"
-                        data-event-target="event-card-{{ event.id }}"
-                        aria-label="Go to {{ event.title }}"
-                    >
-                        <span class="journey-dot" aria-hidden="true"></span>
-                        <span class="journey-date">{{ event.short_date }}</span>
-                        <span class="journey-title">
-                            {% if event.id == 'hindu_wedding' %}Hindu Wedding
-                            {% elif event.id == 'christian_wedding_reception' %}Wedding &amp; Reception
-                            {% else %}{{ event.title }}{% endif %}
-                        </span>
-                    </button>
-                {% endfor %}
-            </nav>
-
             <div class="event-list cinematic-event-list">
                 {% for event in events %}
                     {% set saved = saved_rsvps.get(event.id, {}) %}
                     {% set has_response = saved.get("attending") %}
 
                     <article
-                        id="event-card-{{ event.id }}"
-                        data-schedule-event="{{ event.id }}"
                         class="cinematic-event-card
                             {% if event.id == 'haldi' %}event-haldi{% endif %}
                             {% if event.id == 'hindu_wedding' %}event-hindu{% endif %}
@@ -748,48 +723,11 @@
             activateTab(hashTab);
         }
 
-        const journeyStops = Array.from(document.querySelectorAll(".schedule-journey-stop"));
-        const scheduleCards = Array.from(document.querySelectorAll("[data-schedule-event]"));
-
-        function setActiveJourneyStop(targetId) {
-            journeyStops.forEach(function (stop) {
-                const isActive = stop.getAttribute("data-event-target") === targetId;
-                stop.classList.toggle("is-active", isActive);
-                stop.setAttribute("aria-current", isActive ? "step" : "false");
-            });
-        }
-
-        journeyStops.forEach(function (stop) {
-            stop.addEventListener("click", function () {
-                const targetId = stop.getAttribute("data-event-target");
-                const target = document.getElementById(targetId);
-
-                if (target) {
-                    setActiveJourneyStop(targetId);
-                    target.scrollIntoView({ behavior: "smooth", block: "start" });
-                }
-            });
-        });
-
-        if ("IntersectionObserver" in window && scheduleCards.length) {
-            const journeyObserver = new IntersectionObserver(function (entries) {
-                const visible = entries
-                    .filter(function (entry) { return entry.isIntersecting; })
-                    .sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; });
-
-                if (visible[0]) {
-                    setActiveJourneyStop(visible[0].target.id);
-                }
-            }, { rootMargin: "-28% 0px -54% 0px", threshold: [0.12, 0.3, 0.55] });
-
-            scheduleCards.forEach(function (card) { journeyObserver.observe(card); });
-        }
-
         let currentSlide = 0;
         let slideTransitionInProgress = false;
         let slideshowTimer = null;
 
-        const slides = Array.from(document.querySelectorAll(".dashboard-background .slide"));
+        const slides = Array.from(document.querySelectorAll("#welcome .slide"));
         const dots = Array.from(document.querySelectorAll("#welcome .dot"));
         const SLIDE_INTERVAL_MS = 9000;
         const AUTO_SLIDESHOW_ENABLED = false;
