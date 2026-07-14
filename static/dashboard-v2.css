@@ -3256,3 +3256,233 @@ body:not([data-active-tab="welcome"]) .dashboard-background-treatment {
         scroll-margin-top: 150px;
     }
 }
+
+/* ===================================================== */
+/* SCHEDULE PHOTO HERO — SAME FOUNDATION AS WELCOME       */
+/* ===================================================== */
+
+/* Schedule uses the exact shared couple photograph without a global black wash. */
+body[data-active-tab="schedule"] .dashboard-background-treatment {
+    opacity: 0;
+}
+
+body[data-active-tab="schedule"] .dashboard-background .slide {
+    filter: brightness(.91) saturate(1.07) contrast(1.02);
+}
+
+/* The Schedule header floats over the photo in the same manner as Welcome. */
+body[data-active-tab="schedule"] .dashboard-header {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(24, 19, 15, 0.24) 0%,
+            rgba(20, 17, 14, 0.075) 62%,
+            rgba(16, 14, 12, 0) 100%
+        );
+    backdrop-filter: blur(7px) saturate(148%) brightness(1.01) contrast(1.015);
+    -webkit-backdrop-filter: blur(7px) saturate(148%) brightness(1.01) contrast(1.015);
+    box-shadow: none;
+}
+
+body[data-active-tab="schedule"] .dashboard-header::before {
+    background:
+        radial-gradient(
+            ellipse 72% 45% at 50% -8%,
+            rgba(255, 255, 255, 0.15) 0%,
+            rgba(255, 255, 255, 0.045) 38%,
+            rgba(255, 255, 255, 0.008) 62%,
+            transparent 82%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(24, 19, 15, 0.12),
+            rgba(20, 17, 14, 0.035) 68%,
+            transparent
+        );
+}
+
+.schedule-tab {
+    width: 100%;
+    padding: 0 0 72px;
+}
+
+.schedule-photo-hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+}
+
+.schedule-photo-hero-shade {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(22, 17, 13, 0.80) 0%,
+            rgba(21, 16, 13, 0.68) 22%,
+            rgba(19, 15, 12, 0.47) 39%,
+            rgba(16, 13, 11, 0.18) 61%,
+            rgba(14, 12, 10, 0.035) 78%,
+            rgba(12, 11, 10, 0.015) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(18, 15, 12, 0.18) 0%,
+            rgba(15, 13, 11, 0.01) 32%,
+            rgba(15, 13, 11, 0.035) 70%,
+            rgba(16, 13, 11, 0.34) 100%
+        );
+}
+
+.schedule-photo-hero-content {
+    position: relative;
+    z-index: 2;
+    width: min(42vw, 650px);
+    margin-left: clamp(70px, 6.8vw, 112px);
+    padding-top: clamp(190px, 19vh, 240px);
+    padding-bottom: 64px;
+}
+
+.schedule-intro-card {
+    width: 100%;
+    margin: 0 0 32px;
+    padding: 0;
+}
+
+.schedule-intro-card::before {
+    content: none;
+}
+
+.schedule-eyebrow {
+    margin-bottom: 8px;
+    font-size: clamp(22px, 2vw, 30px);
+}
+
+.schedule-intro-card h2 {
+    margin-bottom: 18px;
+    font-size: clamp(54px, 5.3vw, 78px);
+}
+
+.schedule-intro {
+    max-width: 610px;
+    font-size: clamp(18px, 1.5vw, 22px);
+}
+
+.schedule-journey {
+    display: grid;
+    grid-template-columns: repeat(var(--journey-count, 3), minmax(0, 1fr));
+    width: 100%;
+    margin: 0;
+    padding-top: 12px;
+}
+
+.schedule-journey-stop {
+    min-width: 0;
+}
+
+/* Event cards start after the full photographic intro hero. */
+.cinematic-event-list {
+    position: relative;
+    z-index: 3;
+    width: min(calc(100% - 28px), 1680px);
+    margin: 0 auto;
+    padding-top: clamp(34px, 5vw, 74px);
+}
+
+@media (max-width: 900px) {
+    .schedule-photo-hero-content {
+        width: min(54vw, 620px);
+        margin-left: 42px;
+    }
+}
+
+@media (max-width: 700px) {
+    body[data-active-tab="schedule"] .dashboard-background .slide {
+        object-position: var(--slide-position-mobile, 68% center);
+        filter: brightness(.82) saturate(1.06) contrast(1.025);
+    }
+
+    .schedule-tab {
+        padding: 0 0 48px;
+    }
+
+    .schedule-photo-hero {
+        min-height: 100svh;
+        align-items: flex-end;
+    }
+
+    .schedule-photo-hero-shade {
+        background:
+            linear-gradient(
+                90deg,
+                rgba(22, 17, 13, 0.84) 0%,
+                rgba(21, 16, 13, 0.72) 34%,
+                rgba(19, 15, 12, 0.42) 62%,
+                rgba(15, 13, 11, 0.10) 100%
+            ),
+            linear-gradient(
+                180deg,
+                rgba(18, 15, 12, 0.16) 0%,
+                rgba(15, 13, 11, 0.025) 36%,
+                rgba(15, 13, 11, 0.06) 68%,
+                rgba(16, 13, 11, 0.56) 100%
+            );
+    }
+
+    .schedule-photo-hero-content {
+        width: 100%;
+        margin: 0;
+        padding: 150px 24px 52px;
+    }
+
+    .schedule-intro-card {
+        width: min(100%, 520px);
+        margin: 0 0 26px;
+    }
+
+    .schedule-eyebrow {
+        font-size: 20px;
+    }
+
+    .schedule-intro-card h2 {
+        font-size: clamp(45px, 13vw, 60px);
+    }
+
+    .schedule-intro {
+        max-width: 92%;
+        font-size: 16px;
+    }
+
+    .schedule-journey {
+        display: flex;
+        width: 100%;
+        margin: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .schedule-journey::-webkit-scrollbar {
+        display: none;
+    }
+
+    .schedule-journey-stop {
+        flex: 1 0 132px;
+    }
+
+    .cinematic-event-list {
+        width: calc(100% - 24px);
+        padding-top: 28px;
+    }
+}
