@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard12sharedphotos"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard13scheduleintro"
     >
 </head>
 
@@ -176,12 +176,33 @@
                 </p>
             </header>
 
+            <nav class="schedule-journey" aria-label="Your available wedding events">
+                {% for event in events %}
+                    <button
+                        type="button"
+                        class="schedule-journey-stop {% if loop.first %}is-active{% endif %}"
+                        data-event-target="event-card-{{ event.id }}"
+                        aria-label="Go to {{ event.title }}"
+                    >
+                        <span class="journey-dot" aria-hidden="true"></span>
+                        <span class="journey-date">{{ event.short_date }}</span>
+                        <span class="journey-title">
+                            {% if event.id == 'hindu_wedding' %}Hindu Wedding
+                            {% elif event.id == 'christian_wedding_reception' %}Wedding &amp; Reception
+                            {% else %}{{ event.title }}{% endif %}
+                        </span>
+                    </button>
+                {% endfor %}
+            </nav>
+
             <div class="event-list cinematic-event-list">
                 {% for event in events %}
                     {% set saved = saved_rsvps.get(event.id, {}) %}
                     {% set has_response = saved.get("attending") %}
 
                     <article
+                        id="event-card-{{ event.id }}"
+                        data-schedule-event="{{ event.id }}"
                         class="cinematic-event-card
                             {% if event.id == 'haldi' %}event-haldi{% endif %}
                             {% if event.id == 'hindu_wedding' %}event-hindu{% endif %}
@@ -725,6 +746,43 @@
 
         if (hashTab) {
             activateTab(hashTab);
+        }
+
+        const journeyStops = Array.from(document.querySelectorAll(".schedule-journey-stop"));
+        const scheduleCards = Array.from(document.querySelectorAll("[data-schedule-event]"));
+
+        function setActiveJourneyStop(targetId) {
+            journeyStops.forEach(function (stop) {
+                const isActive = stop.getAttribute("data-event-target") === targetId;
+                stop.classList.toggle("is-active", isActive);
+                stop.setAttribute("aria-current", isActive ? "step" : "false");
+            });
+        }
+
+        journeyStops.forEach(function (stop) {
+            stop.addEventListener("click", function () {
+                const targetId = stop.getAttribute("data-event-target");
+                const target = document.getElementById(targetId);
+
+                if (target) {
+                    setActiveJourneyStop(targetId);
+                    target.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            });
+        });
+
+        if ("IntersectionObserver" in window && scheduleCards.length) {
+            const journeyObserver = new IntersectionObserver(function (entries) {
+                const visible = entries
+                    .filter(function (entry) { return entry.isIntersecting; })
+                    .sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; });
+
+                if (visible[0]) {
+                    setActiveJourneyStop(visible[0].target.id);
+                }
+            }, { rootMargin: "-28% 0px -54% 0px", threshold: [0.12, 0.3, 0.55] });
+
+            scheduleCards.forEach(function (card) { journeyObserver.observe(card); });
         }
 
         let currentSlide = 0;
