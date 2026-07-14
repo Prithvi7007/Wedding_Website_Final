@@ -1536,352 +1536,385 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 }
 
 /* ----------------------------------------------------- */
-/* SCHEDULE — REFINED CINEMATIC JOURNEY                  */
-/* Compact desktop chapter, 9:16 mobile composition,     */
-/* adaptive optical glass, attached RSVP drawer.         */
-/* ----------------------------------------------------- */
-
-
-
-
-
-
-
-
-
-/* Keep the sticky header neutral. It should not absorb saffron, ruby,
-   or sage from the event artwork passing beneath it. */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Journey line */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Active event */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Optical metadata ribbon */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Integrated fashion + planning dock */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Attached RSVP glass drawer */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Only show the other celebrations beneath the active chapter. */
-
-
-
-
-
-
-.preview-haldi {
+/* ===================================================== */
+/* SCHEDULE — CINEMATIC CELEBRATION CARDS                */
+/* ===================================================== */
+
+.schedule-tab {
+    width: min(calc(100% - 28px), 1680px);
+    max-width: none;
+    margin: 0 auto;
+    padding: 58px 0 90px;
+}
+
+.schedule-intro-card {
+    width: min(980px, calc(100% - 36px));
+    margin: 0 auto 52px;
+    padding: 50px 36px 46px;
+    text-align: center;
+    border: 1px solid rgba(255, 247, 232, 0.18);
+    border-radius: 30px;
+    background:
+        radial-gradient(ellipse 80% 70% at 50% 0%, rgba(255,255,255,.06), transparent 60%),
+        linear-gradient(145deg, rgba(255,255,255,.035), rgba(0,0,0,.14));
+    backdrop-filter: blur(12px) saturate(125%);
+    -webkit-backdrop-filter: blur(12px) saturate(125%);
+    box-shadow: 0 24px 58px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.13);
+}
+
+.schedule-eyebrow,
+.event-date-line,
+.event-fact span,
+.event-attire-line span,
+.event-response-summary span,
+.rsvp-sheet-heading p {
+    color: var(--dash-gold);
+    font-family: "Manrope", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+}
+
+.schedule-intro-card h2 {
+    margin: 10px 0 12px;
+    color: var(--dash-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(44px, 5vw, 68px);
+    font-weight: 600;
+    line-height: .98;
+}
+
+.schedule-intro {
+    max-width: 730px;
+    margin: 0 auto;
+    color: var(--dash-copy);
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+.cinematic-event-list {
+    display: grid;
+    gap: 48px;
+}
+
+.cinematic-event-card {
+    position: relative;
+    min-height: clamp(620px, 76vh, 840px);
+    overflow: hidden;
+    isolation: isolate;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 34px;
+    background-position: center;
+    background-size: cover;
+    box-shadow: 0 30px 72px rgba(0,0,0,.33), inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+.cinematic-event-card.event-haldi {
     background-image: url("/static/images/schedule/schedule-haldi-desktop.webp");
 }
 
-.preview-hindu {
+.cinematic-event-card.event-hindu {
     background-image: url("/static/images/WEDDING.webp");
 }
 
-.preview-christian {
+.cinematic-event-card.event-christian {
     background-image: url("/static/images/RECEPTION.webp");
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Motion */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@keyframes attire-procession-in {
-    from {
-        opacity: 0;
-        transform: translateY(18px) scale(0.975);
-        filter: blur(3px) drop-shadow(0 7px 12px rgba(0, 0, 0, 0.06));
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0) drop-shadow(0 7px 12px rgba(0, 0, 0, 0.09));
-    }
+.cinematic-event-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(9,7,7,.72) 0%, rgba(9,7,7,.48) 35%, rgba(9,7,7,.08) 68%, rgba(9,7,7,.02) 100%),
+        linear-gradient(180deg, rgba(8,7,7,.06) 45%, rgba(8,7,7,.38) 100%);
 }
 
-@keyframes journey-orbit-in {
-    to {
-        opacity: 1;
-        transform: translateX(-50%) scale(1);
-    }
+.event-hindu .cinematic-event-scrim,
+.event-christian .cinematic-event-scrim {
+    background:
+        linear-gradient(90deg, rgba(9,7,8,.80) 0%, rgba(9,7,8,.55) 38%, rgba(9,7,8,.13) 70%, rgba(9,7,8,.05) 100%),
+        linear-gradient(180deg, rgba(8,7,8,.08) 42%, rgba(8,7,8,.44) 100%);
 }
 
-@keyframes rsvp-drawer-open {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-        filter: blur(4px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-    }
+.event-glass-panel {
+    position: absolute;
+    top: 50%;
+    left: clamp(34px, 6vw, 96px);
+    z-index: 2;
+    width: min(520px, calc(100% - 68px));
+    padding: 38px 40px 34px;
+    transform: translateY(-50%);
+    overflow: visible;
+    border: 1px solid rgba(255,255,255,.28);
+    border-radius: 30px;
+    background:
+        radial-gradient(ellipse 85% 72% at 45% 28%, rgba(255,255,255,.055), rgba(255,255,255,.016) 45%, rgba(0,0,0,.10) 100%),
+        linear-gradient(145deg, rgba(255,255,255,.045), rgba(0,0,0,.15));
+    backdrop-filter: blur(10px) saturate(142%) brightness(.93);
+    -webkit-backdrop-filter: blur(10px) saturate(142%) brightness(.93);
+    box-shadow: 0 26px 60px rgba(0,0,0,.27), inset 0 1px 0 rgba(255,255,255,.24), inset 0 -1px 0 rgba(255,255,255,.05);
 }
 
-/* Tablet */
+.event-glass-panel::before {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    pointer-events: none;
+    border-radius: 27px;
+    background: radial-gradient(ellipse 80% 24% at 50% -2%, rgba(255,255,255,.21), transparent 74%);
+    mix-blend-mode: screen;
+}
+
+.event-glass-panel > * { position: relative; z-index: 1; }
+
+.event-glass-panel h3 {
+    margin: 7px 0 4px;
+    color: var(--dash-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(48px, 5vw, 76px);
+    font-style: italic;
+    font-weight: 600;
+    line-height: .92;
+    text-shadow: 0 3px 20px rgba(0,0,0,.40);
+}
+
+.event-kicker {
+    margin: 0 0 24px;
+    color: rgba(255,247,231,.78);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 19px;
+    font-style: italic;
+}
+
+.event-facts {
+    display: grid;
+    grid-template-columns: .72fr 1.5fr;
+    gap: 18px;
+    margin-bottom: 20px;
+    padding: 18px 0;
+    border-top: 1px solid rgba(255,255,255,.12);
+    border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.event-fact { display: grid; gap: 4px; }
+.event-fact strong { color: var(--dash-cream); font-family: "Cormorant Garamond", Georgia, serif; font-size: 18px; font-weight: 600; }
+.event-fact small { color: rgba(255,247,231,.66); font-size: 11px; line-height: 1.45; }
+.event-attire-line { margin: 0 0 25px; color: var(--dash-copy); font-size: 13px; }
+.event-attire-line span { margin-right: 8px; }
+
+.event-primary-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.event-glass-button {
+    min-height: 46px;
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,.30);
+    border-radius: 999px;
+    background: linear-gradient(-75deg, rgba(255,255,255,.03), rgba(255,255,255,.13), rgba(255,255,255,.03));
+    color: var(--dash-cream);
+    text-decoration: none;
+    backdrop-filter: blur(7px) saturate(140%);
+    -webkit-backdrop-filter: blur(7px) saturate(140%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.27), inset 0 -1px 0 rgba(255,255,255,.06), 0 7px 18px rgba(0,0,0,.18);
+    transition: transform .28s ease, background .28s ease;
+}
+
+.event-glass-button span { padding: 14px 20px; font-family: "Manrope", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; }
+.event-glass-button:hover { transform: translateY(-2px) scale(.985); background: linear-gradient(-75deg, rgba(255,255,255,.06), rgba(255,255,255,.19), rgba(255,255,255,.06)); }
+.event-rsvp-trigger { border-color: rgba(227,185,105,.50); box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 0 0 1px rgba(227,185,105,.12), 0 8px 18px rgba(0,0,0,.20); }
+
+.calendar-menu-wrap { position: relative; }
+.calendar-popover {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    z-index: 8;
+    width: 190px;
+    padding: 8px;
+    transform: translateX(-50%);
+    border: 1px solid rgba(255,255,255,.20);
+    border-radius: 18px;
+    background: rgba(14,11,13,.78);
+    backdrop-filter: blur(18px) saturate(135%);
+    -webkit-backdrop-filter: blur(18px) saturate(135%);
+    box-shadow: 0 18px 38px rgba(0,0,0,.35);
+}
+.calendar-popover a { display: block; padding: 11px 13px; border-radius: 12px; color: var(--dash-cream); font-size: 12px; text-decoration: none; }
+.calendar-popover a:hover { background: rgba(255,255,255,.08); }
+
+.event-response-summary {
+    margin-top: 20px;
+    padding-top: 16px;
+    display: grid;
+    gap: 4px;
+    border-top: 1px solid rgba(255,255,255,.10);
+}
+.event-response-summary strong { color: var(--dash-cream); font-family: "Cormorant Garamond", Georgia, serif; font-size: 17px; }
+
+.event-rsvp-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 34px;
+    visibility: hidden;
+    opacity: 0;
+    background: rgba(7,6,7,.26);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    transition: opacity .35s ease, visibility .35s ease;
+}
+.event-rsvp-overlay.is-open { visibility: visible; opacity: 1; }
+
+.event-rsvp-sheet {
+    position: relative;
+    width: min(650px, 100%);
+    max-height: calc(100% - 16px);
+    padding: 38px 42px 32px;
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,.28);
+    border-radius: 32px;
+    background:
+        radial-gradient(ellipse 86% 68% at 50% 17%, rgba(255,255,255,.075), rgba(255,255,255,.02) 44%, rgba(0,0,0,.18) 100%),
+        rgba(19,15,18,.42);
+    backdrop-filter: blur(18px) saturate(145%) brightness(.92);
+    -webkit-backdrop-filter: blur(18px) saturate(145%) brightness(.92);
+    box-shadow: 0 34px 86px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.28);
+    transform: translateY(24px) scale(.985);
+    transition: transform .38s cubic-bezier(.2,.8,.2,1);
+}
+.event-rsvp-overlay.is-open .event-rsvp-sheet { transform: translateY(0) scale(1); }
+
+.rsvp-sheet-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 50%;
+    background: rgba(255,255,255,.04);
+    color: var(--dash-cream);
+    font: 300 24px/1 sans-serif;
+}
+
+.rsvp-sheet-heading { margin-bottom: 28px; text-align: center; }
+.rsvp-sheet-heading h4 { margin: 7px 0 5px; color: var(--dash-cream); font-family: "Cormorant Garamond", Georgia, serif; font-size: 42px; font-weight: 600; }
+.rsvp-sheet-heading span { color: var(--dash-muted); font-size: 13px; }
+
+.attendance-choice-group { margin: 0 0 24px; padding: 0; border: 0; }
+.attendance-choice-group legend,
+.guest-stepper-wrap > label,
+.cinematic-notes-field label { margin-bottom: 10px; color: var(--dash-gold); font-size: 10px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; }
+.attendance-choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.attendance-choice input { position: absolute; opacity: 0; pointer-events: none; }
+.attendance-choice span {
+    min-height: 48px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.20);
+    border-radius: 999px;
+    background: rgba(255,255,255,.035);
+    color: var(--dash-copy);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: .25s ease;
+}
+.attendance-choice.is-selected span { border-color: rgba(227,185,105,.72); background: rgba(227,185,105,.12); color: var(--dash-cream); box-shadow: 0 0 22px rgba(227,185,105,.12), inset 0 1px 0 rgba(255,255,255,.22); }
+
+.guest-stepper-wrap { margin-bottom: 22px; transition: opacity .25s ease; }
+.guest-stepper-wrap.is-disabled { opacity: .35; pointer-events: none; }
+.guest-stepper { display: grid; grid-template-columns: 48px 44px 1fr 48px; align-items: center; gap: 8px; padding: 8px; border: 1px solid rgba(255,255,255,.18); border-radius: 18px; background: rgba(255,255,255,.03); }
+.guest-stepper button { width: 42px; height: 42px; margin: 0; padding: 0; border-radius: 50%; background: rgba(255,255,255,.06); }
+.guest-stepper output { color: var(--dash-cream); font-family: "Cormorant Garamond", serif; font-size: 28px; text-align: center; }
+.guest-stepper span { color: var(--dash-muted); font-size: 12px; }
+
+.cinematic-notes-field { display: grid; margin-bottom: 22px; }
+.cinematic-notes-field textarea { min-height: 108px; padding: 15px 16px; resize: vertical; border: 1px solid rgba(255,255,255,.18); border-radius: 18px; outline: none; background: rgba(255,255,255,.035); color: var(--dash-cream); font: 14px/1.6 "Manrope", sans-serif; }
+.cinematic-notes-field textarea::placeholder { color: rgba(255,247,231,.40); }
+.cinematic-notes-field textarea:focus { border-color: rgba(227,185,105,.60); box-shadow: 0 0 0 3px rgba(227,185,105,.08); }
+
+.confirm-response-btn { width: 100%; min-height: 52px; margin: 0; border: 1px solid rgba(255,255,255,.30); border-radius: 999px; background: linear-gradient(-75deg, rgba(255,255,255,.04), rgba(255,255,255,.16), rgba(255,255,255,.04)); color: var(--dash-cream); }
+.confirm-response-btn span { font-size: 11px; letter-spacing: 1.7px; }
+.cancel-response-btn { width: 100%; margin: 10px 0 0; padding: 8px; border: 0; background: transparent; box-shadow: none; color: var(--dash-muted); font-size: 11px; }
+
+@media (max-width: 900px) {
+    .schedule-tab { width: min(calc(100% - 20px), 1680px); padding-top: 40px; }
+    .cinematic-event-card { min-height: 720px; }
+    .event-glass-panel { left: 28px; width: min(500px, calc(100% - 56px)); }
+}
+
+@media (max-width: 700px) {
+    .schedule-tab { width: calc(100% - 16px); padding: 28px 0 58px; }
+    .schedule-intro-card { width: 100%; margin-bottom: 28px; padding: 34px 22px 30px; border-radius: 24px; }
+    .schedule-intro-card h2 { font-size: 42px; }
+    .schedule-intro { font-size: 13px; }
+    .cinematic-event-list { gap: 24px; }
+    .cinematic-event-card { min-height: 88svh; border-radius: 26px; background-position: center top; }
+    .cinematic-event-card.event-haldi { background-image: url("/static/images/schedule/schedule-haldi-mobile.webp"); }
+    .cinematic-event-card.event-hindu { background-image: url("/static/images/WEDDING-mobile.webp"); }
+    .cinematic-event-card.event-christian { background-image: url("/static/images/RECEPTION-mobile.webp"); }
+    .cinematic-event-scrim,
+    .event-hindu .cinematic-event-scrim,
+    .event-christian .cinematic-event-scrim {
+        background: linear-gradient(180deg, rgba(8,7,8,.02) 18%, rgba(8,7,8,.28) 50%, rgba(8,7,8,.88) 100%);
+    }
+    .event-glass-panel {
+        top: auto;
+        right: 14px;
+        bottom: 14px;
+        left: 14px;
+        width: auto;
+        padding: 28px 22px 24px;
+        transform: none;
+        border-radius: 25px;
+        backdrop-filter: blur(10px) saturate(142%) brightness(.91);
+        -webkit-backdrop-filter: blur(10px) saturate(142%) brightness(.91);
+    }
+    .event-glass-panel h3 { font-size: 50px; }
+    .event-kicker { margin-bottom: 17px; font-size: 17px; }
+    .event-facts { grid-template-columns: 1fr; gap: 12px; margin-bottom: 15px; padding: 14px 0; }
+    .event-fact-location small { font-size: 10px; }
+    .event-primary-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .event-rsvp-trigger { grid-column: 1 / -1; }
+    .calendar-menu-wrap, .calendar-toggle { width: 100%; }
+    .event-glass-button { width: 100%; }
+    .event-response-summary { margin-top: 16px; }
+    .event-rsvp-overlay { align-items: end; padding: 0; }
+    .event-rsvp-sheet { width: 100%; max-height: 88%; padding: 34px 20px 24px; border-right: 0; border-bottom: 0; border-left: 0; border-radius: 28px 28px 0 0; transform: translateY(100%); }
+    .event-rsvp-overlay.is-open .event-rsvp-sheet { transform: translateY(0); }
+    .event-rsvp-sheet::before { content: ""; display: block; width: 44px; height: 4px; margin: -18px auto 18px; border-radius: 99px; background: rgba(255,255,255,.28); }
+    .rsvp-sheet-heading h4 { font-size: 36px; }
+    .attendance-choices { gap: 7px; }
+    .attendance-choice span { min-height: 46px; font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .event-rsvp-overlay,
+    .event-rsvp-sheet,
+    .event-glass-button { transition: none !important; }
+}
 
 
-
-
-/* Mobile: a deliberate 9:16 chapter, not a squeezed desktop card. */
-
-
-
-
-
-
-/* ----------------------------------------------------- */
 /* TRAVEL — FUNCTIONAL PHASE-1 PRESENTATION               */
 /* ----------------------------------------------------- */
 
@@ -2273,309 +2306,6 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 /* ----------------------------------------------------- */
 
 @media (max-width: 700px) {
-    .schedule-bg-haldi {
-        background-image: url("/static/images/schedule/schedule-haldi-mobile.webp");
-        background-position: center top;
-    }
-
-    .schedule-tab[data-journey-theme="haldi"] .schedule-header {
-        display: none;
-    }
-
-    .schedule-tab[data-journey-theme="haldi"] .schedule-timeline {
-        width: 76px;
-        grid-template-columns: repeat(var(--journey-count), 1fr);
-        gap: 8px;
-        margin: 4px auto 10px;
-    }
-
-    .schedule-tab[data-journey-theme="haldi"] .journey-track,
-    .schedule-tab[data-journey-theme="haldi"] .journey-date,
-    .schedule-tab[data-journey-theme="haldi"] .journey-name {
-        display: none;
-    }
-
-    .schedule-tab[data-journey-theme="haldi"] .journey-stop {
-        padding: 0;
-        gap: 0;
-    }
-
-    .schedule-tab[data-journey-theme="haldi"] .journey-dot,
-    .schedule-tab[data-journey-theme="haldi"] .journey-stop.is-active .journey-dot {
-        width: 6px;
-        height: 6px;
-        border: 0;
-        background: rgba(255, 239, 209, 0.34);
-        box-shadow: none;
-    }
-
-    .schedule-tab[data-journey-theme="haldi"] .journey-stop.is-active .journey-dot {
-        background: #e6b45e;
-        box-shadow: 0 0 9px rgba(230, 180, 94, 0.68);
-    }
-
-    .event-haldi .event-artwork,
-    .event-haldi .event-artwork-inner {
-        min-height: calc(100svh - 138px);
-    }
-
-    .event-haldi .event-artwork-inner {
-        position: relative;
-        display: block;
-        padding: clamp(52vh, 58vh, 62vh) 18px 28px;
-    }
-
-    .event-haldi .event-hero-grid,
-    .event-haldi .event-lower-layout {
-        display: block;
-    }
-
-    .event-haldi .attire-visual {
-        position: absolute;
-        top: 20px;
-        right: 0;
-        left: 0;
-        z-index: 1;
-        min-height: 0;
-        height: min(54vh, 590px);
-        padding: 0 6px;
-        pointer-events: none;
-    }
-
-    .event-haldi .attire-guide-image-haldi {
-        width: 100%;
-        max-width: 520px;
-        max-height: 100%;
-        margin: 0 auto;
-        object-fit: contain;
-        object-position: center bottom;
-        filter:
-            drop-shadow(0 24px 22px rgba(55, 31, 9, 0.28))
-            drop-shadow(0 5px 5px rgba(36, 20, 7, 0.18));
-    }
-
-    .event-haldi .event-title-block {
-        position: relative;
-        z-index: 3;
-        max-width: none;
-        margin: 0 0 14px;
-        text-shadow: 0 3px 24px rgba(0,0,0,0.42);
-    }
-
-    .event-haldi .event-date-line {
-        margin-bottom: 6px;
-        color: #e6a43b;
-        font-family: "Cormorant Garamond", Georgia, serif;
-        font-size: 18px;
-        font-style: italic;
-        font-weight: 600;
-        letter-spacing: 0;
-        text-transform: none;
-    }
-
-    .event-haldi .event-title-block h3 {
-        color: #fff4df;
-        font-size: clamp(48px, 14vw, 66px);
-        line-height: 0.95;
-    }
-
-    .event-haldi .event-kicker,
-    .event-haldi .event-title-flourish {
-        display: none;
-    }
-
-    .event-haldi .event-meta-grid {
-        position: relative;
-        z-index: 3;
-        display: flex;
-        gap: 0;
-        width: 100%;
-        margin: 0 0 13px;
-        overflow: visible;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        box-shadow: none;
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-    }
-
-    .event-haldi .event-meta-grid::before,
-    .event-haldi .event-meta-item::after,
-    .event-haldi .meta-icon,
-    .event-haldi .meta-label {
-        display: none;
-    }
-
-    .event-haldi .event-meta-item {
-        display: block;
-        min-height: 0;
-        padding: 0;
-    }
-
-    .event-haldi .event-meta-item:first-child {
-        display: none;
-    }
-
-    .event-haldi .event-meta-item:nth-child(2) {
-        flex: 0 0 auto;
-    }
-
-    .event-haldi .event-meta-item:nth-child(2)::after {
-        content: "·";
-        display: inline;
-        position: static;
-        margin: 0 10px;
-        color: #d79a3a;
-        background: none;
-    }
-
-    .event-haldi .event-meta-location {
-        flex: 1 1 auto;
-    }
-
-    .event-haldi .meta-value {
-        display: inline;
-        color: rgba(255, 244, 225, 0.90);
-        font-family: "Manrope", Arial, sans-serif;
-        font-size: 13px;
-        font-weight: 500;
-    }
-
-    .event-haldi .meta-value span {
-        display: inline;
-    }
-
-    .event-haldi .venue-name {
-        display: none !important;
-    }
-
-    .event-haldi .attire-editorial {
-        position: relative;
-        z-index: 3;
-        display: block;
-        min-height: 0;
-        margin-bottom: 20px;
-    }
-
-    .event-haldi .attire-copy {
-        max-width: none;
-        padding: 0;
-        text-shadow: 0 2px 18px rgba(0,0,0,0.52);
-    }
-
-    .event-haldi .attire-guide-label,
-    .event-haldi .attire-copy strong,
-    .event-haldi .attire-copy p {
-        display: none;
-    }
-
-    .event-haldi .attire-copy small {
-        margin: 0;
-        padding-bottom: 5px;
-        display: inline-block;
-        border-bottom: 1px solid rgba(222, 166, 76, 0.64);
-        color: rgba(255, 244, 225, 0.72);
-        font-size: 11px;
-        letter-spacing: 1.1px;
-    }
-
-    .event-haldi .attire-copy small::before {
-        content: "Attire — ";
-    }
-
-    .event-haldi .event-utility-dock {
-        position: relative;
-        z-index: 3;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: visible;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        box-shadow: none;
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-    }
-
-    .event-haldi .event-utility-dock::before,
-    .event-haldi .event-actions-label,
-    .event-haldi .event-actions-block {
-        border: 0;
-    }
-
-    .event-haldi .event-actions-block {
-        padding: 0;
-    }
-
-    .event-haldi .event-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-
-    .event-haldi .event-action-link {
-        min-height: 48px;
-        color: #fff4df;
-        background: linear-gradient(-75deg, rgba(255,255,255,0.025), rgba(255,255,255,0.10), rgba(255,255,255,0.025));
-        border-color: rgba(255, 239, 214, 0.32);
-    }
-
-    .event-haldi .event-action-link:first-child,
-    .event-haldi .event-action-link:nth-child(2) {
-        display: none;
-    }
-
-    .event-haldi .event-directions-link {
-        grid-column: 2;
-        grid-row: 1;
-    }
-
-    .event-haldi .event-rsvp-shell {
-        padding: 0;
-    }
-
-    .event-haldi .rsvp-summary,
-    .event-haldi .rsvp-confirmation {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: -48px;
-    }
-
-    .event-haldi .rsvp-seal,
-    .event-haldi .rsvp-eyebrow,
-    .event-haldi .rsvp-status-copy > p:last-child {
-        display: none;
-    }
-
-    .event-haldi .rsvp-status-copy {
-        grid-column: 2;
-        display: flex;
-        align-items: center;
-        padding-left: 12px;
-    }
-
-    .event-haldi .rsvp-status-copy h4 {
-        color: rgba(255, 244, 225, 0.68);
-        font-family: "Manrope", Arial, sans-serif;
-        font-size: 12px;
-        font-weight: 500;
-        white-space: nowrap;
-    }
-
-    .event-haldi .edit-rsvp-btn {
-        grid-column: 1;
-        grid-row: 1;
-        min-height: 48px;
-        margin: 0;
-        color: #17100a;
-        background: linear-gradient(-75deg, rgba(214,165,82,0.48), rgba(239,199,123,0.62), rgba(214,165,82,0.48));
-        border-color: rgba(244, 215, 159, 0.48);
-    }
-
-
     body.dashboard-v2::before {
         filter:
             blur(4px)
@@ -2842,57 +2572,155 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         font-size: 16px;
     }
 
-    
+    .schedule-tab {
+        width: 100%;
+        padding: 28px 14px 42px;
+    }
 
-    
+    .schedule-header {
+        margin-bottom: 28px;
+    }
 
-    
+    .schedule-eyebrow {
+        font-size: 9px;
+        letter-spacing: 2.7px;
+    }
 
-    
+    .schedule-header h2 {
+        font-size: 36px;
+    }
 
-    
+    .schedule-intro {
+        max-width: 94%;
+        margin-top: 14px;
+        font-size: 16px;
+        line-height: 1.55;
+    }
 
-    
+    .schedule-header-rule {
+        width: 220px;
+        margin-top: 21px;
+    }
 
-    
+    .event-list {
+        gap: 34px;
+    }
 
-    
+    .event-chapter {
+        border-radius: 24px;
+    }
 
-    
+    .event-artwork {
+        min-height: 0;
+        aspect-ratio: 9 / 16;
+    }
 
-    
+    .event-haldi .event-artwork {
+        background-image:
+            linear-gradient(180deg, rgba(255, 249, 235, 0.18), rgba(255, 249, 235, 0.045) 50%, rgba(255, 247, 229, 0.16)),
+            url("/static/images/HALDI-mobile.webp");
+    }
 
-    
+    .event-hindu .event-artwork {
+        background-image:
+            linear-gradient(180deg, rgba(255, 248, 235, 0.17), rgba(255, 248, 235, 0.04) 50%, rgba(255, 245, 229, 0.14)),
+            url("/static/images/WEDDING-mobile.webp");
+    }
 
-    
+    .event-christian .event-artwork {
+        background-image:
+            linear-gradient(180deg, rgba(255, 249, 238, 0.18), rgba(255, 249, 238, 0.045) 50%, rgba(255, 248, 235, 0.15)),
+            url("/static/images/RECEPTION-mobile.webp");
+    }
 
-    
+    .event-artwork::before {
+        inset: 9px;
+        border-radius: 17px;
+    }
 
-    
+    .event-artwork-inner {
+        padding: 28px 17px 18px;
+    }
 
-    
+    .event-title-block {
+        margin-bottom: 16px;
+    }
 
-    
+    .event-date-line {
+        margin-bottom: 5px;
+        font-size: 8px;
+        letter-spacing: 2.2px;
+    }
 
-    
+    .event-card h3,
+    .event-chapter h3 {
+        font-size: clamp(29px, 8.4vw, 36px);
+        letter-spacing: 2px;
+        line-height: 1.02;
+    }
 
-    
+    .event-kicker {
+        margin-top: 8px;
+        font-size: 8px;
+        letter-spacing: 1.35px;
+    }
 
-    
+    .event-meta-grid {
+        margin-bottom: 14px;
+        grid-template-columns: 1fr;
+    }
 
-    
+    .event-meta-item {
+        min-height: 54px;
+        padding: 8px 10px;
+        display: grid;
+        grid-template-columns: 34px 62px 1fr;
+        align-items: center;
+        column-gap: 8px;
+        text-align: left;
+    }
 
-    
+    .event-meta-item:not(:last-child)::after {
+        top: auto;
+        right: 8%;
+        bottom: 0;
+        left: 8%;
+        width: auto;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(var(--event-accent-rgb), 0.30), transparent);
+    }
 
-    
+    .meta-icon {
+        width: 32px;
+        height: 32px;
+        margin: 0;
+        grid-row: 1;
+    }
 
-    
+    .meta-icon svg {
+        width: 14px;
+        height: 14px;
+    }
 
-    
+    .meta-label {
+        margin: 0;
+        font-size: 8px;
+        letter-spacing: 1.1px;
+        text-align: left;
+    }
 
-    
+    .meta-value {
+        font-size: 13px;
+        line-height: 1.25;
+        text-align: left;
+    }
 
-    
+    .event-lower-layout {
+        margin-top: auto;
+        padding: 13px;
+        display: block;
+        border-radius: 17px;
+    }
 
     .attire-guide-card {
         padding: 0 0 12px;
@@ -2900,11 +2728,20 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         gap: 12px;
     }
 
-    
+    .attire-visual {
+        min-height: 92px;
+    }
 
-    
+    .attire-guide-image {
+        max-height: 105px;
+    }
 
-    
+    .attire-guide-label,
+    .event-actions-label,
+    .rsvp-eyebrow {
+        font-size: 8px;
+        letter-spacing: 1.55px;
+    }
 
     .attire-guide-card strong {
         font-size: 24px;
@@ -2921,42 +2758,87 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         line-height: 1.33;
     }
 
-    
+    .event-actions-block {
+        padding: 11px 0 0;
+        border-top: 1px solid rgba(var(--event-accent-rgb), 0.24);
+        border-left: 0;
+    }
 
-    
+    .event-actions-label {
+        margin-bottom: 8px;
+    }
 
-    
+    .event-actions {
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+    }
 
-    
+    .event-action-link {
+        min-height: 40px;
+        padding: 9px 8px;
+        gap: 6px;
+        font-size: 7.5px;
+        letter-spacing: 0.72px;
+    }
 
-    
+    .event-action-link:last-child {
+        grid-column: span 2;
+    }
 
-    
+    .event-action-link svg {
+        width: 14px;
+        height: 14px;
+    }
 
-    
+    .event-rsvp-shell {
+        padding: 22px 16px 24px;
+    }
 
-    
+    .rsvp-confirmation {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
 
     .rsvp-status-header {
         align-items: flex-start;
     }
 
-    
+    .rsvp-status-header h4,
+    .rsvp-form-heading span {
+        font-size: 20px;
+    }
 
     .confirmation-details {
         display: grid;
         gap: 6px;
     }
 
-    
+    .edit-rsvp-btn {
+        width: 100%;
+        min-width: 0;
+    }
 
-    
+    .rsvp-form-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 7px;
+    }
 
-    
+    .rsvp-form-heading > p {
+        max-width: none;
+        text-align: left;
+    }
 
-    
+    .rsvp-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
 
-    
+    .rsvp-field select,
+    .rsvp-field input,
+    .rsvp-field textarea {
+        font-size: 16px;
+    }
 
     .travel-paper-grid,
     .mixed-newspaper-grid,
@@ -3089,300 +2971,4 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-}
-
-/* ===================================================== */
-/* SCHEDULE V6 — CINEMATIC EVENT CHAPTERS                */
-/* ===================================================== */
-
-body[data-active-tab="schedule"]::before,
-body[data-active-tab="schedule"]::after { opacity: 0; }
-
-body[data-active-tab="schedule"] .dashboard-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: linear-gradient(180deg, rgba(11,9,7,.72), rgba(11,9,7,.34) 72%, rgba(11,9,7,.08));
-    backdrop-filter: blur(7px) saturate(118%);
-    -webkit-backdrop-filter: blur(7px) saturate(118%);
-}
-
-.schedule-tab {
-    --journey-count: 3;
-    --journey-accent-rgb: 224, 166, 57;
-    position: relative;
-    isolation: isolate;
-    width: 100%;
-    min-height: calc(100svh - 150px);
-    padding: 22px clamp(22px, 5vw, 78px) 48px;
-    overflow: clip;
-    color: #fff1dc;
-}
-
-.schedule-tab[data-journey-theme="hindu_wedding"] { --journey-accent-rgb: 191, 84, 62; }
-.schedule-tab[data-journey-theme="christian_wedding_reception"] { --journey-accent-rgb: 131, 162, 112; }
-
-.schedule-backgrounds {
-    position: fixed;
-    inset: 0;
-    z-index: -3;
-    overflow: hidden;
-    pointer-events: none;
-    background: #21150b;
-}
-
-.schedule-bg {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    transform: scale(1.025);
-    transition: opacity 700ms ease, transform 5000ms ease;
-}
-.schedule-bg.is-active { opacity: 1; transform: scale(1); }
-.schedule-bg-haldi { background-image: url('/static/images/schedule/schedule-haldi-desktop.webp'); }
-.schedule-bg-hindu { background-image: url('/static/images/WEDDING.webp'); filter: brightness(.72) saturate(1.08); }
-.schedule-bg-christian { background-image: url('/static/images/RECEPTION.webp'); filter: brightness(.72) saturate(1.05); }
-
-.schedule-bg-shade,
-.schedule-bg-light { position:absolute; inset:0; pointer-events:none; }
-.schedule-bg-shade {
-    z-index: 2;
-    background:
-      linear-gradient(180deg, rgba(18,11,5,.48) 0%, rgba(20,12,6,.10) 24%, rgba(20,12,6,.02) 63%, rgba(18,10,5,.30) 100%),
-      linear-gradient(90deg, rgba(27,16,7,.18), transparent 43%, transparent 78%, rgba(27,16,7,.07));
-}
-.schedule-bg-light {
-    z-index:3;
-    background: radial-gradient(circle at 45% 56%, rgba(var(--journey-accent-rgb),.11), transparent 48%);
-    mix-blend-mode: screen;
-}
-
-.schedule-shell { position:relative; z-index:2; width:min(100%, 1480px); margin:0 auto; }
-.schedule-header { display:none; }
-
-.schedule-timeline {
-    position:relative;
-    display:grid;
-    grid-template-columns:repeat(var(--journey-count), minmax(0,1fr));
-    width:min(760px, 100%);
-    margin:0 auto 18px;
-}
-.journey-track {
-    position:absolute;
-    top:27px;
-    left:calc(50% / var(--journey-count));
-    right:calc(50% / var(--journey-count));
-    height:1px;
-    background:rgba(255,239,214,.34);
-}
-.journey-track-fill { display:block; width:var(--journey-progress,0%); height:100%; background:rgb(var(--journey-accent-rgb)); transition:width 500ms ease; }
-.journey-stop {
-    all:unset;
-    position:relative;
-    z-index:2;
-    display:grid;
-    justify-items:center;
-    gap:5px;
-    padding:0 8px;
-    cursor:pointer;
-    color:rgba(255,241,221,.70);
-    text-align:center;
-}
-.journey-date { font:700 8px/1 Manrope, sans-serif; letter-spacing:1.5px; text-transform:uppercase; }
-.journey-dot { width:9px; height:9px; border:1px solid rgba(255,241,221,.62); border-radius:50%; background:rgba(25,17,11,.58); }
-.journey-name { font:600 16px/1.1 'Cormorant Garamond', serif; color:rgba(255,241,221,.82); }
-.journey-stop.is-active .journey-dot { width:13px; height:13px; background:rgb(var(--journey-accent-rgb)); box-shadow:0 0 0 5px rgba(var(--journey-accent-rgb),.14), 0 0 18px rgba(var(--journey-accent-rgb),.58); }
-.journey-stop.is-active .journey-name { color:#fff4e2; }
-
-.event-stage { position:relative; min-height:clamp(600px, 69vh, 760px); }
-.journey-event {
-    position:absolute;
-    inset:0;
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
-    transform:translateY(12px);
-    transition:opacity 420ms ease, transform 620ms cubic-bezier(.22,1,.36,1), visibility 0s linear 430ms;
-}
-.journey-event.is-active { position:relative; opacity:1; visibility:visible; pointer-events:auto; transform:none; transition-delay:0s; }
-
-.event-artwork { position:relative; min-height:clamp(600px, 69vh, 760px); }
-.event-artwork-shade,
-.event-light-orbit { display:none; }
-.event-artwork-inner {
-    min-height:clamp(600px, 69vh, 760px);
-    display:grid;
-    grid-template-rows:auto 1fr;
-    gap:18px;
-    padding:10px 0 0;
-}
-.event-hero-grid {
-    display:grid;
-    grid-template-columns:minmax(330px,.82fr) minmax(560px,1.18fr);
-    gap:clamp(28px,5vw,86px);
-    align-items:start;
-}
-.event-title-block { max-width:520px; padding-top:8px; text-shadow:0 2px 18px rgba(255,245,225,.18); }
-.event-date-line { margin:0 0 7px; font:700 9px/1 Manrope,sans-serif; letter-spacing:2.2px; text-transform:uppercase; color:#bd6e16; }
-.event-title-block h3 { margin:0; font:italic 600 clamp(56px,5.2vw,82px)/.94 'Cormorant Garamond',serif; letter-spacing:.2px; color:#6f3214; text-transform:none; }
-.event-kicker { margin:12px 0 0; font:italic 600 22px/1.2 'Cormorant Garamond',serif; color:rgba(91,46,23,.84); }
-.event-title-flourish { display:block; width:58px; height:1px; margin-top:14px; background:rgba(var(--journey-accent-rgb),.62); }
-
-.event-meta-grid {
-    display:grid;
-    grid-template-columns:.9fr .7fr 1.45fr;
-    align-self:start;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,.50);
-    border-radius:24px;
-    background:linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.055));
-    backdrop-filter:blur(8px) saturate(125%);
-    -webkit-backdrop-filter:blur(8px) saturate(125%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 18px 38px rgba(80,48,18,.10);
-}
-.event-meta-item { position:relative; min-height:82px; display:grid; grid-template-columns:38px 1fr; gap:10px; align-items:center; padding:14px 16px; }
-.event-meta-item:not(:last-child)::after { content:''; position:absolute; top:18%; right:0; width:1px; height:64%; background:rgba(133,77,25,.15); }
-.meta-icon { width:34px; height:34px; display:grid; place-items:center; border:1px solid rgba(255,255,255,.42); border-radius:50%; color:#b46a18; background:rgba(255,255,255,.12); }
-.meta-icon svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
-.meta-label { margin-bottom:4px; font:700 7px/1 Manrope,sans-serif; letter-spacing:1.5px; text-transform:uppercase; color:rgba(87,47,22,.64); }
-.meta-value { font:600 13px/1.35 'Cormorant Garamond',serif; color:#5d311c; }
-.meta-value span { display:block; }
-
-.event-lower-layout {
-    display:grid;
-    grid-template-columns:minmax(0,1.55fr) minmax(320px,.45fr);
-    gap:clamp(28px,4vw,58px);
-    align-items:end;
-    min-height:0;
-}
-.attire-editorial { display:grid; grid-template-columns:minmax(430px,1.25fr) minmax(220px,.55fr); gap:28px; align-items:end; }
-.attire-visual { min-height:360px; display:flex; align-items:flex-end; justify-content:center; }
-.attire-guide-image { display:block; width:min(100%,700px); max-height:470px; object-fit:contain; object-position:center bottom; filter:drop-shadow(0 28px 28px rgba(72,40,10,.27)); }
-.attire-copy { max-width:290px; padding-bottom:30px; color:#5e321c; }
-.attire-guide-label,.event-actions-label { display:block; margin-bottom:7px; font:700 7px/1 Manrope,sans-serif; letter-spacing:1.8px; text-transform:uppercase; color:#bd6e16; }
-.attire-copy strong { display:block; font:400 45px/.92 'Parisienne',cursive; color:#6e3519; }
-.attire-copy small { display:block; margin-top:8px; font:700 7px/1 Manrope,sans-serif; letter-spacing:1.4px; text-transform:uppercase; color:rgba(91,48,25,.63); }
-.attire-copy p { margin:8px 0 0; font:600 13px/1.5 'Cormorant Garamond',serif; color:rgba(86,45,24,.86); }
-
-.event-utility-dock {
-    align-self:end;
-    padding:16px;
-    border:1px solid rgba(255,255,255,.48);
-    border-radius:24px;
-    background:linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.045));
-    backdrop-filter:blur(8px) saturate(125%);
-    -webkit-backdrop-filter:blur(8px) saturate(125%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.34), 0 20px 44px rgba(75,42,15,.10);
-}
-.event-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.event-action-link,.edit-rsvp-btn,.rsvp-btn,.rsvp-cancel-btn {
-    min-height:42px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    border:1px solid rgba(255,255,255,.52);
-    border-radius:999px;
-    background:linear-gradient(-75deg, rgba(255,255,255,.06), rgba(255,255,255,.18), rgba(255,255,255,.06));
-    color:#5a301b;
-    font:700 8px/1 Manrope,sans-serif;
-    letter-spacing:.6px;
-    text-decoration:none;
-    text-transform:uppercase;
-    box-shadow:inset 0 1px 1px rgba(255,255,255,.42), 0 7px 18px rgba(70,39,13,.08);
-    cursor:pointer;
-}
-.event-action-link svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.7; }
-.event-directions-link { grid-column:1/-1; }
-
-.rsvp-summary { margin-top:12px; padding-top:12px; border-top:1px solid rgba(143,83,28,.16); }
-.rsvp-status-summary { display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:center; }
-.rsvp-summary-icon { width:34px; height:34px; display:grid; place-items:center; border:1px solid rgba(var(--journey-accent-rgb),.58); border-radius:50%; color:#a75f13; }
-.rsvp-summary-icon svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.7; }
-.rsvp-summary-copy span { display:block; font:700 7px/1 Manrope,sans-serif; letter-spacing:1.3px; text-transform:uppercase; color:#bd6e16; }
-.rsvp-summary-copy strong { display:block; margin-top:3px; font:600 18px/1 'Cormorant Garamond',serif; color:#5c301b; }
-.rsvp-summary-copy p { margin:3px 0 0; font:600 10px/1.25 'Cormorant Garamond',serif; color:rgba(86,45,24,.68); }
-.edit-rsvp-btn { width:100%; margin-top:11px; }
-.rsvp-form { margin-top:12px; padding-top:12px; border-top:1px solid rgba(143,83,28,.16); }
-.rsvp-form.is-hidden { display:none; }
-.rsvp-form-heading span { font:700 8px/1 Manrope,sans-serif; letter-spacing:1.2px; text-transform:uppercase; color:#a75f13; }
-.rsvp-form-heading p { margin:4px 0 10px; font:600 11px/1.3 'Cormorant Garamond',serif; color:#5d321d; }
-.rsvp-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
-.rsvp-field { margin-bottom:9px; }
-.rsvp-field label { display:block; margin-bottom:5px; font:700 7px/1 Manrope,sans-serif; letter-spacing:1px; text-transform:uppercase; color:#8b4b18; }
-.rsvp-field select,.rsvp-field input,.rsvp-field textarea { width:100%; min-height:40px; padding:9px 11px; border:1px solid rgba(255,255,255,.46); border-radius:13px; background:rgba(255,255,255,.10); color:#542d1a; font:600 13px/1.3 'Cormorant Garamond',serif; }
-.rsvp-field textarea { min-height:66px; resize:vertical; }
-.rsvp-helper { margin:4px 0 0; font-size:9px; color:rgba(84,45,26,.68); }
-.rsvp-form-actions { display:grid; grid-template-columns:.7fr 1fr; gap:8px; }
-
-.schedule-reveal,.journey-piece { opacity:1; transform:none; }
-.journey-event.is-active .attire-guide-image { animation:attire-arrive 760ms cubic-bezier(.22,1,.36,1) both; }
-@keyframes attire-arrive { from { opacity:0; transform:translateY(22px) scale(.98); filter:blur(4px) drop-shadow(0 18px 20px rgba(0,0,0,.12)); } to { opacity:1; transform:none; } }
-
-@media (max-width: 980px) {
-    .event-hero-grid { grid-template-columns:1fr; gap:14px; }
-    .event-meta-grid { width:min(100%,760px); }
-    .event-lower-layout { grid-template-columns:1fr; gap:16px; }
-    .attire-editorial { grid-template-columns:minmax(320px,1fr) minmax(220px,.55fr); }
-    .event-utility-dock { width:min(100%,620px); justify-self:end; }
-}
-
-@media (max-width:700px) {
-    body[data-active-tab="schedule"] .dashboard-header { background:linear-gradient(180deg, rgba(11,8,6,.78), rgba(11,8,6,.38) 75%, rgba(11,8,6,.08)); }
-    .schedule-tab { min-height:calc(100svh - 128px); padding:12px 18px 30px; overflow:visible; }
-    .schedule-bg-haldi { background-image:url('/static/images/schedule/schedule-haldi-mobile.webp'); background-position:center top; }
-    .schedule-bg-hindu { background-image:url('/static/images/WEDDING-mobile.webp'); }
-    .schedule-bg-christian { background-image:url('/static/images/RECEPTION-mobile.webp'); }
-    .schedule-bg-shade { background:linear-gradient(180deg, rgba(18,10,5,.18) 0%, rgba(18,10,5,.02) 44%, rgba(17,10,7,.56) 70%, rgba(10,7,6,.94) 100%); }
-    .schedule-timeline { width:112px; display:flex; justify-content:center; gap:9px; margin:0 auto 4px; }
-    .journey-track,.journey-date,.journey-name { display:none; }
-    .journey-stop { width:7px; height:7px; padding:5px; display:block; }
-    .journey-dot { display:block; width:6px; height:6px; border:0; background:rgba(255,255,255,.34); }
-    .journey-stop.is-active .journey-dot { width:7px; height:7px; background:#edc77a; box-shadow:0 0 10px rgba(237,199,122,.64); }
-    .event-stage,.event-artwork,.event-artwork-inner { min-height:calc(100svh - 170px); }
-    .event-artwork-inner { display:flex; flex-direction:column; padding:0; gap:0; }
-    .event-hero-grid { display:contents; }
-    .event-title-block { order:3; margin-top:auto; padding:0 0 10px; max-width:100%; color:#fff3df; text-shadow:0 2px 18px rgba(0,0,0,.44); }
-    .event-date-line { color:#eab34f; font-size:10px; }
-    .event-title-block h3 { color:#fff5e5; font-size:clamp(48px,15vw,70px); }
-    .event-kicker { display:none; }
-    .event-title-flourish { display:none; }
-    .event-meta-grid { order:4; display:block; width:100%; border:0; border-radius:0; background:transparent; backdrop-filter:none; box-shadow:none; }
-    .event-meta-item { display:none; }
-    .event-meta-item:nth-child(2),.event-meta-location { display:inline; min-height:0; padding:0; }
-    .event-meta-item:nth-child(2)::after { content:' · '; position:static; display:inline; background:none; color:#e3b969; }
-    .event-meta-item:nth-child(2) .meta-icon,.event-meta-location .meta-icon,.event-meta-item:nth-child(2) .meta-label,.event-meta-location .meta-label,.event-meta-location .venue-name { display:none; }
-    .event-meta-item:nth-child(2) .meta-value,.event-meta-location .meta-value { display:inline; color:rgba(255,244,225,.86); font:500 14px/1.4 Manrope,sans-serif; }
-    .event-meta-location .meta-value span:last-child { display:inline; }
-    .event-lower-layout { display:contents; }
-    .attire-editorial { display:contents; }
-    .attire-visual { order:1; min-height:0; flex:1 1 auto; display:flex; align-items:flex-end; justify-content:center; }
-    .attire-guide-image { width:min(116%,620px); max-height:56svh; object-fit:contain; object-position:center bottom; filter:drop-shadow(0 24px 24px rgba(54,28,7,.25)); }
-    .attire-copy { order:5; max-width:100%; padding:8px 0 16px; color:#fff1db; }
-    .attire-guide-label,.attire-copy strong,.attire-copy small,.attire-copy p { display:none; }
-    .attire-copy::before { content:'Attire — Shades of Yellow'; display:inline-block; padding-bottom:4px; border-bottom:1px solid rgba(227,185,105,.45); color:rgba(255,240,216,.72); font:700 10px/1 Manrope,sans-serif; letter-spacing:1.2px; text-transform:uppercase; }
-    .event-utility-dock { order:6; width:100%; padding:0; border:0; border-radius:0; background:transparent; backdrop-filter:none; box-shadow:none; }
-    .event-actions-label { display:none; }
-    .event-actions { display:flex; gap:10px; }
-    .event-action-link { flex:1; min-height:48px; color:#fff4e3; border-color:rgba(255,255,255,.28); background:rgba(255,255,255,.045); backdrop-filter:blur(6px); }
-    .event-actions .event-action-link:first-child,.event-actions .event-action-link:nth-child(2) { display:none; }
-    .event-directions-link { display:flex !important; }
-    .rsvp-summary { margin-top:10px; padding:0; border:0; display:grid; grid-template-columns:auto auto 1fr; gap:10px; align-items:center; }
-    .rsvp-status-summary { display:contents; }
-    .rsvp-summary-icon { display:none; }
-    .rsvp-summary-copy { order:3; }
-    .rsvp-summary-copy span,.rsvp-summary-copy p { display:none; }
-    .rsvp-summary-copy strong { color:rgba(255,242,221,.62); font:500 12px/1 Manrope,sans-serif; white-space:nowrap; }
-    .edit-rsvp-btn { order:1; width:auto; min-width:136px; min-height:48px; margin:0; color:#120c08; background:linear-gradient(-75deg, rgba(227,185,105,.34), rgba(227,185,105,.56), rgba(227,185,105,.34)); border-color:rgba(255,228,173,.38); }
-    .rsvp-form { position:fixed; z-index:300; right:12px; bottom:12px; left:12px; max-height:80svh; overflow:auto; padding:20px; border:1px solid rgba(255,255,255,.25); border-radius:26px; background:rgba(20,14,11,.76); backdrop-filter:blur(18px) saturate(130%); color:#fff0dc; box-shadow:0 28px 70px rgba(0,0,0,.44); }
-    .rsvp-form-heading span,.rsvp-form-heading p,.rsvp-field label,.rsvp-helper { color:#fff0dc; }
-    .rsvp-grid,.rsvp-form-actions { grid-template-columns:1fr; }
-    .rsvp-field select,.rsvp-field input,.rsvp-field textarea { color:#fff; background:rgba(255,255,255,.08); }
-}
-
-@media (prefers-reduced-motion:reduce) {
-    .schedule-bg,.journey-event,.journey-track-fill,.attire-guide-image { animation:none!important; transition:none!important; }
 }
