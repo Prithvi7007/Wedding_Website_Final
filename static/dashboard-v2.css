@@ -50,44 +50,68 @@ body.dashboard-v2 {
     font-family: "Manrope", Arial, sans-serif;
 }
 
-/* Background used by the other tabs. Welcome supplies its own full-bleed image. */
-body.dashboard-v2::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-
-    background:
-        url("/static/images/site-bg.webp")
-        center center / cover no-repeat;
-
-    filter:
-        blur(4px)
-        brightness(0.40)
-        saturate(1.00)
-        contrast(1.05);
-
-    transform: scale(1.04);
+/* The couple slideshow is the permanent visual foundation for every tab. */
+body.dashboard-v2::before,
+body.dashboard-v2::after {
+    content: none;
 }
 
-body.dashboard-v2::after {
-    content: "";
+/* Shared couple-photo slideshow for Schedule, Travel, Registry and Q&A.
+   Welcome keeps its own original full-bleed slideshow below. */
+.dashboard-background {
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: #171411;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 260ms ease, visibility 260ms ease;
+}
 
-    background:
-        radial-gradient(
-            circle at 76% 20%,
-            rgba(220, 157, 66, 0.12),
-            transparent 38%
-        ),
-        linear-gradient(
-            135deg,
-            rgba(12, 12, 11, 0.42),
-            rgba(20, 16, 13, 0.54) 48%,
-            rgba(10, 11, 10, 0.72)
-        );
+.dashboard-background-slides,
+.dashboard-background .slide {
+    position: absolute;
+    inset: 0;
+}
+
+.dashboard-background .slide {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--slide-position-desktop, 64% center);
+    opacity: 0;
+    filter:
+        brightness(0.91)
+        saturate(1.07)
+        contrast(1.02);
+    transition: opacity 0.32s ease-in-out;
+    will-change: opacity;
+}
+
+.dashboard-background .slide.active-slide {
+    z-index: 2;
+    opacity: 1;
+}
+
+.dashboard-background .slide.is-leaving {
+    z-index: 3;
+    opacity: 0;
+}
+
+.dashboard-background .slide-1 { --slide-position-desktop: 61% 48%; --slide-position-mobile: 68% center; }
+.dashboard-background .slide-2 { --slide-position-desktop: 63% 45%; --slide-position-mobile: 68% center; }
+.dashboard-background .slide-3 { --slide-position-desktop: 68% 50%; --slide-position-mobile: 72% center; }
+.dashboard-background .slide-4 { --slide-position-desktop: 59% 48%; --slide-position-mobile: 65% center; }
+.dashboard-background .slide-5 { --slide-position-desktop: 64% 44%; --slide-position-mobile: 69% center; }
+.dashboard-background .slide-6 { --slide-position-desktop: 67% 50%; --slide-position-mobile: 71% center; }
+
+/* The global photo layer is hidden on Welcome so the exact approved local
+   composition is not double-filtered or double-shaded. */
+body[data-active-tab="welcome"] .dashboard-background {
+    opacity: 0;
+    visibility: hidden;
 }
 
 button,
@@ -109,6 +133,7 @@ a {
 
 .dashboard-app {
     position: relative;
+    z-index: 2;
     min-height: 100vh;
     min-height: 100svh;
 }
@@ -242,18 +267,14 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     top: 0;
 
     background:
-        linear-gradient(
-            180deg,
-            rgba(18, 18, 17, 0.52),
-            rgba(12, 13, 13, 0.36)
-        );
+        linear-gradient(180deg, rgba(24,19,15,.30), rgba(20,17,14,.10) 72%, rgba(16,14,12,0));
 
-    backdrop-filter: blur(10px) saturate(138%) brightness(0.94);
-    -webkit-backdrop-filter: blur(10px) saturate(138%) brightness(0.94);
+    backdrop-filter: blur(8px) saturate(145%) brightness(.98);
+    -webkit-backdrop-filter: blur(8px) saturate(145%) brightness(.98);
 
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.10),
-        0 10px 34px rgba(0, 0, 0, 0.13);
+        inset 0 1px 0 rgba(255,255,255,.10),
+        0 10px 34px rgba(0,0,0,.08);
 }
 
 .dashboard-meta,
@@ -1541,6 +1562,7 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 /* ===================================================== */
 
 .schedule-tab {
+    position: relative;
     width: min(calc(100% - 28px), 1680px);
     max-width: none;
     margin: 0 auto;
@@ -1914,6 +1936,21 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     .event-glass-button { transition: none !important; }
 }
 
+
+
+/* Schedule content floats over the permanent couple-photo background. */
+.schedule-intro-card {
+    background:
+        radial-gradient(ellipse 84% 68% at 50% 18%, rgba(255,255,255,.085), rgba(255,255,255,.018) 46%, rgba(0,0,0,.16) 100%),
+        rgba(18,15,14,.24);
+    backdrop-filter: blur(10px) saturate(145%) brightness(.94);
+    -webkit-backdrop-filter: blur(10px) saturate(145%) brightness(.94);
+    box-shadow: 0 28px 70px rgba(0,0,0,.22), 0 0 0 1px rgba(255,255,255,.18), inset 0 1px 0 rgba(255,255,255,.24);
+}
+
+.cinematic-event-card {
+    box-shadow: 0 34px 90px rgba(0,0,0,.34), 0 0 0 1px rgba(255,255,255,.15);
+}
 
 /* TRAVEL — FUNCTIONAL PHASE-1 PRESENTATION               */
 /* ----------------------------------------------------- */
@@ -2970,5 +3007,241 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+
+/* Shared-photo foundation for Travel, Registry and Q&A. */
+body:not([data-active-tab="welcome"]) .dashboard-main {
+    min-height: calc(100svh - 120px);
+}
+
+body[data-active-tab="schedule"] .schedule-tab,
+body[data-active-tab="travel"] #travel,
+body[data-active-tab="registry"] #registry,
+body[data-active-tab="qa"] #qa {
+    background-color: transparent;
+}
+
+@media (max-width: 700px) {
+    .dashboard-background .slide {
+        object-position: var(--slide-position-mobile, 68% center);
+        filter:
+            brightness(0.82)
+            saturate(1.06)
+            contrast(1.025);
+    }
+}
+
+
+/* ===================================================== */
+/* SCHEDULE INTRO + ACCESS-AWARE JOURNEY — FINAL LAYER    */
+/* ===================================================== */
+
+.schedule-tab {
+    width: min(calc(100% - 28px), 1680px);
+    padding-top: clamp(54px, 7vh, 92px);
+}
+
+/* Direct editorial copy over the couple photograph — no rounded glass card. */
+.schedule-intro-card {
+    position: relative;
+    width: min(760px, calc(100% - 48px));
+    margin: 0 0 38px clamp(18px, 5.8vw, 96px);
+    padding: 0;
+    text-align: left;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+}
+
+.schedule-intro-card::before {
+    content: "";
+    position: absolute;
+    inset: -52px -100px -46px -86px;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+        ellipse 72% 74% at 24% 48%,
+        rgba(19, 15, 12, .48) 0%,
+        rgba(18, 14, 12, .26) 42%,
+        rgba(16, 13, 11, .08) 66%,
+        transparent 84%
+    );
+    filter: blur(10px);
+}
+
+.schedule-eyebrow {
+    margin: 0 0 7px;
+    color: var(--dash-gold-bright);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(18px, 1.7vw, 24px);
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    text-shadow: 0 2px 12px rgba(0,0,0,.42);
+}
+
+.schedule-intro-card h2 {
+    margin: 0 0 14px;
+    color: var(--dash-cream);
+    font-size: clamp(50px, 5.2vw, 76px);
+    line-height: .98;
+    text-shadow: 0 3px 20px rgba(0,0,0,.46);
+}
+
+.schedule-intro {
+    max-width: 690px;
+    margin: 0;
+    color: rgba(255, 240, 216, .92);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(17px, 1.45vw, 21px);
+    line-height: 1.55;
+    text-align: left;
+    text-shadow: 0 2px 10px rgba(0,0,0,.58);
+}
+
+/* One stop is rendered per event in the server-filtered events list. */
+.schedule-journey {
+    --journey-count: 3;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    width: min(760px, calc(100% - 48px));
+    margin: 0 0 54px clamp(18px, 5.8vw, 96px);
+    padding: 0;
+}
+
+.schedule-journey-stop {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: 4px;
+    min-width: 0;
+    padding: 0 18px 0 0;
+    color: rgba(255, 239, 216, .62);
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+}
+
+.schedule-journey-stop:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    left: 18px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(231,186,100,.48), rgba(255,255,255,.12));
+}
+
+.journey-dot {
+    position: relative;
+    z-index: 2;
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(255,255,255,.30);
+    border-radius: 50%;
+    background: rgba(24,20,18,.62);
+    box-shadow: 0 0 0 4px rgba(15,12,10,.18);
+    transition: .28s ease;
+}
+
+.schedule-journey-stop.is-active .journey-dot {
+    border-color: rgba(255,235,188,.95);
+    background: var(--dash-gold-bright);
+    box-shadow: 0 0 0 4px rgba(225,174,76,.14), 0 0 14px rgba(239,197,111,.78);
+}
+
+.journey-date {
+    margin-top: 5px;
+    color: var(--dash-gold-bright);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+}
+
+.journey-title {
+    overflow: hidden;
+    color: rgba(255,241,220,.72);
+    font-family: "Manrope", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.schedule-journey-stop.is-active .journey-title {
+    color: var(--dash-cream);
+}
+
+.cinematic-event-card {
+    scroll-margin-top: 190px;
+}
+
+@media (max-width: 700px) {
+    .schedule-tab {
+        width: 100%;
+        padding: 34px 14px 50px;
+    }
+
+    .schedule-intro-card {
+        width: calc(100% - 28px);
+        margin: 0 14px 28px;
+    }
+
+    .schedule-intro-card::before {
+        inset: -34px -24px -30px -24px;
+        background: radial-gradient(
+            ellipse 92% 78% at 20% 48%,
+            rgba(18,14,12,.48),
+            rgba(18,14,12,.20) 56%,
+            transparent 86%
+        );
+    }
+
+    .schedule-eyebrow {
+        font-size: 18px;
+    }
+
+    .schedule-intro-card h2 {
+        font-size: clamp(43px, 13vw, 58px);
+    }
+
+    .schedule-intro {
+        max-width: 94%;
+        font-size: 16px;
+        line-height: 1.55;
+    }
+
+    .schedule-journey {
+        display: flex;
+        width: calc(100% - 28px);
+        margin: 0 14px 34px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .schedule-journey::-webkit-scrollbar { display: none; }
+
+    .schedule-journey-stop {
+        flex: 1 0 138px;
+        padding-right: 16px;
+    }
+
+    .journey-title {
+        max-width: 128px;
+        font-size: 9px;
+    }
+
+    .cinematic-event-card {
+        scroll-margin-top: 150px;
     }
 }
