@@ -50,44 +50,73 @@ body.dashboard-v2 {
     font-family: "Manrope", Arial, sans-serif;
 }
 
-/* Background used by the other tabs. Welcome supplies its own full-bleed image. */
-body.dashboard-v2::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-
-    background:
-        url("/static/images/site-bg.webp")
-        center center / cover no-repeat;
-
-    filter:
-        blur(4px)
-        brightness(0.40)
-        saturate(1.00)
-        contrast(1.05);
-
-    transform: scale(1.04);
+/* The couple slideshow is the permanent visual foundation for every tab. */
+body.dashboard-v2::before,
+body.dashboard-v2::after {
+    content: none;
 }
 
-body.dashboard-v2::after {
-    content: "";
+.dashboard-background {
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: #171411;
+}
 
+.dashboard-background-slides,
+.dashboard-background-treatment,
+.dashboard-background .slide {
+    position: absolute;
+    inset: 0;
+}
+
+.dashboard-background .slide {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--slide-position-desktop, 64% center);
+    opacity: 0;
+    filter: brightness(.88) saturate(1.06) contrast(1.02);
+    transition: opacity .32s ease-in-out;
+    will-change: opacity;
+}
+
+.dashboard-background .slide.active-slide {
+    z-index: 2;
+    opacity: 1;
+}
+
+.dashboard-background .slide.is-leaving {
+    z-index: 3;
+    opacity: 0;
+}
+
+.dashboard-background .slide-1 { --slide-position-desktop: 61% 48%; --slide-position-mobile: 68% center; }
+.dashboard-background .slide-2 { --slide-position-desktop: 63% 45%; --slide-position-mobile: 68% center; }
+.dashboard-background .slide-3 { --slide-position-desktop: 68% 50%; --slide-position-mobile: 72% center; }
+.dashboard-background .slide-4 { --slide-position-desktop: 59% 48%; --slide-position-mobile: 65% center; }
+.dashboard-background .slide-5 { --slide-position-desktop: 64% 44%; --slide-position-mobile: 69% center; }
+.dashboard-background .slide-6 { --slide-position-desktop: 67% 50%; --slide-position-mobile: 71% center; }
+
+.dashboard-background-treatment {
+    z-index: 4;
     background:
-        radial-gradient(
-            circle at 76% 20%,
-            rgba(220, 157, 66, 0.12),
-            transparent 38%
-        ),
-        linear-gradient(
-            135deg,
-            rgba(12, 12, 11, 0.42),
-            rgba(20, 16, 13, 0.54) 48%,
-            rgba(10, 11, 10, 0.72)
-        );
+        radial-gradient(circle at 76% 20%, rgba(220,157,66,.10), transparent 38%),
+        linear-gradient(90deg, rgba(20,15,12,.58) 0%, rgba(18,14,12,.32) 38%, rgba(12,11,10,.12) 72%, rgba(10,10,9,.18) 100%),
+        linear-gradient(180deg, rgba(12,10,9,.16), rgba(12,10,9,.08) 55%, rgba(12,10,9,.32));
+    transition: background .35s ease, opacity .35s ease;
+}
+
+body:not([data-active-tab="welcome"]) .dashboard-background .slide {
+    filter: brightness(.72) saturate(1.02) contrast(1.04);
+}
+
+body:not([data-active-tab="welcome"]) .dashboard-background-treatment {
+    background:
+        radial-gradient(circle at 75% 18%, rgba(220,157,66,.08), transparent 38%),
+        linear-gradient(135deg, rgba(13,11,10,.48), rgba(18,14,12,.50) 48%, rgba(9,10,9,.62));
 }
 
 button,
@@ -109,6 +138,7 @@ a {
 
 .dashboard-app {
     position: relative;
+    z-index: 2;
     min-height: 100vh;
     min-height: 100svh;
 }
@@ -242,18 +272,14 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     top: 0;
 
     background:
-        linear-gradient(
-            180deg,
-            rgba(18, 18, 17, 0.52),
-            rgba(12, 13, 13, 0.36)
-        );
+        linear-gradient(180deg, rgba(24,19,15,.30), rgba(20,17,14,.10) 72%, rgba(16,14,12,0));
 
-    backdrop-filter: blur(10px) saturate(138%) brightness(0.94);
-    -webkit-backdrop-filter: blur(10px) saturate(138%) brightness(0.94);
+    backdrop-filter: blur(8px) saturate(145%) brightness(.98);
+    -webkit-backdrop-filter: blur(8px) saturate(145%) brightness(.98);
 
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.10),
-        0 10px 34px rgba(0, 0, 0, 0.13);
+        inset 0 1px 0 rgba(255,255,255,.10),
+        0 10px 34px rgba(0,0,0,.08);
 }
 
 .dashboard-meta,
@@ -518,20 +544,15 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     height: 100vh;
     height: 100svh;
 
-    background: #171411;
-    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.34);
+    background: transparent;
+    box-shadow: none;
 }
 
-.welcome-slides,
 .welcome-hero-shade,
 .welcome-hero::before,
 .welcome-hero::after {
     position: absolute;
     inset: 0;
-}
-
-.welcome-slides {
-    z-index: 0;
 }
 
 .welcome-hero .slide {
@@ -1541,6 +1562,7 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 /* ===================================================== */
 
 .schedule-tab {
+    position: relative;
     width: min(calc(100% - 28px), 1680px);
     max-width: none;
     margin: 0 auto;
@@ -1914,6 +1936,21 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     .event-glass-button { transition: none !important; }
 }
 
+
+
+/* Schedule content floats over the permanent couple-photo background. */
+.schedule-intro-card {
+    background:
+        radial-gradient(ellipse 84% 68% at 50% 18%, rgba(255,255,255,.085), rgba(255,255,255,.018) 46%, rgba(0,0,0,.16) 100%),
+        rgba(18,15,14,.24);
+    backdrop-filter: blur(10px) saturate(145%) brightness(.94);
+    -webkit-backdrop-filter: blur(10px) saturate(145%) brightness(.94);
+    box-shadow: 0 28px 70px rgba(0,0,0,.22), 0 0 0 1px rgba(255,255,255,.18), inset 0 1px 0 rgba(255,255,255,.24);
+}
+
+.cinematic-event-card {
+    box-shadow: 0 34px 90px rgba(0,0,0,.34), 0 0 0 1px rgba(255,255,255,.15);
+}
 
 /* TRAVEL — FUNCTIONAL PHASE-1 PRESENTATION               */
 /* ----------------------------------------------------- */
@@ -2970,5 +3007,29 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+
+/* Shared-photo foundation for Travel, Registry and Q&A. */
+body:not([data-active-tab="welcome"]) .dashboard-main {
+    min-height: calc(100svh - 120px);
+}
+
+body[data-active-tab="schedule"] .schedule-tab,
+body[data-active-tab="travel"] #travel,
+body[data-active-tab="registry"] #registry,
+body[data-active-tab="qa"] #qa {
+    background-color: transparent;
+}
+
+@media (max-width: 700px) {
+    .dashboard-background .slide {
+        object-position: var(--slide-position-mobile, 68% center);
+        filter: brightness(.78) saturate(1.04) contrast(1.03);
+    }
+
+    body:not([data-active-tab="welcome"]) .dashboard-background .slide {
+        filter: brightness(.62) saturate(1.00) contrast(1.05);
     }
 }

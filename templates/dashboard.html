@@ -21,13 +21,26 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboardschedule11cinematiccards"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard12sharedphotos"
     >
 </head>
 
 {% set guest_display_name = (guest.get('display_name') or guest.get('name') or 'Dear Guest') | title %}
 
 <body class="dashboard-page dashboard-v2" data-active-tab="welcome">
+
+    <!-- Permanent couple-photo background shared by every dashboard tab -->
+    <div class="dashboard-background" aria-hidden="true">
+        <div class="dashboard-background-slides">
+            <img class="slide slide-1 active-slide" src="{{ url_for('static', filename='images/site-bg.webp') }}" alt="">
+            <img class="slide slide-2" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="">
+            <img class="slide slide-3" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="">
+            <img class="slide slide-4" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
+            <img class="slide slide-5" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="">
+            <img class="slide slide-6" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="">
+        </div>
+        <div class="dashboard-background-treatment"></div>
+    </div>
 
     <div id="login-toast" class="login-toast" role="status" aria-live="polite">
         <div class="login-toast-inner">
@@ -74,15 +87,6 @@
             <!-- Welcome Tab -->
             <section id="welcome" class="tab-content active" aria-labelledby="welcome-heading">
                 <div class="welcome-hero">
-                    <div class="welcome-slides" aria-hidden="true">
-                        <img class="slide slide-1 active-slide" src="{{ url_for('static', filename='images/site-bg.webp') }}" alt="">
-                        <img class="slide slide-2" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="">
-                        <img class="slide slide-3" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="">
-                        <img class="slide slide-4" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
-                        <img class="slide slide-5" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="">
-                        <img class="slide slide-6" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="">
-                    </div>
-
                     <div class="welcome-hero-shade" aria-hidden="true"></div>
 
                     <div class="welcome-copy">
@@ -727,7 +731,7 @@
         let slideTransitionInProgress = false;
         let slideshowTimer = null;
 
-        const slides = Array.from(document.querySelectorAll("#welcome .slide"));
+        const slides = Array.from(document.querySelectorAll(".dashboard-background .slide"));
         const dots = Array.from(document.querySelectorAll("#welcome .dot"));
         const SLIDE_INTERVAL_MS = 9000;
         const AUTO_SLIDESHOW_ENABLED = false;
