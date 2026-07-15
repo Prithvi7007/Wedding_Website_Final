@@ -5082,3 +5082,343 @@ html {
         0 1px 0 rgba(255, 255, 255, 0.18),
         0 1px 5px rgba(255, 255, 255, 0.08);
 }
+
+
+/* ===================================================== */
+/* V35 — PRIVATE-INVITATION GLASS FOR EVENT ACTIONS      */
+/* Copies the approved View Your Schedule button material */
+/* onto RSVP, Directions and Calendar. Only the compact   */
+/* dimensions remain adapted so all three stay in one row.*/
+/* ===================================================== */
+
+.event-glass-button,
+.event-rsvp-trigger {
+    --cta-hover-time: 360ms;
+    --cta-hover-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --cta-border-width: 1px;
+
+    position: relative;
+    z-index: 3;
+    isolation: isolate;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    margin: 0;
+    padding: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 0 !important;
+    border-radius: 999px;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+
+    color: rgba(255, 255, 255, 0.95);
+    text-decoration: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.075) 0%,
+            rgba(255, 255, 255, 0.018) 44%,
+            rgba(255, 255, 255, 0.035) 100%
+        ) !important;
+
+    backdrop-filter:
+        blur(7px)
+        saturate(154%)
+        brightness(1.10)
+        contrast(1.03);
+
+    -webkit-backdrop-filter:
+        blur(7px)
+        saturate(154%)
+        brightness(1.10)
+        contrast(1.03);
+
+    box-shadow:
+        0 15px 34px rgba(4, 7, 7, 0.26),
+        0 3px 7px rgba(4, 7, 7, 0.18),
+        0 0 0 1px rgba(255, 255, 255, 0.20),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.70),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.15),
+        inset 2px 0 2px rgba(255, 255, 255, 0.11),
+        inset -2px 0 2px rgba(255, 255, 255, 0.075);
+
+    transform: translateZ(0) scale(1);
+
+    transition:
+        transform var(--cta-hover-time) var(--cta-hover-ease),
+        background var(--cta-hover-time) ease,
+        box-shadow var(--cta-hover-time) var(--cta-hover-ease),
+        backdrop-filter var(--cta-hover-time) var(--cta-hover-ease),
+        -webkit-backdrop-filter var(--cta-hover-time) var(--cta-hover-ease);
+}
+
+/* Same broad convex top reflection as View Your Schedule. */
+.event-glass-button::before,
+.event-rsvp-trigger::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 5%;
+    left: 5%;
+    z-index: 0;
+
+    height: 45%;
+    border-radius: 999px 999px 58% 58%;
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.36) 0%,
+            rgba(255, 255, 255, 0.11) 34%,
+            rgba(255, 255, 255, 0) 100%
+        );
+
+    filter: blur(0.2px);
+    opacity: 0.72;
+
+    transition:
+        opacity var(--cta-hover-time) ease,
+        transform var(--cta-hover-time) var(--cta-hover-ease);
+}
+
+/* Same colorless rotating refractive rim. */
+.event-glass-button::after,
+.event-rsvp-trigger::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--cta-border-width) / -2);
+    z-index: 1;
+
+    padding: var(--cta-border-width);
+    box-sizing: border-box;
+    border-radius: 999px;
+    pointer-events: none;
+
+    background:
+        conic-gradient(
+            from -72deg at 50% 50%,
+            rgba(255, 255, 255, 0.82),
+            rgba(255, 255, 255, 0.12) 8% 35%,
+            rgba(255, 255, 255, 0.46) 48%,
+            rgba(255, 255, 255, 0.08) 61% 91%,
+            rgba(255, 255, 255, 0.78)
+        );
+
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask-composite: exclude;
+
+    opacity: 0.78;
+    transform: rotate(0deg);
+
+    transition:
+        transform 680ms var(--cta-hover-ease),
+        opacity var(--cta-hover-time) ease;
+}
+
+/* Same label treatment and animated neutral sheen. */
+.event-glass-button span,
+.event-rsvp-trigger span {
+    position: relative;
+    z-index: 4;
+
+    width: 100%;
+    min-height: 46px;
+    padding: 0 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(255, 255, 255, 0.94);
+    font-family: "Manrope", Arial, sans-serif;
+    font-size: clamp(9px, 0.68vw, 11px);
+    font-weight: 700;
+    letter-spacing: clamp(0.8px, 0.11vw, 1.4px);
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+    user-select: none;
+
+    text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.74),
+        0 3px 12px rgba(0, 0, 0, 0.28);
+
+    transition:
+        letter-spacing var(--cta-hover-time) var(--cta-hover-ease),
+        text-shadow var(--cta-hover-time) ease;
+}
+
+.event-glass-button span::after,
+.event-rsvp-trigger span::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+
+    border-radius: 999px;
+    pointer-events: none;
+    mix-blend-mode: screen;
+
+    background:
+        linear-gradient(
+            -48deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.02) 34%,
+            rgba(255, 255, 255, 0.28) 49%,
+            rgba(255, 255, 255, 0.02) 61%,
+            rgba(255, 255, 255, 0) 74%
+        );
+
+    background-size: 230% 230%;
+    background-position: -82% 50%;
+    background-repeat: no-repeat;
+    opacity: 0.66;
+
+    transition:
+        background-position 700ms var(--cta-hover-ease),
+        opacity 220ms ease;
+}
+
+.event-glass-button:hover,
+.event-rsvp-trigger:hover {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.085) 0%,
+            rgba(255, 255, 255, 0.025) 44%,
+            rgba(255, 255, 255, 0.008) 70%,
+            rgba(0, 0, 0, 0.012) 100%
+        ) !important;
+
+    backdrop-filter:
+        blur(8px)
+        saturate(158%)
+        contrast(1.045)
+        brightness(1.075);
+
+    -webkit-backdrop-filter:
+        blur(8px)
+        saturate(158%)
+        contrast(1.045)
+        brightness(1.075);
+
+    box-shadow:
+        inset 0 1.5px 1.2px rgba(255, 255, 255, 0.70),
+        inset 0 -1.5px 1.5px rgba(255, 255, 255, 0.20),
+        inset 1.5px 0 1.2px rgba(255, 255, 255, 0.14),
+        inset -1.5px 0 1.2px rgba(255, 255, 255, 0.11),
+        0 10px 24px rgba(0, 0, 0, 0.24),
+        0 2px 3px rgba(0, 0, 0, 0.18);
+
+    transform: translateY(-1px) scale(0.988);
+}
+
+.event-glass-button:hover::before,
+.event-rsvp-trigger:hover::before {
+    opacity: 0.90;
+    transform: translateY(-1px) scaleX(0.985);
+}
+
+.event-glass-button:hover::after,
+.event-rsvp-trigger:hover::after {
+    opacity: 0.94;
+    transform: rotate(-42deg);
+}
+
+.event-glass-button:hover span,
+.event-rsvp-trigger:hover span {
+    letter-spacing: clamp(0.88px, 0.12vw, 1.5px);
+    text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.80),
+        0 3px 11px rgba(0, 0, 0, 0.24);
+}
+
+.event-glass-button:hover span::after,
+.event-rsvp-trigger:hover span::after {
+    background-position: 40% 50%;
+    opacity: 0.82;
+}
+
+.event-glass-button:active,
+.event-rsvp-trigger:active {
+    transform:
+        perspective(700px)
+        rotateX(3deg)
+        translateY(1px)
+        scale(0.978);
+
+    backdrop-filter:
+        blur(11px)
+        saturate(150%)
+        brightness(1.035);
+
+    -webkit-backdrop-filter:
+        blur(11px)
+        saturate(150%)
+        brightness(1.035);
+
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.13),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.24),
+        0 4px 10px rgba(0, 0, 0, 0.22);
+}
+
+.event-glass-button:active::after,
+.event-rsvp-trigger:active::after {
+    transform: rotate(-64deg);
+}
+
+.event-glass-button:active span::after,
+.event-rsvp-trigger:active span::after {
+    background-position: 62% 18%;
+}
+
+.event-glass-button:focus-visible,
+.event-rsvp-trigger:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.90);
+    outline-offset: 5px;
+
+    box-shadow:
+        0 0 0 5px rgba(255, 255, 255, 0.14),
+        0 10px 24px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+
+/* Remove the old RSVP-only visual hierarchy so all three use the same
+   approved invitation material. Width hierarchy remains in the grid only. */
+.event-rsvp-trigger {
+    min-height: 46px;
+}
+
+@media (max-width: 700px) {
+    .event-glass-button,
+    .event-rsvp-trigger {
+        min-height: 42px;
+    }
+
+    .event-glass-button span,
+    .event-rsvp-trigger span {
+        min-height: 42px;
+        padding: 0 4px;
+        font-size: clamp(7.5px, 2.15vw, 9px);
+        letter-spacing: clamp(0.45px, 0.16vw, 0.75px);
+    }
+}
