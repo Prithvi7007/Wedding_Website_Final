@@ -4892,114 +4892,125 @@ html {
 }
 
 /* ===================================================== */
-/* V32 — CLEAR BACKGROUND-BORROWING OPTICAL GLASS        */
-/* No event-color fill and no artificial dark scrim.     */
-/* The celebration photograph itself supplies the hue.   */
+/* V33 — BACKGROUND-REVEALING INVITATION GLASS          */
+/* No event-color fill. The event photograph supplies   */
+/* the hue while a light neutral lens preserves contrast.*/
 /* ===================================================== */
 
-/* Reveal the generated celebration artwork across the entire card. */
+/* Remove the full-card wash. The celebration artwork remains untouched. */
 .cinematic-event-scrim,
 .event-hindu .cinematic-event-scrim,
 .event-christian .cinematic-event-scrim {
     background: transparent;
 }
 
-/* Neutral clear glass, modeled after the Private Invitation card.
-   The only visible surface is a very light white reflection; color comes
-   exclusively from the photograph passing through the backdrop filter. */
+/* Clear, nearly colorless glass. The low blur keeps the wall texture,
+   architectural details, and natural color visible through the panel. */
 .event-glass-panel {
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
     background:
         radial-gradient(
-            ellipse 84% 34% at 44% 0%,
-            rgba(255, 255, 255, 0.11) 0%,
-            rgba(255, 255, 255, 0.028) 46%,
-            transparent 76%
+            ellipse 82% 30% at 42% 0%,
+            rgba(255, 255, 255, 0.090) 0%,
+            rgba(255, 255, 255, 0.026) 48%,
+            transparent 78%
         ),
         linear-gradient(
             145deg,
-            rgba(255, 255, 255, 0.038) 0%,
-            rgba(255, 255, 255, 0.012) 52%,
-            rgba(255, 255, 255, 0.020) 100%
+            rgba(255, 255, 255, 0.028) 0%,
+            rgba(255, 255, 255, 0.010) 48%,
+            rgba(0, 0, 0, 0.018) 100%
         );
 
     backdrop-filter:
-        blur(13px)
-        saturate(132%)
-        brightness(0.82)
-        contrast(1.045);
+        blur(4px)
+        saturate(108%)
+        brightness(0.97)
+        contrast(1.018);
     -webkit-backdrop-filter:
-        blur(13px)
-        saturate(132%)
-        brightness(0.82)
-        contrast(1.045);
+        blur(4px)
+        saturate(108%)
+        brightness(0.97)
+        contrast(1.018);
 
     box-shadow:
-        0 22px 54px rgba(0, 0, 0, 0.16),
-        0 0 0 1px rgba(255, 255, 255, 0.045),
-        inset 0 1.4px 1px rgba(255, 255, 255, 0.28),
+        0 22px 52px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(255, 255, 255, 0.035),
+        inset 0 1.4px 1px rgba(255, 255, 255, 0.25),
         inset 0 -1px 1px rgba(255, 255, 255, 0.035);
 }
 
-/* Remove the colored atmosphere that previously extended around the panel. */
+/* Remove the old tinted atmosphere around the panel. This is only a very
+   faint neutral optical haze, masked so it dissolves into the photograph. */
 .event-glass-panel::before {
-    inset: -10px -14px -12px -12px;
+    inset: -14px -18px -16px -16px;
     border-radius: 38px;
+
     background:
         radial-gradient(
-            ellipse 78% 26% at 38% 0%,
+            ellipse 88% 72% at 29% 48%,
+            rgba(255, 255, 255, 0.026) 0%,
+            rgba(255, 255, 255, 0.010) 50%,
+            transparent 88%
+        ),
+        radial-gradient(
+            ellipse 72% 24% at 38% 0%,
             rgba(255, 255, 255, 0.070) 0%,
-            rgba(255, 255, 255, 0.018) 46%,
+            rgba(255, 255, 255, 0.015) 48%,
             transparent 78%
         );
 
-    backdrop-filter: blur(2px) saturate(122%);
-    -webkit-backdrop-filter: blur(2px) saturate(122%);
+    backdrop-filter: blur(1.5px) saturate(104%) brightness(0.995);
+    -webkit-backdrop-filter: blur(1.5px) saturate(104%) brightness(0.995);
 
     -webkit-mask-image: radial-gradient(
         ellipse 96% 90% at 31% 49%,
         #000 0%,
-        rgba(0, 0, 0, 0.88) 58%,
-        rgba(0, 0, 0, 0.36) 76%,
-        transparent 93%
+        #000 52%,
+        rgba(0, 0, 0, 0.56) 72%,
+        transparent 92%
     );
     mask-image: radial-gradient(
         ellipse 96% 90% at 31% 49%,
         #000 0%,
-        rgba(0, 0, 0, 0.88) 58%,
-        rgba(0, 0, 0, 0.36) 76%,
-        transparent 93%
+        #000 52%,
+        rgba(0, 0, 0, 0.56) 72%,
+        transparent 92%
     );
 
     box-shadow: none;
 }
 
-/* Fine neutral molded reflections, matching the entry-page material. */
+/* Keep only molded white reflections, matching the material language of the
+   invitation card without adding orange, red, brown, or black surface color. */
 .event-glass-panel::after {
     inset: 0;
     border-radius: inherit;
+
     background:
         linear-gradient(
             90deg,
             rgba(255, 255, 255, 0.42),
-            rgba(255, 255, 255, 0.09) 42%,
+            rgba(255, 255, 255, 0.08) 42%,
             transparent 82%
         ) top left / 82% 1px no-repeat,
         linear-gradient(
             180deg,
-            rgba(255, 255, 255, 0.25),
-            rgba(255, 255, 255, 0.045) 54%,
+            rgba(255, 255, 255, 0.24),
+            rgba(255, 255, 255, 0.040) 54%,
             transparent 88%
         ) top left / 1px 84% no-repeat,
         radial-gradient(
-            ellipse 66% 18% at 36% 0%,
-            rgba(255, 255, 255, 0.11),
+            ellipse 66% 16% at 36% 0%,
+            rgba(255, 255, 255, 0.085),
             transparent 74%
         );
+
     opacity: 0.72;
 }
 
-/* Text remains readable through a restrained shadow, not a filled layer. */
+/* Neutral shadows maintain readability without tinting the panel. */
 .event-glass-panel h3,
 .event-kicker,
 .event-fact strong,
@@ -5008,13 +5019,13 @@ html {
 .event-attire-copy small,
 .event-response-summary strong {
     text-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.48),
-        0 3px 13px rgba(0, 0, 0, 0.18);
+        0 1px 2px rgba(0, 0, 0, 0.46),
+        0 3px 12px rgba(0, 0, 0, 0.16);
 }
 
 @media (max-width: 700px) {
-    /* The phone card remains clear glass. A slightly stronger backdrop filter
-       protects readability without introducing a black or event-colored fill. */
+    /* Mobile remains clear. Only a small increase in neutral lens density is
+       used because the text overlaps a tighter crop of the photograph. */
     .cinematic-event-scrim,
     .event-hindu .cinematic-event-scrim,
     .event-christian .cinematic-event-scrim {
@@ -5022,38 +5033,43 @@ html {
     }
 
     .event-glass-panel {
-        border-color: rgba(255, 255, 255, 0.24);
         background:
             radial-gradient(
-                ellipse 88% 32% at 48% 0%,
-                rgba(255, 255, 255, 0.10),
-                rgba(255, 255, 255, 0.024) 50%,
+                ellipse 86% 30% at 48% 0%,
+                rgba(255, 255, 255, 0.085),
+                rgba(255, 255, 255, 0.022) 50%,
                 transparent 78%
             ),
             linear-gradient(
                 155deg,
-                rgba(255, 255, 255, 0.034),
-                rgba(255, 255, 255, 0.010) 58%,
-                rgba(255, 255, 255, 0.018)
+                rgba(255, 255, 255, 0.040),
+                rgba(255, 255, 255, 0.015) 56%,
+                rgba(0, 0, 0, 0.028)
             );
 
         backdrop-filter:
-            blur(13px)
-            saturate(128%)
-            brightness(0.74)
-            contrast(1.055);
+            blur(5px)
+            saturate(108%)
+            brightness(0.95)
+            contrast(1.02);
         -webkit-backdrop-filter:
-            blur(13px)
-            saturate(128%)
-            brightness(0.74)
-            contrast(1.055);
+            blur(5px)
+            saturate(108%)
+            brightness(0.95)
+            contrast(1.02);
     }
 
     .event-glass-panel::before {
         background:
             radial-gradient(
-                ellipse 84% 24% at 50% 0%,
-                rgba(255, 255, 255, 0.065),
+                ellipse 104% 92% at 44% 52%,
+                rgba(255, 255, 255, 0.025),
+                rgba(255, 255, 255, 0.008) 60%,
+                transparent 94%
+            ),
+            radial-gradient(
+                ellipse 82% 24% at 50% 0%,
+                rgba(255, 255, 255, 0.070),
                 transparent 76%
             );
     }
