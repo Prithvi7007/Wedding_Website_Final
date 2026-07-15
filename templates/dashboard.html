@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard22glassbuttonhierarchy"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard23attireimages"
     >
 </head>
 
@@ -225,6 +225,28 @@
                         aria-labelledby="event-title-{{ event.id }}"
                     >
                         <div class="cinematic-event-scrim" aria-hidden="true"></div>
+
+                        {# Transparent attire artwork mapped independently of database IDs. #}
+                        {% if 'haldi' in event_name %}
+                            {% set attire_visual_path = 'images/attire-haldi.png' %}
+                        {% elif 'telugu' in event_name or 'hindu' in event_name %}
+                            {% set attire_visual_path = 'images/attire-hindu.png' %}
+                        {% elif 'church' in event_name or 'christian' in event_name or 'reception' in event_name %}
+                            {% set attire_visual_path = 'images/attire_reception.png' %}
+                        {% else %}
+                            {% set attire_visual_path = none %}
+                        {% endif %}
+
+                        {% if attire_visual_path %}
+                            <figure class="event-attire-figure">
+                                <img
+                                    src="{{ url_for('static', filename=attire_visual_path) }}"
+                                    alt="{{ event.title }} attire inspiration"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                            </figure>
+                        {% endif %}
 
                         <section class="event-glass-panel">
                             <p class="event-date-line">{{ event.date }}</p>

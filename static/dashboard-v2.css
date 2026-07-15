@@ -1708,6 +1708,88 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     background-image: url("/static/images/schedule/schedule-church-desktop.webp");
 }
 
+
+/* ----------------------------------------------------- */
+/* EVENT ATTIRE ARTWORK — TRANSPARENT EDITORIAL LAYER     */
+/* Floats inside the scene without adding another card.   */
+/* ----------------------------------------------------- */
+
+.event-attire-figure {
+    position: absolute;
+    right: clamp(28px, 4.8vw, 86px);
+    bottom: -1.5%;
+    z-index: 1;
+
+    width: clamp(235px, 27vw, 430px);
+    height: 78%;
+    margin: 0;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    overflow: visible;
+    pointer-events: none;
+
+    opacity: 0.96;
+    transform: translateZ(0);
+    filter:
+        drop-shadow(0 26px 28px rgba(0, 0, 0, 0.30))
+        drop-shadow(0 8px 12px rgba(0, 0, 0, 0.18));
+}
+
+.event-attire-figure::before {
+    content: "";
+    position: absolute;
+    right: 4%;
+    bottom: 2%;
+    left: 4%;
+    z-index: -1;
+
+    height: 19%;
+    border-radius: 50%;
+    pointer-events: none;
+
+    background: radial-gradient(
+        ellipse at center,
+        rgba(0, 0, 0, 0.24) 0%,
+        rgba(0, 0, 0, 0.10) 48%,
+        transparent 76%
+    );
+
+    filter: blur(15px);
+}
+
+.event-attire-figure img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+
+    object-fit: contain;
+    object-position: center bottom;
+
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Small event-specific optical positioning adjustments. */
+.event-haldi .event-attire-figure {
+    right: clamp(24px, 4.2vw, 76px);
+    width: clamp(240px, 28vw, 445px);
+}
+
+.event-hindu .event-attire-figure {
+    right: clamp(20px, 3.8vw, 68px);
+    width: clamp(245px, 28.5vw, 455px);
+}
+
+.event-christian .event-attire-figure {
+    right: clamp(30px, 5vw, 92px);
+    width: clamp(225px, 26vw, 415px);
+}
+
 .cinematic-event-scrim {
     position: absolute;
     inset: 0;
@@ -2202,6 +2284,16 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 .confirm-response-btn span { font-size: 11px; letter-spacing: 1.7px; }
 .cancel-response-btn { width: 100%; margin: 10px 0 0; padding: 8px; border: 0; background: transparent; box-shadow: none; color: var(--dash-muted); font-size: 11px; }
 
+
+@media (max-width: 1100px) {
+    .event-attire-figure {
+        right: 14px;
+        width: clamp(220px, 30vw, 345px);
+        height: 70%;
+        opacity: 0.92;
+    }
+}
+
 @media (max-width: 900px) {
     .schedule-tab { width: min(calc(100% - 20px), 1680px); padding-top: 40px; }
     .cinematic-event-card { min-height: 720px; }
@@ -2223,6 +2315,35 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     .event-christian .cinematic-event-scrim {
         background: linear-gradient(180deg, rgba(8,7,8,.02) 18%, rgba(8,7,8,.28) 50%, rgba(8,7,8,.88) 100%);
     }
+    .event-attire-figure {
+        top: 7%;
+        right: 3%;
+        bottom: auto;
+
+        width: min(64vw, 330px);
+        height: 43%;
+
+        align-items: flex-start;
+        opacity: 0.94;
+
+        filter:
+            drop-shadow(0 20px 24px rgba(0, 0, 0, 0.28))
+            drop-shadow(0 6px 10px rgba(0, 0, 0, 0.16));
+    }
+
+    .event-haldi .event-attire-figure,
+    .event-hindu .event-attire-figure,
+    .event-christian .event-attire-figure {
+        right: 3%;
+        width: min(64vw, 330px);
+    }
+
+    .event-attire-figure::before {
+        bottom: 0;
+        height: 16%;
+        filter: blur(11px);
+    }
+
     .event-glass-panel {
         top: auto;
         right: 14px;
@@ -2269,6 +2390,19 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     .attendance-choice span { min-height: 46px; font-size: 10px; }
 }
 
+
+
+@media (max-width: 430px) {
+    .event-attire-figure,
+    .event-haldi .event-attire-figure,
+    .event-hindu .event-attire-figure,
+    .event-christian .event-attire-figure {
+        top: 8.5%;
+        right: 1%;
+        width: min(67vw, 285px);
+        height: 39%;
+    }
+}
 
 @media (hover: none), (pointer: coarse) {
     .event-glass-button:hover {
