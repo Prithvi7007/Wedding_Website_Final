@@ -1,4 +1,4 @@
-```python
+
 import os
 import secrets
 from pathlib import Path
@@ -984,4 +984,4 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
-```
+
