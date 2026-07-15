@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard27compactglassactions"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard28attireoverlaytyperegistry"
     >
 </head>
 
@@ -272,14 +272,15 @@
                                 </div>
 
                                 {% if attire_visual_path %}
-                                    <figure class="event-attire-figure">
-                                        <img
-                                            src="{{ url_for('static', filename=attire_visual_path) }}"
-                                            alt="{{ event.title }} attire inspiration"
-                                            loading="lazy"
-                                            decoding="async"
-                                        >
-                                    </figure>
+                                    <button
+                                        type="button"
+                                        class="attire-inspiration-trigger"
+                                        onclick="openAttireInspiration('{{ event.id }}')"
+                                        aria-haspopup="dialog"
+                                        aria-controls="attire-overlay-{{ event.id }}"
+                                    >
+                                        View Attire Inspiration
+                                    </button>
                                 {% endif %}
                             </div>
 
@@ -334,6 +335,48 @@
                                 </div>
                             </div>
                         </section>
+
+                        {% if attire_visual_path %}
+                            <section
+                                id="attire-overlay-{{ event.id }}"
+                                class="attire-inspiration-overlay"
+                                aria-hidden="true"
+                                role="dialog"
+                                aria-modal="true"
+                                aria-labelledby="attire-title-{{ event.id }}"
+                            >
+                                <div class="attire-inspiration-sheet">
+                                    <button
+                                        type="button"
+                                        class="attire-inspiration-close"
+                                        onclick="closeAttireInspiration('{{ event.id }}')"
+                                        aria-label="Close attire inspiration"
+                                    >×</button>
+
+                                    <div class="attire-inspiration-copy">
+                                        <p>Attire Inspiration</p>
+                                        <h4 id="attire-title-{{ event.id }}">
+                                            {{ event.attire_heading if event.attire_heading else 'Attire' }}
+                                        </h4>
+
+                                        {% if event.attire_subheading %}
+                                            <span>{{ event.attire_subheading }}</span>
+                                        {% endif %}
+
+                                        <div>{{ event.attire }}</div>
+                                    </div>
+
+                                    <figure class="attire-inspiration-visual">
+                                        <img
+                                            src="{{ url_for('static', filename=attire_visual_path) }}"
+                                            alt="{{ event.title }} attire inspiration"
+                                            loading="lazy"
+                                            decoding="async"
+                                        >
+                                    </figure>
+                                </div>
+                            </section>
+                        {% endif %}
 
                         <section
                             id="rsvp-overlay-{{ event.id }}"
@@ -616,15 +659,32 @@
             </div>
 
         <!-- Registry Tab -->
-        <div id="registry" class="tab-content">
-            <h2>Registry</h2>
+        <section id="registry" class="tab-content registry-tab" aria-labelledby="registry-heading">
+            <div class="registry-hero">
+                <div class="registry-copy">
+                    <p class="registry-eyebrow">With Love &amp; Gratitude</p>
+                    <h2 id="registry-heading">Registry</h2>
 
-            <div class="info-card">
-                <p>
-                    Your presence is the greatest gift. Registry details will be added here soon.
-                </p>
+                    <p class="registry-message">
+                        Your presence at our wedding is the greatest gift. For those who would like
+                        to bless us further as we begin our life together, we have created a wedding
+                        registry at Target.
+                    </p>
+
+                    <p class="registry-name">Adlin &amp; Prithvi's Wedding Registry</p>
+
+                    <a
+                        href="https://www.target.com/gift-registry/gift/Adlin-Prithvi"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="registry-target-btn"
+                        aria-label="Open Adlin and Prithvi's Target wedding registry"
+                    >
+                        <span>View Target Registry</span>
+                    </a>
+                </div>
             </div>
-        </div>
+        </section>
 
         <!-- QA Tab -->
         <div id="qa" class="tab-content">
@@ -1084,6 +1144,29 @@
             history.replaceState(null, "", window.location.pathname + "#welcome");
         }
 
+        window.openAttireInspiration = function (eventId) {
+            const overlay = document.getElementById("attire-overlay-" + eventId);
+            if (!overlay) return;
+
+            overlay.classList.add("is-open");
+            overlay.setAttribute("aria-hidden", "false");
+            document.body.classList.add("attire-overlay-open");
+
+            const closeButton = overlay.querySelector(".attire-inspiration-close");
+            if (closeButton) {
+                window.setTimeout(function () { closeButton.focus(); }, 60);
+            }
+        };
+
+        window.closeAttireInspiration = function (eventId) {
+            const overlay = document.getElementById("attire-overlay-" + eventId);
+            if (!overlay) return;
+
+            overlay.classList.remove("is-open");
+            overlay.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("attire-overlay-open");
+        };
+
         window.openEventRsvp = function (eventId) {
             const overlay = document.getElementById("rsvp-overlay-" + eventId);
             if (!overlay) return;
@@ -1151,6 +1234,26 @@
             if (event.target.classList.contains("event-rsvp-overlay")) {
                 const id = event.target.id.replace("rsvp-overlay-", "");
                 closeEventRsvp(id);
+            }
+
+            if (event.target.classList.contains("attire-inspiration-overlay")) {
+                const id = event.target.id.replace("attire-overlay-", "");
+                closeAttireInspiration(id);
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key !== "Escape") return;
+
+            const openAttireOverlay = document.querySelector(".attire-inspiration-overlay.is-open");
+            if (openAttireOverlay) {
+                closeAttireInspiration(openAttireOverlay.id.replace("attire-overlay-", ""));
+                return;
+            }
+
+            const openRsvpOverlay = document.querySelector(".event-rsvp-overlay.is-open");
+            if (openRsvpOverlay) {
+                closeEventRsvp(openRsvpOverlay.id.replace("rsvp-overlay-", ""));
             }
         });
 

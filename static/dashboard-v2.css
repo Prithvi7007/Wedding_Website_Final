@@ -4106,3 +4106,604 @@ body[data-active-tab="qa"] #qa {
         transform: none;
     }
 }
+
+
+/* ===================================================== */
+/* V23 — ATTIRE OVERLAY + TYPOGRAPHY RHYTHM + REGISTRY    */
+/* Final override layer: intentionally placed last.       */
+/* ===================================================== */
+
+body.dashboard-v2 {
+    --type-micro: clamp(10px, 0.66vw, 11px);
+    --type-label: clamp(11px, 0.74vw, 12px);
+    --type-small: clamp(12px, 0.82vw, 13px);
+    --type-body: clamp(14px, 0.98vw, 16px);
+    --type-body-large: clamp(16px, 1.12vw, 18px);
+    --type-subtitle: clamp(17px, 1.22vw, 20px);
+}
+
+/* A more deliberate type scale across the approved Schedule card. */
+.schedule-eyebrow,
+.event-date-line,
+.event-fact span,
+.event-attire-label,
+.event-response-label,
+.rsvp-sheet-heading p {
+    font-size: var(--type-micro);
+    letter-spacing: 2px;
+}
+
+.schedule-intro {
+    font-size: var(--type-body);
+}
+
+.event-glass-panel h3 {
+    font-size: clamp(46px, 4.25vw, 68px);
+    line-height: 0.94;
+}
+
+.event-kicker {
+    margin-bottom: 20px;
+    font-size: var(--type-subtitle);
+    line-height: 1.25;
+}
+
+.event-fact strong {
+    font-size: var(--type-body-large);
+    line-height: 1.2;
+}
+
+.event-fact small {
+    font-size: var(--type-label);
+    line-height: 1.5;
+}
+
+.event-attire-copy strong,
+.event-response-summary strong {
+    font-size: var(--type-body-large);
+    line-height: 1.25;
+}
+
+.event-attire-copy small {
+    font-size: var(--type-micro);
+    letter-spacing: 1.1px;
+    line-height: 1.35;
+}
+
+.event-glass-button span,
+.attire-inspiration-trigger,
+.registry-target-btn span {
+    font-size: var(--type-micro);
+}
+
+/* Keep attire concise in the main card. The artwork is now optional detail. */
+.event-attire-section {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 18px;
+    min-height: 0;
+    padding: 0 0 14px;
+}
+
+.event-attire-figure,
+.event-haldi .event-attire-figure,
+.event-hindu .event-attire-figure,
+.event-christian .event-attire-figure {
+    display: none !important;
+}
+
+.attire-inspiration-trigger {
+    position: relative;
+    margin: 0 0 1px;
+    padding: 5px 0 4px;
+
+    border: 0;
+    border-bottom: 1px solid rgba(var(--event-accent-rgb, 227, 185, 105), 0.46);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: rgba(255, 244, 221, 0.82);
+
+    font-family: "Manrope", Arial, sans-serif;
+    font-weight: 650;
+    letter-spacing: 1.15px;
+    line-height: 1.2;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    transition: color 220ms ease, border-color 220ms ease, transform 220ms ease;
+}
+
+.attire-inspiration-trigger:hover {
+    border-color: rgba(var(--event-accent-rgb, 227, 185, 105), 0.90);
+    background: transparent;
+    color: var(--dash-cream);
+    transform: translateY(-1px);
+}
+
+.attire-inspiration-trigger:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.88);
+    outline-offset: 5px;
+}
+
+/* Attire inspiration modal: a purposeful large view, not a tiny thumbnail. */
+.attire-inspiration-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 24;
+
+    display: grid;
+    place-items: center;
+    padding: 32px;
+
+    visibility: hidden;
+    opacity: 0;
+    background: rgba(7, 6, 7, 0.28);
+    backdrop-filter: blur(4px) saturate(116%);
+    -webkit-backdrop-filter: blur(4px) saturate(116%);
+
+    transition: opacity 320ms ease, visibility 320ms ease;
+}
+
+.attire-inspiration-overlay.is-open {
+    visibility: visible;
+    opacity: 1;
+}
+
+.attire-inspiration-sheet {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    width: min(820px, 100%);
+    min-height: 470px;
+    padding: 42px 44px;
+
+    display: grid;
+    grid-template-columns: minmax(250px, 0.84fr) minmax(300px, 1.16fr);
+    align-items: center;
+    gap: 34px;
+
+    border: 0;
+    border-radius: 32px;
+    background:
+        radial-gradient(ellipse 76% 42% at 50% 0%, rgba(255,255,255,.16), rgba(255,255,255,.025) 50%, transparent 78%),
+        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.018) 45%, rgba(0,0,0,.16)),
+        rgba(17, 14, 14, 0.58);
+
+    backdrop-filter: blur(20px) saturate(148%) brightness(0.94);
+    -webkit-backdrop-filter: blur(20px) saturate(148%) brightness(0.94);
+
+    box-shadow:
+        0 38px 92px rgba(0,0,0,.46),
+        0 0 0 1px rgba(255,255,255,.20),
+        inset 0 1.5px 1px rgba(255,255,255,.30),
+        inset 0 -1px 1px rgba(255,255,255,.045);
+
+    transform: translateY(18px) scale(.985);
+    transition: transform 340ms cubic-bezier(.2,.8,.2,1);
+}
+
+.attire-inspiration-overlay.is-open .attire-inspiration-sheet {
+    transform: translateY(0) scale(1);
+}
+
+.attire-inspiration-sheet::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+
+    background:
+        radial-gradient(circle at 76% 36%, rgba(var(--event-accent-rgb, 227,185,105), .14), transparent 38%),
+        linear-gradient(90deg, rgba(8,7,8,.48), rgba(8,7,8,.12) 60%, transparent);
+}
+
+.attire-inspiration-close {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    z-index: 3;
+
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+
+    display: grid;
+    place-items: center;
+
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,.045);
+    color: var(--dash-cream);
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,.18),
+        inset 0 1px 0 rgba(255,255,255,.18);
+
+    font: 300 25px/1 Arial, sans-serif;
+    cursor: pointer;
+}
+
+.attire-inspiration-copy p {
+    margin-bottom: 8px;
+    color: var(--dash-gold-bright);
+    font-size: var(--type-micro);
+    font-weight: 700;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+}
+
+.attire-inspiration-copy h4 {
+    margin-bottom: 6px;
+    color: var(--dash-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(36px, 4vw, 54px);
+    font-style: italic;
+    font-weight: 600;
+    line-height: 0.98;
+}
+
+.attire-inspiration-copy > span {
+    display: block;
+    margin-bottom: 20px;
+    color: var(--dash-muted);
+    font-size: var(--type-label);
+    font-weight: 650;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+}
+
+.attire-inspiration-copy > div {
+    color: var(--dash-copy);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: var(--type-body-large);
+    line-height: 1.55;
+}
+
+.attire-inspiration-visual {
+    position: relative;
+    min-width: 0;
+    height: 390px;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.attire-inspiration-visual::after {
+    content: "";
+    position: absolute;
+    right: 11%;
+    bottom: 5%;
+    left: 11%;
+    height: 11%;
+
+    border-radius: 50%;
+    background: rgba(0,0,0,.38);
+    filter: blur(18px);
+}
+
+.attire-inspiration-visual img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter:
+        drop-shadow(0 24px 28px rgba(0,0,0,.34))
+        drop-shadow(0 8px 12px rgba(0,0,0,.18));
+}
+
+body.attire-overlay-open {
+    overflow: hidden;
+}
+
+/* ----------------------------------------------------- */
+/* TARGET REGISTRY — DIRECT ON THE COUPLE-PHOTO WORLD     */
+/* ----------------------------------------------------- */
+
+body[data-active-tab="registry"] #registry.registry-tab {
+    position: relative;
+    isolation: isolate;
+    overflow: visible;
+
+    width: 100%;
+    min-height: calc(100svh - 170px);
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+}
+
+.registry-hero {
+    position: relative;
+    min-height: calc(100svh - 170px);
+    padding: 88px clamp(44px, 8vw, 138px) 96px;
+
+    display: flex;
+    align-items: center;
+}
+
+.registry-copy {
+    position: relative;
+    z-index: 1;
+    width: min(620px, 46vw);
+    text-align: left;
+}
+
+.registry-copy::before {
+    content: "";
+    position: absolute;
+    top: -70px;
+    right: -88px;
+    bottom: -74px;
+    left: -82px;
+    z-index: -1;
+    pointer-events: none;
+
+    background:
+        radial-gradient(ellipse 92% 84% at 28% 48%, rgba(13,10,9,.56), rgba(13,10,9,.34) 50%, rgba(13,10,9,.10) 72%, transparent 91%),
+        radial-gradient(ellipse 70% 28% at 34% 0%, rgba(255,255,255,.10), transparent 75%);
+
+    backdrop-filter: blur(8px) saturate(146%) brightness(.96);
+    -webkit-backdrop-filter: blur(8px) saturate(146%) brightness(.96);
+
+    -webkit-mask-image: radial-gradient(ellipse 96% 88% at 28% 49%, #000 0%, #000 55%, rgba(0,0,0,.66) 73%, transparent 92%);
+    mask-image: radial-gradient(ellipse 96% 88% at 28% 49%, #000 0%, #000 55%, rgba(0,0,0,.66) 73%, transparent 92%);
+}
+
+.registry-eyebrow {
+    margin-bottom: 8px;
+    color: var(--dash-gold-bright);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(22px, 2vw, 29px);
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.registry-copy h2 {
+    margin: 0 0 22px;
+    color: var(--dash-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(58px, 6vw, 84px);
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: .92;
+    text-align: left;
+    text-transform: none;
+    text-shadow: 0 3px 20px rgba(0,0,0,.38);
+}
+
+.registry-message {
+    max-width: 580px;
+    margin: 0 0 18px;
+    color: var(--dash-copy);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(19px, 1.5vw, 23px);
+    line-height: 1.48;
+    text-align: left;
+    text-shadow: 0 1px 4px rgba(0,0,0,.58);
+}
+
+.registry-name {
+    margin: 0 0 28px;
+    color: var(--dash-muted);
+    font-size: var(--type-small);
+    font-weight: 650;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+}
+
+.registry-target-btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    min-width: 260px;
+    min-height: 56px;
+    padding: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 999px;
+    background:
+        radial-gradient(ellipse 92% 66% at 50% 4%, rgba(255,255,255,.22), rgba(255,255,255,.060) 48%, transparent 78%),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.022) 50%, rgba(255,255,255,.012));
+    color: var(--dash-cream);
+    text-decoration: none;
+
+    backdrop-filter: blur(15px) saturate(140%) brightness(1.10);
+    -webkit-backdrop-filter: blur(15px) saturate(140%) brightness(1.10);
+
+    box-shadow:
+        0 18px 38px rgba(0,0,0,.24),
+        0 0 24px rgba(214,168,78,.10),
+        inset 0 1.4px 0 rgba(255,255,255,.50),
+        inset 0 -1px 0 rgba(255,255,255,.055);
+
+    transition: transform 340ms cubic-bezier(.22,1,.36,1), box-shadow 340ms ease;
+}
+
+.registry-target-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+
+    background: conic-gradient(from -70deg, rgba(242,202,116,.96), rgba(255,255,255,.08) 12% 38%, rgba(242,202,116,.58) 51%, rgba(255,255,255,.06) 66% 91%, rgba(242,202,116,.92));
+
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+
+    opacity: .48;
+    transition: transform 720ms cubic-bezier(.22,1,.36,1), opacity 260ms ease;
+}
+
+.registry-target-btn span {
+    position: relative;
+    z-index: 2;
+    padding: 17px 28px;
+    color: rgba(255,255,255,.98);
+    font-weight: 750;
+    letter-spacing: 1.9px;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0,0,0,.68);
+}
+
+.registry-target-btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 22px 44px rgba(0,0,0,.28),
+        0 0 30px rgba(214,168,78,.18),
+        inset 0 1.4px 0 rgba(255,255,255,.60),
+        inset 0 -1px 0 rgba(255,255,255,.07);
+}
+
+.registry-target-btn:hover::before {
+    opacity: .94;
+    transform: rotate(-78deg);
+}
+
+.registry-target-btn:focus-visible {
+    outline: 2px solid rgba(255,255,255,.90);
+    outline-offset: 5px;
+}
+
+@media (max-width: 700px) {
+    .event-glass-panel h3 {
+        font-size: clamp(39px, 12vw, 52px);
+        line-height: .96;
+    }
+
+    .event-kicker {
+        font-size: clamp(16px, 4.8vw, 18px);
+    }
+
+    .event-fact strong,
+    .event-attire-copy strong,
+    .event-response-summary strong {
+        font-size: 17px;
+    }
+
+    .event-fact small {
+        font-size: 11px;
+    }
+
+    .event-attire-section {
+        grid-template-columns: 1fr;
+        align-items: start;
+        gap: 8px;
+        padding-bottom: 13px;
+    }
+
+    .attire-inspiration-trigger {
+        justify-self: start;
+        font-size: 10px;
+    }
+
+    .attire-inspiration-overlay {
+        align-items: end;
+        padding: 0;
+    }
+
+    .attire-inspiration-sheet {
+        width: 100%;
+        max-height: 90svh;
+        min-height: 0;
+        padding: 40px 22px 26px;
+        overflow-y: auto;
+
+        grid-template-columns: 1fr;
+        gap: 18px;
+
+        border-right: 0;
+        border-bottom: 0;
+        border-left: 0;
+        border-radius: 28px 28px 0 0;
+
+        transform: translateY(100%);
+    }
+
+    .attire-inspiration-overlay.is-open .attire-inspiration-sheet {
+        transform: translateY(0);
+    }
+
+    .attire-inspiration-copy {
+        padding-right: 36px;
+    }
+
+    .attire-inspiration-copy h4 {
+        font-size: clamp(34px, 10vw, 46px);
+    }
+
+    .attire-inspiration-copy > div {
+        font-size: 17px;
+    }
+
+    .attire-inspiration-visual {
+        height: min(48svh, 390px);
+        order: -1;
+    }
+
+    body[data-active-tab="registry"] #registry.registry-tab,
+    .registry-hero {
+        min-height: calc(100svh - 150px);
+    }
+
+    .registry-hero {
+        padding: 72px 24px 84px;
+        align-items: flex-end;
+    }
+
+    .registry-copy {
+        width: min(100%, 560px);
+    }
+
+    .registry-copy::before {
+        top: -54px;
+        right: -28px;
+        bottom: -48px;
+        left: -28px;
+    }
+
+    .registry-copy h2 {
+        font-size: clamp(52px, 17vw, 72px);
+    }
+
+    .registry-message {
+        font-size: 19px;
+    }
+
+    .registry-target-btn {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .attire-inspiration-overlay,
+    .attire-inspiration-sheet,
+    .registry-target-btn,
+    .registry-target-btn::before {
+        transition: none !important;
+    }
+}
