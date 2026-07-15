@@ -1,4 +1,5 @@
 import os
+import secrets
 from pathlib import Path
 from datetime import datetime
 from urllib.parse import urlencode, quote_plus
@@ -28,8 +29,7 @@ secret_key = os.getenv("SECRET_KEY")
 if not secret_key:
     raise RuntimeError(
         "SECRET_KEY environment variable is required. "
-        "Generate one with: python -c "
-        "\"import secrets; print(secrets.token_urlsafe(64))\""
+        "Generate one with: python -c \"import secrets; print(secrets.token_urlsafe(64))\""
     )
 
 blocked_secret_keys = {
@@ -38,23 +38,17 @@ blocked_secret_keys = {
 }
 
 if secret_key in blocked_secret_keys:
-    raise RuntimeError(
-        "The configured SECRET_KEY is a known insecure placeholder."
-    )
+    raise RuntimeError("The configured SECRET_KEY is a known insecure placeholder.")
 
 if len(secret_key) < 32:
-    raise RuntimeError(
-        "SECRET_KEY must be at least 32 characters long."
-    )
+    raise RuntimeError("SECRET_KEY must be at least 32 characters long.")
 
 app.config.update(
     SECRET_KEY=secret_key,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=os.getenv(
-        "SESSION_COOKIE_SECURE",
-        "true"
-    ).lower() in {"1", "true", "yes", "on"},
+    SESSION_COOKIE_SECURE=os.getenv("SESSION_COOKIE_SECURE", "true").lower()
+    in {"1", "true", "yes", "on"},
 )
 
 
@@ -329,6 +323,39 @@ def wants_json_response():
     )
 
 
+CSRF_SESSION_KEY = "_csrf_token"
+
+
+def get_csrf_token():
+    """Return the current session's CSRF token, creating it when needed."""
+    token = session.get(CSRF_SESSION_KEY)
+
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session[CSRF_SESSION_KEY] = token
+
+    return token
+
+
+def has_valid_csrf_token():
+    """Validate an RSVP CSRF token from a form field or AJAX header."""
+    submitted_token = (
+        request.form.get("csrf_token", "")
+        or request.headers.get("X-CSRF-Token", "")
+    )
+    expected_token = session.get(CSRF_SESSION_KEY, "")
+
+    return bool(
+        submitted_token
+        and expected_token
+        and secrets.compare_digest(submitted_token, expected_token)
+    )
+
+
+# Makes {{ csrf_token() }} available in every Jinja template.
+app.jinja_env.globals["csrf_token"] = get_csrf_token
+
+
 def normalize_tab(tab):
     allowed_tabs = ["welcome", "schedule", "travel", "registry", "qa"]
 
@@ -432,6 +459,15 @@ def save_rsvp():
             }), 401
 
         return redirect(url_for("home"))
+
+    if not has_valid_csrf_token():
+        if wants_json:
+            return jsonify({
+                "success": False,
+                "message": "Invalid or expired form token. Please refresh the page and try again."
+            }), 400
+
+        return "Invalid or missing CSRF token.", 400
 
     event_id = request.form.get("event_id", "").strip()
 

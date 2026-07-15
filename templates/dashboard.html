@@ -6,6 +6,7 @@
 
     <title>Adlin & Prithvi | Wedding Weekend</title>
     <meta name="theme-color" content="#171513">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link
         rel="icon"
@@ -42,7 +43,6 @@
     </div>
 
     <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
-    </div>
 
     <div class="dashboard-app">
         <header class="dashboard-header">
@@ -385,6 +385,11 @@
                                     method="POST"
                                     class="cinematic-rsvp-form"
                                 >
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
                                     <input type="hidden" name="event_id" value="{{ event.id }}">
 
                                     <fieldset class="attendance-choice-group">
@@ -775,6 +780,9 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfMeta ? csrfMeta.content : "";
+
         const tabButtons = document.querySelectorAll(".tab-btn");
         const tabContents = document.querySelectorAll(".tab-content");
 
@@ -1278,7 +1286,8 @@
                         body: formData,
                         credentials: "same-origin",
                         headers: {
-                            "X-Requested-With": "XMLHttpRequest"
+                            "X-Requested-With": "XMLHttpRequest",
+                            "X-CSRF-Token": csrfToken
                         }
                     });
 
