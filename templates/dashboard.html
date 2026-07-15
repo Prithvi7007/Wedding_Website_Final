@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard19eventbackgrounds"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard21scheduleopticalauto"
     >
 </head>
 
@@ -195,8 +195,9 @@
                         <span class="journey-dot" aria-hidden="true"></span>
                         <span class="journey-date">{{ event.short_date }}</span>
                         <span class="journey-title">
-                            {% if event.id == 'hindu_wedding' %}Hindu Wedding
-                            {% elif event.id == 'christian_wedding_reception' %}Wedding &amp; Reception
+                            {% set timeline_name = event.title | lower %}
+                            {% if 'telugu' in timeline_name or 'hindu' in timeline_name %}Telugu Wedding
+                            {% elif 'church' in timeline_name or 'christian' in timeline_name or 'reception' in timeline_name %}Wedding &amp; Reception
                             {% else %}{{ event.title }}{% endif %}
                         </span>
                     </button>
@@ -207,12 +208,11 @@
                 {% for event in events %}
                     {% set saved = saved_rsvps.get(event.id, {}) %}
                     {% set has_response = saved.get("attending") %}
+                    {% set event_name = event.title | lower %}
 
                     <article
                         id="event-card-{{ event.id }}"
                         data-schedule-event="{{ event.id }}"
-                        {% set event_name = event.title | lower %}
-
                         class="cinematic-event-card
                             {% if 'haldi' in event_name %}
                                 event-haldi
@@ -230,11 +230,11 @@
                             <p class="event-date-line">{{ event.date }}</p>
                             <h3 id="event-title-{{ event.id }}">{{ event.title }}</h3>
 
-                            {% if event.id == 'haldi' %}
+                            {% if 'haldi' in event_name %}
                                 <p class="event-kicker">A joyful pre-wedding celebration</p>
-                            {% elif event.id == 'hindu_wedding' %}
-                                <p class="event-kicker">Traditional Hindu ceremony and blessings</p>
-                            {% elif event.id == 'christian_wedding_reception' %}
+                            {% elif 'telugu' in event_name or 'hindu' in event_name %}
+                                <p class="event-kicker">Traditional Telugu ceremony and blessings</p>
+                            {% elif 'church' in event_name or 'christian' in event_name or 'reception' in event_name %}
                                 <p class="event-kicker">Ceremony, dinner, dancing, and celebration</p>
                             {% endif %}
 
@@ -808,8 +808,8 @@
         const slideGroups = [welcomeSlides, backgroundSlides].filter(function (group) { return group.length > 0; });
         const slideCount = slideGroups.reduce(function (count, group) { return Math.max(count, group.length); }, 0);
         const dots = Array.from(document.querySelectorAll("#welcome .dot"));
-        const SLIDE_INTERVAL_MS = 9000;
-        const AUTO_SLIDESHOW_ENABLED = false;
+        const SLIDE_INTERVAL_MS = 7500;
+        const AUTO_SLIDESHOW_ENABLED = true;
         const FADE_OUT_MS = 340;
         const FADE_IN_MS = 480;
 
@@ -885,12 +885,8 @@
                 slideshowTimer = null;
             }
 
-            /*
-             * Keep the strongest opening photograph locked while we match the
-             * approved composition. Arrows and dots still provide the complete
-             * slideshow manually. Change this flag to true when automatic
-             * rotation is ready to return.
-             */
+            /* The Welcome hero and the background shared by the remaining
+             * tabs advance together, keeping the same photograph across tabs. */
             if (!AUTO_SLIDESHOW_ENABLED) {
                 return;
             }
@@ -910,6 +906,17 @@
 
         updateSlideDots(currentSlide);
         startSlideshowTimer();
+
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) {
+                if (slideshowTimer) {
+                    window.clearInterval(slideshowTimer);
+                    slideshowTimer = null;
+                }
+            } else {
+                startSlideshowTimer();
+            }
+        });
 
         window.toggleRsvpForm = function (eventId) {
             const form = document.getElementById("rsvp-form-" + eventId);

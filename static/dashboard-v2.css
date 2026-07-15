@@ -1694,14 +1694,17 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 }
 
 .cinematic-event-card.event-haldi {
+    --event-accent-rgb: 227, 185, 105;
     background-image: url("/static/images/schedule/schedule-haldi-desktop.webp");
 }
 
 .cinematic-event-card.event-hindu {
+    --event-accent-rgb: 199, 103, 88;
     background-image: url("/static/images/schedule/schedule-hindu-desktop.webp");
 }
 
 .cinematic-event-card.event-christian {
+    --event-accent-rgb: 192, 207, 175;
     background-image: url("/static/images/schedule/schedule-church-desktop.webp");
 }
 
@@ -1727,31 +1730,87 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     top: 50%;
     left: clamp(34px, 6vw, 96px);
     z-index: 2;
+    isolation: isolate;
+
     width: min(520px, calc(100% - 68px));
     padding: 38px 40px 34px;
     transform: translateY(-50%);
+
     overflow: visible;
-    border: 1px solid rgba(255,255,255,.28);
+    border: 0;
     border-radius: 30px;
-    background:
-        radial-gradient(ellipse 85% 72% at 45% 28%, rgba(255,255,255,.055), rgba(255,255,255,.016) 45%, rgba(0,0,0,.10) 100%),
-        linear-gradient(145deg, rgba(255,255,255,.045), rgba(0,0,0,.15));
-    backdrop-filter: blur(10px) saturate(142%) brightness(.93);
-    -webkit-backdrop-filter: blur(10px) saturate(142%) brightness(.93);
-    box-shadow: 0 26px 60px rgba(0,0,0,.27), inset 0 1px 0 rgba(255,255,255,.24), inset 0 -1px 0 rgba(255,255,255,.05);
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
+/* Localized glass atmosphere that dissolves into the celebration image. */
 .event-glass-panel::before {
     content: "";
     position: absolute;
-    inset: 2px;
+    inset: -24px -38px -28px -34px;
+    z-index: -2;
     pointer-events: none;
-    border-radius: 27px;
-    background: radial-gradient(ellipse 80% 24% at 50% -2%, rgba(255,255,255,.21), transparent 74%);
-    mix-blend-mode: screen;
+    border-radius: 40px;
+
+    background:
+        radial-gradient(
+            ellipse 96% 90% at 29% 48%,
+            rgba(9, 8, 8, 0.48) 0%,
+            rgba(9, 8, 8, 0.31) 43%,
+            rgba(9, 8, 8, 0.11) 69%,
+            transparent 90%
+        ),
+        radial-gradient(
+            ellipse 78% 35% at 40% 0%,
+            rgba(255, 255, 255, 0.13) 0%,
+            rgba(255, 255, 255, 0.032) 48%,
+            transparent 76%
+        );
+
+    backdrop-filter: blur(7px) saturate(146%) brightness(0.96);
+    -webkit-backdrop-filter: blur(7px) saturate(146%) brightness(0.96);
+
+    -webkit-mask-image: radial-gradient(
+        ellipse 97% 91% at 29% 49%,
+        #000 0%,
+        #000 57%,
+        rgba(0, 0, 0, 0.68) 72%,
+        transparent 91%
+    );
+    mask-image: radial-gradient(
+        ellipse 97% 91% at 29% 49%,
+        #000 0%,
+        #000 57%,
+        rgba(0, 0, 0, 0.68) 72%,
+        transparent 91%
+    );
+
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.13);
 }
 
-.event-glass-panel > * { position: relative; z-index: 1; }
+/* Partial molded highlights replace a complete rounded rectangle. */
+.event-glass-panel::after {
+    content: "";
+    position: absolute;
+    inset: -3px -14px -6px -8px;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 32px;
+
+    background:
+        linear-gradient(90deg, rgba(255,255,255,.42), rgba(255,255,255,.10) 45%, transparent 84%) top left / 84% 1px no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,.055) 56%, transparent 88%) top left / 1px 84% no-repeat,
+        radial-gradient(ellipse 68% 20% at 34% 0%, rgba(255,255,255,.12), transparent 72%);
+
+    opacity: 0.72;
+}
+
+.event-glass-panel > * {
+    position: relative;
+    z-index: 1;
+}
 
 .event-glass-panel h3 {
     margin: 7px 0 4px;
@@ -1796,26 +1855,149 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 }
 
 .event-glass-button {
+    --event-button-border: 1px;
+
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
     min-height: 46px;
     margin: 0;
     padding: 0;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255,255,255,.30);
+
+    border: 0;
     border-radius: 999px;
-    background: linear-gradient(-75deg, rgba(255,255,255,.03), rgba(255,255,255,.13), rgba(255,255,255,.03));
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.075) 0%,
+            rgba(255,255,255,.018) 45%,
+            rgba(255,255,255,.035) 100%
+        );
     color: var(--dash-cream);
     text-decoration: none;
-    backdrop-filter: blur(7px) saturate(140%);
-    -webkit-backdrop-filter: blur(7px) saturate(140%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.27), inset 0 -1px 0 rgba(255,255,255,.06), 0 7px 18px rgba(0,0,0,.18);
-    transition: transform .28s ease, background .28s ease;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    backdrop-filter: blur(7px) saturate(154%) brightness(1.07) contrast(1.025);
+    -webkit-backdrop-filter: blur(7px) saturate(154%) brightness(1.07) contrast(1.025);
+
+    box-shadow:
+        0 10px 24px rgba(0,0,0,.22),
+        0 2px 5px rgba(0,0,0,.15),
+        0 0 0 1px rgba(255,255,255,.17),
+        inset 0 1.4px 1px rgba(255,255,255,.56),
+        inset 0 -1.5px 1px rgba(255,255,255,.10);
+
+    transform: translateZ(0);
+    transition:
+        transform 360ms cubic-bezier(.22,1,.36,1),
+        background 300ms ease,
+        box-shadow 360ms cubic-bezier(.22,1,.36,1);
 }
 
-.event-glass-button span { padding: 14px 20px; font-family: "Manrope", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; }
-.event-glass-button:hover { transform: translateY(-2px) scale(.985); background: linear-gradient(-75deg, rgba(255,255,255,.06), rgba(255,255,255,.19), rgba(255,255,255,.06)); }
-.event-rsvp-trigger { border-color: rgba(227,185,105,.50); box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 0 0 1px rgba(227,185,105,.12), 0 8px 18px rgba(0,0,0,.20); }
+/* Convex highlight across the clear-glass surface. */
+.event-glass-button::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 7%;
+    left: 7%;
+    z-index: 0;
+    height: 43%;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.08) 40%, transparent 100%);
+    opacity: .68;
+    transition: opacity 300ms ease, transform 360ms cubic-bezier(.22,1,.36,1);
+}
+
+/* Event-colored refraction appears only at the molded rim. */
+.event-glass-button::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--event-button-border) / -2);
+    z-index: 1;
+    padding: var(--event-button-border);
+    box-sizing: border-box;
+    border-radius: inherit;
+    pointer-events: none;
+
+    background: conic-gradient(
+        from -72deg at 50% 50%,
+        rgba(var(--event-accent-rgb, 227,185,105), .94),
+        rgba(255,255,255,.10) 9% 34%,
+        rgba(var(--event-accent-rgb, 227,185,105), .68) 49%,
+        rgba(255,255,255,.07) 62% 91%,
+        rgba(var(--event-accent-rgb, 227,185,105), .92)
+    );
+
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+
+    opacity: .74;
+    transform: rotate(0deg);
+    transition: transform 680ms cubic-bezier(.22,1,.36,1), opacity 280ms ease;
+}
+
+.event-glass-button span {
+    position: relative;
+    z-index: 2;
+    padding: 14px 20px;
+    color: rgba(255,255,255,.95);
+    font-family: "Manrope", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0,0,0,.76), 0 3px 11px rgba(0,0,0,.22);
+}
+
+.event-glass-button:hover {
+    transform: translateY(-1px) scale(.982);
+    background: linear-gradient(180deg, rgba(255,255,255,.095), rgba(255,255,255,.025) 48%, rgba(255,255,255,.012));
+    box-shadow:
+        0 13px 28px rgba(0,0,0,.24),
+        0 2px 4px rgba(0,0,0,.14),
+        0 0 0 1px rgba(255,255,255,.20),
+        inset 0 1.4px 1px rgba(255,255,255,.66),
+        inset 0 -1.5px 1px rgba(255,255,255,.14);
+}
+
+.event-glass-button:hover::before {
+    opacity: .88;
+    transform: translateY(-1px) scaleX(.98);
+}
+
+.event-glass-button:hover::after {
+    opacity: .96;
+    transform: rotate(-76deg);
+}
+
+.event-glass-button:active {
+    transform: translateY(1px) scale(.972);
+}
+
+.event-glass-button:focus-visible {
+    outline: 2px solid rgba(255,255,255,.90);
+    outline-offset: 4px;
+}
+
+.event-rsvp-trigger {
+    background: linear-gradient(180deg, rgba(255,255,255,.095), rgba(255,255,255,.028) 47%, rgba(var(--event-accent-rgb,227,185,105),.045));
+    box-shadow:
+        0 11px 26px rgba(0,0,0,.23),
+        0 0 18px rgba(var(--event-accent-rgb,227,185,105),.10),
+        0 0 0 1px rgba(255,255,255,.19),
+        inset 0 1.4px 1px rgba(255,255,255,.62),
+        inset 0 -1.5px 1px rgba(255,255,255,.12);
+}
 
 .calendar-menu-wrap { position: relative; }
 .calendar-popover {
@@ -1970,8 +2152,24 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         padding: 28px 22px 24px;
         transform: none;
         border-radius: 25px;
-        backdrop-filter: blur(10px) saturate(142%) brightness(.91);
-        -webkit-backdrop-filter: blur(10px) saturate(142%) brightness(.91);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .event-glass-panel::before {
+        inset: -18px -12px -17px;
+        border-radius: 31px;
+        background:
+            radial-gradient(ellipse 105% 94% at 43% 52%, rgba(8,7,8,.55), rgba(8,7,8,.34) 54%, rgba(8,7,8,.10) 77%, transparent 95%),
+            radial-gradient(ellipse 84% 28% at 50% 0%, rgba(255,255,255,.12), transparent 74%);
+        backdrop-filter: blur(7px) saturate(146%) brightness(.95);
+        -webkit-backdrop-filter: blur(7px) saturate(146%) brightness(.95);
+    }
+
+    .event-glass-panel::after {
+        inset: -2px -5px -4px;
+        border-radius: 27px;
+        opacity: .64;
     }
     .event-glass-panel h3 { font-size: 50px; }
     .event-kicker { margin-bottom: 17px; font-size: 17px; }
@@ -1989,6 +2187,17 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     .rsvp-sheet-heading h4 { font-size: 36px; }
     .attendance-choices { gap: 7px; }
     .attendance-choice span { min-height: 46px; font-size: 10px; }
+}
+
+
+@media (hover: none), (pointer: coarse) {
+    .event-glass-button:hover {
+        transform: none;
+    }
+
+    .event-glass-button:hover::after {
+        transform: none;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2722,13 +2931,13 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     .event-hindu .event-artwork {
         background-image:
             linear-gradient(180deg, rgba(255, 248, 235, 0.17), rgba(255, 248, 235, 0.04) 50%, rgba(255, 245, 229, 0.14)),
-            url("/static/images/WEDDING-mobile.webp");
+            url("/static/images/schedule/schedule-hindu-mobile.webp");
     }
 
     .event-christian .event-artwork {
         background-image:
             linear-gradient(180deg, rgba(255, 249, 238, 0.18), rgba(255, 249, 238, 0.045) 50%, rgba(255, 248, 235, 0.15)),
-            url("/static/images/RECEPTION-mobile.webp");
+            url("/static/images/schedule/schedule-church-mobile.webp");
     }
 
     .event-artwork::before {
