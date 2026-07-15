@@ -2747,6 +2747,9 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     pointer-events: none;
     transform-origin: 46% 72%;
     will-change: transform, opacity;
+    contain: layout paint style;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 
     animation:
         rsvp-petal-fall
@@ -5600,4 +5603,39 @@ html,
 body,
 .dashboard-app {
     touch-action: manipulation;
+}
+
+/* Mobile Safari is markedly smoother with a 2D rotation. The element still
+   travels on a compositor layer, but avoids repainting gradients during a
+   rotateY flip on every frame. */
+.rsvp-petal-ios {
+    animation-name: rsvp-petal-fall-ios;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.10);
+}
+
+@keyframes rsvp-petal-fall-ios {
+    0% {
+        opacity: 0.96;
+        transform: translate3d(0, 0, 0)
+            rotate(var(--petal-rotation-start, 0deg))
+            scale(var(--petal-scale, 1));
+    }
+    30% {
+        opacity: 0.98;
+        transform: translate3d(var(--petal-drift-a, 18px), 34vh, 0)
+            rotate(var(--petal-rotation-a, 180deg))
+            scale(var(--petal-scale, 1));
+    }
+    64% {
+        opacity: 0.94;
+        transform: translate3d(var(--petal-drift-b, -24px), 73vh, 0)
+            rotate(var(--petal-rotation-b, 390deg))
+            scale(var(--petal-scale, 1));
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(var(--petal-drift-end, 48px), 118vh, 0)
+            rotate(var(--petal-rotation-end, 790deg))
+            scale(var(--petal-scale, 1));
+    }
 }

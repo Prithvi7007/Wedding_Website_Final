@@ -22,7 +22,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard39readabletravelqafixedattire"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard40iosstabilitys"
     >
 </head>
 
@@ -1070,13 +1070,26 @@
             };
 
             const palette = palettes[theme];
-            const petalCount = window.innerWidth <= 700 ? 42 : 58;
-            const releaseWindow = window.innerWidth <= 700 ? 760 : 920;
+            const isIos = /iP(?:hone|ad|od)/.test(navigator.userAgent)
+                || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+            const isCompact = window.innerWidth <= 700;
+            const petalCount = isIos ? 24 : (isCompact ? 34 : 58);
+            const releaseWindow = isIos ? 520 : (isCompact ? 680 : 920);
+            const burstId = String(Date.now()) + "-" + Math.random().toString(16).slice(2);
+
+            container.dataset.petalBurstId = burstId;
+
+            /* Do not leave an earlier burst competing for Safari's compositor. */
+            container.querySelectorAll(".rsvp-petal").forEach(function (petal) {
+                petal.remove();
+            });
 
             for (let i = 0; i < petalCount; i++) {
                 const spawnDelay = Math.random() * releaseWindow;
 
                 window.setTimeout(function () {
+                    if (container.dataset.petalBurstId !== burstId) return;
+
                     const petal = document.createElement("span");
                     const tone = palette[Math.floor(Math.random() * palette.length)];
                     const duration = 5.2 + Math.random() * 2.5;
@@ -1086,6 +1099,9 @@
                     const driftEnd = -140 + Math.random() * 280;
 
                     petal.className = "rsvp-petal rsvp-petal-" + theme + " petal-shape-" + (1 + Math.floor(Math.random() * 3));
+                    if (isIos) {
+                        petal.classList.add("rsvp-petal-ios");
+                    }
                     petal.style.left = Math.random() * 100 + "vw";
                     petal.style.top = (-24 - Math.random() * 96).toFixed(0) + "px";
                     petal.style.setProperty("--petal-color", tone.color);
@@ -1361,6 +1377,54 @@
                 closeAttireInspiration(id);
             }
         });
+
+        /* iOS can attempt double-tap zoom even with touch-action: manipulation.
+         * On this composited page that can exhaust Safari's rendering process.
+         * Cancel only the second tap at the same location; scrolling and pinch
+         * zoom remain untouched. */
+        (function guardIosDoubleTap() {
+            const isIos = /iP(?:hone|ad|od)/.test(navigator.userAgent)
+                || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+            if (!isIos) return;
+
+            let lastTapTime = 0;
+            let lastTapX = 0;
+            let lastTapY = 0;
+            let multiTouchGesture = false;
+
+            document.addEventListener("touchstart", function (event) {
+                if (event.touches.length > 1) {
+                    multiTouchGesture = true;
+                }
+            }, { passive: true });
+
+            document.addEventListener("touchend", function (event) {
+                if (multiTouchGesture) {
+                    if (event.touches.length === 0) multiTouchGesture = false;
+                    lastTapTime = 0;
+                    return;
+                }
+
+                const touch = event.changedTouches[0];
+                if (!touch) return;
+
+                const now = Date.now();
+                const isRapid = now - lastTapTime < 350;
+                const isNearby = Math.abs(touch.clientX - lastTapX) < 28
+                    && Math.abs(touch.clientY - lastTapY) < 28;
+
+                if (isRapid && isNearby && event.cancelable) {
+                    event.preventDefault();
+                    lastTapTime = 0;
+                    return;
+                }
+
+                lastTapTime = now;
+                lastTapX = touch.clientX;
+                lastTapY = touch.clientY;
+            }, { passive: false });
+        }());
 
         document.addEventListener("keydown", function (event) {
             if (event.key !== "Escape") return;
