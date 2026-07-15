@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard33backgroundrevealingglass"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard34notoasthaldidarklabels"
     >
 </head>
 
@@ -38,16 +38,6 @@
             <img class="slide slide-4" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
             <img class="slide slide-5" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="">
             <img class="slide slide-6" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="">
-        </div>
-    </div>
-
-    <div id="login-toast" class="login-toast" role="status" aria-live="polite">
-        <div class="login-toast-inner">
-            <span class="login-icon" aria-hidden="true">✦</span>
-            <div>
-                <strong>Welcome</strong>
-                <p>Your private wedding portal is ready.</p>
-            </div>
         </div>
     </div>
 
@@ -1080,20 +1070,6 @@
         }
         const shouldShowLoginEffect = {{ 'true' if login_effect == 'success' else 'false' }};
 
-        function showLoginToast() {
-            const toast = document.getElementById("login-toast");
-
-            if (!toast) {
-                return;
-            }
-
-            toast.classList.add("show");
-
-            setTimeout(function () {
-                toast.classList.remove("show");
-            }, 3200);
-        }
-
         function burstLoginSparkles() {
             const container = document.getElementById("confetti-container");
 
@@ -1128,7 +1104,6 @@
 
         if (shouldShowLoginEffect) {
             activateTab("welcome");
-            showLoginToast();
             burstLoginSparkles();
 
             const hero = document.querySelector(".welcome-hero");

@@ -2711,8 +2711,7 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     }
 }
 
-.celebration-toast,
-.login-toast {
+.celebration-toast {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -2726,14 +2725,12 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         transform 320ms ease;
 }
 
-.celebration-toast.show,
-.login-toast.show {
+.celebration-toast.show {
     opacity: 1;
     transform: translateY(0);
 }
 
-.celebration-toast-inner,
-.login-toast-inner {
+.celebration-toast-inner {
     display: flex;
     align-items: flex-start;
     gap: 11px;
@@ -2752,14 +2749,12 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     box-shadow: 0 18px 42px rgba(0, 0, 0, 0.30);
 }
 
-.celebration-icon,
-.login-icon {
+.celebration-icon {
     color: var(--dash-gold);
     font-size: 20px;
 }
 
-.celebration-toast strong,
-.login-toast strong {
+.celebration-toast strong {
     display: block;
     margin-bottom: 3px;
 
@@ -2769,8 +2764,7 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     letter-spacing: 1px;
 }
 
-.celebration-toast p,
-.login-toast p {
+.celebration-toast p {
     color: var(--dash-muted);
     font-size: 12px;
     line-height: 1.45;
@@ -3407,15 +3401,13 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         margin: 12px 0 16px;
     }
 
-    .celebration-toast,
-    .login-toast {
+    .celebration-toast {
         top: 12px;
         right: 12px;
         left: 12px;
     }
 
-    .celebration-toast-inner,
-    .login-toast-inner {
+    .celebration-toast-inner {
         width: 100%;
     }
 
@@ -5073,4 +5065,20 @@ html {
                 transparent 76%
             );
     }
+}
+
+/* ===================================================== */
+/* V34 — HALDI DARK LABELS + TOAST-FREE ENTRY            */
+/* Only the Haldi card's small informational headings     */
+/* change from gold to deep espresso-black.               */
+/* ===================================================== */
+
+.event-haldi .event-date-line,
+.event-haldi .event-fact > span,
+.event-haldi .event-attire-label,
+.event-haldi .event-response-label {
+    color: rgba(31, 20, 8, 0.94);
+    text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.18),
+        0 1px 5px rgba(255, 255, 255, 0.08);
 }
