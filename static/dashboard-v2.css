@@ -2750,9 +2750,8 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 
     animation:
         rsvp-petal-fall
-        var(--petal-duration, 5.2s)
-        cubic-bezier(0.18, 0.72, 0.26, 1)
-        var(--petal-delay, 0s)
+        var(--petal-duration, 6.2s)
+        linear
         forwards;
 }
 
@@ -2811,41 +2810,47 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 
 @keyframes rsvp-petal-fall {
     0% {
-        opacity: 0;
+        opacity: 0.96;
         transform:
-            translate3d(0, -8vh, 0)
+            translate3d(0, 0, 0)
             rotateZ(var(--petal-rotation-start, 0deg))
             rotateY(0deg)
             scale(var(--petal-scale, 1));
     }
 
-    8% {
+    24% {
         opacity: 0.98;
-    }
-
-    32% {
         transform:
-            translate3d(var(--petal-drift-a, 20px), 34vh, 0)
-            rotateZ(var(--petal-rotation-mid, 260deg))
-            rotateY(170deg)
+            translate3d(var(--petal-drift-a, 18px), 28vh, 0)
+            rotateZ(var(--petal-rotation-a, 180deg))
+            rotateY(150deg)
             scale(var(--petal-scale, 1));
     }
 
-    63% {
-        opacity: 0.94;
+    51% {
+        opacity: 0.96;
         transform:
-            translate3d(var(--petal-drift-b, -30px), 70vh, 0)
-            rotateZ(calc(var(--petal-rotation-mid, 260deg) + 220deg))
-            rotateY(420deg)
+            translate3d(var(--petal-drift-b, -24px), 59vh, 0)
+            rotateZ(var(--petal-rotation-b, 390deg))
+            rotateY(320deg)
+            scale(var(--petal-scale, 1));
+    }
+
+    77% {
+        opacity: 0.92;
+        transform:
+            translate3d(var(--petal-drift-c, 34px), 88vh, 0)
+            rotateZ(var(--petal-rotation-c, 590deg))
+            rotateY(500deg)
             scale(var(--petal-scale, 1));
     }
 
     100% {
         opacity: 0;
         transform:
-            translate3d(var(--petal-drift-end, 55px), 114vh, 0)
-            rotateZ(var(--petal-rotation-end, 980deg))
-            rotateY(760deg)
+            translate3d(var(--petal-drift-end, 48px), 118vh, 0)
+            rotateZ(var(--petal-rotation-end, 790deg))
+            rotateY(680deg)
             scale(var(--petal-scale, 1));
     }
 }

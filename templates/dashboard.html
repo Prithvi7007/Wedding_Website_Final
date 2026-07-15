@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard37eventpetals"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard38naturalpetals"
     >
 </head>
 
@@ -1003,8 +1003,8 @@
         };
 
         /* Event-specific CSS petals replace the generic RSVP confetti.
-         * No image assets are required: JavaScript only supplies randomized
-         * position, size and color variables while CSS draws and animates each petal. */
+         * Petals are created over a short release window and begin moving as
+         * soon as each one enters the DOM, avoiding a delayed "pause, then fall" effect. */
         function burstRsvpPetals(eventId) {
             const container = document.getElementById("confetti-container");
             const eventCard = document.getElementById("event-card-" + eventId);
@@ -1044,38 +1044,46 @@
 
             const palette = palettes[theme];
             const petalCount = window.innerWidth <= 700 ? 42 : 58;
+            const releaseWindow = window.innerWidth <= 700 ? 760 : 920;
 
             for (let i = 0; i < petalCount; i++) {
-                const petal = document.createElement("span");
-                const tone = palette[Math.floor(Math.random() * palette.length)];
-                const duration = 4.2 + Math.random() * 2.2;
-                const delay = Math.random() * 0.65;
-                const driftA = -70 + Math.random() * 140;
-                const driftB = -110 + Math.random() * 220;
-                const driftEnd = -170 + Math.random() * 340;
-
-                petal.className = "rsvp-petal rsvp-petal-" + theme + " petal-shape-" + (1 + Math.floor(Math.random() * 3));
-                petal.style.left = Math.random() * 100 + "vw";
-                petal.style.setProperty("--petal-color", tone.color);
-                petal.style.setProperty("--petal-highlight", tone.highlight);
-                petal.style.setProperty("--petal-shadow", tone.shadow);
-                petal.style.setProperty("--petal-width", (8 + Math.random() * 8).toFixed(1) + "px");
-                petal.style.setProperty("--petal-height", (13 + Math.random() * 13).toFixed(1) + "px");
-                petal.style.setProperty("--petal-scale", (0.72 + Math.random() * 0.70).toFixed(2));
-                petal.style.setProperty("--petal-duration", duration.toFixed(2) + "s");
-                petal.style.setProperty("--petal-delay", delay.toFixed(2) + "s");
-                petal.style.setProperty("--petal-drift-a", driftA.toFixed(0) + "px");
-                petal.style.setProperty("--petal-drift-b", driftB.toFixed(0) + "px");
-                petal.style.setProperty("--petal-drift-end", driftEnd.toFixed(0) + "px");
-                petal.style.setProperty("--petal-rotation-start", (-90 + Math.random() * 180).toFixed(0) + "deg");
-                petal.style.setProperty("--petal-rotation-mid", (180 + Math.random() * 300).toFixed(0) + "deg");
-                petal.style.setProperty("--petal-rotation-end", (620 + Math.random() * 620).toFixed(0) + "deg");
-
-                container.appendChild(petal);
+                const spawnDelay = Math.random() * releaseWindow;
 
                 window.setTimeout(function () {
-                    petal.remove();
-                }, Math.ceil((duration + delay + 0.5) * 1000));
+                    const petal = document.createElement("span");
+                    const tone = palette[Math.floor(Math.random() * palette.length)];
+                    const duration = 5.2 + Math.random() * 2.5;
+                    const driftA = -55 + Math.random() * 110;
+                    const driftB = -90 + Math.random() * 180;
+                    const driftC = -115 + Math.random() * 230;
+                    const driftEnd = -140 + Math.random() * 280;
+
+                    petal.className = "rsvp-petal rsvp-petal-" + theme + " petal-shape-" + (1 + Math.floor(Math.random() * 3));
+                    petal.style.left = Math.random() * 100 + "vw";
+                    petal.style.top = (-24 - Math.random() * 96).toFixed(0) + "px";
+                    petal.style.setProperty("--petal-color", tone.color);
+                    petal.style.setProperty("--petal-highlight", tone.highlight);
+                    petal.style.setProperty("--petal-shadow", tone.shadow);
+                    petal.style.setProperty("--petal-width", (8 + Math.random() * 8).toFixed(1) + "px");
+                    petal.style.setProperty("--petal-height", (13 + Math.random() * 13).toFixed(1) + "px");
+                    petal.style.setProperty("--petal-scale", (0.72 + Math.random() * 0.70).toFixed(2));
+                    petal.style.setProperty("--petal-duration", duration.toFixed(2) + "s");
+                    petal.style.setProperty("--petal-drift-a", driftA.toFixed(0) + "px");
+                    petal.style.setProperty("--petal-drift-b", driftB.toFixed(0) + "px");
+                    petal.style.setProperty("--petal-drift-c", driftC.toFixed(0) + "px");
+                    petal.style.setProperty("--petal-drift-end", driftEnd.toFixed(0) + "px");
+                    petal.style.setProperty("--petal-rotation-start", (-55 + Math.random() * 110).toFixed(0) + "deg");
+                    petal.style.setProperty("--petal-rotation-a", (90 + Math.random() * 170).toFixed(0) + "deg");
+                    petal.style.setProperty("--petal-rotation-b", (240 + Math.random() * 220).toFixed(0) + "deg");
+                    petal.style.setProperty("--petal-rotation-c", (390 + Math.random() * 260).toFixed(0) + "deg");
+                    petal.style.setProperty("--petal-rotation-end", (570 + Math.random() * 360).toFixed(0) + "deg");
+
+                    container.appendChild(petal);
+
+                    window.setTimeout(function () {
+                        petal.remove();
+                    }, Math.ceil((duration + 0.35) * 1000));
+                }, spawnDelay);
             }
         }
 
