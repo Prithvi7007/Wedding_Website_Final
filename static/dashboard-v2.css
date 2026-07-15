@@ -3774,9 +3774,10 @@ body[data-active-tab="qa"] #qa {
 /* more of each cinematic background to remain visible.  */
 /* ===================================================== */
 
-/* Slightly shorter event chapters now that the content is compact. */
+/* Restore the approved cinematic chapter height. The information panel stays
+   compact, but the event photograph keeps the taller visual breathing room. */
 .cinematic-event-card {
-    min-height: clamp(560px, 68vh, 740px);
+    min-height: clamp(620px, 76vh, 840px);
 }
 
 .event-glass-panel {
@@ -4013,7 +4014,7 @@ body[data-active-tab="qa"] #qa {
 
 @media (max-width: 700px) {
     .cinematic-event-card {
-        min-height: clamp(550px, 78svh, 665px);
+        min-height: clamp(680px, 88svh, 860px);
     }
 
     .event-glass-panel {
@@ -4705,5 +4706,187 @@ body[data-active-tab="registry"] #registry.registry-tab {
     .registry-target-btn,
     .registry-target-btn::before {
         transition: none !important;
+    }
+}
+
+/* ===================================================== */
+/* V24 — NARROW/SHORT PHONE EVENT-CARD CONTAINMENT       */
+/* Keeps every Schedule detail inside its celebration     */
+/* background when Safari has a short viewport or larger  */
+/* text metrics. Desktop and regular phone layouts remain */
+/* unchanged.                                             */
+/* ===================================================== */
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+@media (max-width: 430px), (max-width: 700px) and (max-height: 740px) {
+    /* On constrained phones, the panel contributes to the card height while
+       an 82svh minimum preserves the cinematic image area above the copy. */
+    .cinematic-event-card {
+        min-height: 82svh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding-top: clamp(225px, 38svh, 320px);
+        overflow: hidden;
+    }
+
+    /* Relative positioning makes the panel contribute to the parent height,
+       so it can never extend below the event background. */
+    .event-glass-panel {
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+
+        width: auto;
+        margin: 0 10px 10px;
+        padding: 20px 16px 16px;
+        transform: none;
+    }
+
+    .event-glass-panel::before {
+        inset: -11px -5px -9px;
+        border-radius: 28px;
+    }
+
+    .event-glass-panel::after {
+        inset: -1px -3px -3px;
+        border-radius: 25px;
+    }
+
+    .event-glass-panel h3 {
+        max-width: 100%;
+        font-size: clamp(36px, 10.4vw, 44px);
+        line-height: 0.94;
+        overflow-wrap: anywhere;
+    }
+
+    .event-christian .event-glass-panel h3 {
+        font-size: clamp(34px, 9.7vw, 41px);
+    }
+
+    .event-kicker {
+        margin-bottom: 12px;
+        font-size: 14px;
+        line-height: 1.25;
+    }
+
+    /* Time and Location return to one compact row instead of consuming
+       two full vertical blocks. */
+    .event-facts {
+        grid-template-columns: minmax(72px, 0.62fr) minmax(0, 1.55fr);
+        gap: 12px;
+        margin-bottom: 10px;
+        padding: 10px 0;
+    }
+
+    .event-fact {
+        min-width: 0;
+    }
+
+    .event-fact strong {
+        font-size: 16px;
+        line-height: 1.18;
+    }
+
+    .event-fact small {
+        font-size: 10px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+
+    /* Keep the attire text and its optional inspiration control together. */
+    .event-attire-section {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 10px;
+        padding-bottom: 10px;
+    }
+
+    .event-attire-copy {
+        min-width: 0;
+    }
+
+    .event-attire-copy strong {
+        font-size: 16px;
+    }
+
+    .attire-inspiration-trigger {
+        justify-self: end;
+        margin-bottom: 1px;
+        font-size: 8.5px;
+        letter-spacing: 0.72px;
+        white-space: nowrap;
+    }
+
+    .event-response-summary {
+        gap: 7px;
+        padding-top: 9px;
+    }
+
+    .event-response-summary strong {
+        font-size: 16px;
+    }
+
+    /* Preserve the requested single action row while fitting narrower
+       Safari viewports without forcing Calendar below the other buttons. */
+    .event-primary-actions,
+    .event-response-summary .event-primary-actions {
+        grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.92fr) minmax(0, 0.92fr);
+        gap: 5px;
+    }
+
+    .event-glass-button,
+    .event-rsvp-trigger,
+    .calendar-menu-wrap,
+    .calendar-toggle {
+        min-width: 0;
+    }
+
+    .event-glass-button span,
+    .event-rsvp-trigger span {
+        padding: 10px 3px;
+        font-size: 7.2px;
+        letter-spacing: 0.58px;
+    }
+
+    .event-rsvp-trigger span {
+        font-size: 7.5px;
+        letter-spacing: 0.62px;
+    }
+}
+
+@media (max-width: 360px) {
+    .event-glass-panel {
+        margin-right: 8px;
+        margin-left: 8px;
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .event-glass-panel h3,
+    .event-christian .event-glass-panel h3 {
+        font-size: 34px;
+    }
+
+    .event-facts {
+        grid-template-columns: 66px minmax(0, 1fr);
+        gap: 9px;
+    }
+
+    .attire-inspiration-trigger {
+        font-size: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .event-glass-button span,
+    .event-rsvp-trigger span {
+        font-size: 6.8px;
+        letter-spacing: 0.42px;
     }
 }
