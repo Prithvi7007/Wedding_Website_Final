@@ -20,7 +20,42 @@ if load_dotenv:
 
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "temporary-dev-secret-key-change-this")
+
+# Require a private, high-entropy key for signing invitation sessions.
+# The application fails closed instead of falling back to a public key.
+secret_key = os.getenv("SECRET_KEY")
+
+if not secret_key:
+    raise RuntimeError(
+        "SECRET_KEY environment variable is required. "
+        "Generate one with: python -c "
+        "\"import secrets; print(secrets.token_urlsafe(64))\""
+    )
+
+blocked_secret_keys = {
+    "temporary-dev-secret-key-change-this",
+    "temporary-dev-secret-key-change-later",
+}
+
+if secret_key in blocked_secret_keys:
+    raise RuntimeError(
+        "The configured SECRET_KEY is a known insecure placeholder."
+    )
+
+if len(secret_key) < 32:
+    raise RuntimeError(
+        "SECRET_KEY must be at least 32 characters long."
+    )
+
+app.config.update(
+    SECRET_KEY=secret_key,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=os.getenv(
+        "SESSION_COOKIE_SECURE",
+        "true"
+    ).lower() in {"1", "true", "yes", "on"},
+)
 
 
 # =============================
