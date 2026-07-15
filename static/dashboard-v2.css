@@ -1648,8 +1648,8 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 .schedule-eyebrow,
 .event-date-line,
 .event-fact span,
-.event-attire-line span,
-.event-response-summary span,
+.event-attire-label,
+.event-response-label,
 .rsvp-sheet-heading p {
     color: var(--dash-gold);
     font-family: "Manrope", sans-serif;
@@ -1710,18 +1710,53 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 
 
 /* ----------------------------------------------------- */
-/* EVENT ATTIRE ARTWORK — TRANSPARENT EDITORIAL LAYER     */
-/* Floats inside the scene without adding another card.   */
+/* EVENT ATTIRE — ARTWORK LIVES INSIDE THE ATTIRE ROW     */
 /* ----------------------------------------------------- */
 
-.event-attire-figure {
-    position: absolute;
-    right: clamp(28px, 4.8vw, 86px);
-    bottom: -1.5%;
+.event-attire-section {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 138px;
+    align-items: center;
+    gap: 20px;
+
+    min-height: 142px;
+    margin: 0;
+    padding: 4px 0 18px;
+}
+
+.event-attire-copy {
+    min-width: 0;
+    display: grid;
+    align-content: center;
+    gap: 5px;
+}
+
+.event-attire-copy strong {
+    color: var(--dash-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.15;
+}
+
+.event-attire-copy small {
+    color: rgba(255, 247, 231, 0.58);
+    font-size: 10px;
+    letter-spacing: 1px;
+    line-height: 1.3;
+    text-transform: uppercase;
+}
+
+.event-attire-figure,
+.event-haldi .event-attire-figure,
+.event-hindu .event-attire-figure,
+.event-christian .event-attire-figure {
+    position: relative;
+    inset: auto;
     z-index: 1;
 
-    width: clamp(235px, 27vw, 430px);
-    height: 78%;
+    width: 138px;
+    height: 142px;
     margin: 0;
 
     display: flex;
@@ -1730,34 +1765,32 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 
     overflow: visible;
     pointer-events: none;
-
-    opacity: 0.96;
-    transform: translateZ(0);
+    opacity: 0.98;
+    transform: none;
     filter:
-        drop-shadow(0 26px 28px rgba(0, 0, 0, 0.30))
-        drop-shadow(0 8px 12px rgba(0, 0, 0, 0.18));
+        drop-shadow(0 14px 16px rgba(0, 0, 0, 0.26))
+        drop-shadow(0 4px 7px rgba(0, 0, 0, 0.16));
 }
 
 .event-attire-figure::before {
     content: "";
     position: absolute;
     right: 4%;
-    bottom: 2%;
+    bottom: 0;
     left: 4%;
     z-index: -1;
 
-    height: 19%;
+    height: 16%;
     border-radius: 50%;
     pointer-events: none;
 
     background: radial-gradient(
         ellipse at center,
-        rgba(0, 0, 0, 0.24) 0%,
-        rgba(0, 0, 0, 0.10) 48%,
-        transparent 76%
+        rgba(0, 0, 0, 0.22),
+        rgba(0, 0, 0, 0.08) 52%,
+        transparent 78%
     );
-
-    filter: blur(15px);
+    filter: blur(9px);
 }
 
 .event-attire-figure img {
@@ -1766,28 +1799,10 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     height: 100%;
     max-width: 100%;
     max-height: 100%;
-
     object-fit: contain;
     object-position: center bottom;
-
     user-select: none;
     -webkit-user-drag: none;
-}
-
-/* Small event-specific optical positioning adjustments. */
-.event-haldi .event-attire-figure {
-    right: clamp(24px, 4.2vw, 76px);
-    width: clamp(240px, 28vw, 445px);
-}
-
-.event-hindu .event-attire-figure {
-    right: clamp(20px, 3.8vw, 68px);
-    width: clamp(245px, 28.5vw, 455px);
-}
-
-.event-christian .event-attire-figure {
-    right: clamp(30px, 5vw, 92px);
-    width: clamp(225px, 26vw, 415px);
 }
 
 .cinematic-event-scrim {
@@ -2181,13 +2196,27 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 .calendar-popover a:hover { background: rgba(255,255,255,.08); }
 
 .event-response-summary {
-    margin-top: 20px;
+    margin-top: 0;
     padding-top: 16px;
     display: grid;
-    gap: 4px;
+    gap: 15px;
     border-top: 1px solid rgba(255,255,255,.10);
 }
-.event-response-summary strong { color: var(--dash-cream); font-family: "Cormorant Garamond", Georgia, serif; font-size: 17px; }
+
+.event-response-copy {
+    display: grid;
+    gap: 4px;
+}
+
+.event-response-summary strong {
+    color: var(--dash-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 17px;
+}
+
+.event-response-summary .event-primary-actions {
+    margin-top: 1px;
+}
 
 .event-rsvp-overlay {
     position: absolute;
@@ -2285,14 +2314,6 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 .cancel-response-btn { width: 100%; margin: 10px 0 0; padding: 8px; border: 0; background: transparent; box-shadow: none; color: var(--dash-muted); font-size: 11px; }
 
 
-@media (max-width: 1100px) {
-    .event-attire-figure {
-        right: 14px;
-        width: clamp(220px, 30vw, 345px);
-        height: 70%;
-        opacity: 0.92;
-    }
-}
 
 @media (max-width: 900px) {
     .schedule-tab { width: min(calc(100% - 20px), 1680px); padding-top: 40px; }
@@ -2315,33 +2336,35 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     .event-christian .cinematic-event-scrim {
         background: linear-gradient(180deg, rgba(8,7,8,.02) 18%, rgba(8,7,8,.28) 50%, rgba(8,7,8,.88) 100%);
     }
-    .event-attire-figure {
-        top: 7%;
-        right: 3%;
-        bottom: auto;
 
-        width: min(64vw, 330px);
-        height: 43%;
-
-        align-items: flex-start;
-        opacity: 0.94;
-
-        filter:
-            drop-shadow(0 20px 24px rgba(0, 0, 0, 0.28))
-            drop-shadow(0 6px 10px rgba(0, 0, 0, 0.16));
+    .event-attire-section {
+        grid-template-columns: minmax(0, 1fr) 112px;
+        gap: 12px;
+        min-height: 112px;
+        padding: 2px 0 14px;
     }
 
+    .event-attire-copy strong {
+        font-size: 18px;
+    }
+
+    .event-attire-copy small {
+        font-size: 8px;
+        letter-spacing: 0.8px;
+    }
+
+    .event-attire-figure,
     .event-haldi .event-attire-figure,
     .event-hindu .event-attire-figure,
     .event-christian .event-attire-figure {
-        right: 3%;
-        width: min(64vw, 330px);
-    }
-
-    .event-attire-figure::before {
-        bottom: 0;
-        height: 16%;
-        filter: blur(11px);
+        position: relative;
+        inset: auto;
+        width: 112px;
+        height: 112px;
+        opacity: 0.98;
+        filter:
+            drop-shadow(0 11px 13px rgba(0, 0, 0, 0.24))
+            drop-shadow(0 3px 6px rgba(0, 0, 0, 0.14));
     }
 
     .event-glass-panel {
@@ -2376,11 +2399,15 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     .event-kicker { margin-bottom: 17px; font-size: 17px; }
     .event-facts { grid-template-columns: 1fr; gap: 12px; margin-bottom: 15px; padding: 14px 0; }
     .event-fact-location small { font-size: 10px; }
-    .event-primary-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .event-primary-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+    }
     .event-rsvp-trigger { grid-column: 1 / -1; }
     .calendar-menu-wrap, .calendar-toggle { width: 100%; }
     .event-glass-button { width: 100%; }
-    .event-response-summary { margin-top: 16px; }
+    .event-response-summary { margin-top: 0; gap: 13px; }
     .event-rsvp-overlay { align-items: end; padding: 0; }
     .event-rsvp-sheet { width: 100%; max-height: 88%; padding: 34px 20px 24px; border-right: 0; border-bottom: 0; border-left: 0; border-radius: 28px 28px 0 0; transform: translateY(100%); }
     .event-rsvp-overlay.is-open .event-rsvp-sheet { transform: translateY(0); }
@@ -2392,17 +2419,6 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 
 
 
-@media (max-width: 430px) {
-    .event-attire-figure,
-    .event-haldi .event-attire-figure,
-    .event-hindu .event-attire-figure,
-    .event-christian .event-attire-figure {
-        top: 8.5%;
-        right: 1%;
-        width: min(67vw, 285px);
-        height: 39%;
-    }
-}
 
 @media (hover: none), (pointer: coarse) {
     .event-glass-button:hover {

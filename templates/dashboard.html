@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard23attireimages"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard26attirefilenamefix"
     >
 </head>
 
@@ -228,25 +228,15 @@
 
                         {# Transparent attire artwork mapped independently of database IDs. #}
                         {% if 'haldi' in event_name %}
-                            {% set attire_visual_path = 'images/attire-haldi.png' %}
+                            {% set attire_visual_path = 'images/schedule/attire-haldi.png' %}
                         {% elif 'telugu' in event_name or 'hindu' in event_name %}
-                            {% set attire_visual_path = 'images/attire-hindu.png' %}
+                            {% set attire_visual_path = 'images/schedule/attire-hindu.png' %}
                         {% elif 'church' in event_name or 'christian' in event_name or 'reception' in event_name %}
-                            {% set attire_visual_path = 'images/attire_reception.png' %}
+                            {% set attire_visual_path = 'images/schedule/attire-reception.png' %}
                         {% else %}
                             {% set attire_visual_path = none %}
                         {% endif %}
 
-                        {% if attire_visual_path %}
-                            <figure class="event-attire-figure">
-                                <img
-                                    src="{{ url_for('static', filename=attire_visual_path) }}"
-                                    alt="{{ event.title }} attire inspiration"
-                                    loading="lazy"
-                                    decoding="async"
-                                >
-                            </figure>
-                        {% endif %}
 
                         <section class="event-glass-panel">
                             <p class="event-date-line">{{ event.date }}</p>
@@ -272,58 +262,76 @@
                                 </div>
                             </div>
 
-                            <p class="event-attire-line">
-                                <span>Attire</span>
-                                {{ event.attire_heading if event.attire_heading else event.attire }}
-                            </p>
-
-                            <div class="event-primary-actions">
-                                <button
-                                    type="button"
-                                    class="event-glass-button event-rsvp-trigger"
-                                    onclick="openEventRsvp('{{ event.id }}')"
-                                >
-                                    <span>{% if has_response %}Edit Response{% else %}RSVP Now{% endif %}</span>
-                                </button>
-
-                                <a
-                                    href="{{ event.directions_link }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="event-glass-button"
-                                >
-                                    <span>Directions</span>
-                                </a>
-
-                                <div class="calendar-menu-wrap">
-                                    <button
-                                        type="button"
-                                        class="event-glass-button calendar-toggle"
-                                        onclick="toggleCalendarMenu('{{ event.id }}', this)"
-                                        aria-expanded="false"
-                                    >
-                                        <span>+ Calendar</span>
-                                    </button>
-                                    <div id="calendar-menu-{{ event.id }}" class="calendar-popover" hidden>
-                                        <a href="{{ event.calendar_link }}" target="_blank" rel="noopener noreferrer">Google Calendar</a>
-                                        <a href="{{ url_for('apple_calendar_event', event_id=event.id) }}">Apple Calendar</a>
-                                    </div>
+                            <div class="event-attire-section">
+                                <div class="event-attire-copy">
+                                    <span class="event-attire-label">Attire</span>
+                                    <strong>{{ event.attire_heading if event.attire_heading else event.attire }}</strong>
+                                    {% if event.attire_subheading %}
+                                        <small>{{ event.attire_subheading }}</small>
+                                    {% endif %}
                                 </div>
+
+                                {% if attire_visual_path %}
+                                    <figure class="event-attire-figure">
+                                        <img
+                                            src="{{ url_for('static', filename=attire_visual_path) }}"
+                                            alt="{{ event.title }} attire inspiration"
+                                            loading="lazy"
+                                            decoding="async"
+                                        >
+                                    </figure>
+                                {% endif %}
                             </div>
 
                             <div class="event-response-summary" id="response-summary-{{ event.id }}">
-                                <span>Your Response</span>
-                                {% if has_response %}
-                                    {% if saved.get('attending') == 'Yes' %}
-                                        <strong>Attending · {{ saved.get('guest_count', 0) }} Guest{% if saved.get('guest_count', 0) != 1 %}s{% endif %}</strong>
-                                    {% elif saved.get('attending') == 'No' %}
-                                        <strong>Unable to Attend</strong>
+                                <div class="event-response-copy">
+                                    <span class="event-response-label">Your Response</span>
+                                    {% if has_response %}
+                                        {% if saved.get('attending') == 'Yes' %}
+                                            <strong>Attending · {{ saved.get('guest_count', 0) }} Guest{% if saved.get('guest_count', 0) != 1 %}s{% endif %}</strong>
+                                        {% elif saved.get('attending') == 'No' %}
+                                            <strong>Unable to Attend</strong>
+                                        {% else %}
+                                            <strong>Maybe · Response Pending</strong>
+                                        {% endif %}
                                     {% else %}
-                                        <strong>Maybe · Response Pending</strong>
+                                        <strong>Not yet submitted</strong>
                                     {% endif %}
-                                {% else %}
-                                    <strong>Not yet submitted</strong>
-                                {% endif %}
+                                </div>
+
+                                <div class="event-primary-actions">
+                                    <button
+                                        type="button"
+                                        class="event-glass-button event-rsvp-trigger"
+                                        onclick="openEventRsvp('{{ event.id }}')"
+                                    >
+                                        <span>{% if has_response %}Edit Response{% else %}RSVP Now{% endif %}</span>
+                                    </button>
+
+                                    <a
+                                        href="{{ event.directions_link }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="event-glass-button"
+                                    >
+                                        <span>Directions</span>
+                                    </a>
+
+                                    <div class="calendar-menu-wrap">
+                                        <button
+                                            type="button"
+                                            class="event-glass-button calendar-toggle"
+                                            onclick="toggleCalendarMenu('{{ event.id }}', this)"
+                                            aria-expanded="false"
+                                        >
+                                            <span>+ Calendar</span>
+                                        </button>
+                                        <div id="calendar-menu-{{ event.id }}" class="calendar-popover" hidden>
+                                            <a href="{{ event.calendar_link }}" target="_blank" rel="noopener noreferrer">Google Calendar</a>
+                                            <a href="{{ url_for('apple_calendar_event', event_id=event.id) }}">Apple Calendar</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </section>
 
