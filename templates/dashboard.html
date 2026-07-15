@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard38naturalpetals"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard39readabletravelqafixedattire"
     >
 </head>
 
@@ -777,6 +777,25 @@
     document.addEventListener("DOMContentLoaded", function () {
         const tabButtons = document.querySelectorAll(".tab-btn");
         const tabContents = document.querySelectorAll(".tab-content");
+
+        // Move attire dialogs out of the event-card stacking context. This lets
+        // the modal cover the sticky header and keeps its close button visible
+        // regardless of where the event card sits in the viewport.
+        document.querySelectorAll(".attire-inspiration-overlay").forEach(function (overlay) {
+            const sourceCard = overlay.closest(".cinematic-event-card");
+
+            if (sourceCard) {
+                const eventAccent = window.getComputedStyle(sourceCard)
+                    .getPropertyValue("--event-accent-rgb")
+                    .trim();
+
+                if (eventAccent) {
+                    overlay.style.setProperty("--event-accent-rgb", eventAccent);
+                }
+            }
+
+            document.body.appendChild(overlay);
+        });
 
         function activateTab(tabName) {
             tabButtons.forEach(function (btn) {

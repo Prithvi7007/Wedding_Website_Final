@@ -4294,13 +4294,18 @@ body.dashboard-v2 {
 
 /* Attire inspiration modal: a purposeful large view, not a tiny thumbnail. */
 .attire-inspiration-overlay {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    z-index: 24;
+    z-index: 1000;
 
     display: grid;
     place-items: center;
-    padding: 32px;
+    padding:
+        max(24px, env(safe-area-inset-top, 0px))
+        24px
+        max(24px, env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
 
     visibility: hidden;
     opacity: 0;
@@ -4688,15 +4693,24 @@ body[data-active-tab="registry"] #registry.registry-tab {
 
     .attire-inspiration-overlay {
         align-items: end;
-        padding: 0;
+        padding:
+            max(8px, env(safe-area-inset-top, 0px))
+            8px
+            max(8px, env(safe-area-inset-bottom, 0px));
     }
 
     .attire-inspiration-sheet {
         width: 100%;
-        max-height: 90svh;
+        max-height: calc(
+            100svh
+            - 16px
+            - env(safe-area-inset-top, 0px)
+            - env(safe-area-inset-bottom, 0px)
+        );
         min-height: 0;
         padding: 40px 22px 26px;
         overflow-y: auto;
+        overscroll-behavior: contain;
 
         grid-template-columns: 1fr;
         gap: 18px;
@@ -5506,4 +5520,73 @@ html {
     cursor: wait;
     opacity: 0.72;
     transform: none;
+}
+
+
+/* ===================================================== */
+/* V39 — TRAVEL/Q&A READABILITY + VIEWPORT ATTIRE MODAL  */
+/* Larger editorial copy without affecting Schedule,      */
+/* Welcome, Registry, or the compact navigation labels.   */
+/* ===================================================== */
+
+.travel-page-header p,
+.qa-section-header p {
+    font-size: 19px;
+    line-height: 1.68;
+}
+
+.paper-item h4 {
+    font-size: 20px;
+    line-height: 1.18;
+}
+
+.paper-item p,
+.qa-card p {
+    font-size: 18px;
+    line-height: 1.65;
+}
+
+.paper-item a {
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+@media (max-width: 700px) {
+    .travel-page-header p,
+    .qa-section-header p {
+        font-size: 18px;
+        line-height: 1.62;
+    }
+
+    .travel-paper-card h3,
+    .qa-card h3 {
+        font-size: 27px;
+        line-height: 1.08;
+    }
+
+    .paper-item h4 {
+        font-size: 21px;
+    }
+
+    .paper-item p,
+    .qa-card p {
+        font-size: 18px;
+        line-height: 1.66;
+    }
+
+    .paper-item a {
+        font-size: 12px;
+    }
+
+    .attire-inspiration-close {
+        top: 14px;
+        right: 14px;
+        background: rgba(20, 17, 15, 0.48);
+        backdrop-filter: blur(10px) saturate(135%);
+        -webkit-backdrop-filter: blur(10px) saturate(135%);
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,.28),
+            0 8px 22px rgba(0,0,0,.24),
+            inset 0 1px 0 rgba(255,255,255,.22);
+    }
 }
