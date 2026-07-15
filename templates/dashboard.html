@@ -17,28 +17,63 @@
     <link
         rel="preload"
         as="image"
-        href="{{ url_for('static', filename='images/DSC06660.webp') }}"
+        href="{{ url_for('static', filename='images/site-bg.webp') }}"
+        fetchpriority="high"
     >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Manrope:wght@400;500;600;700&display=swap"
+    >
+
+    <script>
+        (function () {
+            const isIos = /iP(?:hone|ad|od)/.test(navigator.userAgent)
+                || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+            if (isIos) {
+                document.documentElement.classList.add("is-ios");
+            }
+
+            if (
+                window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                || (navigator.connection && navigator.connection.saveData)
+            ) {
+                document.documentElement.classList.add("reduced-effects");
+            }
+        }());
+    </script>
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard40iosstabilitys"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard42balancedios"
     >
 </head>
 
 {% set guest_display_name = (guest.get('display_name') or guest.get('name') or 'Dear Guest') | title %}
 
-<body class="dashboard-page dashboard-v2" data-active-tab="welcome">
+<body class="dashboard-page dashboard-v2" data-active-tab="{{ active_tab | default('welcome') }}">
 
-    <!-- Permanent couple-photo background shared by every dashboard tab -->
+    <!-- Two-buffer slideshow: only two large photographs can be decoded at once. -->
     <div class="dashboard-background" aria-hidden="true">
         <div class="dashboard-background-slides">
-            <img class="slide slide-1 active-slide" src="{{ url_for('static', filename='images/site-bg.webp') }}" alt="">
-            <img class="slide slide-2" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="">
-            <img class="slide slide-3" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="">
-            <img class="slide slide-4" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
-            <img class="slide slide-5" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="">
-            <img class="slide slide-6" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="">
+            <img
+                id="dashboard-slide-primary"
+                class="slide active-slide"
+                src="{{ url_for('static', filename='images/site-bg.webp') }}"
+                alt=""
+                decoding="async"
+                fetchpriority="high"
+                style="--slide-position-desktop: 61% 48%; --slide-position-mobile: 68% center;"
+            >
+            <img
+                id="dashboard-slide-secondary"
+                class="slide"
+                alt=""
+                decoding="async"
+            >
         </div>
     </div>
 
@@ -55,27 +90,18 @@
             <h1 class="dashboard-title">Adlin &amp; Prithvi</h1>
 
             <nav class="tabs" aria-label="Wedding portal navigation">
-                <button type="button" class="tab-btn active" data-tab="welcome">Welcome</button>
-                <button type="button" class="tab-btn" data-tab="schedule">Schedule</button>
-                <button type="button" class="tab-btn" data-tab="travel">Travel</button>
-                <button type="button" class="tab-btn" data-tab="registry">Registry</button>
-                <button type="button" class="tab-btn" data-tab="qa">Q&amp;A</button>
+                <button type="button" class="tab-btn {% if active_tab == 'welcome' %}active{% endif %}" data-tab="welcome">Welcome</button>
+                <button type="button" class="tab-btn {% if active_tab == 'schedule' %}active{% endif %}" data-tab="schedule">Schedule</button>
+                <button type="button" class="tab-btn {% if active_tab == 'travel' %}active{% endif %}" data-tab="travel">Travel</button>
+                <button type="button" class="tab-btn {% if active_tab == 'registry' %}active{% endif %}" data-tab="registry">Registry</button>
+                <button type="button" class="tab-btn {% if active_tab == 'qa' %}active{% endif %}" data-tab="qa">Q&amp;A</button>
             </nav>
         </header>
 
         <main class="dashboard-main">
             <!-- Welcome Tab -->
-            <section id="welcome" class="tab-content active" aria-labelledby="welcome-heading">
+            <section id="welcome" class="tab-content {% if active_tab == 'welcome' %}active{% endif %}" aria-labelledby="welcome-heading">
                 <div class="welcome-hero">
-                    <div class="welcome-slides" aria-hidden="true">
-                        <img class="slide slide-1 active-slide" src="{{ url_for('static', filename='images/site-bg.webp') }}" alt="">
-                        <img class="slide slide-2" src="{{ url_for('static', filename='images/DSC06692.webp') }}" alt="">
-                        <img class="slide slide-3" src="{{ url_for('static', filename='images/DSC06717.webp') }}" alt="">
-                        <img class="slide slide-4" src="{{ url_for('static', filename='images/DSC06785.webp') }}" alt="">
-                        <img class="slide slide-5" src="{{ url_for('static', filename='images/DSC06855.webp') }}" alt="">
-                        <img class="slide slide-6" src="{{ url_for('static', filename='images/DSC06882.webp') }}" alt="">
-                    </div>
-
                     <div class="welcome-hero-shade" aria-hidden="true"></div>
 
                     <div class="welcome-copy">
@@ -155,7 +181,7 @@
             </section>
 
         <!-- Schedule Tab -->
-        <section id="schedule" class="tab-content schedule-tab" aria-labelledby="schedule-heading">
+        <section id="schedule" class="tab-content schedule-tab {% if active_tab == 'schedule' %}active{% endif %}" aria-labelledby="schedule-heading">
             <header class="schedule-header schedule-intro-card">
                 <p class="schedule-eyebrow">Your Wedding Weekend</p>
                 <h2 id="schedule-heading">Wedding Schedule</h2>
@@ -451,7 +477,7 @@
         </section>
 
       <!-- Travel Tab -->
-        <div id="travel" class="tab-content">
+        <div id="travel" class="tab-content {% if active_tab == 'travel' %}active{% endif %}">
 
             <div class="travel-page-header">
                 <h2>Travel Guide</h2>
@@ -477,6 +503,9 @@
                                 src="{{ url_for('static', filename='images/travel/airport.png') }}" 
                                 alt="Airport illustration"
                                 class="paper-image"
+                            
+                                loading="lazy"
+                                decoding="async"
                             >
                         </div>
 
@@ -554,7 +583,10 @@
                                     src="{{ url_for('static', filename='images/travel/hotel.png') }}" 
                                     alt="Hotel illustration"
                                     class="paper-image"
-                                >
+                                
+                                loading="lazy"
+                                decoding="async"
+                            >
                             </div>
                         </div>
                     </section>
@@ -569,6 +601,9 @@
                                 src="{{ url_for('static', filename='images/travel/tampa.png') }}" 
                                 alt="Tampa illustration"
                                 class="paper-image"
+                            
+                                loading="lazy"
+                                decoding="async"
                             >
                         </div>
 
@@ -637,6 +672,9 @@
                                 src="{{ url_for('static', filename='images/travel/restaurants.png') }}" 
                                 alt="Restaurant illustration"
                                 class="paper-image"
+                            
+                                loading="lazy"
+                                decoding="async"
                             >
                         </div>
                     </section>
@@ -645,7 +683,7 @@
             </div>
 
         <!-- Registry Tab -->
-        <section id="registry" class="tab-content registry-tab" aria-labelledby="registry-heading">
+        <section id="registry" class="tab-content registry-tab {% if active_tab == 'registry' %}active{% endif %}" aria-labelledby="registry-heading">
             <div class="registry-hero">
                 <div class="registry-copy">
                     <p class="registry-eyebrow">With Love &amp; Gratitude</p>
@@ -673,7 +711,7 @@
         </section>
 
         <!-- QA Tab -->
-        <div id="qa" class="tab-content">
+        <div id="qa" class="tab-content {% if active_tab == 'qa' %}active{% endif %}">
             <div class="qa-section-header">
                 <h2>Questions & Answers</h2>
                 <p>
@@ -782,6 +820,9 @@
     document.addEventListener("DOMContentLoaded", function () {
         const csrfMeta = document.querySelector('meta[name="csrf-token"]');
         const csrfToken = csrfMeta ? csrfMeta.content : "";
+        const isIosDevice = document.documentElement.classList.contains("is-ios");
+        const reducedEffects = document.documentElement.classList.contains("reduced-effects");
+        const scrollBehavior = reducedEffects ? "auto" : "smooth";
 
         const tabButtons = document.querySelectorAll(".tab-btn");
         const tabContents = document.querySelectorAll(".tab-content");
@@ -821,6 +862,7 @@
                 targetButton.classList.add("active");
                 targetContent.classList.add("active");
                 document.body.setAttribute("data-active-tab", tabName);
+
             }
         }
 
@@ -834,7 +876,7 @@
 
                 window.scrollTo({
                     top: 0,
-                    behavior: "smooth"
+                    behavior: scrollBehavior
                 });
             });
         });
@@ -848,7 +890,7 @@
 
                 window.scrollTo({
                     top: 0,
-                    behavior: "smooth"
+                    behavior: scrollBehavior
                 });
             });
         }
@@ -862,7 +904,6 @@
 
         const journeyStops = Array.from(document.querySelectorAll(".schedule-journey-stop"));
         const scheduleCards = Array.from(document.querySelectorAll("[data-schedule-event]"));
-
         function setActiveJourneyStop(targetId) {
             journeyStops.forEach(function (stop) {
                 const isActive = stop.getAttribute("data-event-target") === targetId;
@@ -878,7 +919,7 @@
 
                 if (target) {
                     setActiveJourneyStop(targetId);
-                    target.scrollIntoView({ behavior: "smooth", block: "start" });
+                    target.scrollIntoView({ behavior: scrollBehavior, block: "start" });
                 }
             });
         });
@@ -898,25 +939,40 @@
         }
 
         let currentSlide = 0;
+        let activeSlideLayer = 0;
         let slideTransitionInProgress = false;
         let slideshowTimer = null;
 
-        const welcomeSlides = Array.from(document.querySelectorAll("#welcome .welcome-slides .slide"));
-        const backgroundSlides = Array.from(document.querySelectorAll(".dashboard-background .slide"));
-        const slideGroups = [welcomeSlides, backgroundSlides].filter(function (group) { return group.length > 0; });
-        const slideCount = slideGroups.reduce(function (count, group) { return Math.max(count, group.length); }, 0);
+        const slideSources = [
+            "{{ url_for('static', filename='images/site-bg.webp') }}",
+            "{{ url_for('static', filename='images/DSC06692.webp') }}",
+            "{{ url_for('static', filename='images/DSC06717.webp') }}",
+            "{{ url_for('static', filename='images/DSC06785.webp') }}",
+            "{{ url_for('static', filename='images/DSC06855.webp') }}",
+            "{{ url_for('static', filename='images/DSC06882.webp') }}"
+        ];
+
+        const slidePositions = [
+            { desktop: "61% 48%", mobile: "68% center" },
+            { desktop: "63% 45%", mobile: "68% center" },
+            { desktop: "68% 50%", mobile: "72% center" },
+            { desktop: "59% 48%", mobile: "65% center" },
+            { desktop: "64% 44%", mobile: "69% center" },
+            { desktop: "67% 50%", mobile: "71% center" }
+        ];
+
+        const slideLayers = [
+            document.getElementById("dashboard-slide-primary"),
+            document.getElementById("dashboard-slide-secondary")
+        ].filter(Boolean);
+
         const dots = Array.from(document.querySelectorAll("#welcome .dot"));
-        const SLIDE_INTERVAL_MS = 7500;
-        const AUTO_SLIDESHOW_ENABLED = true;
-        const FADE_OUT_MS = 340;
-        const FADE_IN_MS = 480;
+        const SLIDE_INTERVAL_MS = 9000;
+        const SLIDE_FADE_MS = 320;
+        const autoSlideshowAllowed = !reducedEffects;
 
         function normalizeSlideIndex(index) {
-            if (slideCount === 0) {
-                return 0;
-            }
-
-            return (index + slideCount) % slideCount;
+            return (index + slideSources.length) % slideSources.length;
         }
 
         function updateSlideDots(index) {
@@ -925,8 +981,15 @@
             });
         }
 
+        function applySlidePosition(layer, index) {
+            const position = slidePositions[index] || slidePositions[0];
+
+            layer.style.setProperty("--slide-position-desktop", position.desktop);
+            layer.style.setProperty("--slide-position-mobile", position.mobile);
+        }
+
         function showSlideInternal(index, restartTimer) {
-            if (slideCount === 0 || slideTransitionInProgress) {
+            if (slideLayers.length < 2 || slideTransitionInProgress) {
                 return;
             }
 
@@ -939,59 +1002,72 @@
 
             slideTransitionInProgress = true;
 
-            slideGroups.forEach(function (group) {
-                const outgoingSlide = group[currentSlide];
-                if (!outgoingSlide) {
+            const outgoingLayer = slideLayers[activeSlideLayer];
+            const incomingLayerIndex = activeSlideLayer === 0 ? 1 : 0;
+            const incomingLayer = slideLayers[incomingLayerIndex];
+            let swapCompleted = false;
+
+            function completeSwap() {
+                if (swapCompleted) {
                     return;
                 }
-                outgoingSlide.classList.remove("active-slide");
-                outgoingSlide.classList.add("is-leaving");
-            });
 
-            window.setTimeout(function () {
-                slideGroups.forEach(function (group) {
-                    const outgoingSlide = group[currentSlide];
-                    if (outgoingSlide) {
-                        outgoingSlide.classList.remove("is-leaving");
-                    }
-                });
-
-                currentSlide = nextSlide;
-
-                slideGroups.forEach(function (group) {
-                    const incomingSlide = group[currentSlide];
-                    if (incomingSlide) {
-                        incomingSlide.classList.add("active-slide");
-                    }
-                });
-
-                updateSlideDots(currentSlide);
+                swapCompleted = true;
+                incomingLayer.classList.add("active-slide");
 
                 window.setTimeout(function () {
+                    outgoingLayer.classList.remove("active-slide");
+                    outgoingLayer.removeAttribute("src");
+
+                    activeSlideLayer = incomingLayerIndex;
+                    currentSlide = nextSlide;
                     slideTransitionInProgress = false;
-                }, FADE_IN_MS);
-            }, FADE_OUT_MS);
+                    updateSlideDots(currentSlide);
+                }, SLIDE_FADE_MS);
+            }
+
+            incomingLayer.classList.remove("active-slide");
+            applySlidePosition(incomingLayer, nextSlide);
+            incomingLayer.onload = completeSwap;
+            incomingLayer.onerror = function () {
+                slideTransitionInProgress = false;
+            };
+            incomingLayer.src = slideSources[nextSlide];
+
+            if (incomingLayer.complete) {
+                window.requestAnimationFrame(completeSwap);
+            }
 
             if (restartTimer) {
                 startSlideshowTimer();
             }
         }
 
-        function startSlideshowTimer() {
+        function stopSlideshowTimer() {
             if (slideshowTimer) {
                 window.clearInterval(slideshowTimer);
                 slideshowTimer = null;
             }
+        }
 
-            /* The Welcome hero and the background shared by the remaining
-             * tabs advance together, keeping the same photograph across tabs. */
-            if (!AUTO_SLIDESHOW_ENABLED) {
+        function startSlideshowTimer() {
+            stopSlideshowTimer();
+
+            if (!autoSlideshowAllowed || document.hidden) {
                 return;
             }
 
             slideshowTimer = window.setInterval(function () {
                 showSlideInternal(currentSlide + 1, false);
             }, SLIDE_INTERVAL_MS);
+        }
+
+        function updateSlideshowState() {
+            if (document.hidden) {
+                stopSlideshowTimer();
+            } else {
+                startSlideshowTimer();
+            }
         }
 
         window.changeSlide = function (direction) {
@@ -1003,18 +1079,16 @@
         };
 
         updateSlideDots(currentSlide);
-        startSlideshowTimer();
+        updateSlideshowState();
 
-        document.addEventListener("visibilitychange", function () {
-            if (document.hidden) {
-                if (slideshowTimer) {
-                    window.clearInterval(slideshowTimer);
-                    slideshowTimer = null;
-                }
-            } else {
-                startSlideshowTimer();
-            }
-        });
+        if (!reducedEffects && slideSources[1]) {
+            window.requestIdleCallback?.(function () {
+                const preloadImage = new Image();
+                preloadImage.src = slideSources[1];
+            }, { timeout: 2200 });
+        }
+
+        document.addEventListener("visibilitychange", updateSlideshowState);
 
         window.toggleRsvpForm = function (eventId) {
             const form = document.getElementById("rsvp-form-" + eventId);
@@ -1099,9 +1173,6 @@
                     const driftEnd = -140 + Math.random() * 280;
 
                     petal.className = "rsvp-petal rsvp-petal-" + theme + " petal-shape-" + (1 + Math.floor(Math.random() * 3));
-                    if (isIos) {
-                        petal.classList.add("rsvp-petal-ios");
-                    }
                     petal.style.left = Math.random() * 100 + "vw";
                     petal.style.top = (-24 - Math.random() * 96).toFixed(0) + "px";
                     petal.style.setProperty("--petal-color", tone.color);
@@ -1135,7 +1206,7 @@
         function burstLoginSparkles() {
             const container = document.getElementById("confetti-container");
 
-            if (!container) {
+            if (!container || reducedEffects) {
                 return;
             }
 
@@ -1474,8 +1545,24 @@
         secondsEl.innerText = String(seconds).padStart(2, "0");
     }
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+    let countdownTimer = null;
+
+    function updateCountdownTimer() {
+        if (countdownTimer) {
+            window.clearInterval(countdownTimer);
+            countdownTimer = null;
+        }
+
+        if (document.hidden) {
+            return;
+        }
+
+        updateCountdown();
+        countdownTimer = window.setInterval(updateCountdown, 1000);
+    }
+
+    updateCountdownTimer();
+    document.addEventListener("visibilitychange", updateCountdownTimer);
     });
 </script>
 </body>
