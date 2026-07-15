@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard35invitationeventbuttons"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard36asyncrsvp"
     >
 </head>
 
@@ -42,15 +42,6 @@
     </div>
 
     <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
-
-    <div id="celebration-toast" class="celebration-toast" role="status" aria-live="polite">
-        <div class="celebration-toast-inner">
-            <span class="celebration-icon" aria-hidden="true">✦</span>
-            <div>
-                <strong>RSVP Confirmed</strong>
-                <p>We can’t wait to celebrate with you.</p>
-            </div>
-        </div>
     </div>
 
     <div class="dashboard-app">
@@ -274,7 +265,7 @@
                                 {% endif %}
                             </div>
 
-                            <div class="event-response-summary" id="response-summary-{{ event.id }}">
+                            <div class="event-response-summary" id="response-summary-{{ event.id }}" aria-live="polite">
                                 <div class="event-response-copy">
                                     <span class="event-response-label">Your Response</span>
                                     {% if has_response %}
@@ -1011,22 +1002,6 @@
             }
         };
 
-        const shouldCelebrate = {{ 'true' if celebrate == 'yes' else 'false' }};
-
-        function showCelebrationToast() {
-            const toast = document.getElementById("celebration-toast");
-
-            if (!toast) {
-                return;
-            }
-
-            toast.classList.add("show");
-
-            setTimeout(function () {
-                toast.classList.remove("show");
-            }, 3500);
-        }
-
         function burstConfetti() {
             const container = document.getElementById("confetti-container");
 
@@ -1061,13 +1036,6 @@
             }
         }
 
-        if (shouldCelebrate) {
-            activateTab("schedule");
-            showCelebrationToast();
-            burstConfetti();
-
-            history.replaceState(null, "", window.location.pathname + "#schedule");
-        }
         const shouldShowLoginEffect = {{ 'true' if login_effect == 'success' else 'false' }};
 
         function burstLoginSparkles() {
@@ -1200,6 +1168,105 @@
             input.value = String(next);
             output.textContent = String(next);
         };
+
+
+        /* Save RSVP in the background so the page never reloads. The existing
+         * Flask route remains the source of truth; fetch simply follows its
+         * normal redirect and updates the visible card after a successful save. */
+        document.querySelectorAll(".cinematic-rsvp-form").forEach(function (form) {
+            form.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                if (!form.reportValidity()) {
+                    return;
+                }
+
+                const submitButton = form.querySelector(".confirm-response-btn");
+                const submitLabel = submitButton ? submitButton.querySelector("span") : null;
+                const originalLabel = submitLabel ? submitLabel.textContent : "Confirm Response";
+                const formData = new FormData(form);
+                const eventId = String(formData.get("event_id") || "");
+                const attending = String(formData.get("attending") || "");
+                let guestCount = Number(formData.get("guest_count") || 0);
+
+                if (attending === "No") {
+                    guestCount = 0;
+                }
+
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.classList.add("is-saving");
+                }
+
+                if (submitLabel) {
+                    submitLabel.textContent = "Saving…";
+                }
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: "POST",
+                        body: formData,
+                        credentials: "same-origin",
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("RSVP save failed with status " + response.status);
+                    }
+
+                    const eventCard = document.getElementById("event-card-" + eventId);
+                    const responseSummary = document.getElementById("response-summary-" + eventId);
+                    const responseText = responseSummary
+                        ? responseSummary.querySelector(".event-response-copy strong")
+                        : null;
+                    const rsvpTriggerLabel = eventCard
+                        ? eventCard.querySelector(".event-rsvp-trigger span")
+                        : null;
+
+                    if (responseText) {
+                        if (attending === "Yes") {
+                            responseText.textContent = "Attending · " + guestCount + " Guest" + (guestCount === 1 ? "" : "s");
+                        } else if (attending === "No") {
+                            responseText.textContent = "Unable to Attend";
+                        } else {
+                            responseText.textContent = "Maybe · Response Pending";
+                        }
+                    }
+
+                    if (rsvpTriggerLabel) {
+                        rsvpTriggerLabel.textContent = "Edit Response";
+                    }
+
+                    if (submitLabel) {
+                        submitLabel.textContent = "Update Response";
+                    }
+
+                    closeEventRsvp(eventId);
+
+                    /* Preserve the original celebration behavior: confetti is
+                     * shown for a confirmed Yes response, now immediately and
+                     * without navigating away from the Schedule card. */
+                    if (attending === "Yes") {
+                        window.setTimeout(burstConfetti, 120);
+                    }
+                } catch (error) {
+                    console.error(error);
+
+                    if (submitLabel) {
+                        submitLabel.textContent = originalLabel;
+                    }
+
+                    window.alert("We couldn’t save your RSVP. Please check your connection and try again.");
+                } finally {
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.classList.remove("is-saving");
+                    }
+                }
+            });
+        });
 
         document.addEventListener("click", function (event) {
             if (!event.target.closest(".calendar-menu-wrap")) {

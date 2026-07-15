@@ -2711,66 +2711,6 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     }
 }
 
-.celebration-toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-16px);
-    transition:
-        opacity 320ms ease,
-        transform 320ms ease;
-}
-
-.celebration-toast.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.celebration-toast-inner {
-    display: flex;
-    align-items: flex-start;
-    gap: 11px;
-
-    width: min(390px, calc(100vw - 40px));
-    padding: 15px 17px;
-
-    background: rgba(29, 26, 23, 0.84);
-    color: var(--dash-copy);
-    border: 1px solid rgba(214, 168, 78, 0.42);
-    border-radius: 16px;
-
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-
-    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.30);
-}
-
-.celebration-icon {
-    color: var(--dash-gold);
-    font-size: 20px;
-}
-
-.celebration-toast strong {
-    display: block;
-    margin-bottom: 3px;
-
-    color: var(--dash-cream);
-    font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: 18px;
-    letter-spacing: 1px;
-}
-
-.celebration-toast p {
-    color: var(--dash-muted);
-    font-size: 12px;
-    line-height: 1.45;
-}
-
-
 /* ----------------------------------------------------- */
 /* TABLET                                                 */
 /* ----------------------------------------------------- */
@@ -3400,17 +3340,6 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         width: 100%;
         margin: 12px 0 16px;
     }
-
-    .celebration-toast {
-        top: 12px;
-        right: 12px;
-        left: 12px;
-    }
-
-    .celebration-toast-inner {
-        width: 100%;
-    }
-
 }
 
 /* ----------------------------------------------------- */
@@ -5421,4 +5350,16 @@ html {
         font-size: clamp(7.5px, 2.15vw, 9px);
         letter-spacing: clamp(0.45px, 0.16vw, 0.75px);
     }
+}
+
+
+/* ===================================================== */
+/* V36 — ASYNC RSVP SUBMISSION                           */
+/* ===================================================== */
+
+.confirm-response-btn:disabled,
+.confirm-response-btn.is-saving {
+    cursor: wait;
+    opacity: 0.72;
+    transform: none;
 }
