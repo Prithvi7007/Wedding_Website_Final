@@ -211,10 +211,16 @@
                     <article
                         id="event-card-{{ event.id }}"
                         data-schedule-event="{{ event.id }}"
+                        {% set event_name = event.title | lower %}
+
                         class="cinematic-event-card
-                            {% if event.id == 'haldi' %}event-haldi{% endif %}
-                            {% if event.id == 'hindu_wedding' %}event-hindu{% endif %}
-                            {% if event.id == 'christian_wedding_reception' %}event-christian{% endif %}
+                            {% if 'haldi' in event_name %}
+                                event-haldi
+                            {% elif 'telugu' in event_name or 'hindu' in event_name %}
+                                event-hindu
+                            {% elif 'church' in event_name or 'christian' in event_name or 'reception' in event_name %}
+                                event-christian
+                            {% endif %}
                         "
                         aria-labelledby="event-title-{{ event.id }}"
                     >
