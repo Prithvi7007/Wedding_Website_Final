@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard36asyncrsvp"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard37eventpetals"
     >
 </head>
 
@@ -1002,37 +1002,80 @@
             }
         };
 
-        function burstConfetti() {
+        /* Event-specific CSS petals replace the generic RSVP confetti.
+         * No image assets are required: JavaScript only supplies randomized
+         * position, size and color variables while CSS draws and animates each petal. */
+        function burstRsvpPetals(eventId) {
             const container = document.getElementById("confetti-container");
+            const eventCard = document.getElementById("event-card-" + eventId);
 
-            if (!container) {
+            if (!container || !eventCard) {
                 return;
             }
 
-            const colors = [
-                "#7b3b2d",
-                "#916926",
-                "#4a673b",
-                "#d7c08a",
-                "#c4935f",
-                "#fff1d6"
-            ];
+            let theme = "church";
 
-            for (let i = 0; i < 55; i++) {
-                const piece = document.createElement("span");
-                piece.className = "confetti-piece";
+            if (eventCard.classList.contains("event-haldi")) {
+                theme = "haldi";
+            } else if (eventCard.classList.contains("event-hindu")) {
+                theme = "hindu";
+            }
 
-                piece.style.left = Math.random() * 100 + "vw";
-                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-                piece.style.animationDelay = Math.random() * 0.45 + "s";
-                piece.style.width = 7 + Math.random() * 8 + "px";
-                piece.style.height = 10 + Math.random() * 12 + "px";
+            const palettes = {
+                haldi: [
+                    { color: "#f4bd2f", highlight: "#ffe58f", shadow: "#bf720d" },
+                    { color: "#e89a18", highlight: "#ffd56a", shadow: "#a95c08" },
+                    { color: "#ffd45b", highlight: "#fff0ad", shadow: "#d48714" },
+                    { color: "#f0ad24", highlight: "#ffdd78", shadow: "#b5670b" }
+                ],
+                hindu: [
+                    { color: "#a90f2d", highlight: "#ef667a", shadow: "#650719" },
+                    { color: "#c51f3d", highlight: "#f27a8d", shadow: "#7e0b24" },
+                    { color: "#821126", highlight: "#d94a62", shadow: "#4d0715" },
+                    { color: "#d43a50", highlight: "#f699a5", shadow: "#8d1428" }
+                ],
+                church: [
+                    { color: "#fff5e7", highlight: "#ffffff", shadow: "#c9aa7f" },
+                    { color: "#f2dfc5", highlight: "#fffaf2", shadow: "#b99a70" },
+                    { color: "#f5e4ea", highlight: "#fffafd", shadow: "#c9a7b0" },
+                    { color: "#e4c996", highlight: "#fff0c9", shadow: "#aa8147" }
+                ]
+            };
 
-                container.appendChild(piece);
+            const palette = palettes[theme];
+            const petalCount = window.innerWidth <= 700 ? 42 : 58;
 
-                setTimeout(function () {
-                    piece.remove();
-                }, 3800);
+            for (let i = 0; i < petalCount; i++) {
+                const petal = document.createElement("span");
+                const tone = palette[Math.floor(Math.random() * palette.length)];
+                const duration = 4.2 + Math.random() * 2.2;
+                const delay = Math.random() * 0.65;
+                const driftA = -70 + Math.random() * 140;
+                const driftB = -110 + Math.random() * 220;
+                const driftEnd = -170 + Math.random() * 340;
+
+                petal.className = "rsvp-petal rsvp-petal-" + theme + " petal-shape-" + (1 + Math.floor(Math.random() * 3));
+                petal.style.left = Math.random() * 100 + "vw";
+                petal.style.setProperty("--petal-color", tone.color);
+                petal.style.setProperty("--petal-highlight", tone.highlight);
+                petal.style.setProperty("--petal-shadow", tone.shadow);
+                petal.style.setProperty("--petal-width", (8 + Math.random() * 8).toFixed(1) + "px");
+                petal.style.setProperty("--petal-height", (13 + Math.random() * 13).toFixed(1) + "px");
+                petal.style.setProperty("--petal-scale", (0.72 + Math.random() * 0.70).toFixed(2));
+                petal.style.setProperty("--petal-duration", duration.toFixed(2) + "s");
+                petal.style.setProperty("--petal-delay", delay.toFixed(2) + "s");
+                petal.style.setProperty("--petal-drift-a", driftA.toFixed(0) + "px");
+                petal.style.setProperty("--petal-drift-b", driftB.toFixed(0) + "px");
+                petal.style.setProperty("--petal-drift-end", driftEnd.toFixed(0) + "px");
+                petal.style.setProperty("--petal-rotation-start", (-90 + Math.random() * 180).toFixed(0) + "deg");
+                petal.style.setProperty("--petal-rotation-mid", (180 + Math.random() * 300).toFixed(0) + "deg");
+                petal.style.setProperty("--petal-rotation-end", (620 + Math.random() * 620).toFixed(0) + "deg");
+
+                container.appendChild(petal);
+
+                window.setTimeout(function () {
+                    petal.remove();
+                }, Math.ceil((duration + delay + 0.5) * 1000));
             }
         }
 
@@ -1245,11 +1288,10 @@
 
                     closeEventRsvp(eventId);
 
-                    /* Preserve the original celebration behavior: confetti is
-                     * shown for a confirmed Yes response, now immediately and
-                     * without navigating away from the Schedule card. */
+                    /* A confirmed Yes response launches event-specific petals
+                     * immediately, without navigating away from the Schedule card. */
                     if (attending === "Yes") {
-                        window.setTimeout(burstConfetti, 120);
+                        window.setTimeout(function () { burstRsvpPetals(eventId); }, 120);
                     }
                 } catch (error) {
                     console.error(error);
