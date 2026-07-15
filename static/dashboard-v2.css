@@ -3768,3 +3768,341 @@ body[data-active-tab="qa"] #qa {
         scroll-margin-top: 150px;
     }
 }
+/* ===================================================== */
+/* V22 — COMPACT ATTIRE + INLINE CLEAR-GLASS ACTIONS      */
+/* Keeps the approved event composition while allowing   */
+/* more of each cinematic background to remain visible.  */
+/* ===================================================== */
+
+/* Slightly shorter event chapters now that the content is compact. */
+.cinematic-event-card {
+    min-height: clamp(560px, 68vh, 740px);
+}
+
+.event-glass-panel {
+    padding: 30px 34px 26px;
+}
+
+.event-kicker {
+    margin-bottom: 18px;
+}
+
+.event-facts {
+    gap: 14px;
+    margin-bottom: 14px;
+    padding: 14px 0;
+}
+
+/* Attire remains in the Attire row, but reads as a subtle editorial
+   accent rather than a pasted rectangular thumbnail. */
+.event-attire-section {
+    grid-template-columns: minmax(0, 1fr) 88px;
+    gap: 12px;
+    min-height: 88px;
+    padding: 0 0 11px;
+}
+
+.event-attire-copy {
+    gap: 3px;
+}
+
+.event-attire-copy strong {
+    font-size: 18px;
+}
+
+.event-attire-copy small {
+    font-size: 8.5px;
+    letter-spacing: 0.85px;
+}
+
+.event-attire-figure,
+.event-haldi .event-attire-figure,
+.event-hindu .event-attire-figure,
+.event-christian .event-attire-figure {
+    width: 88px;
+    height: 88px;
+    overflow: hidden;
+    opacity: 0.82;
+    filter:
+        drop-shadow(0 9px 11px rgba(0, 0, 0, 0.19))
+        drop-shadow(0 2px 4px rgba(0, 0, 0, 0.10));
+
+    -webkit-mask-image: radial-gradient(
+        ellipse 74% 86% at 50% 54%,
+        #000 0%,
+        #000 43%,
+        rgba(0, 0, 0, 0.82) 61%,
+        rgba(0, 0, 0, 0.34) 76%,
+        transparent 94%
+    );
+    mask-image: radial-gradient(
+        ellipse 74% 86% at 50% 54%,
+        #000 0%,
+        #000 43%,
+        rgba(0, 0, 0, 0.82) 61%,
+        rgba(0, 0, 0, 0.34) 76%,
+        transparent 94%
+    );
+}
+
+.event-attire-figure::before {
+    right: 14%;
+    left: 14%;
+    height: 12%;
+    opacity: 0.48;
+}
+
+.event-attire-figure img {
+    transform: scale(0.92);
+    transform-origin: center bottom;
+}
+
+/* Response copy and all three actions share one compact row. */
+.event-response-summary {
+    gap: 10px;
+    padding-top: 12px;
+}
+
+.event-response-copy {
+    gap: 2px;
+}
+
+.event-response-summary strong {
+    font-size: 16px;
+}
+
+.event-primary-actions,
+.event-response-summary .event-primary-actions {
+    width: 100%;
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.92fr) minmax(0, 0.92fr);
+    align-items: stretch;
+    gap: 8px;
+}
+
+.calendar-menu-wrap,
+.calendar-toggle {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Clear optical glass. No painted brown surface and no hard resting outline. */
+.event-glass-button,
+.event-rsvp-trigger {
+    --event-button-border: 0.8px;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+
+    background:
+        radial-gradient(
+            ellipse 92% 60% at 50% 0%,
+            rgba(255, 255, 255, 0.19) 0%,
+            rgba(255, 255, 255, 0.045) 46%,
+            transparent 76%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.050) 0%,
+            rgba(255, 255, 255, 0.012) 54%,
+            rgba(255, 255, 255, 0.004) 100%
+        ) !important;
+
+    border: 0 !important;
+
+    backdrop-filter:
+        blur(8px)
+        saturate(150%)
+        brightness(1.24)
+        contrast(1.015);
+    -webkit-backdrop-filter:
+        blur(8px)
+        saturate(150%)
+        brightness(1.24)
+        contrast(1.015);
+
+    box-shadow:
+        0 8px 18px rgba(0, 0, 0, 0.13),
+        0 2px 5px rgba(0, 0, 0, 0.07),
+        inset 0 1.2px 0 rgba(255, 255, 255, 0.42),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.event-glass-button::before,
+.event-rsvp-trigger::before {
+    opacity: 0.58;
+}
+
+.event-glass-button::after {
+    opacity: 0.17;
+}
+
+.event-rsvp-trigger {
+    min-height: 44px;
+
+    background:
+        radial-gradient(
+            ellipse 94% 66% at 50% 0%,
+            rgba(255, 255, 255, 0.26) 0%,
+            rgba(255, 255, 255, 0.068) 48%,
+            transparent 78%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.075) 0%,
+            rgba(255, 255, 255, 0.018) 54%,
+            rgba(255, 255, 255, 0.006) 100%
+        ) !important;
+
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.16),
+        0 2px 6px rgba(0, 0, 0, 0.08),
+        0 0 17px rgba(var(--event-accent-rgb, 227, 185, 105), 0.08),
+        inset 0 1.3px 0 rgba(255, 255, 255, 0.52),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.event-rsvp-trigger::after {
+    opacity: 0.34;
+}
+
+.event-glass-button span,
+.event-rsvp-trigger span {
+    width: 100%;
+    padding: 11px 8px;
+    font-size: 8.6px;
+    font-weight: 700;
+    letter-spacing: 1.05px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.event-rsvp-trigger span {
+    padding: 12px 9px;
+    color: rgba(255, 255, 255, 0.98);
+    font-size: 9px;
+    font-weight: 760;
+    letter-spacing: 1.12px;
+}
+
+.event-glass-button:hover,
+.event-rsvp-trigger:hover {
+    background:
+        radial-gradient(
+            ellipse 94% 68% at 50% 0%,
+            rgba(255, 255, 255, 0.28) 0%,
+            rgba(255, 255, 255, 0.075) 48%,
+            transparent 78%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.070) 0%,
+            rgba(255, 255, 255, 0.017) 52%,
+            rgba(255, 255, 255, 0.006) 100%
+        ) !important;
+
+    box-shadow:
+        0 13px 26px rgba(0, 0, 0, 0.18),
+        0 3px 7px rgba(0, 0, 0, 0.08),
+        0 0 20px rgba(var(--event-accent-rgb, 227, 185, 105), 0.10),
+        inset 0 1.3px 0 rgba(255, 255, 255, 0.56),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 700px) {
+    .cinematic-event-card {
+        min-height: clamp(550px, 78svh, 665px);
+    }
+
+    .event-glass-panel {
+        right: 12px;
+        bottom: 12px;
+        left: 12px;
+        padding: 22px 18px 18px;
+    }
+
+    .event-glass-panel h3 {
+        font-size: 45px;
+    }
+
+    .event-kicker {
+        margin-bottom: 13px;
+        font-size: 15px;
+    }
+
+    .event-facts {
+        gap: 9px;
+        margin-bottom: 10px;
+        padding: 10px 0;
+    }
+
+    .event-attire-section {
+        grid-template-columns: minmax(0, 1fr) 64px;
+        gap: 8px;
+        min-height: 66px;
+        padding: 0 0 8px;
+    }
+
+    .event-attire-copy strong {
+        font-size: 16px;
+    }
+
+    .event-attire-copy small {
+        font-size: 7.4px;
+        letter-spacing: 0.65px;
+    }
+
+    .event-attire-figure,
+    .event-haldi .event-attire-figure,
+    .event-hindu .event-attire-figure,
+    .event-christian .event-attire-figure {
+        width: 64px;
+        height: 66px;
+        opacity: 0.76;
+    }
+
+    .event-response-summary {
+        gap: 8px;
+        padding-top: 10px;
+    }
+
+    .event-response-summary strong {
+        font-size: 15px;
+    }
+
+    .event-primary-actions,
+    .event-response-summary .event-primary-actions {
+        grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.91fr) minmax(0, 0.91fr);
+        gap: 6px;
+    }
+
+    .event-glass-button,
+    .event-rsvp-trigger {
+        min-height: 38px;
+    }
+
+    .event-rsvp-trigger {
+        min-height: 40px;
+        grid-column: auto;
+    }
+
+    .event-glass-button span,
+    .event-rsvp-trigger span {
+        padding: 10px 4px;
+        font-size: 7.4px;
+        letter-spacing: 0.72px;
+    }
+
+    .event-rsvp-trigger span {
+        font-size: 7.7px;
+        letter-spacing: 0.78px;
+    }
+
+    .calendar-popover {
+        right: 0;
+        left: auto;
+        transform: none;
+    }
+}
