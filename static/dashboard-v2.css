@@ -1851,17 +1851,24 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px;
 }
 
+/* ----------------------------------------------------- */
+/* EVENT ACTIONS — OPTICAL GLASS, NOT PAINTED PILLS       */
+/* The photograph supplies the color. Accent appears only */
+/* as a soft refracted rim and halo.                       */
+/* ----------------------------------------------------- */
+
 .event-glass-button {
-    --event-button-border: 1px;
+    --event-button-border: .9px;
 
     position: relative;
     isolation: isolate;
     overflow: hidden;
 
-    min-height: 46px;
+    min-width: 132px;
+    min-height: 44px;
     margin: 0;
     padding: 0;
 
@@ -1872,26 +1879,31 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     border: 0;
     border-radius: 999px;
     background:
+        radial-gradient(
+            ellipse 92% 66% at 50% 5%,
+            rgba(255,255,255,.16) 0%,
+            rgba(255,255,255,.045) 46%,
+            transparent 76%
+        ),
         linear-gradient(
             180deg,
-            rgba(255,255,255,.075) 0%,
-            rgba(255,255,255,.018) 45%,
-            rgba(255,255,255,.035) 100%
-        );
+            rgba(255,255,255,.055) 0%,
+            rgba(255,255,255,.018) 48%,
+            rgba(255,255,255,.010) 100%
+        ) !important;
     color: var(--dash-cream);
     text-decoration: none;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 
-    backdrop-filter: blur(7px) saturate(154%) brightness(1.07) contrast(1.025);
-    -webkit-backdrop-filter: blur(7px) saturate(154%) brightness(1.07) contrast(1.025);
+    backdrop-filter: blur(15px) saturate(132%) brightness(1.14) contrast(1.02);
+    -webkit-backdrop-filter: blur(15px) saturate(132%) brightness(1.14) contrast(1.02);
 
     box-shadow:
-        0 10px 24px rgba(0,0,0,.22),
-        0 2px 5px rgba(0,0,0,.15),
-        0 0 0 1px rgba(255,255,255,.17),
-        inset 0 1.4px 1px rgba(255,255,255,.56),
-        inset 0 -1.5px 1px rgba(255,255,255,.10);
+        0 13px 28px rgba(0,0,0,.18),
+        0 3px 8px rgba(0,0,0,.10),
+        inset 0 1.2px 0 rgba(255,255,255,.38),
+        inset 0 -1px 0 rgba(255,255,255,.035);
 
     transform: translateZ(0);
     transition:
@@ -1900,27 +1912,34 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
         box-shadow 360ms cubic-bezier(.22,1,.36,1);
 }
 
-/* Convex highlight across the clear-glass surface. */
+/* Curved surface reflection — intentionally borderless. */
 .event-glass-button::before {
     content: "";
     position: absolute;
     top: 2px;
-    right: 7%;
-    left: 7%;
+    right: 9%;
+    left: 9%;
     z-index: 0;
-    height: 43%;
+    height: 42%;
     border-radius: inherit;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.08) 40%, transparent 100%);
-    opacity: .68;
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,.32),
+        rgba(255,255,255,.075) 42%,
+        transparent 100%
+    );
+    opacity: .50;
+    filter: blur(.2px);
     transition: opacity 300ms ease, transform 360ms cubic-bezier(.22,1,.36,1);
 }
 
-/* Event-colored refraction appears only at the molded rim. */
+/* Refracted event-colored rim. Nearly invisible at rest on */
+/* secondary actions; it comes alive through rotation.       */
 .event-glass-button::after {
     content: "";
     position: absolute;
-    inset: calc(var(--event-button-border) / -2);
+    inset: 0;
     z-index: 1;
     padding: var(--event-button-border);
     box-sizing: border-box;
@@ -1929,10 +1948,10 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 
     background: conic-gradient(
         from -72deg at 50% 50%,
-        rgba(var(--event-accent-rgb, 227,185,105), .94),
-        rgba(255,255,255,.10) 9% 34%,
-        rgba(var(--event-accent-rgb, 227,185,105), .68) 49%,
-        rgba(255,255,255,.07) 62% 91%,
+        rgba(var(--event-accent-rgb, 227,185,105), .96),
+        rgba(255,255,255,.08) 10% 36%,
+        rgba(var(--event-accent-rgb, 227,185,105), .60) 50%,
+        rgba(255,255,255,.05) 64% 91%,
         rgba(var(--event-accent-rgb, 227,185,105), .92)
     );
 
@@ -1941,62 +1960,123 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     mask-composite: exclude;
 
-    opacity: .74;
+    opacity: .12;
     transform: rotate(0deg);
-    transition: transform 680ms cubic-bezier(.22,1,.36,1), opacity 280ms ease;
+    transition:
+        transform 760ms cubic-bezier(.22,1,.36,1),
+        opacity 280ms ease;
 }
 
 .event-glass-button span {
     position: relative;
     z-index: 2;
-    padding: 14px 20px;
-    color: rgba(255,255,255,.95);
+    padding: 13px 19px;
+    color: rgba(255,255,255,.90);
     font-family: "Manrope", sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.6px;
+    font-size: 9.5px;
+    font-weight: 650;
+    letter-spacing: 1.55px;
     text-transform: uppercase;
-    text-shadow: 0 1px 2px rgba(0,0,0,.76), 0 3px 11px rgba(0,0,0,.22);
+    text-shadow: 0 1px 2px rgba(0,0,0,.62), 0 3px 10px rgba(0,0,0,.18);
 }
 
 .event-glass-button:hover {
-    transform: translateY(-1px) scale(.982);
-    background: linear-gradient(180deg, rgba(255,255,255,.095), rgba(255,255,255,.025) 48%, rgba(255,255,255,.012));
+    transform: translateY(-2px);
+    background:
+        radial-gradient(
+            ellipse 94% 72% at 50% 3%,
+            rgba(255,255,255,.23) 0%,
+            rgba(255,255,255,.065) 48%,
+            transparent 78%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.075) 0%,
+            rgba(255,255,255,.022) 50%,
+            rgba(255,255,255,.012) 100%
+        ) !important;
     box-shadow:
-        0 13px 28px rgba(0,0,0,.24),
-        0 2px 4px rgba(0,0,0,.14),
-        0 0 0 1px rgba(255,255,255,.20),
-        inset 0 1.4px 1px rgba(255,255,255,.66),
-        inset 0 -1.5px 1px rgba(255,255,255,.14);
+        0 17px 34px rgba(0,0,0,.22),
+        0 4px 9px rgba(0,0,0,.10),
+        0 0 20px rgba(var(--event-accent-rgb,227,185,105),.08),
+        inset 0 1.2px 0 rgba(255,255,255,.48),
+        inset 0 -1px 0 rgba(255,255,255,.05);
 }
 
 .event-glass-button:hover::before {
-    opacity: .88;
-    transform: translateY(-1px) scaleX(.98);
+    opacity: .78;
+    transform: translateY(-1px) scaleX(.985);
 }
 
 .event-glass-button:hover::after {
-    opacity: .96;
-    transform: rotate(-76deg);
+    opacity: .88;
+    transform: rotate(-82deg);
 }
 
 .event-glass-button:active {
-    transform: translateY(1px) scale(.972);
+    transform: translateY(0) scale(.982);
 }
 
 .event-glass-button:focus-visible {
-    outline: 2px solid rgba(255,255,255,.90);
+    outline: 2px solid rgba(255,255,255,.86);
     outline-offset: 4px;
 }
 
+/* RSVP is the sole primary action: larger, brighter and more */
+/* dimensional, while still remaining transparent glass.      */
 .event-rsvp-trigger {
-    background: linear-gradient(180deg, rgba(255,255,255,.095), rgba(255,255,255,.028) 47%, rgba(var(--event-accent-rgb,227,185,105),.045));
+    --event-button-border: 1.15px;
+
+    min-width: 178px;
+    min-height: 52px;
+    background:
+        radial-gradient(
+            ellipse 94% 72% at 50% 4%,
+            rgba(255,255,255,.24) 0%,
+            rgba(255,255,255,.075) 48%,
+            transparent 78%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.090) 0%,
+            rgba(255,255,255,.025) 50%,
+            rgba(255,255,255,.014) 100%
+        ) !important;
     box-shadow:
-        0 11px 26px rgba(0,0,0,.23),
-        0 0 18px rgba(var(--event-accent-rgb,227,185,105),.10),
-        0 0 0 1px rgba(255,255,255,.19),
-        inset 0 1.4px 1px rgba(255,255,255,.62),
-        inset 0 -1.5px 1px rgba(255,255,255,.12);
+        0 16px 34px rgba(0,0,0,.22),
+        0 4px 10px rgba(0,0,0,.12),
+        0 0 24px rgba(var(--event-accent-rgb,227,185,105),.13),
+        inset 0 1.4px 0 rgba(255,255,255,.52),
+        inset 0 -1px 0 rgba(255,255,255,.055);
+}
+
+.event-rsvp-trigger::before {
+    opacity: .72;
+}
+
+.event-rsvp-trigger::after {
+    opacity: .42;
+}
+
+.event-rsvp-trigger span {
+    padding: 16px 27px;
+    color: rgba(255,255,255,.98);
+    font-size: 10.5px;
+    font-weight: 750;
+    letter-spacing: 1.75px;
+}
+
+.event-rsvp-trigger:hover {
+    box-shadow:
+        0 20px 40px rgba(0,0,0,.25),
+        0 4px 11px rgba(0,0,0,.12),
+        0 0 30px rgba(var(--event-accent-rgb,227,185,105),.20),
+        inset 0 1.4px 0 rgba(255,255,255,.62),
+        inset 0 -1px 0 rgba(255,255,255,.07);
+}
+
+.event-rsvp-trigger:hover::after {
+    opacity: 1;
 }
 
 .calendar-menu-wrap { position: relative; }
