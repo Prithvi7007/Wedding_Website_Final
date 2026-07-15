@@ -5590,3 +5590,14 @@ html {
             inset 0 1px 0 rgba(255,255,255,.22);
     }
 }
+/* =====================================================
+   IOS DOUBLE-TAP ZOOM CRASH PROTECTION
+   Keeps normal scrolling and pinch-to-zoom,
+   but disables rapid double-tap zoom.
+   ===================================================== */
+
+html,
+body,
+.dashboard-app {
+    touch-action: manipulation;
+}
