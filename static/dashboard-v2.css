@@ -1702,7 +1702,7 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 }
 
 .cinematic-event-card.event-christian {
-    background-image: url("/static/images/schedule/schedule-church-desktop.webpp");
+    background-image: url("/static/images/schedule/schedule-church-desktop.webp");
 }
 
 .cinematic-event-scrim {
