@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard34readabletypographyfloor"
+        href="{{ url_for('static', filename='dashboard-v2.css') }}?v=dashboard31eventcolorglass"
     >
 </head>
 
@@ -174,7 +174,16 @@
             </section>
 
         <!-- Schedule Tab -->
-        <section id="schedule" class="tab-content schedule-tab" aria-label="Wedding Schedule">
+        <section id="schedule" class="tab-content schedule-tab" aria-labelledby="schedule-heading">
+            <header class="schedule-header schedule-intro-card">
+                <p class="schedule-eyebrow">Your Wedding Weekend</p>
+                <h2 id="schedule-heading">Wedding Schedule</h2>
+                <p class="schedule-intro">
+                    Please RSVP for each celebration shown below. Your response helps us plan seating,
+                    dining, parking, and every thoughtful detail of the weekend.
+                </p>
+            </header>
+
             <nav class="schedule-journey" aria-label="Your available wedding events">
                 {% for event in events %}
                     <button
