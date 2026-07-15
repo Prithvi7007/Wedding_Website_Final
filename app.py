@@ -1,3 +1,4 @@
+```python
 import os
 import secrets
 from pathlib import Path
@@ -6,7 +7,22 @@ from urllib.parse import urlencode, quote_plus
 
 import psycopg2
 import psycopg2.extras
-from flask import Flask, render_template, request, redirect, url_for, session, Response, jsonify
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    Response,
+    jsonify,
+)
+
+from notifications import (
+    RSVPNotification,
+    RSVPState,
+    send_rsvp_notification,
+)
 
 try:
     from dotenv import load_dotenv
@@ -22,6 +38,11 @@ if load_dotenv:
 
 app = Flask(__name__)
 
+
+# =============================
+# APPLICATION SECURITY
+# =============================
+
 # Require a private, high-entropy key for signing invitation sessions.
 # The application fails closed instead of falling back to a public key.
 secret_key = os.getenv("SECRET_KEY")
@@ -29,7 +50,8 @@ secret_key = os.getenv("SECRET_KEY")
 if not secret_key:
     raise RuntimeError(
         "SECRET_KEY environment variable is required. "
-        "Generate one with: python -c \"import secrets; print(secrets.token_urlsafe(64))\""
+        "Generate one with: "
+        'python -c "import secrets; print(secrets.token_urlsafe(64))"'
     )
 
 blocked_secret_keys = {
@@ -38,17 +60,23 @@ blocked_secret_keys = {
 }
 
 if secret_key in blocked_secret_keys:
-    raise RuntimeError("The configured SECRET_KEY is a known insecure placeholder.")
+    raise RuntimeError(
+        "The configured SECRET_KEY is a known insecure placeholder."
+    )
 
 if len(secret_key) < 32:
-    raise RuntimeError("SECRET_KEY must be at least 32 characters long.")
+    raise RuntimeError(
+        "SECRET_KEY must be at least 32 characters long."
+    )
 
 app.config.update(
     SECRET_KEY=secret_key,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=os.getenv("SESSION_COOKIE_SECURE", "true").lower()
-    in {"1", "true", "yes", "on"},
+    SESSION_COOKIE_SECURE=(
+        os.getenv("SESSION_COOKIE_SECURE", "true").lower()
+        in {"1", "true", "yes", "on"}
+    ),
 )
 
 
@@ -63,7 +91,7 @@ def get_db_connection():
         dbname=os.getenv("DB_NAME", "wedding_db"),
         user=os.getenv("DB_USER", "wedding_user"),
         password=os.getenv("DB_PASSWORD"),
-        cursor_factory=psycopg2.extras.RealDictCursor
+        cursor_factory=psycopg2.extras.RealDictCursor,
     )
 
 
@@ -85,6 +113,7 @@ def execute_query(query, params=None):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(query, params or ())
+
         conn.commit()
 
 
@@ -111,17 +140,33 @@ def format_date_time_line(event_date, start_time):
         return ""
 
     weekday = event_date.strftime("%A")
-    return f"{weekday} • {format_date(event_date)} • {format_time(start_time)}"
+
+    return (
+        f"{weekday} • "
+        f"{format_date(event_date)} • "
+        f"{format_time(start_time)}"
+    )
 
 
 def calendar_timestamp(event, time_key):
-    combined = datetime.combine(event["event_date"], event[time_key])
+    combined = datetime.combine(
+        event["event_date"],
+        event[time_key],
+    )
+
     return combined.strftime("%Y%m%dT%H%M%S")
 
 
 def build_google_calendar_link(event):
-    calendar_start = calendar_timestamp(event, "start_time")
-    calendar_end = calendar_timestamp(event, "end_time")
+    calendar_start = calendar_timestamp(
+        event,
+        "start_time",
+    )
+
+    calendar_end = calendar_timestamp(
+        event,
+        "end_time",
+    )
 
     calendar_params = {
         "action": "TEMPLATE",
@@ -129,14 +174,26 @@ def build_google_calendar_link(event):
         "dates": f"{calendar_start}/{calendar_end}",
         "details": event.get("description") or "",
         "location": event.get("location") or "",
-        "ctz": event.get("timezone") or "America/New_York"
+        "ctz": (
+            event.get("timezone")
+            or "America/New_York"
+        ),
     }
 
-    return "https://calendar.google.com/calendar/render?" + urlencode(calendar_params)
+    return (
+        "https://calendar.google.com/calendar/render?"
+        + urlencode(calendar_params)
+    )
 
 
 def build_directions_link(event):
-    return "https://www.google.com/maps/search/?api=1&query=" + quote_plus(event.get("location") or "")
+    location = event.get("location") or ""
+
+    return (
+        "https://www.google.com/maps/search/"
+        "?api=1&query="
+        + quote_plus(location)
+    )
 
 
 def escape_ics_text(text):
@@ -145,9 +202,9 @@ def escape_ics_text(text):
 
     return (
         text.replace("\\", "\\\\")
-            .replace(",", "\\,")
-            .replace(";", "\\;")
-            .replace("\n", "\\n")
+        .replace(",", "\\,")
+        .replace(";", "\\;")
+        .replace("\n", "\\n")
     )
 
 
@@ -176,7 +233,7 @@ def get_current_invitation():
         WHERE invitation_id = %s
           AND is_active = TRUE
         """,
-        (invitation_id,)
+        (invitation_id,),
     )
 
     if not invitation:
@@ -184,6 +241,7 @@ def get_current_invitation():
         return None
 
     invitation["name"] = invitation["display_name"]
+
     return invitation
 
 
@@ -213,7 +271,7 @@ def get_allowed_events(invitation_id):
         WHERE p.invitation_id = %s
         ORDER BY e.display_order
         """,
-        (invitation_id,)
+        (invitation_id,),
     )
 
     events = []
@@ -222,18 +280,32 @@ def get_allowed_events(invitation_id):
         event = dict(row)
 
         event["id"] = event["event_id"]
-        event["date"] = format_date(event["event_date"])
-        event["time"] = format_time(event["start_time"])
-        event["date_time_line"] = format_date_time_line(event["event_date"], event["start_time"])
-        event["calendar_link"] = build_google_calendar_link(event)
-        event["directions_link"] = build_directions_link(event)
+        event["date"] = format_date(
+            event["event_date"]
+        )
+        event["time"] = format_time(
+            event["start_time"]
+        )
+        event["date_time_line"] = format_date_time_line(
+            event["event_date"],
+            event["start_time"],
+        )
+        event["calendar_link"] = (
+            build_google_calendar_link(event)
+        )
+        event["directions_link"] = (
+            build_directions_link(event)
+        )
 
         events.append(event)
 
     return events
 
 
-def get_event_for_invitation(invitation_id, event_id):
+def get_event_for_invitation(
+    invitation_id,
+    event_id,
+):
     return fetch_one(
         """
         SELECT
@@ -258,11 +330,16 @@ def get_event_for_invitation(invitation_id, event_id):
         WHERE p.invitation_id = %s
           AND e.event_id = %s
         """,
-        (invitation_id, event_id)
+        (
+            invitation_id,
+            event_id,
+        ),
     )
 
 
-def get_saved_rsvps_for_invitation(invitation_id):
+def get_saved_rsvps_for_invitation(
+    invitation_id,
+):
     rows = fetch_all(
         """
         SELECT
@@ -273,7 +350,7 @@ def get_saved_rsvps_for_invitation(invitation_id):
         FROM rsvps
         WHERE invitation_id = %s
         """,
-        (invitation_id,)
+        (invitation_id,),
     )
 
     saved = {}
@@ -282,7 +359,7 @@ def get_saved_rsvps_for_invitation(invitation_id):
         saved[row["event_id"]] = {
             "attending": row["attending"],
             "guest_count": row["guest_count"],
-            "notes": row["notes"]
+            "notes": row["notes"],
         }
 
     return saved
@@ -294,8 +371,10 @@ def get_rsvp_ui_status(attending):
             "status_class": "status-yes",
             "badge_class": "badge-yes",
             "badge_text": "Confirmed",
-            "heading_text": "We are delighted you'll be joining us.",
-            "celebrate": True
+            "heading_text": (
+                "We are delighted you'll be joining us."
+            ),
+            "celebrate": True,
         }
 
     if attending == "No":
@@ -303,23 +382,29 @@ def get_rsvp_ui_status(attending):
             "status_class": "status-no",
             "badge_class": "badge-no",
             "badge_text": "Declined",
-            "heading_text": "We will miss you at this event.",
-            "celebrate": False
+            "heading_text": (
+                "We will miss you at this event."
+            ),
+            "celebrate": False,
         }
 
     return {
         "status_class": "status-maybe",
         "badge_class": "badge-maybe",
         "badge_text": "Maybe",
-        "heading_text": "Thank you for letting us know.",
-        "celebrate": False
+        "heading_text": (
+            "Thank you for letting us know."
+        ),
+        "celebrate": False,
     }
 
 
 def wants_json_response():
     return (
-        request.headers.get("X-Requested-With") == "XMLHttpRequest"
-        or "application/json" in request.headers.get("Accept", "")
+        request.headers.get("X-Requested-With")
+        == "XMLHttpRequest"
+        or "application/json"
+        in request.headers.get("Accept", "")
     )
 
 
@@ -327,7 +412,10 @@ CSRF_SESSION_KEY = "_csrf_token"
 
 
 def get_csrf_token():
-    """Return the current session's CSRF token, creating it when needed."""
+    """
+    Return the current session's CSRF token,
+    creating it when needed.
+    """
     token = session.get(CSRF_SESSION_KEY)
 
     if not token:
@@ -338,26 +426,48 @@ def get_csrf_token():
 
 
 def has_valid_csrf_token():
-    """Validate an RSVP CSRF token from a form field or AJAX header."""
+    """
+    Validate an RSVP CSRF token from a form
+    field or AJAX header.
+    """
     submitted_token = (
         request.form.get("csrf_token", "")
-        or request.headers.get("X-CSRF-Token", "")
+        or request.headers.get(
+            "X-CSRF-Token",
+            "",
+        )
     )
-    expected_token = session.get(CSRF_SESSION_KEY, "")
+
+    expected_token = session.get(
+        CSRF_SESSION_KEY,
+        "",
+    )
 
     return bool(
         submitted_token
         and expected_token
-        and secrets.compare_digest(submitted_token, expected_token)
+        and secrets.compare_digest(
+            submitted_token,
+            expected_token,
+        )
     )
 
 
-# Makes {{ csrf_token() }} available in every Jinja template.
-app.jinja_env.globals["csrf_token"] = get_csrf_token
+# Makes {{ csrf_token() }} available
+# in every Jinja template.
+app.jinja_env.globals["csrf_token"] = (
+    get_csrf_token
+)
 
 
 def normalize_tab(tab):
-    allowed_tabs = ["welcome", "schedule", "travel", "registry", "qa"]
+    allowed_tabs = [
+        "welcome",
+        "schedule",
+        "travel",
+        "registry",
+        "qa",
+    ]
 
     if tab in allowed_tabs:
         return tab
@@ -375,7 +485,7 @@ def home():
         "index.html",
         redirect_url=None,
         guest_name=None,
-        invalid_invite=False
+        invalid_invite=False,
     )
 
 
@@ -392,7 +502,7 @@ def invite(invite_token):
         WHERE invite_token = %s
           AND is_active = TRUE
         """,
-        (invite_token,)
+        (invite_token,),
     )
 
     if not invitation:
@@ -400,18 +510,25 @@ def invite(invite_token):
             "index.html",
             redirect_url=None,
             guest_name=None,
-            invalid_invite=True
+            invalid_invite=True,
         ), 404
 
     session.clear()
-    session["invitation_id"] = invitation["invitation_id"]
-    session["invite_token"] = invitation["invite_token"]
+    session["invitation_id"] = (
+        invitation["invitation_id"]
+    )
+    session["invite_token"] = (
+        invitation["invite_token"]
+    )
 
     return render_template(
         "index.html",
-        redirect_url=url_for("dashboard", login="success"),
+        redirect_url=url_for(
+            "dashboard",
+            login="success",
+        ),
         guest_name=invitation["display_name"],
-        invalid_invite=False
+        invalid_invite=False,
     )
 
 
@@ -426,13 +543,25 @@ def dashboard():
     celebrate_event_id = request.args.get("event")
     login_effect = request.args.get("login")
 
-    active_tab = normalize_tab(request.args.get("tab", "welcome"))
+    active_tab = normalize_tab(
+        request.args.get(
+            "tab",
+            "welcome",
+        )
+    )
 
     if celebrate == "yes":
         active_tab = "schedule"
 
-    events = get_allowed_events(invitation["invitation_id"])
-    saved_rsvps = get_saved_rsvps_for_invitation(invitation["invitation_id"])
+    events = get_allowed_events(
+        invitation["invitation_id"]
+    )
+
+    saved_rsvps = (
+        get_saved_rsvps_for_invitation(
+            invitation["invitation_id"]
+        )
+    )
 
     return render_template(
         "dashboard.html",
@@ -442,7 +571,7 @@ def dashboard():
         celebrate=celebrate,
         celebrate_event_id=celebrate_event_id,
         login_effect=login_effect,
-        active_tab=active_tab
+        active_tab=active_tab,
     )
 
 
@@ -455,7 +584,11 @@ def save_rsvp():
         if wants_json:
             return jsonify({
                 "success": False,
-                "message": "Your session expired. Please open your private invitation link again."
+                "message": (
+                    "Your session expired. "
+                    "Please open your private "
+                    "invitation link again."
+                ),
             }), 401
 
         return redirect(url_for("home"))
@@ -464,38 +597,85 @@ def save_rsvp():
         if wants_json:
             return jsonify({
                 "success": False,
-                "message": "Invalid or expired form token. Please refresh the page and try again."
+                "message": (
+                    "Invalid or expired form token. "
+                    "Please refresh the page and "
+                    "try again."
+                ),
             }), 400
 
-        return "Invalid or missing CSRF token.", 400
+        return (
+            "Invalid or missing CSRF token.",
+            400,
+        )
 
-    event_id = request.form.get("event_id", "").strip()
+    event_id = request.form.get(
+        "event_id",
+        "",
+    ).strip()
 
-    event = get_event_for_invitation(invitation["invitation_id"], event_id)
+    event = get_event_for_invitation(
+        invitation["invitation_id"],
+        event_id,
+    )
 
     if not event:
         if wants_json:
             return jsonify({
                 "success": False,
-                "message": "You are not invited to this event."
+                "message": (
+                    "You are not invited "
+                    "to this event."
+                ),
             }), 403
 
-        return redirect(url_for("dashboard", tab="schedule") + "#schedule")
+        return redirect(
+            url_for(
+                "dashboard",
+                tab="schedule",
+            )
+            + "#schedule"
+        )
 
-    attending = request.form.get("attending", "").strip()
-    notes = request.form.get("notes", "").strip()
+    attending = request.form.get(
+        "attending",
+        "",
+    ).strip()
 
-    if attending not in ["Yes", "No", "Maybe"]:
+    notes = request.form.get(
+        "notes",
+        "",
+    ).strip()
+
+    if attending not in [
+        "Yes",
+        "No",
+        "Maybe",
+    ]:
         if wants_json:
             return jsonify({
                 "success": False,
-                "message": "Please select Yes, No, or Maybe."
+                "message": (
+                    "Please select Yes, No, "
+                    "or Maybe."
+                ),
             }), 400
 
-        return redirect(url_for("dashboard", tab="schedule") + "#schedule")
+        return redirect(
+            url_for(
+                "dashboard",
+                tab="schedule",
+            )
+            + "#schedule"
+        )
 
     try:
-        guest_count = int(request.form.get("guest_count", "0"))
+        guest_count = int(
+            request.form.get(
+                "guest_count",
+                "0",
+            )
+        )
     except ValueError:
         guest_count = 0
 
@@ -504,35 +684,160 @@ def save_rsvp():
     if attending == "No":
         guest_count = 0
     else:
-        guest_count = max(0, min(guest_count, max_guests))
-
-    execute_query(
-        """
-        INSERT INTO rsvps (
-            invitation_id,
-            event_id,
-            attending,
-            guest_count,
-            notes
+        guest_count = max(
+            0,
+            min(
+                guest_count,
+                max_guests,
+            ),
         )
-        VALUES (%s, %s, %s, %s, %s)
-        ON CONFLICT (invitation_id, event_id)
-        DO UPDATE SET
-            attending = EXCLUDED.attending,
-            guest_count = EXCLUDED.guest_count,
-            notes = EXCLUDED.notes,
-            updated_at = CURRENT_TIMESTAMP
-        """,
-        (
-            invitation["invitation_id"],
-            event_id,
-            attending,
-            guest_count,
-            notes
+
+    # ---------------------------------
+    # RSVP DATABASE TRANSACTION
+    # ---------------------------------
+    #
+    # First retrieve the previous RSVP,
+    # then insert/update the current RSVP.
+    #
+    # The email is sent only after this
+    # transaction successfully commits.
+    # ---------------------------------
+
+    previous_rsvp = None
+
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT
+                    attending,
+                    guest_count,
+                    notes
+                FROM rsvps
+                WHERE invitation_id = %s
+                  AND event_id = %s
+                """,
+                (
+                    invitation["invitation_id"],
+                    event_id,
+                ),
+            )
+
+            previous_rsvp = cur.fetchone()
+
+            cur.execute(
+                """
+                INSERT INTO rsvps (
+                    invitation_id,
+                    event_id,
+                    attending,
+                    guest_count,
+                    notes
+                )
+                VALUES (
+                    %s,
+                    %s,
+                    %s,
+                    %s,
+                    %s
+                )
+                ON CONFLICT (
+                    invitation_id,
+                    event_id
+                )
+                DO UPDATE SET
+                    attending = EXCLUDED.attending,
+                    guest_count = EXCLUDED.guest_count,
+                    notes = EXCLUDED.notes,
+                    updated_at = CURRENT_TIMESTAMP
+                """,
+                (
+                    invitation["invitation_id"],
+                    event_id,
+                    attending,
+                    guest_count,
+                    notes,
+                ),
+            )
+
+        conn.commit()
+
+    # ---------------------------------
+    # RSVP EMAIL NOTIFICATION
+    # ---------------------------------
+    #
+    # This runs after PostgreSQL commits.
+    # If Resend fails, the RSVP remains
+    # saved and the guest still receives
+    # a successful website response.
+    # ---------------------------------
+
+    previous_state = None
+
+    if previous_rsvp:
+        previous_state = RSVPState(
+            attending=(
+                previous_rsvp["attending"]
+                or ""
+            ),
+            guest_count=(
+                previous_rsvp["guest_count"]
+                or 0
+            ),
+            notes=(
+                previous_rsvp["notes"]
+                or ""
+            ),
+        )
+
+    current_state = RSVPState(
+        attending=attending,
+        guest_count=guest_count,
+        notes=notes,
+    )
+
+    notification = RSVPNotification(
+        guest_name=(
+            invitation["display_name"]
+            or invitation["name"]
+            or "Wedding Guest"
+        ),
+        event_title=event["title"],
+        previous=previous_state,
+        current=current_state,
+        submitted_at=(
+            datetime.now().astimezone()
+        ),
+    )
+
+    notification_result = (
+        send_rsvp_notification(
+            notification
         )
     )
 
-    status = get_rsvp_ui_status(attending)
+    if notification_result.sent:
+        app.logger.info(
+            "RSVP email sent for "
+            "invitation_id=%s event_id=%s "
+            "message_id=%s",
+            invitation["invitation_id"],
+            event_id,
+            notification_result.message_id,
+        )
+    else:
+        app.logger.warning(
+            "RSVP saved but email notification "
+            "was not sent for invitation_id=%s "
+            "event_id=%s error=%s",
+            invitation["invitation_id"],
+            event_id,
+            notification_result.error,
+        )
+
+    status = get_rsvp_ui_status(
+        attending
+    )
 
     if wants_json:
         return jsonify({
@@ -542,19 +847,41 @@ def save_rsvp():
             "attending": attending,
             "guest_count": guest_count,
             "notes": notes,
-            "status_class": status["status_class"],
-            "badge_class": status["badge_class"],
-            "badge_text": status["badge_text"],
-            "heading_text": status["heading_text"],
-            "celebrate": status["celebrate"]
+            "status_class": (
+                status["status_class"]
+            ),
+            "badge_class": (
+                status["badge_class"]
+            ),
+            "badge_text": (
+                status["badge_text"]
+            ),
+            "heading_text": (
+                status["heading_text"]
+            ),
+            "celebrate": (
+                status["celebrate"]
+            ),
         })
 
     if attending == "Yes":
         return redirect(
-            url_for("dashboard", tab="schedule", celebrate="yes", event=event_id) + "#schedule"
+            url_for(
+                "dashboard",
+                tab="schedule",
+                celebrate="yes",
+                event=event_id,
+            )
+            + "#schedule"
         )
 
-    return redirect(url_for("dashboard", tab="schedule") + "#schedule")
+    return redirect(
+        url_for(
+            "dashboard",
+            tab="schedule",
+        )
+        + "#schedule"
+    )
 
 
 @app.route("/calendar/<event_id>.ics")
@@ -564,36 +891,75 @@ def apple_calendar_event(event_id):
     if not invitation:
         return redirect(url_for("home"))
 
-    event = get_event_for_invitation(invitation["invitation_id"], event_id)
+    event = get_event_for_invitation(
+        invitation["invitation_id"],
+        event_id,
+    )
 
     if not event:
-        return redirect(url_for("dashboard"))
+        return redirect(
+            url_for("dashboard")
+        )
 
-    calendar_start = calendar_timestamp(event, "start_time")
-    calendar_end = calendar_timestamp(event, "end_time")
+    calendar_start = calendar_timestamp(
+        event,
+        "start_time",
+    )
 
-    title = escape_ics_text(event["title"])
-    description = escape_ics_text(event.get("description") or "")
-    location = escape_ics_text(event.get("location") or "")
-    timezone = event.get("timezone") or "America/New_York"
+    calendar_end = calendar_timestamp(
+        event,
+        "end_time",
+    )
+
+    title = escape_ics_text(
+        event["title"]
+    )
+
+    description = escape_ics_text(
+        event.get("description") or ""
+    )
+
+    location = escape_ics_text(
+        event.get("location") or ""
+    )
+
+    timezone = (
+        event.get("timezone")
+        or "America/New_York"
+    )
 
     ics_content = "\r\n".join([
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//Adlin and Prithvi Wedding//EN",
+        (
+            "PRODID:-//Adlin and Prithvi "
+            "Wedding//EN"
+        ),
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
         "BEGIN:VEVENT",
-        f"UID:{event_id}@adlin-prithvi-wedding",
-        f"DTSTAMP:{datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')}",
-        f"DTSTART;TZID={timezone}:{calendar_start}",
-        f"DTEND;TZID={timezone}:{calendar_end}",
+        (
+            f"UID:{event_id}"
+            "@adlin-prithvi-wedding"
+        ),
+        (
+            "DTSTAMP:"
+            f"{datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')}"
+        ),
+        (
+            f"DTSTART;TZID={timezone}:"
+            f"{calendar_start}"
+        ),
+        (
+            f"DTEND;TZID={timezone}:"
+            f"{calendar_end}"
+        ),
         f"SUMMARY:{title}",
         f"DESCRIPTION:{description}",
         f"LOCATION:{location}",
         "END:VEVENT",
         "END:VCALENDAR",
-        ""
+        "",
     ])
 
     filename = f"{event_id}.ics"
@@ -602,16 +968,20 @@ def apple_calendar_event(event_id):
         ics_content,
         mimetype="text/calendar",
         headers={
-            "Content-Disposition": f"attachment; filename={filename}"
-        }
+            "Content-Disposition": (
+                f"attachment; filename={filename}"
+            ),
+        },
     )
 
 
 @app.route("/logout")
 def logout():
     session.clear()
+
     return redirect(url_for("home"))
 
 
 if __name__ == "__main__":
     app.run(debug=True)
+```
