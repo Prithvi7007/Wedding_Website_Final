@@ -1698,11 +1698,11 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
 }
 
 .cinematic-event-card.event-hindu {
-    background-image: url("/static/images/WEDDING.webp");
+    background-image: url("/static/images/schedule/schedule-hindu-desktop.webp");
 }
 
 .cinematic-event-card.event-christian {
-    background-image: url("/static/images/RECEPTION.webp");
+    background-image: url("/static/images/schedule/schedule-church-desktop.webpp");
 }
 
 .cinematic-event-scrim {
@@ -1954,8 +1954,8 @@ body:not([data-active-tab="welcome"]) .dashboard-header {
     .cinematic-event-list { gap: 24px; }
     .cinematic-event-card { min-height: 88svh; border-radius: 26px; background-position: center top; }
     .cinematic-event-card.event-haldi { background-image: url("/static/images/schedule/schedule-haldi-mobile.webp"); }
-    .cinematic-event-card.event-hindu { background-image: url("/static/images/WEDDING-mobile.webp"); }
-    .cinematic-event-card.event-christian { background-image: url("/static/images/RECEPTION-mobile.webp"); }
+    .cinematic-event-card.event-hindu { background-image: url("/static/images/schedule/schedule-hindu-mobile.webp"); }
+    .cinematic-event-card.event-christian { background-image: url("/static/images/schedule/schedule-church-mobile.webp"); }
     .cinematic-event-scrim,
     .event-hindu .cinematic-event-scrim,
     .event-christian .cinematic-event-scrim {
