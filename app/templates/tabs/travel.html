@@ -1,0 +1,232 @@
+{% macro travel_picture(stem, alt, class_name='travel-card-image') -%}
+<picture>
+    <source
+        type="image/avif"
+        srcset="
+            {{ asset_url('images/travel/' ~ stem ~ '-480.avif') }} 480w,
+            {{ asset_url('images/travel/' ~ stem ~ '-768.avif') }} 768w,
+            {{ asset_url('images/travel/' ~ stem ~ '-1200.avif') }} 1200w
+        "
+        sizes="(max-width: 700px) calc(100vw - 48px), (max-width: 1100px) 52vw, 680px"
+    >
+    <source
+        type="image/webp"
+        srcset="
+            {{ asset_url('images/travel/' ~ stem ~ '-480.webp') }} 480w,
+            {{ asset_url('images/travel/' ~ stem ~ '-768.webp') }} 768w,
+            {{ asset_url('images/travel/' ~ stem ~ '-1200.webp') }} 1200w
+        "
+        sizes="(max-width: 700px) calc(100vw - 48px), (max-width: 1100px) 52vw, 680px"
+    >
+    <img
+        class="{{ class_name }}"
+        src="{{ asset_url('images/travel/' ~ stem ~ '-768.webp') }}"
+        width="768"
+        height="576"
+        alt="{{ alt }}"
+        loading="lazy"
+        decoding="async"
+    >
+</picture>
+{%- endmacro %}
+
+<section
+    id="travel"
+    class="tab-panel information-panel travel-panel"
+    data-tab-panel="travel"
+    data-information-root
+    aria-labelledby="travel-heading"
+>
+    <header class="information-intro">
+        <p class="information-eyebrow">The Weekend Edition</p>
+        <h2 id="travel-heading">Travel Guide</h2>
+        <p>
+            A helpful guide for our out-of-town guests—airports, places to stay,
+            local favorites, and a few ways to enjoy Tampa between celebrations.
+        </p>
+    </header>
+
+    <div class="travel-edition" aria-label="Wedding weekend travel information">
+        <article class="travel-story travel-story-feature">
+            <div class="travel-story-heading">
+                <div>
+                    <p class="story-label">Travel Forecast</p>
+                    <h3>Airport Information</h3>
+                </div>
+                <span class="edition-stamp" aria-hidden="true">Arrivals<br>Desk</span>
+            </div>
+
+            <figure class="travel-image-frame travel-image-feature">
+                {{ travel_picture('airport', 'Vintage illustration of an airplane, airport tower, and luggage') }}
+            </figure>
+
+            <div class="travel-list travel-list-airports">
+                <section class="travel-item">
+                    <p class="travel-item-number">01</p>
+                    <div>
+                        <h4>Tampa International Airport</h4>
+                        <p>
+                            The recommended airport for most guests. It is the most convenient
+                            option for the Tampa wedding weekend.
+                        </p>
+                        <a
+                            class="editorial-link"
+                            href="https://www.google.com/maps/search/?api=1&query=Tampa+International+Airport"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >Open in Maps <span aria-hidden="true">↗</span></a>
+                    </div>
+                </section>
+
+                <section class="travel-item">
+                    <p class="travel-item-number">02</p>
+                    <div>
+                        <h4>St. Pete–Clearwater International Airport</h4>
+                        <p>
+                            A secondary option depending on flight availability and pricing.
+                        </p>
+                        <a
+                            class="editorial-link"
+                            href="https://www.google.com/maps/search/?api=1&query=St.+Pete-Clearwater+International+Airport"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >Open in Maps <span aria-hidden="true">↗</span></a>
+                    </div>
+                </section>
+
+                <section class="travel-item">
+                    <p class="travel-item-number">03</p>
+                    <div>
+                        <h4>Orlando International Airport</h4>
+                        <p>
+                            Another option for guests who find better fares into Orlando. Please
+                            allow additional driving time to reach the Tampa event locations.
+                        </p>
+                        <a
+                            class="editorial-link"
+                            href="https://www.google.com/maps/search/?api=1&query=Orlando+International+Airport"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >Open in Maps <span aria-hidden="true">↗</span></a>
+                    </div>
+                </section>
+            </div>
+        </article>
+
+        <article class="travel-story travel-story-hotel">
+            <div class="travel-story-heading compact-heading">
+                <div>
+                    <p class="story-label">Stay Bulletin</p>
+                    <h3>Hotel Information</h3>
+                </div>
+            </div>
+
+            <figure class="travel-image-frame travel-image-side">
+                {{ travel_picture('hotel', 'Vintage illustration of a hotel and travel luggage') }}
+            </figure>
+
+            <div class="travel-list">
+                <section class="travel-item travel-item-stacked">
+                    <p class="travel-item-number">Stay</p>
+                    <div>
+                        <h4>Hotel Block</h4>
+                        <p>
+                            Hotel block details will be shared here when finalized, including the
+                            booking link, group rate, and reservation deadline.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="travel-item travel-item-stacked">
+                    <p class="travel-item-number">Area</p>
+                    <div>
+                        <h4>Recommended Areas</h4>
+                        <p>
+                            Tampa, New Tampa, Wesley Chapel, and Brandon can all be convenient,
+                            depending on the celebrations included with your invitation.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </article>
+
+        <article class="travel-story travel-story-local">
+            <div class="travel-story-heading compact-heading">
+                <div>
+                    <p class="story-label">Around Town</p>
+                    <h3>Things To Do</h3>
+                </div>
+            </div>
+
+            <figure class="travel-image-frame travel-image-clipping">
+                {{ travel_picture('tampa', 'Vintage illustrated travel scene from Tampa') }}
+            </figure>
+
+            <div class="travel-list">
+                <section class="travel-item travel-item-stacked">
+                    <p class="travel-item-number">Walk</p>
+                    <div>
+                        <h4>Tampa Riverwalk</h4>
+                        <p>A scenic waterfront route with restaurants, museums, and downtown views.</p>
+                        <a
+                            class="editorial-link"
+                            href="https://www.google.com/maps/search/?api=1&query=Tampa+Riverwalk"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >Open in Maps <span aria-hidden="true">↗</span></a>
+                    </div>
+                </section>
+
+                <section class="travel-item travel-item-stacked">
+                    <p class="travel-item-number">Eat</p>
+                    <div>
+                        <h4>Armature Works</h4>
+                        <p>A lively food hall and gathering spot near the river, especially good for groups.</p>
+                        <a
+                            class="editorial-link"
+                            href="https://www.google.com/maps/search/?api=1&query=Armature+Works+Tampa"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >Open in Maps <span aria-hidden="true">↗</span></a>
+                    </div>
+                </section>
+
+                <section class="travel-item travel-item-stacked">
+                    <p class="travel-item-number">Coast</p>
+                    <div>
+                        <h4>Clearwater Beach</h4>
+                        <p>A beautiful Gulf Coast option for guests extending their trip.</p>
+                        <a
+                            class="editorial-link"
+                            href="https://www.google.com/maps/search/?api=1&query=Clearwater+Beach"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >Open in Maps <span aria-hidden="true">↗</span></a>
+                    </div>
+                </section>
+            </div>
+        </article>
+
+        <article class="travel-story travel-story-dining">
+            <div class="travel-story-heading dining-heading">
+                <div>
+                    <p class="story-label">Selected Eats</p>
+                    <h3>Favorite<br>Restaurants</h3>
+                </div>
+                <span class="edition-stamp edition-stamp-round" aria-hidden="true">Eats</span>
+            </div>
+
+            <div class="travel-dining-note">
+                <p>
+                    We are collecting a short list of our favorite Tampa food, dessert, and coffee
+                    spots. The final recommendations will be added here closer to the wedding weekend.
+                </p>
+                <span>More recommendations coming soon</span>
+            </div>
+
+            <figure class="travel-image-frame travel-image-bottom">
+                {{ travel_picture('restaurants', 'Vintage illustration of a restaurant dining table') }}
+            </figure>
+        </article>
+    </div>
+</section>

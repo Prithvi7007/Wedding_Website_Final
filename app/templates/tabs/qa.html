@@ -1,0 +1,157 @@
+<section
+    id="qa"
+    class="tab-panel information-panel qa-panel"
+    data-tab-panel="qa"
+    data-information-root
+    aria-labelledby="qa-heading"
+>
+    <header class="information-intro qa-intro">
+        <p class="information-eyebrow">Guest Desk</p>
+        <h2 id="qa-heading">Questions &amp; Answers</h2>
+        <p>
+            A few helpful notes for the wedding weekend. Your private invitation and the
+            Schedule tab remain the best source for event-specific details.
+        </p>
+    </header>
+
+    <div class="qa-grid" data-qa-accordion>
+        <details class="qa-item qa-item-featured" open>
+            <summary>
+                <span class="qa-category">Attire</span>
+                <strong>What should I wear?</strong>
+                <i aria-hidden="true"></i>
+            </summary>
+            <div class="qa-answer">
+                <p>
+                    Please refer to the attire details under each celebration in the Schedule tab.
+                    Festive yellow shades are encouraged for Haldi, soft pastel and floral shades for
+                    the Telugu Wedding, and green shades for the Christian Wedding and Reception.
+                </p>
+                <a
+                    class="qa-inline-link"
+                    href="{{ url_for('dashboard.shell', tab='schedule') }}"
+                    data-tab-name="schedule"
+                    data-fragment-url="{{ url_for('dashboard.tab_fragment', tab_name='schedule') }}"
+                >View your schedule <span aria-hidden="true">→</span></a>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary>
+                <span class="qa-category">Invitation</span>
+                <strong>Can I bring a guest?</strong>
+                <i aria-hidden="true"></i>
+            </summary>
+            <div class="qa-answer">
+                <p>
+                    Your RSVP form shows the exact number of guests included with your invitation.
+                    That limit is unique to your private invitation link.
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary>
+                <span class="qa-category">Family</span>
+                <strong>Are children invited?</strong>
+                <i aria-hidden="true"></i>
+            </summary>
+            <div class="qa-answer">
+                <p>
+                    Please follow the guest count shown with your invitation. Children included in
+                    your invitation can be counted when you submit the RSVP.
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary>
+                <span class="qa-category">Arrival</span>
+                <strong>What time should I arrive?</strong>
+                <i aria-hidden="true"></i>
+            </summary>
+            <div class="qa-answer">
+                <p>
+                    We recommend arriving 20–30 minutes before the listed start time for parking,
+                    seating, and a relaxed arrival before the celebration begins.
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary>
+                <span class="qa-category">Parking</span>
+                <strong>Will parking be available?</strong>
+                <i aria-hidden="true"></i>
+            </summary>
+            <div class="qa-answer">
+                <p>
+                    Parking varies by venue. Use the Directions button under each event, and check
+                    back closer to the wedding weekend for any special parking instructions.
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary>
+                <span class="qa-category">Food</span>
+                <strong>Will food be provided?</strong>
+                <i aria-hidden="true"></i>
+            </summary>
+            <div class="qa-answer">
+                <p>
+                    Yes. Please add dietary restrictions, allergies, or accessibility needs in the
+                    Notes field when submitting your RSVP for the relevant event.
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary>
+                <span class="qa-category">Photos</span>
+                <strong>Can I take photos?</strong>
+                <i aria-hidden="true"></i>
+            </summary>
+            <div class="qa-answer">
+                <p>
+                    We would love for you to capture memories. During formal ceremony moments,
+                    please remain mindful of the professional photographer and the couple’s view.
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary>
+                <span class="qa-category">Travel</span>
+                <strong>Where should I stay?</strong>
+                <i aria-hidden="true"></i>
+            </summary>
+            <div class="qa-answer">
+                <p>
+                    The Travel tab includes airports, recommended stay areas, local activities, and
+                    hotel information. The hotel booking link will be added when finalized.
+                </p>
+                <a
+                    class="qa-inline-link"
+                    href="{{ url_for('dashboard.shell', tab='travel') }}"
+                    data-tab-name="travel"
+                    data-fragment-url="{{ url_for('dashboard.tab_fragment', tab_name='travel') }}"
+                >Open travel guide <span aria-hidden="true">→</span></a>
+            </div>
+        </details>
+
+        <details class="qa-item qa-item-contact">
+            <summary>
+                <span class="qa-category">Help Desk</span>
+                <strong>Who should I contact?</strong>
+                <i aria-hidden="true"></i>
+            </summary>
+            <div class="qa-answer">
+                <p>
+                    For questions about your invitation, RSVP, travel, or wedding details, please
+                    reach out to Adlin or Prithvi directly.
+                </p>
+            </div>
+        </details>
+    </div>
+</section>

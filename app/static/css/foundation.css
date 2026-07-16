@@ -1,0 +1,30 @@
+:root {
+    color-scheme: dark;
+    --cream: #fff0d5;
+    --gold: #d6a84e;
+    --espresso: #171411;
+}
+
+* { box-sizing: border-box; }
+body {
+    min-height: 100vh;
+    margin: 0;
+    background: var(--espresso);
+    color: var(--cream);
+    font-family: Georgia, serif;
+}
+.shell-header,
+.foundation-card {
+    width: min(92%, 900px);
+    margin: 0 auto;
+}
+.shell-header { padding: 2rem 0 1rem; text-align: center; }
+.shell-header h1 { margin: .25rem 0; font-size: clamp(2.5rem, 8vw, 5rem); }
+.foundation-card {
+    padding: 2rem;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 24px;
+    background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
+    box-shadow: 0 24px 70px rgba(0,0,0,.24);
+}
+.eyebrow { color: var(--gold); letter-spacing: .18em; text-transform: uppercase; }

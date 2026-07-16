@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#171411">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{% block title %}Adlin &amp; Prithvi | Wedding Weekend{% endblock %}</title>
+
+    <link rel="icon" type="image/png" href="{{ asset_url('images/favicon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Manrope:wght@400;500;600;700&display=swap"
+    >
+
+    <link rel="stylesheet" href="{{ asset_url('css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/shell.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/welcome.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/schedule.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/information.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/animations.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/responsive.css') }}">
+
+    {% block head %}{% endblock %}
+</head>
+<body
+    class="dashboard-page"
+    data-active-tab="{{ active_tab }}"
+    data-login-effect="{{ 'success' if login_effect == 'success' else '' }}"
+>
+    {% block body %}{% endblock %}
+
+    <script type="module" src="{{ asset_url('js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,46 @@
+{% extends "layouts/dashboard_base.html" %}
+
+{% set guest_display_name = (invitation.display_name or invitation.first_name or 'Dear Guest') | title %}
+
+{% block body %}
+    {% include "components/slideshow.html" %}
+
+    <canvas id="celebration-canvas" class="celebration-canvas" aria-hidden="true"></canvas>
+    <div id="rsvp-petal-container" class="rsvp-petal-container" aria-hidden="true"></div>
+
+    <div class="dashboard-shell">
+        <header class="dashboard-header">
+            <div class="dashboard-meta" aria-label="Wedding details">
+                <span>Nov, 2026</span>
+                <span>Tampa, FL</span>
+                <span>{{ guest_display_name }}</span>
+            </div>
+
+            <h1 class="dashboard-title">Adlin &amp; Prithvi</h1>
+
+            <nav class="dashboard-tabs" aria-label="Wedding portal navigation">
+                {% for tab_name, tab_label in [
+                    ('welcome', 'Welcome'),
+                    ('schedule', 'Schedule'),
+                    ('travel', 'Travel'),
+                    ('registry', 'Registry'),
+                    ('qa', 'Q&A')
+                ] %}
+                    <a
+                        class="dashboard-tab {% if active_tab == tab_name %}is-active{% endif %}"
+                        href="{{ url_for('dashboard.shell', tab=tab_name) }}"
+                        data-tab-name="{{ tab_name }}"
+                        data-fragment-url="{{ url_for('dashboard.tab_fragment', tab_name=tab_name) }}"
+                        {% if active_tab == tab_name %}aria-current="page"{% endif %}
+                    >{{ tab_label }}</a>
+                {% endfor %}
+            </nav>
+        </header>
+
+        <main id="tab-content" class="dashboard-content" tabindex="-1" aria-live="polite">
+            {% include "tabs/" ~ active_tab ~ ".html" %}
+        </main>
+
+        <a href="{{ url_for('invitations.logout') }}" class="logout-link">Logout</a>
+    </div>
+{% endblock %}

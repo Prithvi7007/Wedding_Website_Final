@@ -1,0 +1,54 @@
+@media (max-width: 900px) {
+    :root { --header-height: 160px; }
+    .dashboard-header { padding-inline: 28px; }
+    .dashboard-title { font-size: clamp(56px, 8vw, 74px); }
+    .dashboard-tabs { gap: 30px; }
+    .dashboard-tab { font-size: 14px; letter-spacing: 2.6px; }
+    .welcome-copy { width: min(49vw, 570px); margin-left: clamp(42px, 5vw, 72px); }
+}
+
+@media (max-width: 700px) {
+    :root { --header-height: 143px; }
+    .ambient-slide img { object-position: var(--position-mobile, 68% center); filter: brightness(.82) saturate(1.06) contrast(1.025); }
+    .ambient-slideshow-shade { background: radial-gradient(circle at 74% 28%, rgba(235,174,83,.07), transparent 34%), linear-gradient(90deg, rgba(22,17,13,.84) 0%, rgba(21,16,13,.72) 34%, rgba(19,15,12,.42) 62%, rgba(15,13,11,.10) 100%), linear-gradient(180deg, rgba(18,15,12,.16), rgba(15,13,11,.025) 36%, rgba(15,13,11,.06) 68%, rgba(16,13,11,.56)); }
+    .dashboard-header { padding: 10px 14px 0; }
+    .dashboard-meta { min-height: 29px; font-size: 8px; letter-spacing: .85px; }
+    .dashboard-meta span:last-child { font-size: 8.5px; letter-spacing: .55px; }
+    .dashboard-title { margin: 10px auto 11px; font-size: clamp(43px, 13.6vw, 60px); }
+    .dashboard-tabs { justify-content: flex-start; gap: 24px; min-height: 47px; padding: 0 4px; -webkit-overflow-scrolling: touch; }
+    .dashboard-tab { min-height: 46px; font-size: 11px; letter-spacing: 1.75px; white-space: nowrap; }
+    .welcome-panel { min-height: max(100svh, 820px); }
+    .welcome-copy { width: 100%; min-height: max(100svh, 820px); margin-left: 0; padding: calc(var(--header-height) + 74px) 18px 88px; justify-content: flex-start; }
+    .welcome-copy::before { top: 23%; right: 20%; bottom: 24%; left: -26px; }
+    .welcome-eyebrow { width: 64%; font-size: 20px; }
+    .welcome-copy h2 { width: 66%; font-size: clamp(42px, 12.6vw, 57px); }
+    .welcome-message { width: 64%; font-size: 16px; line-height: 1.48; }
+    .welcome-schedule-wrap { width: min(100%, 420px); margin-top: auto; margin-bottom: 28px; align-self: center; }
+    .welcome-schedule-button { min-height: 55px; }
+    .welcome-schedule-button span { padding: 15px 22px; font-size: 12px; letter-spacing: 2.4px; }
+    .countdown-inline { width: 100%; padding: 23px 0 18px; }
+    .countdown-inline > div { min-height: 78px; padding: 11px 3px 8px; }
+    .countdown-inline > div::before { inset: 3px 4px; border-radius: 14px; opacity: .64; }
+    .countdown-inline span { font-size: clamp(31px, 9.8vw, 43px); }
+    .countdown-inline small { font-size: 8px; letter-spacing: 1px; }
+    .slide-arrow { display: none; }
+    .slide-dots { bottom: 24px; gap: 10px; }
+    .slide-dot { width: 9px; height: 9px; }
+    .logout-link { right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); }
+    .phase-placeholder { padding-top: calc(var(--header-height) + 48px); }
+}
+
+@media (max-width: 430px) {
+    .dashboard-meta { font-size: 7.4px; letter-spacing: .5px; }
+    .dashboard-title { font-size: clamp(40px, 13.8vw, 53px); }
+    .dashboard-tabs { gap: 20px; }
+    .dashboard-tab { font-size: 10px; letter-spacing: 1.25px; }
+    .welcome-copy { padding-inline: 15px; }
+    .welcome-eyebrow { width: 67%; font-size: 18px; }
+    .welcome-copy h2 { width: 69%; font-size: clamp(39px, 12.8vw, 50px); }
+    .welcome-message { width: 68%; font-size: 15px; }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .welcome-schedule-button:hover, .slide-arrow:hover { transform: none; }
+}

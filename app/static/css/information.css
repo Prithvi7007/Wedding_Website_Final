@@ -1,0 +1,896 @@
+/* =====================================================
+   PHASE 4 — TRAVEL, REGISTRY, AND QUESTIONS
+   Editorial information tabs built for fragment loading.
+   These panels intentionally avoid dozens of live blur
+   layers; the glass material is created with gradients,
+   borders, and inset highlights for better iOS stability.
+   ===================================================== */
+
+body[data-active-tab="travel"] .ambient-slideshow-shade,
+body[data-active-tab="qa"] .ambient-slideshow-shade {
+    background:
+        linear-gradient(90deg, rgba(18, 14, 11, .88), rgba(20, 15, 12, .72) 48%, rgba(17, 13, 11, .56)),
+        linear-gradient(180deg, rgba(16, 13, 11, .28), rgba(16, 13, 11, .72));
+}
+
+body[data-active-tab="registry"] .ambient-slideshow-shade {
+    background:
+        radial-gradient(ellipse 72% 80% at 24% 54%, rgba(17, 13, 11, .84), rgba(17, 13, 11, .48) 58%, transparent 86%),
+        linear-gradient(90deg, rgba(16, 13, 11, .72), rgba(16, 13, 11, .22) 62%, rgba(16, 13, 11, .08)),
+        linear-gradient(180deg, rgba(16, 13, 11, .20), rgba(16, 13, 11, .44));
+}
+
+.information-panel {
+    position: relative;
+    width: min(calc(100% - 28px), 1640px);
+    margin: 0 auto;
+    padding: calc(var(--header-height) + clamp(54px, 7vh, 88px)) 0 96px;
+}
+
+.information-intro {
+    position: relative;
+    width: min(760px, calc(100% - 48px));
+    margin: 0 0 38px clamp(18px, 5.8vw, 96px);
+    text-align: left;
+}
+
+.information-intro::before {
+    content: "";
+    position: absolute;
+    inset: -46px -100px -42px -82px;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+        ellipse 74% 78% at 26% 48%,
+        rgba(18, 14, 11, .64),
+        rgba(18, 14, 11, .30) 48%,
+        transparent 76%
+    );
+    filter: blur(6px);
+}
+
+.information-eyebrow,
+.story-label,
+.qa-category {
+    margin: 0;
+    color: var(--gold-bright);
+    font-family: "Manrope", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+}
+
+.information-intro h2,
+.registry-copy h2 {
+    margin: 10px 0 12px;
+    color: var(--cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(50px, 5.5vw, 80px);
+    font-weight: 600;
+    line-height: .94;
+    text-shadow: 0 14px 36px rgba(0, 0, 0, .36);
+}
+
+.information-intro > p:last-child {
+    max-width: 700px;
+    margin: 0;
+    color: rgba(255, 240, 216, .92);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(19px, 1.45vw, 23px);
+    line-height: 1.58;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, .52);
+}
+
+/* ------------------------- Travel -------------------- */
+
+.travel-edition {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 22px;
+    width: min(1380px, calc(100% - 48px));
+    margin: 0 auto;
+}
+
+.travel-story {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(24px, 2.5vw, 38px);
+    border: 1px solid rgba(255, 244, 225, .17);
+    border-radius: 28px;
+    background:
+        radial-gradient(ellipse 90% 34% at 50% 0%, rgba(255, 255, 255, .12), transparent 70%),
+        linear-gradient(145deg, rgba(48, 37, 29, .82), rgba(25, 20, 17, .78) 58%, rgba(19, 16, 14, .88));
+    box-shadow:
+        0 30px 72px rgba(0, 0, 0, .30),
+        inset 0 1px rgba(255, 255, 255, .18),
+        inset 0 -1px rgba(255, 255, 255, .04);
+}
+
+.travel-story::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: .13;
+    pointer-events: none;
+    background-image:
+        repeating-linear-gradient(0deg, transparent 0 5px, rgba(255,255,255,.035) 5px 6px),
+        radial-gradient(circle at 18% 22%, rgba(237, 197, 118, .24), transparent 24%);
+    mix-blend-mode: screen;
+}
+
+.travel-story-feature {
+    grid-column: 1 / -1;
+    grid-row: auto;
+}
+
+.travel-story-hotel,
+.travel-story-local {
+    align-self: start;
+}
+
+.travel-story-dining {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(260px, .72fr) minmax(300px, 1fr) minmax(360px, 1.18fr);
+    align-items: center;
+    gap: clamp(22px, 3vw, 46px);
+}
+
+.travel-story-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.travel-story-heading h3 {
+    margin: 8px 0 0;
+    color: var(--cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(34px, 3vw, 50px);
+    font-weight: 600;
+    line-height: .98;
+}
+
+.compact-heading h3 {
+    font-size: clamp(31px, 2.5vw, 42px);
+}
+
+.edition-stamp {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    color: rgba(255, 239, 211, .78);
+    border: 1px solid rgba(231, 190, 107, .44);
+    border-radius: 50%;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    line-height: 1.05;
+    text-align: center;
+    text-transform: uppercase;
+    transform: rotate(6deg);
+}
+
+.edition-stamp-round {
+    width: 62px;
+    height: 62px;
+}
+
+.travel-image-frame {
+    position: relative;
+    overflow: hidden;
+    margin: 0 0 24px;
+    border: 1px solid rgba(232, 194, 119, .25);
+    border-radius: 20px;
+    background: #b8925f;
+    box-shadow: inset 0 0 0 6px rgba(21, 17, 14, .14);
+}
+
+.travel-image-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(71, 43, 20, .06), rgba(18, 13, 10, .24)),
+        radial-gradient(ellipse at center, transparent 58%, rgba(22, 15, 11, .26));
+}
+
+.travel-image-feature { aspect-ratio: 16 / 8.4; }
+.travel-image-side { aspect-ratio: 16 / 8.8; }
+.travel-image-clipping { aspect-ratio: 16 / 8.8; }
+.travel-image-bottom { aspect-ratio: 16 / 7.2; margin: 0; }
+
+.travel-card-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: sepia(.12) brightness(.86) saturate(.88) contrast(1.05);
+    transform: scale(1.006);
+}
+
+.travel-list {
+    display: grid;
+    gap: 0;
+}
+
+.travel-list-airports {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.travel-item {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid rgba(231, 191, 110, .18);
+}
+
+.travel-list-airports .travel-item {
+    padding-inline: 18px;
+    border-left: 1px solid rgba(231, 191, 110, .14);
+}
+
+.travel-list-airports .travel-item:first-child {
+    border-left: 0;
+}
+
+.travel-item-number {
+    margin: 2px 0 0;
+    color: rgba(235, 194, 108, .74);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.travel-item h4 {
+    margin: 0 0 7px;
+    color: var(--cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(20px, 1.55vw, 24px);
+    font-weight: 700;
+    line-height: 1.08;
+}
+
+.travel-item p:not(.travel-item-number),
+.travel-dining-note p {
+    margin: 0;
+    color: rgba(255, 239, 215, .84);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 18px;
+    line-height: 1.55;
+}
+
+.editorial-link,
+.qa-inline-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    color: var(--gold-bright);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.editorial-link span,
+.qa-inline-link span {
+    font-size: 15px;
+    transition: transform 220ms ease;
+}
+
+.editorial-link:hover span,
+.qa-inline-link:hover span {
+    transform: translateX(3px);
+}
+
+.travel-item-stacked {
+    padding-inline: 0;
+}
+
+.dining-heading {
+    margin: 0;
+}
+
+.dining-heading h3 {
+    font-size: clamp(36px, 3.4vw, 54px);
+}
+
+.travel-dining-note {
+    padding: 4px 0;
+}
+
+.travel-dining-note > span {
+    display: block;
+    margin-top: 16px;
+    color: rgba(235, 197, 118, .76);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+/* ------------------------- Registry ------------------ */
+
+.registry-panel {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-bottom: 70px;
+}
+
+.registry-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, .62fr);
+    align-items: center;
+    gap: clamp(50px, 8vw, 130px);
+    width: min(1220px, calc(100% - 64px));
+    margin: 0 auto;
+}
+
+.registry-copy {
+    position: relative;
+    max-width: 670px;
+}
+
+.registry-copy::before {
+    content: "";
+    position: absolute;
+    inset: -72px -96px -76px -82px;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 84% 82% at 28% 48%, rgba(18, 14, 11, .74), rgba(18, 14, 11, .38) 58%, transparent 88%),
+        radial-gradient(ellipse 68% 28% at 30% 0%, rgba(255,255,255,.10), transparent 74%);
+    filter: blur(4px);
+}
+
+.registry-copy h2 {
+    margin-top: 8px;
+    font-size: clamp(62px, 7vw, 96px);
+    font-style: italic;
+}
+
+.registry-message {
+    max-width: 640px;
+    margin: 0 0 24px;
+    color: rgba(255, 240, 217, .93);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(21px, 1.65vw, 26px);
+    line-height: 1.52;
+    text-shadow: 0 2px 14px rgba(0,0,0,.46);
+}
+
+.registry-signature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 30px;
+    color: rgba(239, 205, 143, .80);
+    font-family: "Parisienne", cursive;
+    font-size: clamp(28px, 3vw, 42px);
+}
+
+.registry-signature i {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: .72em;
+    font-style: italic;
+}
+
+.registry-target-button {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-width: 286px;
+    min-height: 58px;
+    padding: 0 30px;
+    color: #fff8e9;
+    border: 1px solid rgba(255,255,255,.28);
+    border-radius: 999px;
+    background:
+        radial-gradient(ellipse 92% 70% at 50% 0%, rgba(255,255,255,.23), transparent 66%),
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.025));
+    box-shadow:
+        0 20px 42px rgba(0,0,0,.28),
+        inset 0 1px rgba(255,255,255,.48),
+        inset 0 -1px rgba(255,255,255,.07);
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 2px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: transform 260ms var(--ease-cinematic), box-shadow 260ms ease;
+}
+
+.registry-target-button::before {
+    content: "";
+    position: absolute;
+    top: -180%;
+    left: -30%;
+    z-index: -1;
+    width: 34%;
+    height: 460%;
+    opacity: .58;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.52), transparent);
+    transform: rotate(24deg);
+    transition: transform 700ms var(--ease-cinematic);
+}
+
+.registry-target-button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 25px 52px rgba(0,0,0,.31),
+        0 0 28px rgba(218, 172, 83, .12),
+        inset 0 1px rgba(255,255,255,.56);
+}
+
+.registry-target-button:hover::before {
+    transform: translateX(390%) rotate(24deg);
+}
+
+.registry-target-button i {
+    font-size: 18px;
+    font-style: normal;
+}
+
+.registry-note {
+    margin: 13px 0 0;
+    color: rgba(235, 217, 190, .62);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+}
+
+.registry-keepsake {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 5;
+    width: min(100%, 430px);
+    padding: 48px 34px;
+    border: 1px solid rgba(238, 199, 119, .44);
+    border-radius: 32px 7px 32px 7px;
+    background:
+        radial-gradient(circle at 50% 12%, rgba(255,255,255,.15), transparent 34%),
+        linear-gradient(145deg, rgba(73, 54, 39, .70), rgba(27, 21, 18, .84));
+    box-shadow:
+        0 36px 80px rgba(0,0,0,.36),
+        inset 0 1px rgba(255,255,255,.20),
+        inset 0 0 0 8px rgba(17,13,11,.18);
+    color: var(--cream);
+    text-align: center;
+    transform: rotate(2.25deg);
+}
+
+.registry-keepsake::before,
+.registry-keepsake::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+.registry-keepsake::before {
+    inset: 18px;
+    border: 1px solid rgba(234, 193, 111, .28);
+    border-radius: 23px 4px 23px 4px;
+}
+
+.registry-keepsake::after {
+    inset: 35px;
+    opacity: .34;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(240, 197, 112, .28), transparent 34%),
+        repeating-linear-gradient(0deg, transparent 0 7px, rgba(255,255,255,.024) 7px 8px);
+}
+
+.registry-keepsake p,
+.registry-keepsake strong,
+.registry-keepsake span,
+.registry-keepsake .keepsake-flourish {
+    position: relative;
+    z-index: 1;
+}
+
+.registry-keepsake p {
+    margin: 0 0 22px;
+    color: rgba(239, 205, 139, .78);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3.4px;
+    text-transform: uppercase;
+}
+
+.registry-keepsake strong {
+    font-family: "Parisienne", cursive;
+    font-size: clamp(72px, 8vw, 112px);
+    font-weight: 400;
+    line-height: 1;
+    text-shadow: 0 8px 24px rgba(0,0,0,.30);
+}
+
+.registry-keepsake span {
+    margin-top: 22px;
+    color: rgba(255, 239, 214, .70);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+.keepsake-flourish {
+    margin-top: 28px;
+    color: rgba(233, 191, 105, .66);
+    font-size: 30px;
+}
+
+/* ------------------------- Q&A ----------------------- */
+
+.qa-intro {
+    margin-bottom: 30px;
+}
+
+.qa-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 16px;
+    border: 1px solid rgba(255, 244, 225, .15);
+    border-radius: 30px;
+    background:
+        radial-gradient(ellipse 80% 28% at 50% 0%, rgba(255,255,255,.09), transparent 70%),
+        linear-gradient(145deg, rgba(38,29,23,.78), rgba(19,16,14,.84));
+    box-shadow: 0 34px 78px rgba(0,0,0,.32), inset 0 1px rgba(255,255,255,.14);
+}
+
+.qa-item {
+    overflow: hidden;
+    border: 1px solid rgba(255, 244, 225, .12);
+    border-radius: 19px;
+    background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.012));
+    transition: border-color 220ms ease, background 220ms ease, transform 220ms ease;
+}
+
+.qa-item-featured,
+.qa-item-contact {
+    grid-column: 1 / -1;
+}
+
+.qa-item[open] {
+    border-color: rgba(232, 190, 105, .34);
+    background:
+        radial-gradient(ellipse 70% 60% at 0 0, rgba(231, 185, 93, .10), transparent 70%),
+        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.018));
+}
+
+.qa-item summary {
+    position: relative;
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr) 34px;
+    align-items: center;
+    gap: 18px;
+    min-height: 92px;
+    padding: 20px 24px;
+    cursor: pointer;
+    list-style: none;
+    touch-action: manipulation;
+}
+
+.qa-item summary::-webkit-details-marker { display: none; }
+
+.qa-item summary strong {
+    color: var(--cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(23px, 2vw, 30px);
+    font-weight: 650;
+    line-height: 1.08;
+}
+
+.qa-item summary i {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(238, 201, 129, .28);
+    border-radius: 50%;
+}
+
+.qa-item summary i::before,
+.qa-item summary i::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 1px;
+    background: rgba(255, 236, 201, .84);
+    transform: translate(-50%, -50%);
+    transition: transform 220ms ease;
+}
+
+.qa-item summary i::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.qa-item[open] summary i::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.qa-answer {
+    padding: 0 76px 25px 154px;
+}
+
+.qa-answer p {
+    margin: 0;
+    color: rgba(255, 239, 215, .87);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(18px, 1.35vw, 21px);
+    line-height: 1.62;
+}
+
+.qa-inline-link {
+    margin-top: 15px;
+}
+
+/* ------------------------- Responsive ---------------- */
+
+@media (max-width: 1120px) {
+    .travel-edition {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .travel-story-dining {
+        grid-template-columns: .7fr 1fr;
+    }
+
+    .travel-story-dining .travel-image-bottom {
+        grid-column: 1 / -1;
+    }
+
+    .registry-hero {
+        gap: 50px;
+    }
+}
+
+@media (max-width: 800px) {
+    .travel-edition {
+        grid-template-columns: 1fr;
+    }
+
+    .travel-story-dining {
+        grid-column: auto;
+        grid-template-columns: 1fr;
+    }
+
+    .travel-story-dining .travel-image-bottom {
+        grid-column: auto;
+    }
+
+    .travel-list-airports {
+        grid-template-columns: 1fr;
+    }
+
+    .travel-list-airports .travel-item {
+        border-left: 0;
+    }
+
+    .registry-hero {
+        grid-template-columns: 1fr;
+        width: min(680px, calc(100% - 48px));
+    }
+
+    .registry-keepsake {
+        width: min(100%, 390px);
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 700px) {
+    body[data-active-tab="travel"] .ambient-slideshow-shade,
+    body[data-active-tab="qa"] .ambient-slideshow-shade {
+        background:
+            linear-gradient(180deg, rgba(17,13,11,.62), rgba(17,13,11,.84)),
+            linear-gradient(90deg, rgba(17,13,11,.80), rgba(17,13,11,.56));
+    }
+
+    .information-panel {
+        width: 100%;
+        padding: calc(var(--header-height) + 44px) 0 78px;
+    }
+
+    .information-intro {
+        width: calc(100% - 36px);
+        margin: 0 auto 28px;
+    }
+
+    .information-intro::before {
+        inset: -36px -28px -34px;
+    }
+
+    .information-intro h2 {
+        font-size: clamp(46px, 14vw, 65px);
+    }
+
+    .information-intro > p:last-child {
+        font-size: 19px;
+        line-height: 1.56;
+    }
+
+    .travel-edition,
+    .qa-grid {
+        width: calc(100% - 24px);
+    }
+
+    .travel-edition {
+        gap: 14px;
+    }
+
+    .travel-story {
+        padding: 22px 18px;
+        border-radius: 24px;
+    }
+
+    .travel-story-heading {
+        gap: 14px;
+    }
+
+    .travel-story-heading h3,
+    .compact-heading h3,
+    .dining-heading h3 {
+        font-size: clamp(32px, 10vw, 43px);
+    }
+
+    .edition-stamp {
+        width: 60px;
+        height: 60px;
+        font-size: 10px;
+    }
+
+    .travel-image-frame {
+        margin-bottom: 17px;
+        border-radius: 16px;
+    }
+
+    .travel-image-feature,
+    .travel-image-side,
+    .travel-image-clipping,
+    .travel-image-bottom {
+        aspect-ratio: 4 / 3;
+    }
+
+    .travel-item {
+        grid-template-columns: 30px minmax(0, 1fr);
+        padding: 15px 4px;
+    }
+
+    .travel-list-airports .travel-item {
+        padding-inline: 4px;
+    }
+
+    .travel-item h4 {
+        font-size: 22px;
+    }
+
+    .travel-item p:not(.travel-item-number),
+    .travel-dining-note p {
+        font-size: 18px;
+        line-height: 1.58;
+    }
+
+    .registry-panel {
+        align-items: flex-start;
+        padding-top: calc(var(--header-height) + 62px);
+    }
+
+    .registry-hero {
+        width: calc(100% - 36px);
+        gap: 62px;
+    }
+
+    .registry-copy::before {
+        inset: -48px -24px -48px;
+    }
+
+    .registry-copy h2 {
+        font-size: clamp(58px, 18vw, 78px);
+    }
+
+    .registry-message {
+        font-size: 20px;
+    }
+
+    .registry-target-button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .registry-keepsake {
+        max-width: 330px;
+    }
+
+    .qa-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 24px;
+    }
+
+    .qa-item-featured,
+    .qa-item-contact {
+        grid-column: auto;
+    }
+
+    .qa-item summary {
+        grid-template-columns: 1fr 34px;
+        gap: 12px;
+        min-height: 88px;
+        padding: 17px 16px;
+    }
+
+    .qa-category {
+        grid-column: 1 / 2;
+        display: block;
+        margin-bottom: -6px;
+    }
+
+    .qa-item summary strong {
+        grid-column: 1 / 2;
+        font-size: 25px;
+    }
+
+    .qa-item summary i {
+        grid-column: 2 / 3;
+        grid-row: 1 / span 2;
+    }
+
+    .qa-answer {
+        padding: 0 16px 21px;
+    }
+
+    .qa-answer p {
+        font-size: 18px;
+        line-height: 1.62;
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .registry-target-button:hover {
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .registry-target-button,
+    .registry-target-button::before,
+    .qa-item,
+    .qa-item summary i::before,
+    .qa-item summary i::after,
+    .editorial-link span,
+    .qa-inline-link span {
+        transition: none !important;
+    }
+}

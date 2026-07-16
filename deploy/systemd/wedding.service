@@ -1,0 +1,34 @@
+[Unit]
+Description=Adlin and Prithvi Wedding Flask Application
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/wedding
+EnvironmentFile=/var/www/wedding/.env
+RuntimeDirectory=wedding
+RuntimeDirectoryMode=0750
+UMask=0027
+ExecStart=/var/www/wedding/.venv/bin/gunicorn --config /var/www/wedding/gunicorn.conf.py wsgi:app
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGQUIT
+TimeoutStopSec=45
+Restart=always
+RestartSec=5
+
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=full
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

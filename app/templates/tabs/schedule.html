@@ -1,0 +1,353 @@
+{% macro render_attire_overlay(event) -%}
+    <section
+        id="attire-overlay-{{ event.event_id }}"
+        class="attire-inspiration-overlay"
+        data-overlay="attire"
+        data-event-id="{{ event.event_id }}"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="attire-title-{{ event.event_id }}"
+    >
+        <div class="attire-inspiration-sheet" role="document">
+            <button
+                type="button"
+                class="overlay-close attire-inspiration-close"
+                data-action="close-attire"
+                data-event-id="{{ event.event_id }}"
+                aria-label="Close attire inspiration"
+            >×</button>
+
+            <div class="attire-inspiration-copy">
+                <p>Attire Inspiration</p>
+                <h4 id="attire-title-{{ event.event_id }}">
+                    {{ event.attire_heading or 'Attire' }}
+                </h4>
+                {% if event.attire_subheading %}
+                    <span>{{ event.attire_subheading }}</span>
+                {% endif %}
+                {% if event.attire %}
+                    <div>{{ event.attire }}</div>
+                {% endif %}
+            </div>
+
+            <figure class="attire-inspiration-visual">
+                <img
+                    src="{{ asset_url('images/schedule/' ~ event.attire_stem ~ '-768.webp') }}"
+                    srcset="
+                        {{ asset_url('images/schedule/' ~ event.attire_stem ~ '-512.webp') }} 512w,
+                        {{ asset_url('images/schedule/' ~ event.attire_stem ~ '-768.webp') }} 768w,
+                        {{ asset_url('images/schedule/' ~ event.attire_stem ~ '-1024.webp') }} 1024w
+                    "
+                    sizes="(max-width: 700px) 82vw, 48vw"
+                    alt="{{ event.title }} attire inspiration"
+                    loading="lazy"
+                    decoding="async"
+                >
+            </figure>
+        </div>
+    </section>
+{%- endmacro %}
+
+{% macro render_rsvp_overlay(event, saved) -%}
+    {% set has_response = saved is not none %}
+    {% set saved_attending = saved.attending if saved else '' %}
+    {% set saved_guest_count = saved.guest_count if saved else 0 %}
+    {% set saved_notes = saved.notes if saved and saved.notes else '' %}
+
+    <section
+        id="rsvp-overlay-{{ event.event_id }}"
+        class="event-rsvp-overlay"
+        data-overlay="rsvp"
+        data-event-id="{{ event.event_id }}"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rsvp-title-{{ event.event_id }}"
+    >
+        <div class="event-rsvp-sheet" role="document">
+            <button
+                type="button"
+                class="overlay-close rsvp-sheet-close"
+                data-action="close-rsvp"
+                data-event-id="{{ event.event_id }}"
+                aria-label="Close RSVP form"
+            >×</button>
+
+            <div class="rsvp-sheet-heading">
+                <p>Private Response</p>
+                <h4 id="rsvp-title-{{ event.event_id }}">{{ event.title }}</h4>
+                <span>Please confirm your plans for this celebration.</span>
+            </div>
+
+            <form
+                id="rsvp-form-{{ event.event_id }}"
+                action="{{ url_for('dashboard.save_rsvp') }}"
+                method="post"
+                class="cinematic-rsvp-form"
+                data-event-id="{{ event.event_id }}"
+            >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="event_id" value="{{ event.event_id }}">
+
+                <fieldset class="attendance-choice-group">
+                    <legend>Will you attend?</legend>
+                    <div class="attendance-choices">
+                        {% for choice in ['Yes', 'Maybe', 'No'] %}
+                            <label class="attendance-choice {% if saved_attending == choice %}is-selected{% endif %}">
+                                <input
+                                    type="radio"
+                                    name="attending"
+                                    value="{{ choice }}"
+                                    {% if saved_attending == choice %}checked{% endif %}
+                                    required
+                                    data-action="attendance-choice"
+                                    data-event-id="{{ event.event_id }}"
+                                >
+                                <span>{{ choice }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+                <div
+                    id="guest-stepper-wrap-{{ event.event_id }}"
+                    class="guest-stepper-wrap {% if saved_attending == 'No' %}is-disabled{% endif %}"
+                >
+                    <label>Total attending, including you</label>
+                    <div class="guest-stepper">
+                        <button
+                            type="button"
+                            data-action="adjust-guests"
+                            data-event-id="{{ event.event_id }}"
+                            data-delta="-1"
+                            aria-label="Decrease guest count"
+                        >−</button>
+                        <output id="guest-count-output-{{ event.event_id }}">{{ saved_guest_count }}</output>
+                        <span>Guests</span>
+                        <button
+                            type="button"
+                            data-action="adjust-guests"
+                            data-event-id="{{ event.event_id }}"
+                            data-delta="1"
+                            aria-label="Increase guest count"
+                        >+</button>
+                    </div>
+                    <input
+                        id="guest-count-{{ event.event_id }}"
+                        type="hidden"
+                        name="guest_count"
+                        min="0"
+                        max="{{ event.max_guests }}"
+                        value="{{ saved_guest_count }}"
+                    >
+                    <small>Up to {{ event.max_guests }} guest{% if event.max_guests != 1 %}s{% endif %} on this invitation.</small>
+                </div>
+
+                <div class="cinematic-notes-field">
+                    <label for="notes-{{ event.event_id }}">Notes</label>
+                    <textarea
+                        id="notes-{{ event.event_id }}"
+                        name="notes"
+                        maxlength="2000"
+                        placeholder="Dietary restrictions, accessibility needs, or anything else you would like us to know"
+                    >{{ saved_notes }}</textarea>
+                </div>
+
+                <p class="rsvp-form-error" data-form-error hidden role="alert"></p>
+
+                <button type="submit" class="confirm-response-btn">
+                    <span data-submit-label>{% if has_response %}Update Response{% else %}Confirm Response{% endif %}</span>
+                </button>
+                <button
+                    type="button"
+                    class="cancel-response-btn"
+                    data-action="close-rsvp"
+                    data-event-id="{{ event.event_id }}"
+                >Cancel</button>
+            </form>
+        </div>
+    </section>
+{%- endmacro %}
+
+<section
+    id="schedule"
+    class="tab-panel schedule-panel"
+    data-tab-panel="schedule"
+    data-schedule-root
+    aria-labelledby="schedule-heading"
+>
+    <header class="schedule-intro">
+        <p class="schedule-eyebrow">Your Wedding Weekend</p>
+        <h2 id="schedule-heading">Wedding Schedule</h2>
+        <p>
+            Please RSVP for each celebration shown below. Your response helps us plan
+            seating, dining, parking, and every thoughtful detail of the weekend.
+        </p>
+    </header>
+
+    {% if events %}
+        <nav class="schedule-journey" aria-label="Your available wedding events">
+            {% for event in events %}
+                <button
+                    type="button"
+                    class="schedule-journey-stop {% if loop.first %}is-active{% endif %}"
+                    data-action="journey"
+                    data-event-target="event-card-{{ event.event_id }}"
+                    {% if loop.first %}aria-current="step"{% endif %}
+                >
+                    <span class="journey-dot" aria-hidden="true"></span>
+                    <span class="journey-date">{{ event.short_date or event.date_display }}</span>
+                    <span class="journey-title">{{ event.timeline_title }}</span>
+                </button>
+            {% endfor %}
+        </nav>
+
+        <div class="cinematic-event-list">
+            {% for event in events %}
+                {% set saved = saved_rsvps.get(event.event_id) %}
+                {% set has_response = saved is not none %}
+                {% set saved_attending = saved.attending if saved else '' %}
+                {% set saved_guest_count = saved.guest_count if saved else 0 %}
+
+                <article
+                    id="event-card-{{ event.event_id }}"
+                    class="cinematic-event-card event-{{ event.theme }}"
+                    data-schedule-event="{{ event.event_id }}"
+                    data-event-theme="{{ event.theme }}"
+                    aria-labelledby="event-title-{{ event.event_id }}"
+                >
+                    <div class="cinematic-event-scrim" aria-hidden="true"></div>
+
+                    <section class="event-glass-panel">
+                        <p class="event-date-line">{{ event.date_display }}</p>
+                        <h3 id="event-title-{{ event.event_id }}">{{ event.title }}</h3>
+                        <p class="event-kicker">{{ event.kicker }}</p>
+
+                        <div class="event-facts">
+                            <div class="event-fact">
+                                <span>Time</span>
+                                <strong>{{ event.time_display }}</strong>
+                                <small>{{ event.time_range }}</small>
+                            </div>
+                            <div class="event-fact event-fact-location">
+                                <span>Location</span>
+                                <strong>{{ event.venue_name or 'Tampa Bay' }}</strong>
+                                <small>{{ event.location }}</small>
+                            </div>
+                        </div>
+
+                        <div class="event-attire-section">
+                            <div class="event-attire-copy">
+                                <span class="event-attire-label">Attire</span>
+                                <strong>{{ event.attire_heading or event.attire or 'Wedding Festive' }}</strong>
+                                {% if event.attire_subheading %}
+                                    <small>{{ event.attire_subheading }}</small>
+                                {% endif %}
+                            </div>
+
+                            {% if event.attire_stem %}
+                                <button
+                                    type="button"
+                                    class="attire-inspiration-trigger"
+                                    data-action="open-attire"
+                                    data-event-id="{{ event.event_id }}"
+                                    aria-haspopup="dialog"
+                                    aria-controls="attire-overlay-{{ event.event_id }}"
+                                    aria-expanded="false"
+                                >
+                                    View Attire Inspiration
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        <div
+                            id="response-summary-{{ event.event_id }}"
+                            class="event-response-summary"
+                            aria-live="polite"
+                        >
+                            <div class="event-response-copy">
+                                <span class="event-response-label">Your Response</span>
+                                <strong data-response-text>
+                                    {% if saved_attending == 'Yes' %}
+                                        Attending · {{ saved_guest_count }} Guest{% if saved_guest_count != 1 %}s{% endif %}
+                                    {% elif saved_attending == 'No' %}
+                                        Unable to Attend
+                                    {% elif saved_attending == 'Maybe' %}
+                                        Maybe · Response Pending
+                                    {% else %}
+                                        Not yet submitted
+                                    {% endif %}
+                                </strong>
+                            </div>
+
+                            <div class="event-primary-actions">
+                                <button
+                                    type="button"
+                                    class="event-glass-button event-rsvp-trigger"
+                                    data-action="open-rsvp"
+                                    data-event-id="{{ event.event_id }}"
+                                    aria-haspopup="dialog"
+                                    aria-controls="rsvp-overlay-{{ event.event_id }}"
+                                    aria-expanded="false"
+                                >
+                                    <span data-rsvp-trigger-label>{% if has_response %}Edit Response{% else %}RSVP Now{% endif %}</span>
+                                </button>
+
+                                <a
+                                    href="{{ event.directions_link }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="event-glass-button"
+                                >
+                                    <span>Directions</span>
+                                </a>
+
+                                <div class="calendar-menu-wrap">
+                                    <button
+                                        type="button"
+                                        class="event-glass-button calendar-toggle"
+                                        data-action="toggle-calendar"
+                                        data-event-id="{{ event.event_id }}"
+                                        aria-expanded="false"
+                                        aria-controls="calendar-menu-{{ event.event_id }}"
+                                    >
+                                        <span>+ Calendar</span>
+                                    </button>
+                                    <div
+                                        id="calendar-menu-{{ event.event_id }}"
+                                        class="calendar-popover"
+                                        hidden
+                                    >
+                                        <a href="{{ event.google_calendar_link }}" target="_blank" rel="noopener noreferrer">Google Calendar</a>
+                                        <a href="{{ url_for('dashboard.apple_calendar_event', event_id=event.event_id) }}">Apple Calendar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            {% endfor %}
+        </div>
+
+        {#
+           Keep all fixed-position dialogs outside the overflow-clipped event cards.
+           This prevents the cards from clipping or stacking above RSVP/attire sheets.
+        #}
+        <div class="schedule-modal-layer" data-schedule-modal-layer>
+            {% for event in events %}
+                {% set saved = saved_rsvps.get(event.event_id) %}
+                {% if event.attire_stem %}
+                    {{ render_attire_overlay(event) }}
+                {% endif %}
+                {{ render_rsvp_overlay(event, saved) }}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="schedule-empty-state">
+            <p>Your private invitation does not currently include any visible events.</p>
+        </div>
+    {% endif %}
+
+    <p class="schedule-live-region" data-schedule-live aria-live="polite"></p>
+</section>

@@ -1,0 +1,928 @@
+{
+  "database": "wedding_db",
+  "schema": "public",
+  "tables": {
+    "invitations": {
+      "columns": [
+        {
+          "column_name": "invitation_id",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "represent_side",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "first_name",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "last_name",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "partner_name",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "display_name",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "guest_group",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "message",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "invite_token",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "email",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "phone",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "is_active",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "is_nullable": "NO",
+          "column_default": "true",
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": 6
+        },
+        {
+          "column_name": "source_key",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "invite_message",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_name": "2200_16494_12_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16494_13_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16494_1_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16494_3_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16494_6_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16494_9_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "invitations_display_name_not_blank",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": "invitations",
+          "referenced_column": "display_name"
+        },
+        {
+          "constraint_name": "invitations_invite_token_key",
+          "constraint_type": "UNIQUE",
+          "column_name": "invite_token",
+          "ordinal_position": 1,
+          "referenced_table": "invitations",
+          "referenced_column": "invite_token"
+        },
+        {
+          "constraint_name": "invitations_invite_token_not_blank",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": "invitations",
+          "referenced_column": "invite_token"
+        },
+        {
+          "constraint_name": "invitations_pkey",
+          "constraint_type": "PRIMARY KEY",
+          "column_name": "invitation_id",
+          "ordinal_position": 1,
+          "referenced_table": "invitations",
+          "referenced_column": "invitation_id"
+        }
+      ],
+      "indexes": [
+        {
+          "indexname": "idx_invitations_display_name",
+          "indexdef": "CREATE INDEX idx_invitations_display_name ON public.invitations USING btree (display_name)"
+        },
+        {
+          "indexname": "idx_invitations_invite_token",
+          "indexdef": "CREATE INDEX idx_invitations_invite_token ON public.invitations USING btree (invite_token)"
+        },
+        {
+          "indexname": "invitations_invite_token_key",
+          "indexdef": "CREATE UNIQUE INDEX invitations_invite_token_key ON public.invitations USING btree (invite_token)"
+        },
+        {
+          "indexname": "invitations_pkey",
+          "indexdef": "CREATE UNIQUE INDEX invitations_pkey ON public.invitations USING btree (invitation_id)"
+        },
+        {
+          "indexname": "ux_invitations_invite_token",
+          "indexdef": "CREATE UNIQUE INDEX ux_invitations_invite_token ON public.invitations USING btree (invite_token)"
+        },
+        {
+          "indexname": "ux_invitations_source_key",
+          "indexdef": "CREATE UNIQUE INDEX ux_invitations_source_key ON public.invitations USING btree (source_key)"
+        }
+      ]
+    },
+    "events": {
+      "columns": [
+        {
+          "column_name": "event_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "title",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "date",
+          "udt_name": "date",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": 0
+        },
+        {
+          "column_name": "start_time",
+          "data_type": "time without time zone",
+          "udt_name": "time",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": 6
+        },
+        {
+          "column_name": "end_time",
+          "data_type": "time without time zone",
+          "udt_name": "time",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": 6
+        },
+        {
+          "column_name": "timezone",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": "'America/New_York'::text",
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "short_date",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "venue_name",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "location",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "attire_image",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "attire_heading",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "attire_subheading",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "attire",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "display_order",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "is_nullable": "NO",
+          "column_default": "0",
+          "character_maximum_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": 6
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_name": "2200_16406_15_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16406_16_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16406_1_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16406_2_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16406_3_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16406_4_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16406_5_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16406_6_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16406_9_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "events_event_id_not_blank",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": "events",
+          "referenced_column": "event_id"
+        },
+        {
+          "constraint_name": "events_pkey",
+          "constraint_type": "PRIMARY KEY",
+          "column_name": "event_id",
+          "ordinal_position": 1,
+          "referenced_table": "events",
+          "referenced_column": "event_id"
+        }
+      ],
+      "indexes": [
+        {
+          "indexname": "events_pkey",
+          "indexdef": "CREATE UNIQUE INDEX events_pkey ON public.events USING btree (event_id)"
+        }
+      ]
+    },
+    "invitation_event_permissions": {
+      "columns": [
+        {
+          "column_name": "invitation_id",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "event_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "max_guests",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "is_nullable": "NO",
+          "column_default": "1",
+          "character_maximum_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": 6
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_name": "2200_16509_1_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16509_2_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16509_3_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16509_4_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "invitation_event_permissions_event_id_fkey",
+          "constraint_type": "FOREIGN KEY",
+          "column_name": "event_id",
+          "ordinal_position": 1,
+          "referenced_table": "events",
+          "referenced_column": "event_id"
+        },
+        {
+          "constraint_name": "invitation_event_permissions_invitation_id_fkey",
+          "constraint_type": "FOREIGN KEY",
+          "column_name": "invitation_id",
+          "ordinal_position": 1,
+          "referenced_table": "invitations",
+          "referenced_column": "invitation_id"
+        },
+        {
+          "constraint_name": "invitation_event_permissions_max_guests_positive",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": "invitation_event_permissions",
+          "referenced_column": "max_guests"
+        },
+        {
+          "constraint_name": "invitation_event_permissions_pkey",
+          "constraint_type": "PRIMARY KEY",
+          "column_name": "invitation_id",
+          "ordinal_position": 1,
+          "referenced_table": "invitation_event_permissions",
+          "referenced_column": "invitation_id"
+        },
+        {
+          "constraint_name": "invitation_event_permissions_pkey",
+          "constraint_type": "PRIMARY KEY",
+          "column_name": "invitation_id",
+          "ordinal_position": 1,
+          "referenced_table": "invitation_event_permissions",
+          "referenced_column": "event_id"
+        },
+        {
+          "constraint_name": "invitation_event_permissions_pkey",
+          "constraint_type": "PRIMARY KEY",
+          "column_name": "event_id",
+          "ordinal_position": 2,
+          "referenced_table": "invitation_event_permissions",
+          "referenced_column": "invitation_id"
+        },
+        {
+          "constraint_name": "invitation_event_permissions_pkey",
+          "constraint_type": "PRIMARY KEY",
+          "column_name": "event_id",
+          "ordinal_position": 2,
+          "referenced_table": "invitation_event_permissions",
+          "referenced_column": "event_id"
+        }
+      ],
+      "indexes": [
+        {
+          "indexname": "idx_invitation_event_permissions_event_id",
+          "indexdef": "CREATE INDEX idx_invitation_event_permissions_event_id ON public.invitation_event_permissions USING btree (event_id)"
+        },
+        {
+          "indexname": "invitation_event_permissions_pkey",
+          "indexdef": "CREATE UNIQUE INDEX invitation_event_permissions_pkey ON public.invitation_event_permissions USING btree (invitation_id, event_id)"
+        }
+      ]
+    },
+    "rsvps": {
+      "columns": [
+        {
+          "column_name": "rsvp_id",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "invitation_id",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "event_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "attending",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "guest_count",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "is_nullable": "NO",
+          "column_default": "0",
+          "character_maximum_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "notes",
+          "data_type": "text",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": null
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "character_maximum_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "datetime_precision": 6
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_name": "2200_16531_1_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16531_2_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16531_3_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16531_4_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16531_5_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "2200_16531_7_not_null",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": null,
+          "referenced_column": null
+        },
+        {
+          "constraint_name": "rsvps_attending_valid",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": "rsvps",
+          "referenced_column": "attending"
+        },
+        {
+          "constraint_name": "rsvps_event_id_fkey",
+          "constraint_type": "FOREIGN KEY",
+          "column_name": "event_id",
+          "ordinal_position": 1,
+          "referenced_table": "events",
+          "referenced_column": "event_id"
+        },
+        {
+          "constraint_name": "rsvps_guest_count_not_negative",
+          "constraint_type": "CHECK",
+          "column_name": null,
+          "ordinal_position": null,
+          "referenced_table": "rsvps",
+          "referenced_column": "guest_count"
+        },
+        {
+          "constraint_name": "rsvps_invitation_id_event_id_key",
+          "constraint_type": "UNIQUE",
+          "column_name": "invitation_id",
+          "ordinal_position": 1,
+          "referenced_table": "rsvps",
+          "referenced_column": "event_id"
+        },
+        {
+          "constraint_name": "rsvps_invitation_id_event_id_key",
+          "constraint_type": "UNIQUE",
+          "column_name": "invitation_id",
+          "ordinal_position": 1,
+          "referenced_table": "rsvps",
+          "referenced_column": "invitation_id"
+        },
+        {
+          "constraint_name": "rsvps_invitation_id_event_id_key",
+          "constraint_type": "UNIQUE",
+          "column_name": "event_id",
+          "ordinal_position": 2,
+          "referenced_table": "rsvps",
+          "referenced_column": "event_id"
+        },
+        {
+          "constraint_name": "rsvps_invitation_id_event_id_key",
+          "constraint_type": "UNIQUE",
+          "column_name": "event_id",
+          "ordinal_position": 2,
+          "referenced_table": "rsvps",
+          "referenced_column": "invitation_id"
+        },
+        {
+          "constraint_name": "rsvps_invitation_id_fkey",
+          "constraint_type": "FOREIGN KEY",
+          "column_name": "invitation_id",
+          "ordinal_position": 1,
+          "referenced_table": "invitations",
+          "referenced_column": "invitation_id"
+        },
+        {
+          "constraint_name": "rsvps_pkey",
+          "constraint_type": "PRIMARY KEY",
+          "column_name": "rsvp_id",
+          "ordinal_position": 1,
+          "referenced_table": "rsvps",
+          "referenced_column": "rsvp_id"
+        }
+      ],
+      "indexes": [
+        {
+          "indexname": "idx_rsvps_event_id",
+          "indexdef": "CREATE INDEX idx_rsvps_event_id ON public.rsvps USING btree (event_id)"
+        },
+        {
+          "indexname": "idx_rsvps_invitation_id",
+          "indexdef": "CREATE INDEX idx_rsvps_invitation_id ON public.rsvps USING btree (invitation_id)"
+        },
+        {
+          "indexname": "rsvps_invitation_id_event_id_key",
+          "indexdef": "CREATE UNIQUE INDEX rsvps_invitation_id_event_id_key ON public.rsvps USING btree (invitation_id, event_id)"
+        },
+        {
+          "indexname": "rsvps_pkey",
+          "indexdef": "CREATE UNIQUE INDEX rsvps_pkey ON public.rsvps USING btree (rsvp_id)"
+        }
+      ]
+    }
+  }
+}

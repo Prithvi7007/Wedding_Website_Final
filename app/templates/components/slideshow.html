@@ -1,0 +1,38 @@
+{% set first_slide = slideshow[0] %}
+<div class="ambient-slideshow" data-slideshow-root aria-hidden="true">
+    <picture
+        class="ambient-slide is-active"
+        data-slide-buffer="0"
+        style="--position-desktop: {{ first_slide.positionDesktop }}; --position-mobile: {{ first_slide.positionMobile }};"
+    >
+        <source data-slide-source="avif" type="image/avif" srcset="{{ first_slide.avifSrcset }}" sizes="100vw">
+        <source data-slide-source="webp" type="image/webp" srcset="{{ first_slide.webpSrcset }}" sizes="100vw">
+        <img
+            data-slide-image
+            src="{{ first_slide.fallback }}"
+            alt=""
+            width="1170"
+            height="780"
+            sizes="100vw"
+            decoding="async"
+            fetchpriority="high"
+        >
+    </picture>
+
+    <picture class="ambient-slide" data-slide-buffer="1">
+        <source data-slide-source="avif" type="image/avif" sizes="100vw">
+        <source data-slide-source="webp" type="image/webp" sizes="100vw">
+        <img
+            data-slide-image
+            alt=""
+            width="1170"
+            height="780"
+            sizes="100vw"
+            decoding="async"
+        >
+    </picture>
+
+    <div class="ambient-slideshow-shade"></div>
+    <div class="ambient-slideshow-vignette"></div>
+</div>
+<script id="slideshow-data" type="application/json" nonce="{{ csp_nonce() }}">{{ slideshow | tojson }}</script>
