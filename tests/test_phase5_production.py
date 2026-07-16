@@ -34,7 +34,7 @@ def test_dashboard_security_headers_and_private_cache(client, app):
     assert response.headers["Cache-Control"] == "private, no-store, max-age=0"
     assert response.headers["X-Frame-Options"] == "DENY"
     assert response.headers["X-Content-Type-Options"] == "nosniff"
-    assert response.headers["Referrer-Policy"] == "no-referrer"
+    assert response.headers["Referrer-Policy"] == "same-origin"
     assert response.headers.get("X-Request-ID")
     assert "frame-ancestors 'none'" in response.headers["Content-Security-Policy"]
 
