@@ -3,12 +3,151 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Invitation not found</title>
+    <meta name="theme-color" content="#17100c">
+    <title>Invitation Not Found | Adlin &amp; Prithvi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Manrope:wght@500;600;700&display=swap"
+    >
+    <style>
+        :root {
+            color-scheme: dark;
+            --ivory: #fff3db;
+            --muted: #d7c6b2;
+            --gold: #e2b85e;
+            --line: rgba(239, 203, 137, .38);
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { min-height: 100%; }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            overflow-x: hidden;
+            padding:
+                max(24px, env(safe-area-inset-top))
+                20px
+                max(24px, env(safe-area-inset-bottom));
+            background: #17100c;
+            color: var(--ivory);
+            font-family: "Cormorant Garamond", Georgia, serif;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background:
+                linear-gradient(115deg, rgba(15, 9, 6, .93), rgba(26, 15, 9, .71)),
+                url("{{ asset_url('images/slideshow/DSC06717-1170.webp') }}")
+                center / cover no-repeat;
+            transform: scale(1.02);
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 50% 18%, rgba(222, 166, 73, .18), transparent 34%),
+                linear-gradient(180deg, transparent, rgba(9, 5, 3, .34));
+            pointer-events: none;
+        }
+
+        .invitation-notice {
+            width: min(650px, 100%);
+            padding: clamp(36px, 8vw, 72px) clamp(24px, 7vw, 64px);
+            text-align: center;
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            background:
+                linear-gradient(145deg, rgba(45, 31, 23, .78), rgba(17, 12, 9, .88));
+            box-shadow:
+                0 30px 90px rgba(0, 0, 0, .48),
+                inset 0 1px rgba(255, 255, 255, .08);
+            -webkit-backdrop-filter: blur(12px) saturate(115%);
+            backdrop-filter: blur(12px) saturate(115%);
+        }
+
+        .eyebrow {
+            margin: 0 0 18px;
+            color: var(--gold);
+            font: 700 11px/1.3 "Manrope", sans-serif;
+            letter-spacing: .24em;
+            text-transform: uppercase;
+        }
+
+        .names {
+            margin: 0;
+            font-family: "Parisienne", cursive;
+            font-size: clamp(58px, 13vw, 98px);
+            font-weight: 400;
+            line-height: .96;
+            text-wrap: balance;
+        }
+
+        .ornament {
+            width: min(190px, 46%);
+            height: 1px;
+            margin: 28px auto;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(30px, 6vw, 46px);
+            font-weight: 600;
+            line-height: 1.08;
+            text-wrap: balance;
+        }
+
+        .message {
+            max-width: 500px;
+            margin: 20px auto 0;
+            color: var(--muted);
+            font-size: clamp(18px, 3.8vw, 22px);
+            line-height: 1.55;
+            text-wrap: pretty;
+        }
+
+        .contact {
+            margin: 28px 0 0;
+            color: #f2d69d;
+            font: 700 11px/1.5 "Manrope", sans-serif;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 600px) {
+            .invitation-notice {
+                border-radius: 24px;
+                -webkit-backdrop-filter: blur(8px) saturate(110%);
+                backdrop-filter: blur(8px) saturate(110%);
+            }
+        }
+    </style>
 </head>
 <body>
-    <main>
-        <h1>Invitation not found</h1>
-        <p>This private invitation link is invalid or inactive.</p>
+    <main class="invitation-notice">
+        <p class="eyebrow">Private Invitation</p>
+        <p class="names">Adlin &amp; Prithvi</p>
+        <div class="ornament" aria-hidden="true"></div>
+        <h1>We could not open this invitation</h1>
+        <p class="message">
+            This private invitation link is invalid, inactive, or incomplete.
+            Please use the complete personal link that was sent to you.
+        </p>
+        <p class="contact">
+            Need help? Please contact Adlin or Prithvi.
+        </p>
     </main>
 </body>
 </html>

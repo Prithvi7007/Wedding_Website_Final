@@ -32,16 +32,209 @@ function isIos() {
         || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 }
 
-function burstPetals(eventId) {
+let petalCanvasFrame = 0;
+let petalCanvasResizeHandler = null;
+
+function stopCanvasPetals() {
+    if (petalCanvasFrame) {
+        cancelAnimationFrame(petalCanvasFrame);
+        petalCanvasFrame = 0;
+    }
+
+    if (petalCanvasResizeHandler) {
+        window.removeEventListener("resize", petalCanvasResizeHandler);
+        petalCanvasResizeHandler = null;
+    }
+
+    const canvas = document.getElementById("rsvp-petal-canvas");
+    const context = canvas?.getContext("2d");
+    if (canvas && context) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+function drawCanvasPetal(context, particle, x, y, progress, alpha) {
+    const flutter = 0.28 + 0.72 * Math.abs(
+        Math.cos(
+            particle.phase
+            + progress * particle.flutterCycles * Math.PI * 2
+        )
+    );
+    const rotation = particle.rotation + particle.spin * progress;
+
+    context.save();
+    context.translate(x, y);
+    context.rotate(rotation);
+    context.scale(flutter, 1);
+    context.globalAlpha = alpha;
+
+    const width = particle.width;
+    const height = particle.height;
+
+    context.fillStyle = particle.color;
+    context.beginPath();
+    context.moveTo(0, -height / 2);
+    context.bezierCurveTo(
+        width * 0.58,
+        -height * 0.28,
+        width * 0.52,
+        height * 0.27,
+        0,
+        height / 2,
+    );
+    context.bezierCurveTo(
+        -width * 0.52,
+        height * 0.27,
+        -width * 0.58,
+        -height * 0.28,
+        0,
+        -height / 2,
+    );
+    context.closePath();
+    context.fill();
+
+    context.globalAlpha = alpha * 0.42;
+    context.strokeStyle = particle.highlight;
+    context.lineWidth = Math.max(0.7, width * 0.08);
+    context.beginPath();
+    context.moveTo(0, -height * 0.32);
+    context.quadraticCurveTo(
+        width * 0.08,
+        0,
+        0,
+        height * 0.34,
+    );
+    context.stroke();
+    context.restore();
+}
+
+function burstCanvasPetals(eventId) {
+    const canvas = document.getElementById("rsvp-petal-canvas");
+    const card = document.getElementById(`event-card-${eventId}`);
+    if (!canvas || !card) return false;
+
+    const context = canvas.getContext("2d", {
+        alpha: true,
+        desynchronized: true,
+    });
+    if (!context) return false;
+
+    stopCanvasPetals();
+
+    const theme = card.dataset.eventTheme || "neutral";
+    const palette = palettes[theme] || palettes.neutral;
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    const releaseWindow = 620;
+    const count = window.innerWidth <= 430 ? 24 : 30;
+
+    function resizeCanvas() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        canvas.width = Math.round(width * ratio);
+        canvas.height = Math.round(height * ratio);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+
+    resizeCanvas();
+    petalCanvasResizeHandler = resizeCanvas;
+    window.addEventListener("resize", resizeCanvas, { passive: true });
+
+    const particles = Array.from({ length: count }, () => {
+        const [color, highlight] = palette[
+            Math.floor(Math.random() * palette.length)
+        ];
+
+        return {
+            delay: Math.random() * releaseWindow,
+            duration: 5000 + Math.random() * 2100,
+            x: Math.random(),
+            startY: -0.04 - Math.random() * 0.14,
+            fall: 1.18 + Math.random() * 0.18,
+            drift: (Math.random() - 0.5) * 0.32,
+            sway: 0.025 + Math.random() * 0.045,
+            swayCycles: 1.25 + Math.random() * 1.7,
+            phase: Math.random() * Math.PI * 2,
+            width: 6 + Math.random() * 7,
+            height: 13 + Math.random() * 12,
+            rotation: Math.random() * Math.PI * 2,
+            spin: (Math.random() - 0.5) * Math.PI * 5,
+            flutterCycles: 2.2 + Math.random() * 2.8,
+            color,
+            highlight,
+        };
+    });
+
+    const started = performance.now();
+
+    function frame(now) {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        context.clearRect(0, 0, viewportWidth, viewportHeight);
+
+        let animationActive = false;
+
+        particles.forEach((particle) => {
+            const elapsed = now - started - particle.delay;
+            if (elapsed < 0) {
+                animationActive = true;
+                return;
+            }
+
+            if (elapsed > particle.duration) return;
+            animationActive = true;
+
+            const progress = Math.min(1, elapsed / particle.duration);
+            const verticalProgress = progress + 0.08 * progress * progress;
+            const x = (
+                particle.x
+                + particle.drift * progress
+                + Math.sin(
+                    particle.phase
+                    + progress * particle.swayCycles * Math.PI * 2
+                ) * particle.sway
+            ) * viewportWidth;
+            const y = (
+                particle.startY
+                + particle.fall * verticalProgress
+            ) * viewportHeight;
+
+            let alpha = 0.94;
+            if (progress < 0.06) alpha *= progress / 0.06;
+            if (progress > 0.88) alpha *= (1 - progress) / 0.12;
+
+            drawCanvasPetal(
+                context,
+                particle,
+                x,
+                y,
+                progress,
+                Math.max(0, alpha),
+            );
+        });
+
+        if (animationActive) {
+            petalCanvasFrame = requestAnimationFrame(frame);
+        } else {
+            stopCanvasPetals();
+        }
+    }
+
+    petalCanvasFrame = requestAnimationFrame(frame);
+    return true;
+}
+
+function burstDomPetals(eventId) {
     const container = document.getElementById("rsvp-petal-container");
     const card = document.getElementById(`event-card-${eventId}`);
-    if (!container || !card || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!container || !card) return;
 
     const theme = card.dataset.eventTheme || "neutral";
     const palette = palettes[theme] || palettes.neutral;
     const compact = window.innerWidth <= 700;
-    const count = isIos() ? 24 : (compact ? 34 : 58);
-    const releaseWindow = isIos() ? 520 : (compact ? 680 : 920);
+    const count = compact ? 34 : 58;
+    const releaseWindow = compact ? 680 : 920;
     const burstId = `${Date.now()}-${Math.random()}`;
     container.dataset.burstId = burstId;
     container.replaceChildren();
@@ -50,7 +243,9 @@ function burstPetals(eventId) {
         window.setTimeout(() => {
             if (container.dataset.burstId !== burstId) return;
             const petal = document.createElement("span");
-            const [color, highlight, shadow] = palette[Math.floor(Math.random() * palette.length)];
+            const [color, highlight, shadow] = palette[
+                Math.floor(Math.random() * palette.length)
+            ];
             const duration = 5.2 + Math.random() * 2.5;
             petal.className = `rsvp-petal petal-shape-${1 + Math.floor(Math.random() * 3)}`;
             const vars = {
@@ -73,11 +268,24 @@ function burstPetals(eventId) {
                 "--rotation-c": `${410 + Math.random() * 220}deg`,
                 "--rotation-end": `${580 + Math.random() * 260}deg`,
             };
-            Object.entries(vars).forEach(([name, value]) => petal.style.setProperty(name, value));
-            petal.addEventListener("animationend", () => petal.remove(), { once: true });
+            Object.entries(vars).forEach(([name, value]) => {
+                petal.style.setProperty(name, value);
+            });
+            petal.addEventListener(
+                "animationend",
+                () => petal.remove(),
+                { once: true },
+            );
             container.append(petal);
         }, Math.random() * releaseWindow);
     }
+}
+
+function burstPetals(eventId) {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    if (isIos() && burstCanvasPetals(eventId)) return;
+    burstDomPetals(eventId);
 }
 
 export function mountSchedule(root = document) {
@@ -224,6 +432,23 @@ export function mountSchedule(root = document) {
         const label = form.querySelector("[data-submit-label]");
         const errorNode = form.querySelector("[data-form-error]");
         const original = label?.textContent || "Confirm Response";
+        const selectedAttendance = form.querySelector(
+            "input[name='attending']:checked"
+        );
+        const guestCountInput = form.querySelector(
+            "input[name='guest_count']"
+        );
+        const guestCountOutput = form.querySelector("output");
+
+        if (
+            selectedAttendance?.value === "Yes"
+            && guestCountInput
+            && Number(guestCountInput.value) < 1
+        ) {
+            guestCountInput.value = "1";
+            if (guestCountOutput) guestCountOutput.textContent = "1";
+        }
+
         const formData = new FormData(form);
 
         if (button) button.disabled = true;
@@ -262,7 +487,13 @@ export function mountSchedule(root = document) {
             closeOverlay("rsvp", eventId);
             schedule.querySelector("[data-schedule-live]")
                 ?.replaceChildren(`Response saved for ${payload.event_title}.`);
-            if (payload.celebrate) window.setTimeout(() => burstPetals(eventId), 90);
+            if (payload.celebrate) {
+                const celebrationDelay = isIos() ? 180 : 90;
+                window.setTimeout(
+                    () => burstPetals(eventId),
+                    celebrationDelay,
+                );
+            }
         } catch (error) {
             if (label) label.textContent = original;
             if (errorNode) {
@@ -318,8 +549,11 @@ export function mountSchedule(root = document) {
             const checked = form?.querySelector("input[name='attending']:checked");
             if (!input || !output || checked?.value === "No") return;
 
+            const minimum = checked?.value === "Yes"
+                ? 1
+                : Number(input.min || 0);
             const next = Math.max(
-                Number(input.min || 0),
+                minimum,
                 Math.min(
                     Number(input.max || 10),
                     Number(input.value || 0) + Number(actionNode.dataset.delta || 0),

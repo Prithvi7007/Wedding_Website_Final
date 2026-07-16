@@ -42,7 +42,7 @@ def present_event(event: AllowedEvent) -> dict:
         },
         "hindu": {
             "timeline_title": "Telugu Wedding",
-            "kicker": "Traditional Telugu ceremony and blessings",
+            "kicker": "Traditional Telugu ceremony, Lunch and blessings",
             "attire_stem": "attire-hindu",
         },
         "christian": {

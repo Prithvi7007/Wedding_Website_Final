@@ -115,6 +115,11 @@ def shell():
 def tab_fragment(tab_name: str):
     invitation = current_invitation()
     if invitation is None:
+        if _wants_json():
+            return _json_error(
+                "Your session expired. Open your private invitation link again.",
+                401,
+            )
         return redirect(url_for("invitations.home"))
 
     if tab_name not in ALLOWED_TABS:
@@ -155,12 +160,36 @@ def save_rsvp():
     try:
         requested_guest_count = int(request.form.get("guest_count", "0"))
     except (TypeError, ValueError):
-        requested_guest_count = 0
+        if _wants_json():
+            return _json_error("Please choose a valid guest count.", 400)
+        return redirect(url_for("dashboard.shell", tab="schedule"))
 
-    guest_count = 0 if attending == "No" else max(
-        0,
-        min(requested_guest_count, allowed_event.max_guests),
-    )
+    if attending == "Yes" and requested_guest_count < 1:
+        if _wants_json():
+            return _json_error(
+                "Please include at least one attending guest.",
+                400,
+            )
+        return redirect(url_for("dashboard.shell", tab="schedule"))
+
+    if attending == "Yes" and allowed_event.max_guests < 1:
+        if _wants_json():
+            return _json_error(
+                "This invitation is not configured for an attending guest.",
+                400,
+            )
+        return redirect(url_for("dashboard.shell", tab="schedule"))
+
+    if attending == "No":
+        guest_count = 0
+    elif attending == "Yes":
+        guest_count = min(requested_guest_count, allowed_event.max_guests)
+    else:
+        guest_count = max(
+            0,
+            min(requested_guest_count, allowed_event.max_guests),
+        )
+
     notes = request.form.get("notes", "").strip()[:2000]
 
     previous_record = RSVPRepository.get_for_event(

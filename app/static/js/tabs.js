@@ -26,6 +26,12 @@ export function mountFragmentNavigation(onContentMounted, initialCleanup = () =>
                 credentials: "same-origin",
                 headers: { "X-Requested-With": "XMLHttpRequest" },
             });
+
+            if (response.status === 401) {
+                window.location.assign("/");
+                return;
+            }
+
             if (!response.ok) throw new Error(`Tab request failed: ${response.status}`);
 
             cleanupCurrentTab();
