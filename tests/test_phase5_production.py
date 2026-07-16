@@ -97,3 +97,13 @@ def test_invite_tokens_are_suppressed_from_nginx_access_logs():
     nginx = Path("deploy/nginx/adlinprithvi.cloud.conf").read_text(encoding="utf-8")
     assert "location ^~ /invite/" in nginx
     assert "access_log off;" in nginx
+
+
+def test_nginx_does_not_duplicate_shared_proxy_headers():
+    nginx = Path("deploy/nginx/adlinprithvi.cloud.conf").read_text(
+        encoding="utf-8"
+    )
+
+    assert "proxy_set_header Host $host;" not in nginx
+    assert "proxy_set_header X-Forwarded-Proto $scheme;" not in nginx
+    assert "proxy_set_header X-Forwarded-Port $server_port;" not in nginx

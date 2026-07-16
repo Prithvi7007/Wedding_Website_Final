@@ -50,8 +50,8 @@ def create_app(config_name: str | None = None) -> Flask:
             app.wsgi_app,
             x_for=proxy_count,
             x_proto=proxy_count,
-            x_host=proxy_count,
-            x_port=proxy_count,
+            x_host=0,
+            x_port=0,
         )
 
     db.init_app(app)
