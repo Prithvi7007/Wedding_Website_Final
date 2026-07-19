@@ -22,32 +22,72 @@
 ) %}
 
 <body class="invitation-render-v2">
-    <main class="login-container">
-        <div class="login-private-line">
+    <main class="login-container invitation-content-v2">
+        <p class="login-private-line">
             Private Invitation
+        </p>
+
+        <div class="family-ornament" aria-hidden="true">
+            <span></span>
+            <b>✦</b>
+            <span></span>
         </div>
 
-        <h1 class="login-title" aria-label="Adlin and Prithvi">
-            <span class="couple-name">Adlin</span>
-            <span class="couple-ampersand" aria-hidden="true">&amp;</span>
-            <span class="couple-name">Prithvi</span>
+        <p class="family-intro">
+            With joyful hearts
+        </p>
+
+        <section
+            class="families-grid"
+            aria-label="The families inviting you"
+        >
+            <div class="family-block">
+                <span class="family-label">Mr. &amp; Mrs.</span>
+                <strong class="family-name">
+                    Peter &amp; Shefali Lawrence
+                </strong>
+            </div>
+
+            <span class="family-joiner" aria-hidden="true">
+                and
+            </span>
+
+            <div class="family-block">
+                <span class="family-label">Mr. &amp; Mrs.</span>
+                <strong class="family-name">
+                    Mohan &amp; Sunitha Kokku
+                </strong>
+            </div>
+        </section>
+
+        <div class="family-ornament family-ornament--small" aria-hidden="true">
+            <span></span>
+            <b>✦</b>
+            <span></span>
+        </div>
+
+        <p class="invitation-copy">
+            invite you to celebrate the wedding of their children
+        </p>
+
+        <h1 class="couple-display">
+            Adlin <span aria-hidden="true">&amp;</span> Prithvi
         </h1>
 
-        <div class="login-divider" aria-hidden="true"></div>
+        <div class="family-ornament family-ornament--small" aria-hidden="true">
+            <span></span>
+            <b>✦</b>
+            <span></span>
+        </div>
 
-        <p class="login-subtitle">
-            <span class="welcome-name">
-                Welcome, {{ guest_name }}.
-            </span>
+        <section class="guest-welcome">
+            <h2>Welcome, {{ guest_name }}</h2>
 
-            <span class="welcome-message">
-                We’re so excited to celebrate with you.
-            </span>
-
-            <span class="welcome-invitation">
-                Your private invitation and RSVP await.
-            </span>
-        </p>
+            <p>
+                Your private invitation and RSVP await.<br>
+                We are so happy to celebrate with you.
+            </p>
+        </section>
 
         <form
             id="open-invitation-form"
@@ -75,8 +115,14 @@
             </button>
         </form>
 
-        <p class="small-text">
-            Not your invitation? Please contact Adlin or Prithvi before continuing.
+        <div class="family-ornament family-ornament--footer" aria-hidden="true">
+            <span></span>
+            <b>✦</b>
+            <span></span>
+        </div>
+
+        <p class="unique-link-note">
+            This invitation link is unique to you.
         </p>
     </main>
 
