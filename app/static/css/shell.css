@@ -30,3 +30,27 @@
 .phase-placeholder h2 { margin: 0 0 15px; color: var(--cream); font-family: "Cormorant Garamond", Georgia, serif; font-size: clamp(48px, 7vw, 76px); font-weight: 600; }
 .phase-placeholder p:last-child { margin: 0; color: var(--copy); font-family: "Cormorant Garamond", Georgia, serif; font-size: 20px; line-height: 1.55; }
 .logout-link { position: fixed; right: 24px; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 120; padding: 10px 14px; color: var(--muted); border: 1px solid rgba(255,255,255,.12); border-radius: 999px; background: rgba(20,17,15,.38); font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-decoration: none; text-transform: uppercase; backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); touch-action: manipulation; }
+
+/* DASHBOARD OPTICAL GLASS V1 */
+.dashboard-header {
+    background:
+        radial-gradient(ellipse 74% 42% at 50% -8%, rgba(255,255,255,.12), transparent 72%),
+        linear-gradient(180deg, rgba(17,14,12,.28), rgba(17,14,12,.095) 72%, transparent);
+    backdrop-filter: blur(9px) saturate(145%);
+    -webkit-backdrop-filter: blur(9px) saturate(145%);
+}
+.dashboard-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    box-shadow: inset 0 1px rgba(255,255,255,.12);
+}
+.logout-link {
+    border-color: var(--glass-border-soft);
+    background: var(--glass-clear);
+    backdrop-filter: blur(9px) saturate(140%);
+    -webkit-backdrop-filter: blur(9px) saturate(140%);
+    box-shadow: 0 12px 28px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.22);
+}

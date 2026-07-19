@@ -20,3 +20,22 @@ button, input, select, textarea { font: inherit; }
 button { border: 0; appearance: none; -webkit-appearance: none; }
 a { color: inherit; }
 [hidden] { display: none !important; }
+
+/* OPTICAL GLASS SYSTEM V1 */
+:root {
+    --glass-clear:
+        radial-gradient(ellipse 88% 70% at 50% 0%, rgba(255,255,255,.12), rgba(255,255,255,.028) 44%, transparent 74%),
+        linear-gradient(145deg, rgba(255,255,255,.060), rgba(255,255,255,.014) 46%, rgba(7,9,10,.105));
+    --glass-readable:
+        radial-gradient(ellipse 88% 62% at 50% 0%, rgba(255,255,255,.13), rgba(255,255,255,.035) 46%, transparent 72%),
+        linear-gradient(145deg, rgba(40,31,25,.30), rgba(14,12,11,.38) 58%, rgba(7,9,10,.46));
+    --glass-border: rgba(255,250,240,.22);
+    --glass-border-soft: rgba(255,250,240,.14);
+    --glass-highlight: rgba(255,255,255,.40);
+    --glass-shadow:
+        0 30px 72px rgba(3,5,6,.27),
+        0 12px 30px rgba(3,5,6,.15),
+        inset 0 1.5px 1px rgba(255,255,255,.28),
+        inset 0 -1px 1px rgba(255,255,255,.055);
+    --glass-filter: blur(10px) saturate(145%) brightness(.97);
+}

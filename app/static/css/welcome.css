@@ -25,3 +25,62 @@
 .slide-dots { position: absolute; left: 50%; bottom: 25px; z-index: 20; display: flex; gap: 12px; transform: translateX(-50%); }
 .slide-dot { width: 10px; height: 10px; padding: 0; border: 1px solid rgba(255,241,211,.22); border-radius: 50%; background: rgba(255,244,223,.18); box-shadow: 0 4px 12px rgba(0,0,0,.12); cursor: pointer; transition: transform 220ms var(--ease-cinematic), background 220ms ease; touch-action: manipulation; }
 .slide-dot.is-active { background: linear-gradient(145deg, rgba(244,196,105,.94), rgba(194,133,42,.88)); border-color: rgba(255,222,151,.72); box-shadow: 0 0 14px rgba(229,177,80,.34); transform: scale(1.2); }
+
+/* WELCOME OPTICAL GLASS V1 */
+.welcome-copy::before {
+    top: 15%;
+    right: -54px;
+    bottom: 9%;
+    left: -62px;
+    border: 1px solid var(--glass-border-soft);
+    border-radius: 34px;
+    background: var(--glass-clear);
+    backdrop-filter: var(--glass-filter);
+    -webkit-backdrop-filter: var(--glass-filter);
+    box-shadow: var(--glass-shadow);
+    -webkit-mask-image: none;
+    mask-image: none;
+    filter: none;
+}
+.welcome-copy::after {
+    content: "";
+    position: absolute;
+    top: calc(15% + 2px);
+    right: -52px;
+    bottom: calc(9% + 2px);
+    left: -60px;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 32px;
+    background:
+        radial-gradient(ellipse 72% 22% at 50% -3%, rgba(255,255,255,.22), transparent 74%),
+        linear-gradient(118deg, transparent 18%, rgba(255,255,255,.045) 38%, rgba(255,255,255,.11) 46%, transparent 61%);
+    mix-blend-mode: screen;
+    opacity: .72;
+}
+.welcome-schedule-button,
+.countdown-inline > div::before,
+.slide-arrow {
+    border-color: var(--glass-border-soft);
+    background: var(--glass-clear);
+}
+.welcome-schedule-button {
+    backdrop-filter: var(--glass-filter);
+    -webkit-backdrop-filter: var(--glass-filter);
+    box-shadow: 0 18px 40px rgba(4,7,7,.24), 0 0 0 1px rgba(255,255,255,.16), inset 0 1.5px 1px var(--glass-highlight);
+}
+@media (max-width: 700px) {
+    .welcome-copy::before {
+        top: calc(var(--header-height) + 30px);
+        right: 10px;
+        bottom: 34px;
+        left: 10px;
+        border-radius: 28px;
+        background:
+            radial-gradient(ellipse 90% 32% at 50% 0%, rgba(255,255,255,.11), transparent 72%),
+            linear-gradient(160deg, rgba(255,255,255,.045), rgba(8,10,10,.18));
+        backdrop-filter: blur(8px) saturate(138%);
+        -webkit-backdrop-filter: blur(8px) saturate(138%);
+    }
+    .welcome-copy::after { display: none; }
+}

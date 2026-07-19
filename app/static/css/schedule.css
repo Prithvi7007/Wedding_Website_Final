@@ -1225,3 +1225,57 @@ body.attire-overlay-open {
         display: none;
     }
 }
+
+/* SCHEDULE OPTICAL GLASS V1 */
+.schedule-journey,
+.event-glass-panel {
+    border-color: var(--glass-border);
+    background: var(--glass-clear);
+    backdrop-filter: var(--glass-filter);
+    -webkit-backdrop-filter: var(--glass-filter);
+    box-shadow: var(--glass-shadow);
+}
+.schedule-journey {
+    background:
+        radial-gradient(ellipse 76% 90% at 50% -18%, rgba(255,255,255,.15), transparent 70%),
+        linear-gradient(180deg, rgba(255,255,255,.055), rgba(8,10,10,.22));
+}
+.event-glass-panel {
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse 84% 30% at 50% 0%, rgba(255,255,255,.15), transparent 70%),
+        linear-gradient(145deg, rgba(255,255,255,.055), rgba(9,11,11,.24) 54%, rgba(6,8,9,.34));
+}
+.event-glass-panel::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: conic-gradient(from -58deg, rgba(255,255,255,.56), rgba(255,255,255,.10) 15% 40%, rgba(255,255,255,.36) 56%, rgba(255,255,255,.06) 71% 91%, rgba(255,255,255,.56));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: .66;
+}
+.attire-inspiration-trigger,
+.event-action,
+.rsvp-choice,
+.rsvp-submit {
+    background:
+        radial-gradient(ellipse 90% 80% at 50% 0%, rgba(255,255,255,.16), transparent 68%),
+        linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.018));
+    border-color: var(--glass-border);
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+    box-shadow: 0 12px 28px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.30);
+}
+@media (max-width: 700px) {
+    .schedule-journey,
+    .event-glass-panel {
+        backdrop-filter: blur(8px) saturate(138%);
+        -webkit-backdrop-filter: blur(8px) saturate(138%);
+    }
+}
