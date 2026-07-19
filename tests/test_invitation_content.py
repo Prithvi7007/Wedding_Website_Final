@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 
 
 def test_private_invitation_contains_family_invitation_copy():
@@ -11,7 +11,7 @@ def test_private_invitation_contains_family_invitation_copy():
         "Mohan &amp; Sunitha Kokku",
         "invite you to celebrate the wedding of their children",
         "Adlin <span aria-hidden=\"true\">&amp;</span> Prithvi",
-        "This invitation link is unique to you.",
+        "Doesn’t look like your invitation? Please contact Adlin or Prithvi.",
     )
 
     for text in expected_text:
@@ -25,3 +25,4 @@ def test_private_invitation_keeps_personalized_guest_name():
 
     assert "Welcome, {{ guest_name }}" in template
     assert "invitation.display_name" in template
+
