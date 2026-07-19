@@ -1412,3 +1412,134 @@ body[data-active-tab="qa"] .ambient-slideshow-shade {
         font-size: 12px;
     }
 }
+
+
+/* TRAVEL QA SMOKE TINT V3 */
+
+/*
+ * Add a localized smoky-black tint inside Travel and Q&A cards only.
+ * This improves text contrast without restoring the page-wide black film.
+ */
+
+.travel-story {
+    border-color: rgba(255, 250, 240, .19);
+    background:
+        radial-gradient(
+            ellipse 110% 58% at 48% -8%,
+            rgba(255, 255, 255, .105),
+            rgba(255, 255, 255, .018) 48%,
+            transparent 72%
+        ),
+        radial-gradient(
+            ellipse 92% 120% at 108% 54%,
+            rgba(0, 0, 0, .30),
+            transparent 68%
+        ),
+        radial-gradient(
+            ellipse 84% 105% at -10% 92%,
+            rgba(0, 0, 0, .24),
+            transparent 70%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(20, 18, 17, .34),
+            rgba(10, 10, 10, .48) 56%,
+            rgba(5, 6, 6, .56)
+        );
+    backdrop-filter: blur(10px) saturate(132%) brightness(.94);
+    -webkit-backdrop-filter: blur(10px) saturate(132%) brightness(.94);
+    box-shadow:
+        0 28px 66px rgba(0, 0, 0, .25),
+        inset 0 1.5px rgba(255, 255, 255, .24),
+        inset 0 -1px rgba(255, 255, 255, .04);
+}
+
+.travel-story::before {
+    opacity: .055;
+}
+
+.travel-item h4,
+.travel-item p,
+.travel-section-note,
+.travel-meta {
+    text-shadow:
+        0 1px 2px rgba(0, 0, 0, .50),
+        0 3px 14px rgba(0, 0, 0, .24);
+}
+
+.qa-grid {
+    border-color: rgba(255, 250, 240, .19);
+    background:
+        radial-gradient(
+            ellipse 106% 42% at 50% -8%,
+            rgba(255, 255, 255, .105),
+            rgba(255, 255, 255, .016) 52%,
+            transparent 74%
+        ),
+        radial-gradient(
+            ellipse 90% 120% at 105% 50%,
+            rgba(0, 0, 0, .28),
+            transparent 68%
+        ),
+        radial-gradient(
+            ellipse 82% 100% at -8% 92%,
+            rgba(0, 0, 0, .22),
+            transparent 70%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(19, 18, 17, .32),
+            rgba(9, 10, 10, .47) 58%,
+            rgba(5, 6, 6, .55)
+        );
+    backdrop-filter: blur(10px) saturate(132%) brightness(.94);
+    -webkit-backdrop-filter: blur(10px) saturate(132%) brightness(.94);
+    box-shadow:
+        0 28px 66px rgba(0, 0, 0, .24),
+        inset 0 1.5px rgba(255, 255, 255, .23);
+}
+
+.qa-item {
+    border-color: rgba(255, 255, 255, .13);
+    background:
+        radial-gradient(
+            ellipse 70% 78% at 0 0,
+            rgba(255, 255, 255, .060),
+            transparent 72%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(10, 10, 10, .18),
+            rgba(4, 5, 5, .28)
+        );
+}
+
+.qa-item[open] {
+    border-color: rgba(232, 190, 105, .34);
+    background:
+        radial-gradient(
+            ellipse 72% 82% at 0 0,
+            rgba(231, 185, 93, .10),
+            transparent 72%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(14, 13, 12, .22),
+            rgba(5, 6, 6, .32)
+        );
+}
+
+.qa-item summary strong,
+.qa-answer p {
+    text-shadow:
+        0 1px 2px rgba(0, 0, 0, .52),
+        0 3px 14px rgba(0, 0, 0, .25);
+}
+
+@media (max-width: 700px) {
+    .travel-story,
+    .qa-grid {
+        backdrop-filter: blur(8px) saturate(128%) brightness(.93);
+        -webkit-backdrop-filter: blur(8px) saturate(128%) brightness(.93);
+    }
+}
