@@ -18,9 +18,23 @@ def _seed_and_login(client, app):
         db.session.commit()
         invitation_id = invitation.invitation_id
 
-    response = client.get("/invite/phase5-private-token")
+    landing = client.get("/invite/phase5-private-token")
+    assert landing.status_code == 200
+    assert b"Open Invitation" in landing.data
+
+    with client.session_transaction() as session:
+        assert session.get("invitation_id") is None
+
+    response = client.post(
+        "/invite/phase5-private-token/open",
+        follow_redirects=False,
+    )
     assert response.status_code == 302
-    assert response.headers["Location"].endswith("/dashboard?login=success")
+
+    location = response.headers["Location"]
+    assert location.startswith("/dashboard")
+    assert "tab=welcome" in location
+    assert "login=success" in location
 
     return invitation_id
 
