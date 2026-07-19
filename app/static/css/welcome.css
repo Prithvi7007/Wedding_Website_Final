@@ -84,3 +84,94 @@
     }
     .welcome-copy::after { display: none; }
 }
+
+
+/* WELCOME SOFT SCRIM V2 */
+
+/*
+ * Keep the Welcome composition open like the Schedule intro.
+ * Only the button and countdown cells remain defined glass objects.
+ */
+.welcome-copy::before {
+    top: 16%;
+    right: -90px;
+    bottom: 10%;
+    left: -84px;
+
+    border: 0;
+    border-radius: 0;
+
+    background:
+        radial-gradient(
+            ellipse 76% 74% at 24% 47%,
+            rgba(18, 14, 11, .54) 0%,
+            rgba(18, 14, 11, .28) 46%,
+            rgba(18, 14, 11, .10) 66%,
+            transparent 84%
+        ),
+        radial-gradient(
+            ellipse 58% 34% at 28% 24%,
+            rgba(255, 255, 255, .055),
+            transparent 76%
+        );
+
+    backdrop-filter: blur(7px) saturate(138%);
+    -webkit-backdrop-filter: blur(7px) saturate(138%);
+
+    box-shadow: none;
+    -webkit-mask-image: radial-gradient(
+        ellipse 78% 74% at 25% 47%,
+        #000 0 52%,
+        rgba(0, 0, 0, .72) 66%,
+        transparent 86%
+    );
+    mask-image: radial-gradient(
+        ellipse 78% 74% at 25% 47%,
+        #000 0 52%,
+        rgba(0, 0, 0, .72) 66%,
+        transparent 86%
+    );
+    filter: none;
+}
+
+.welcome-copy::after {
+    display: none;
+}
+
+@media (max-width: 700px) {
+    .welcome-copy::before {
+        top: calc(var(--header-height) + 18px);
+        right: -18px;
+        bottom: 20px;
+        left: -18px;
+
+        border: 0;
+        border-radius: 0;
+
+        background:
+            radial-gradient(
+                ellipse 92% 76% at 48% 46%,
+                rgba(16, 13, 11, .58) 0%,
+                rgba(16, 13, 11, .32) 50%,
+                rgba(16, 13, 11, .12) 70%,
+                transparent 88%
+            );
+
+        backdrop-filter: blur(6px) saturate(134%);
+        -webkit-backdrop-filter: blur(6px) saturate(134%);
+
+        box-shadow: none;
+        -webkit-mask-image: radial-gradient(
+            ellipse 94% 78% at 50% 48%,
+            #000 0 56%,
+            rgba(0, 0, 0, .70) 70%,
+            transparent 90%
+        );
+        mask-image: radial-gradient(
+            ellipse 94% 78% at 50% 48%,
+            #000 0 56%,
+            rgba(0, 0, 0, .70) 70%,
+            transparent 90%
+        );
+    }
+}

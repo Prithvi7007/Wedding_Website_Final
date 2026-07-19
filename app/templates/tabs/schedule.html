@@ -227,8 +227,20 @@
                         <div class="event-facts">
                             <div class="event-fact">
                                 <span>Time</span>
-                                <strong>{{ event.time_display }}</strong>
-                                <small>{{ event.time_range }}</small>
+                                {% if event.theme == 'christian' %}
+                                    <div class="event-time-pair" aria-label="Wedding at 6:00 PM and reception at 7:00 PM">
+                                        <p class="event-time-entry">
+                                            <strong>6:00 PM</strong>
+                                            <span>Wedding</span>
+                                        </p>
+                                        <p class="event-time-entry">
+                                            <strong>7:00 PM</strong>
+                                            <span>Reception</span>
+                                        </p>
+                                    </div>
+                                {% else %}
+                                    <strong>{{ event.time_display }}</strong>
+                                {% endif %}
                             </div>
                             <div class="event-fact event-fact-location">
                                 <span>Location</span>

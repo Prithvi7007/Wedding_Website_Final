@@ -1279,3 +1279,54 @@ body.attire-overlay-open {
         -webkit-backdrop-filter: blur(8px) saturate(138%);
     }
 }
+
+
+/* EVENT TIME DISPLAY V2 */
+
+.event-time-pair {
+    display: grid;
+    gap: 7px;
+    margin-top: 7px;
+}
+
+.event-time-entry {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.event-time-entry strong {
+    display: inline;
+    margin: 0;
+    font-size: 20px;
+}
+
+.event-time-entry span {
+    color: rgba(255, 241, 216, 0.68);
+    font-family: "Manrope", sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 700px) {
+    .event-time-pair {
+        gap: 6px;
+    }
+
+    .event-time-entry {
+        gap: 7px;
+    }
+
+    .event-time-entry strong {
+        font-size: 19px;
+    }
+
+    .event-time-entry span {
+        font-size: 8px;
+        letter-spacing: 0.9px;
+    }
+}

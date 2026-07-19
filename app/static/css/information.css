@@ -1093,3 +1093,322 @@ body[data-active-tab="registry"] .ambient-slideshow-shade {
         background: linear-gradient(145deg, rgba(38,30,25,.88), rgba(16,14,13,.92));
     }
 }
+
+
+/* INFORMATION CLEAR PHOTO V2 */
+
+/*
+ * Keep Travel, Registry, and Q&A visually open like Welcome and Schedule.
+ * The photograph stays visible; readability comes from localized clear glass,
+ * soft scrims, borders, and text shadows rather than a page-wide black film.
+ */
+
+body[data-active-tab="travel"] .ambient-slideshow-shade,
+body[data-active-tab="registry"] .ambient-slideshow-shade,
+body[data-active-tab="qa"] .ambient-slideshow-shade {
+    background:
+        radial-gradient(
+            circle at 72% 26%,
+            rgba(235, 174, 83, .075),
+            transparent 36%
+        ),
+        linear-gradient(
+            90deg,
+            rgba(22, 17, 13, .48) 0%,
+            rgba(21, 16, 13, .32) 24%,
+            rgba(19, 15, 12, .17) 48%,
+            rgba(16, 13, 11, .055) 74%,
+            rgba(12, 11, 10, .018) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(18, 15, 12, .12) 0%,
+            rgba(15, 13, 11, .015) 42%,
+            rgba(16, 13, 11, .20) 100%
+        );
+}
+
+.information-intro::before {
+    inset: -50px -112px -48px -86px;
+    background:
+        radial-gradient(
+            ellipse 72% 76% at 24% 48%,
+            rgba(18, 14, 11, .48) 0%,
+            rgba(18, 14, 11, .24) 46%,
+            rgba(18, 14, 11, .08) 64%,
+            transparent 78%
+        );
+    filter: blur(7px);
+}
+
+.travel-story {
+    border-color: rgba(255, 250, 240, .21);
+    background:
+        radial-gradient(
+            ellipse 88% 30% at 50% 0%,
+            rgba(255, 255, 255, .14),
+            rgba(255, 255, 255, .025) 48%,
+            transparent 74%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, .055),
+            rgba(15, 13, 12, .16) 56%,
+            rgba(8, 10, 10, .25)
+        );
+    backdrop-filter: blur(10px) saturate(145%) brightness(1.02);
+    -webkit-backdrop-filter: blur(10px) saturate(145%) brightness(1.02);
+    box-shadow:
+        0 26px 64px rgba(3, 5, 6, .22),
+        0 10px 24px rgba(3, 5, 6, .12),
+        inset 0 1.5px 1px rgba(255, 255, 255, .29),
+        inset 0 -1px rgba(255, 255, 255, .055);
+}
+
+.travel-story::before {
+    opacity: .07;
+}
+
+.travel-image-frame {
+    border-color: rgba(255, 255, 255, .20);
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, .14),
+        inset 0 0 0 1px rgba(255, 255, 255, .10);
+}
+
+.travel-image-frame::after {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(71, 43, 20, .015),
+            rgba(18, 13, 10, .075)
+        ),
+        radial-gradient(
+            ellipse at center,
+            transparent 66%,
+            rgba(22, 15, 11, .10)
+        );
+}
+
+.travel-card-image {
+    filter: sepia(.055) brightness(.98) saturate(.98) contrast(1.02);
+}
+
+.registry-copy::before {
+    inset: -66px -88px -72px -70px;
+    border: 0;
+    border-radius: 0;
+    background:
+        radial-gradient(
+            ellipse 78% 80% at 28% 48%,
+            rgba(18, 14, 11, .46) 0%,
+            rgba(18, 14, 11, .22) 50%,
+            rgba(18, 14, 11, .07) 67%,
+            transparent 84%
+        ),
+        radial-gradient(
+            ellipse 62% 28% at 30% 0%,
+            rgba(255, 255, 255, .075),
+            transparent 74%
+        );
+    backdrop-filter: blur(7px) saturate(138%);
+    -webkit-backdrop-filter: blur(7px) saturate(138%);
+    box-shadow: none;
+    filter: none;
+    -webkit-mask-image: radial-gradient(
+        ellipse 80% 82% at 29% 49%,
+        #000 0 54%,
+        rgba(0, 0, 0, .72) 68%,
+        transparent 88%
+    );
+    mask-image: radial-gradient(
+        ellipse 80% 82% at 29% 49%,
+        #000 0 54%,
+        rgba(0, 0, 0, .72) 68%,
+        transparent 88%
+    );
+}
+
+.registry-keepsake {
+    border-color: rgba(255, 250, 240, .24);
+    background:
+        radial-gradient(
+            circle at 50% 8%,
+            rgba(255, 255, 255, .18),
+            transparent 36%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, .060),
+            rgba(13, 12, 11, .18) 58%,
+            rgba(7, 9, 10, .29)
+        );
+    backdrop-filter: blur(10px) saturate(145%) brightness(1.01);
+    -webkit-backdrop-filter: blur(10px) saturate(145%) brightness(1.01);
+    box-shadow:
+        0 28px 68px rgba(3, 5, 6, .24),
+        inset 0 1.5px rgba(255, 255, 255, .28),
+        inset 0 0 0 7px rgba(255, 255, 255, .020);
+}
+
+.qa-grid {
+    border-color: rgba(255, 250, 240, .20);
+    background:
+        radial-gradient(
+            ellipse 82% 24% at 50% 0%,
+            rgba(255, 255, 255, .14),
+            transparent 72%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, .050),
+            rgba(12, 12, 11, .17) 58%,
+            rgba(7, 9, 10, .27)
+        );
+    backdrop-filter: blur(10px) saturate(145%) brightness(1.02);
+    -webkit-backdrop-filter: blur(10px) saturate(145%) brightness(1.02);
+    box-shadow:
+        0 28px 68px rgba(3, 5, 6, .22),
+        inset 0 1.5px rgba(255, 255, 255, .27);
+}
+
+.qa-item {
+    border-color: rgba(255, 255, 255, .14);
+    background:
+        radial-gradient(
+            ellipse 72% 70% at 0 0,
+            rgba(255, 255, 255, .075),
+            transparent 70%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, .038),
+            rgba(255, 255, 255, .008)
+        );
+}
+
+.qa-item[open] {
+    border-color: rgba(232, 190, 105, .34);
+    background:
+        radial-gradient(
+            ellipse 72% 78% at 0 0,
+            rgba(231, 185, 93, .11),
+            transparent 72%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, .058),
+            rgba(255, 255, 255, .012)
+        );
+}
+
+@media (max-width: 700px) {
+    body[data-active-tab="travel"] .ambient-slideshow-shade,
+    body[data-active-tab="registry"] .ambient-slideshow-shade,
+    body[data-active-tab="qa"] .ambient-slideshow-shade {
+        background:
+            linear-gradient(
+                180deg,
+                rgba(17, 13, 11, .30) 0%,
+                rgba(17, 13, 11, .15) 42%,
+                rgba(17, 13, 11, .34) 100%
+            ),
+            linear-gradient(
+                90deg,
+                rgba(17, 13, 11, .38),
+                rgba(17, 13, 11, .12)
+            );
+    }
+
+    .travel-story,
+    .qa-grid,
+    .registry-keepsake {
+        backdrop-filter: blur(8px) saturate(138%) brightness(1.02);
+        -webkit-backdrop-filter: blur(8px) saturate(138%) brightness(1.02);
+    }
+
+    .registry-copy::before {
+        inset: -46px -24px -48px;
+        backdrop-filter: blur(6px) saturate(134%);
+        -webkit-backdrop-filter: blur(6px) saturate(134%);
+    }
+}
+
+
+/* TRAVEL FEATURE IMAGE SIZE V2 */
+
+/*
+ * Keep the Airport illustration as a supporting editorial visual,
+ * not the dominant element on the page.
+ */
+.travel-image-feature {
+    width: min(100%, 980px);
+    aspect-ratio: 16 / 6.8;
+    margin: 0 auto 22px;
+}
+
+.travel-image-feature .travel-card-image {
+    object-position: center 52%;
+}
+
+@media (max-width: 1100px) {
+    .travel-image-feature {
+        width: min(100%, 860px);
+        aspect-ratio: 16 / 7.2;
+    }
+}
+
+@media (max-width: 700px) {
+    .travel-image-feature {
+        width: 100%;
+        aspect-ratio: 16 / 9.2;
+        margin-bottom: 18px;
+    }
+
+    .travel-image-feature .travel-card-image {
+        object-position: center center;
+    }
+}
+
+
+/* TRAVEL EXPLORE TEXT LAYOUT V2 */
+
+/*
+ * The Explore Tampa category labels are words rather than short numbers.
+ * Stack them above the title so labels such as HEIGHTS and HISTORY never
+ * collide with the destination heading.
+ */
+.travel-list-explore .travel-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+    padding-top: 19px;
+    padding-bottom: 19px;
+}
+
+.travel-list-explore .travel-item-number {
+    display: block;
+    margin: 0 0 2px;
+    line-height: 1.2;
+    white-space: normal;
+}
+
+.travel-list-explore .travel-item > div {
+    min-width: 0;
+}
+
+.travel-list-explore .travel-item h4 {
+    margin-top: 0;
+}
+
+@media (max-width: 700px) {
+    .travel-list-explore .travel-item {
+        gap: 4px;
+        padding-top: 17px;
+        padding-bottom: 17px;
+    }
+
+    .travel-list-explore .travel-item-number {
+        margin-bottom: 1px;
+        font-size: 12px;
+    }
+}
