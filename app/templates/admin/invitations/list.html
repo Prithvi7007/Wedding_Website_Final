@@ -1,0 +1,222 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Invitations · Wedding Admin{% endblock %}
+
+{% block content %}
+<section class="admin-page-heading admin-heading-actions">
+    <div>
+        <p class="admin-eyebrow">Guest Access</p>
+        <h1>Invitations</h1>
+        <p>
+            Search households, review event access, and maintain private
+            invitation records.
+        </p>
+    </div>
+    <a
+        class="admin-primary-link"
+        href="{{ url_for('admin.invitation_new') }}"
+    >
+        Add Invitation
+    </a>
+</section>
+
+<form
+    method="get"
+    class="admin-filter-bar"
+    aria-label="Invitation filters"
+>
+    <div class="admin-filter-search">
+        <label for="invitation-search">Search invitations</label>
+        <input
+            id="invitation-search"
+            name="q"
+            type="search"
+            value="{{ filters.query }}"
+            placeholder="Name, ID, email, phone, or group"
+        >
+    </div>
+
+    <div>
+        <label for="status-filter">Status</label>
+        <select id="status-filter" name="status">
+            <option value="all" {% if filters.status == "all" %}selected{% endif %}>
+                All
+            </option>
+            <option value="active" {% if filters.status == "active" %}selected{% endif %}>
+                Active
+            </option>
+            <option value="inactive" {% if filters.status == "inactive" %}selected{% endif %}>
+                Inactive
+            </option>
+        </select>
+    </div>
+
+    <div>
+        <label for="event-filter">Event access</label>
+        <select id="event-filter" name="event">
+            <option value="">All events</option>
+            {% for event in events %}
+                <option
+                    value="{{ event.event_id }}"
+                    {% if filters.event_id == event.event_id %}selected{% endif %}
+                >
+                    {{ event.title }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="sort-filter">Sort</label>
+        <select id="sort-filter" name="sort">
+            <option value="name" {% if filters.sort == "name" %}selected{% endif %}>
+                Name
+            </option>
+            <option value="newest" {% if filters.sort == "newest" %}selected{% endif %}>
+                Newest
+            </option>
+            <option value="oldest" {% if filters.sort == "oldest" %}selected{% endif %}>
+                Oldest
+            </option>
+            <option value="group" {% if filters.sort == "group" %}selected{% endif %}>
+                Guest group
+            </option>
+        </select>
+    </div>
+
+    <button class="admin-filter-button" type="submit">
+        Apply
+    </button>
+
+    <a
+        class="admin-clear-filter"
+        href="{{ url_for('admin.invitations') }}"
+    >
+        Clear
+    </a>
+</form>
+
+<section class="admin-section admin-invitation-section">
+    <div class="admin-section-heading admin-list-summary">
+        <div>
+            <p class="admin-eyebrow">Invitation Directory</p>
+            <h2>{{ pagination.total }} Record{% if pagination.total != 1 %}s{% endif %}</h2>
+        </div>
+        <span>
+            Page {{ pagination.page }} of {{ pagination.pages or 1 }}
+        </span>
+    </div>
+
+    <div class="admin-invitation-list">
+        {% for invitation in pagination.items %}
+            <article class="admin-invitation-row">
+                <div class="admin-invitation-identity">
+                    <div class="admin-id-badge">
+                        #{{ invitation.invitation_id }}
+                    </div>
+                    <div>
+                        <h3>
+                            <a
+                                href="{{ url_for(
+                                    'admin.invitation_detail',
+                                    invitation_id=invitation.invitation_id
+                                ) }}"
+                            >
+                                {{ invitation.display_name }}
+                            </a>
+                        </h3>
+                        <p>
+                            {{ invitation.first_name }}
+                            {% if invitation.last_name %}
+                                {{ invitation.last_name }}
+                            {% endif %}
+                            {% if invitation.partner_name %}
+                                · {{ invitation.partner_name }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <dl class="admin-invitation-meta">
+                    <div>
+                        <dt>Group</dt>
+                        <dd>{{ invitation.guest_group or "—" }}</dd>
+                    </div>
+                    <div>
+                        <dt>Event access</dt>
+                        <dd>{{ invitation.permissions|length }}</dd>
+                    </div>
+                    <div>
+                        <dt>Responses</dt>
+                        <dd>{{ invitation.rsvps|length }}</dd>
+                    </div>
+                    <div>
+                        <dt>Status</dt>
+                        <dd>
+                            <span
+                                class="admin-status {% if invitation.is_active %}admin-status-yes{% else %}admin-status-no{% endif %}"
+                            >
+                                {% if invitation.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </dd>
+                    </div>
+                </dl>
+
+                <div class="admin-row-actions">
+                    <a
+                        href="{{ url_for(
+                            'admin.invitation_detail',
+                            invitation_id=invitation.invitation_id
+                        ) }}"
+                    >
+                        View
+                    </a>
+                    <a
+                        href="{{ url_for(
+                            'admin.invitation_edit',
+                            invitation_id=invitation.invitation_id
+                        ) }}"
+                    >
+                        Edit
+                    </a>
+                </div>
+            </article>
+        {% else %}
+            <div class="admin-empty-state">
+                No invitations match the selected filters.
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if pagination.pages > 1 %}
+        <nav class="admin-pagination" aria-label="Invitation pages">
+            {% for page_number in pagination.iter_pages(
+                left_edge=1,
+                left_current=2,
+                right_current=2,
+                right_edge=1
+            ) %}
+                {% if page_number %}
+                    <a
+                        href="{{ url_for(
+                            'admin.invitations',
+                            q=filters.query,
+                            status=filters.status,
+                            event=filters.event_id,
+                            sort=filters.sort,
+                            page=page_number
+                        ) }}"
+                        {% if page_number == pagination.page %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        {{ page_number }}
+                    </a>
+                {% else %}
+                    <span>…</span>
+                {% endif %}
+            {% endfor %}
+        </nav>
+    {% endif %}
+</section>
+{% endblock %}

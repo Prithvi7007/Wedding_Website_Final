@@ -1,0 +1,186 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ page_title }} · Wedding Admin{% endblock %}
+
+{% block content %}
+<section class="admin-page-heading admin-heading-actions">
+    <div>
+        <p class="admin-eyebrow">Invitation Management</p>
+        <h1>{{ page_title }}</h1>
+        <p>
+            Update the household record and configure event access independently.
+        </p>
+    </div>
+    {% if invitation %}
+        <a
+            class="admin-secondary-link"
+            href="{{ url_for(
+                'admin.invitation_detail',
+                invitation_id=invitation.invitation_id
+            ) }}"
+        >
+            Cancel
+        </a>
+    {% else %}
+        <a
+            class="admin-secondary-link"
+            href="{{ url_for('admin.invitations') }}"
+        >
+            Cancel
+        </a>
+    {% endif %}
+</section>
+
+<form method="post" class="admin-invitation-form" novalidate>
+    {{ form.hidden_tag() }}
+
+    <section class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Household Details</p>
+                <h2>Invitation Information</h2>
+            </div>
+        </div>
+
+        <div class="admin-form-grid">
+            <div class="admin-field">
+                {{ form.first_name.label }}
+                {{ form.first_name(class_="admin-input") }}
+                {% for error in form.first_name.errors %}
+                    <p class="admin-field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="admin-field">
+                {{ form.last_name.label }}
+                {{ form.last_name(class_="admin-input") }}
+                {% for error in form.last_name.errors %}
+                    <p class="admin-field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="admin-field admin-field-wide">
+                {{ form.partner_name.label }}
+                {{ form.partner_name(class_="admin-input") }}
+                {% for error in form.partner_name.errors %}
+                    <p class="admin-field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="admin-field admin-field-wide">
+                {{ form.display_name.label }}
+                {{ form.display_name(class_="admin-input") }}
+                {% for error in form.display_name.errors %}
+                    <p class="admin-field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="admin-field">
+                {{ form.represent_side.label }}
+                {{ form.represent_side(
+                    class_="admin-input",
+                    placeholder="Adlin, Prithvi, Family, etc."
+                ) }}
+            </div>
+
+            <div class="admin-field">
+                {{ form.guest_group.label }}
+                {{ form.guest_group(
+                    class_="admin-input",
+                    placeholder="Family, Friends, Work, etc."
+                ) }}
+            </div>
+
+            <div class="admin-field">
+                {{ form.email.label }}
+                {{ form.email(class_="admin-input", type="email") }}
+            </div>
+
+            <div class="admin-field">
+                {{ form.phone.label }}
+                {{ form.phone(class_="admin-input", type="tel") }}
+            </div>
+
+            <div class="admin-field admin-field-wide">
+                {{ form.message.label }}
+                {{ form.message(class_="admin-textarea", rows="4") }}
+            </div>
+
+            <div class="admin-field admin-field-wide">
+                {{ form.invite_message.label }}
+                {{ form.invite_message(class_="admin-textarea", rows="5") }}
+            </div>
+
+            <label class="admin-checkbox-card admin-field-wide">
+                {{ form.is_active() }}
+                <span>
+                    <strong>{{ form.is_active.label.text }}</strong>
+                    <small>
+                        Inactive invitations cannot open their private link.
+                    </small>
+                </span>
+            </label>
+        </div>
+    </section>
+
+    <section class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Dynamic Event Access</p>
+                <h2>Events and Guest Limits</h2>
+            </div>
+        </div>
+
+        <div class="admin-permission-grid">
+            {% for event in events %}
+                {% set value = permission_values[event.event_id] %}
+                <article class="admin-permission-card">
+                    <label class="admin-permission-toggle">
+                        <input
+                            type="checkbox"
+                            name="event__{{ event.event_id }}__allowed"
+                            value="1"
+                            {% if value.allowed %}checked{% endif %}
+                            data-permission-toggle
+                        >
+                        <span>
+                            <strong>{{ event.title }}</strong>
+                            <small>
+                                {{ event.event_date.strftime("%b %d, %Y") }}
+                            </small>
+                        </span>
+                    </label>
+
+                    <div class="admin-field">
+                        <label
+                            for="event-{{ loop.index }}-max"
+                        >
+                            Maximum guests
+                        </label>
+                        <input
+                            id="event-{{ loop.index }}-max"
+                            class="admin-input"
+                            type="number"
+                            min="1"
+                            max="999"
+                            name="event__{{ event.event_id }}__max_guests"
+                            value="{{ value.max_guests }}"
+                            data-permission-count
+                        >
+                    </div>
+                </article>
+            {% else %}
+                <div class="admin-empty-state">
+                    No events are configured. Add events before assigning access.
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <div class="admin-sticky-actions">
+        <button class="admin-primary-button" type="submit">
+            {{ submit_label }}
+        </button>
+    </div>
+</form>
+{% endblock %}

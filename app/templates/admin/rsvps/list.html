@@ -1,0 +1,161 @@
+{% extends "admin/base.html" %}
+
+{% block title %}RSVPs · Wedding Admin{% endblock %}
+
+{% block content %}
+<section class="admin-page-heading admin-heading-actions">
+    <div>
+        <p class="admin-eyebrow">Response Management</p>
+        <h1>RSVPs</h1>
+        <p>
+            Review every invited event, distinguish no response from declined,
+            update guest counts, and export the current view.
+        </p>
+    </div>
+    <a
+        class="admin-primary-link"
+        href="{{ url_for(
+            'admin.rsvps_export',
+            q=filters.query,
+            response=filters.response,
+            invitation_status=filters.invitation_status,
+            event=filters.event_id,
+            sort=filters.sort
+        ) }}"
+    >
+        Export CSV
+    </a>
+</section>
+
+<section class="admin-rsvp-summary" aria-label="Filtered RSVP summary">
+    <article><span>Invited event records</span><strong>{{ summary.total }}</strong></article>
+    <article><span>Confirmed guests</span><strong>{{ summary.confirmed_guests }}</strong></article>
+    <article><span>Yes responses</span><strong>{{ summary.yes }}</strong></article>
+    <article><span>Declined</span><strong>{{ summary.no }}</strong></article>
+    <article><span>Maybe</span><strong>{{ summary.maybe }}</strong></article>
+    <article><span>No response</span><strong>{{ summary.no_response }}</strong></article>
+</section>
+
+<form method="get" class="admin-filter-bar admin-rsvp-filter-bar">
+    <div class="admin-filter-search">
+        <label for="rsvp-search">Search RSVPs</label>
+        <input id="rsvp-search" name="q" type="search"
+               value="{{ filters.query }}"
+               placeholder="Name, invitation ID, contact, group, or notes">
+    </div>
+    <div>
+        <label for="response-filter">Response</label>
+        <select id="response-filter" name="response">
+            <option value="all" {% if filters.response == "all" %}selected{% endif %}>All responses</option>
+            <option value="yes" {% if filters.response == "yes" %}selected{% endif %}>Yes</option>
+            <option value="no" {% if filters.response == "no" %}selected{% endif %}>No</option>
+            <option value="maybe" {% if filters.response == "maybe" %}selected{% endif %}>Maybe</option>
+            <option value="no_response" {% if filters.response == "no_response" %}selected{% endif %}>No response</option>
+        </select>
+    </div>
+    <div>
+        <label for="rsvp-event-filter">Event</label>
+        <select id="rsvp-event-filter" name="event">
+            <option value="">All events</option>
+            {% for event in events %}
+                <option value="{{ event.event_id }}"
+                        {% if filters.event_id == event.event_id %}selected{% endif %}>
+                    {{ event.title }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="invitation-status-filter">Invitation status</label>
+        <select id="invitation-status-filter" name="invitation_status">
+            <option value="active" {% if filters.invitation_status == "active" %}selected{% endif %}>Active only</option>
+            <option value="inactive" {% if filters.invitation_status == "inactive" %}selected{% endif %}>Inactive only</option>
+            <option value="all" {% if filters.invitation_status == "all" %}selected{% endif %}>All invitations</option>
+        </select>
+    </div>
+    <div>
+        <label for="rsvp-sort-filter">Sort</label>
+        <select id="rsvp-sort-filter" name="sort">
+            <option value="recent" {% if filters.sort == "recent" %}selected{% endif %}>Recent activity</option>
+            <option value="name" {% if filters.sort == "name" %}selected{% endif %}>Household name</option>
+            <option value="event" {% if filters.sort == "event" %}selected{% endif %}>Event</option>
+            <option value="status" {% if filters.sort == "status" %}selected{% endif %}>Response status</option>
+        </select>
+    </div>
+    <button class="admin-filter-button" type="submit">Apply</button>
+    <a class="admin-clear-filter" href="{{ url_for('admin.rsvps') }}">Clear</a>
+</form>
+
+<section class="admin-section">
+    <div class="admin-section-heading admin-list-summary">
+        <div>
+            <p class="admin-eyebrow">Filtered Directory</p>
+            <h2>{{ pagination.total }} Record{% if pagination.total != 1 %}s{% endif %}</h2>
+        </div>
+        <span>Page {{ pagination.page }} of {{ pagination.pages or 1 }}</span>
+    </div>
+
+    <div class="admin-rsvp-list">
+        {% for row in pagination.items %}
+            <article class="admin-rsvp-row">
+                <div class="admin-rsvp-household">
+                    <div class="admin-id-badge">#{{ row.invitation_id }}</div>
+                    <div>
+                        <h3><a href="{{ url_for('admin.invitation_detail', invitation_id=row.invitation_id) }}">{{ row.display_name }}</a></h3>
+                        <p>{{ row.guest_group or "Ungrouped" }}{% if not row.is_active %} · Inactive invitation{% endif %}</p>
+                    </div>
+                </div>
+                <div class="admin-rsvp-event">
+                    <span>{{ row.event_date.strftime("%b %d, %Y") }}</span>
+                    <strong>{{ row.event_title }}</strong>
+                </div>
+                <dl class="admin-rsvp-response">
+                    <div>
+                        <dt>Response</dt>
+                        <dd>
+                            {% if row.rsvp_id %}
+                                <span class="admin-status admin-status-{{ row.attending|lower }}">{{ row.attending }}</span>
+                            {% else %}
+                                <span class="admin-status admin-status-pending">No response</span>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>Guests</dt>
+                        <dd>{% if row.rsvp_id %}{{ row.guest_count }} / {{ row.max_guests }}{% else %}— / {{ row.max_guests }}{% endif %}</dd>
+                    </div>
+                    <div>
+                        <dt>Updated</dt>
+                        <dd>{% if row.updated_at %}{{ row.updated_at.strftime("%b %d, %Y") }}{% else %}—{% endif %}</dd>
+                    </div>
+                </dl>
+                <div class="admin-rsvp-actions">
+                    <a href="{{ url_for('admin.rsvp_edit', invitation_id=row.invitation_id, event_id=row.event_id) }}">
+                        {% if row.rsvp_id %}Edit RSVP{% else %}Add RSVP{% endif %}
+                    </a>
+                </div>
+                {% if row.notes %}
+                    <p class="admin-rsvp-notes"><strong>Notes:</strong> {{ row.notes }}</p>
+                {% endif %}
+            </article>
+        {% else %}
+            <div class="admin-empty-state">No RSVP records match the selected filters.</div>
+        {% endfor %}
+    </div>
+
+    {% if pagination.pages > 1 %}
+        <nav class="admin-pagination" aria-label="RSVP pages">
+            {% for page_number in pagination.iter_pages(left_edge=1, left_current=2, right_current=2, right_edge=1) %}
+                {% if page_number %}
+                    <a href="{{ url_for('admin.rsvps', q=filters.query, response=filters.response, invitation_status=filters.invitation_status, event=filters.event_id, sort=filters.sort, page=page_number) }}"
+                       {% if page_number == pagination.page %}aria-current="page"{% endif %}>
+                        {{ page_number }}
+                    </a>
+                {% else %}
+                    <span>…</span>
+                {% endif %}
+            {% endfor %}
+        </nav>
+    {% endif %}
+</section>
+{% endblock %}

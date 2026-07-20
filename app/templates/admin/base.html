@@ -17,6 +17,10 @@
         rel="stylesheet"
         href="{{ asset_url('admin/admin.css') }}"
     >
+    <script
+        src="{{ asset_url('admin/admin.js') }}"
+        defer
+    ></script>
 </head>
 <body class="admin-body">
     <header class="admin-topbar">
@@ -37,6 +41,22 @@
                 {% endif %}
             >
                 Dashboard
+            </a>
+            <a
+                href="{{ url_for('admin.invitations') }}"
+                {% if request.endpoint and request.endpoint.startswith('admin.invitation') %}
+                    aria-current="page"
+                {% endif %}
+            >
+                Invitations
+            </a>
+            <a
+                href="{{ url_for('admin.rsvps') }}"
+                {% if request.endpoint and request.endpoint.startswith('admin.rsvp') %}
+                    aria-current="page"
+                {% endif %}
+            >
+                RSVPs
             </a>
 
             <form

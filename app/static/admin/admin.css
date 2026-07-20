@@ -699,3 +699,737 @@ a {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* ADMIN INVITATION MANAGEMENT — PHASE 2 */
+
+.admin-heading-actions {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.admin-heading-button-group,
+.admin-inline-actions,
+.admin-row-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-primary-link,
+.admin-secondary-link,
+.admin-filter-button,
+.admin-clear-filter,
+.admin-secondary-button,
+.admin-danger-button,
+.admin-copy-field button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-family: "Manrope", Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.admin-primary-link,
+.admin-filter-button {
+    border: 1px solid rgba(248, 217, 157, 0.34);
+    background: linear-gradient(145deg, #a97434, #d5a95f);
+    color: #18130d;
+}
+
+.admin-secondary-link,
+.admin-secondary-button,
+.admin-clear-filter,
+.admin-copy-field button {
+    border: 1px solid var(--admin-border);
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--admin-copy);
+}
+
+.admin-danger-button {
+    border: 1px solid rgba(207, 143, 130, 0.42);
+    background: rgba(207, 143, 130, 0.12);
+    color: #efb3a9;
+}
+
+.admin-filter-bar {
+    display: grid;
+    grid-template-columns: minmax(260px, 1.8fr) repeat(3, minmax(145px, 0.7fr)) auto auto;
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 22px;
+    padding: 17px;
+    border: 1px solid var(--admin-border);
+    border-radius: 18px;
+    background: rgba(29, 27, 24, 0.72);
+}
+
+.admin-filter-bar label,
+.admin-field label,
+.admin-permission-card label:not(.admin-permission-toggle) {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--admin-muted);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.admin-filter-bar input,
+.admin-filter-bar select,
+.admin-textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 11px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--admin-cream);
+}
+
+.admin-filter-bar option {
+    background: #1c1916;
+}
+
+.admin-filter-search {
+    min-width: 0;
+}
+
+.admin-invitation-section {
+    overflow: hidden;
+}
+
+.admin-list-summary {
+    align-items: flex-end;
+}
+
+.admin-list-summary > span {
+    color: var(--admin-muted);
+    font-size: 11px;
+}
+
+.admin-invitation-list {
+    display: grid;
+    gap: 10px;
+}
+
+.admin-invitation-row {
+    display: grid;
+    grid-template-columns: minmax(260px, 1.2fr) minmax(430px, 1.6fr) auto;
+    gap: 18px;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.027);
+}
+
+.admin-invitation-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.admin-id-badge {
+    flex: 0 0 auto;
+    padding: 7px 9px;
+    border-radius: 9px;
+    background: rgba(228, 184, 103, 0.12);
+    color: var(--admin-gold);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.admin-invitation-identity h3 {
+    margin: 0;
+    color: var(--admin-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.admin-invitation-identity h3 a {
+    text-decoration: none;
+}
+
+.admin-invitation-identity p {
+    margin: 5px 0 0;
+    overflow: hidden;
+    color: var(--admin-muted);
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-invitation-meta {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+}
+
+.admin-invitation-meta div {
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-invitation-meta dt,
+.admin-detail-list dt,
+.admin-access-row dt {
+    color: var(--admin-muted);
+    font-size: 8px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.admin-invitation-meta dd,
+.admin-detail-list dd,
+.admin-access-row dd {
+    margin: 4px 0 0;
+    color: var(--admin-copy);
+    font-size: 11px;
+}
+
+.admin-row-actions {
+    justify-content: flex-end;
+}
+
+.admin-row-actions a {
+    color: var(--admin-gold);
+    font-size: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.admin-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 20px;
+}
+
+.admin-pagination a,
+.admin-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    color: var(--admin-muted);
+    font-size: 11px;
+    text-decoration: none;
+}
+
+.admin-pagination a[aria-current="page"] {
+    background: rgba(228, 184, 103, 0.16);
+    color: var(--admin-gold);
+}
+
+.admin-invitation-form {
+    display: grid;
+    gap: 0;
+}
+
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.admin-field {
+    min-width: 0;
+}
+
+.admin-field-wide {
+    grid-column: 1 / -1;
+}
+
+.admin-textarea {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.admin-checkbox-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-checkbox-card input,
+.admin-permission-toggle input {
+    margin-top: 3px;
+    accent-color: var(--admin-gold);
+}
+
+.admin-checkbox-card strong,
+.admin-permission-toggle strong {
+    display: block;
+    color: var(--admin-copy);
+    font-size: 12px;
+}
+
+.admin-checkbox-card small,
+.admin-permission-toggle small {
+    display: block;
+    margin-top: 3px;
+    color: var(--admin-muted);
+    font-size: 10px;
+}
+
+.admin-permission-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.admin-permission-card {
+    display: grid;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid rgba(228, 184, 103, 0.17);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.027);
+}
+
+.admin-permission-toggle {
+    display: flex;
+    gap: 11px;
+    cursor: pointer;
+}
+
+.admin-permission-disabled {
+    opacity: 0.58;
+}
+
+.admin-sticky-actions {
+    position: sticky;
+    bottom: 15px;
+    z-index: 10;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+    padding: 12px;
+    border: 1px solid var(--admin-border);
+    border-radius: 18px;
+    background: rgba(16, 15, 13, 0.88);
+    backdrop-filter: blur(14px);
+}
+
+.admin-sticky-actions .admin-primary-button {
+    width: min(100%, 320px);
+}
+
+.admin-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.admin-detail-grid .admin-section {
+    margin-top: 0;
+}
+
+.admin-copy-field {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-copy-field code {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--admin-cream);
+    font-size: 11px;
+    line-height: 42px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-helper-text,
+.admin-danger-zone > p {
+    color: var(--admin-muted);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.admin-detail-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0;
+}
+
+.admin-detail-list div {
+    padding: 12px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.027);
+}
+
+.admin-event-access-list {
+    display: grid;
+    gap: 10px;
+}
+
+.admin-access-row {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.9fr) minmax(430px, 1.4fr);
+    gap: 18px;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-access-row > div > span {
+    color: var(--admin-gold);
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+.admin-access-row h3 {
+    margin: 4px 0 0;
+    color: var(--admin-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 24px;
+}
+
+.admin-access-row dl {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+}
+
+.admin-access-row dl div {
+    padding: 9px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-access-disabled {
+    opacity: 0.52;
+}
+
+.admin-message-block {
+    padding: 13px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.admin-message-block:first-of-type {
+    border-top: 0;
+}
+
+.admin-message-block strong {
+    color: var(--admin-gold);
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.admin-message-block p {
+    margin: 7px 0 0;
+    color: var(--admin-muted);
+    font-size: 12px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+}
+
+.admin-danger-zone {
+    border-color: rgba(207, 143, 130, 0.22);
+}
+
+@media (max-width: 1180px) {
+    .admin-filter-bar {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-filter-search {
+        grid-column: 1 / -1;
+    }
+
+    .admin-invitation-row {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-row-actions {
+        justify-content: flex-start;
+    }
+
+    .admin-permission-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .admin-heading-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-heading-button-group {
+        width: 100%;
+    }
+
+    .admin-heading-button-group a {
+        flex: 1 1 auto;
+    }
+
+    .admin-filter-bar,
+    .admin-form-grid,
+    .admin-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-filter-search,
+    .admin-field-wide {
+        grid-column: auto;
+    }
+
+    .admin-invitation-meta {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-copy-field {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-copy-field code {
+        line-height: 1.5;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .admin-detail-list {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-access-row {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-access-row dl {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ADMIN RSVP MANAGEMENT — PHASE 3 */
+
+.admin-rsvp-summary {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    margin: 0 0 18px;
+}
+.admin-rsvp-summary article {
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.027);
+}
+.admin-rsvp-summary span {
+    display: block;
+    color: var(--admin-muted);
+    font-size: 8px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+.admin-rsvp-summary strong {
+    display: block;
+    margin-top: 7px;
+    color: var(--admin-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 29px;
+    line-height: 1;
+}
+.admin-rsvp-filter-bar {
+    grid-template-columns: minmax(250px, 1.5fr) repeat(4, minmax(135px, 0.7fr)) auto auto;
+}
+.admin-rsvp-list { display: grid; gap: 10px; }
+.admin-rsvp-row {
+    display: grid;
+    grid-template-columns: minmax(240px, 1.15fr) minmax(190px, 0.8fr) minmax(330px, 1.25fr) auto;
+    gap: 16px;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.027);
+}
+.admin-rsvp-household {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+.admin-rsvp-household h3 {
+    margin: 0;
+    color: var(--admin-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 22px;
+    line-height: 1;
+}
+.admin-rsvp-household h3 a { color: inherit; text-decoration: none; }
+.admin-rsvp-household p,
+.admin-rsvp-event span {
+    margin: 5px 0 0;
+    color: var(--admin-muted);
+    font-size: 9px;
+}
+.admin-rsvp-event { min-width: 0; }
+.admin-rsvp-event span {
+    display: block;
+    margin: 0 0 4px;
+    color: var(--admin-gold);
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+.admin-rsvp-event strong {
+    display: block;
+    color: var(--admin-copy);
+    font-size: 11px;
+    line-height: 1.4;
+}
+.admin-rsvp-response {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+}
+.admin-rsvp-response div {
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.025);
+}
+.admin-rsvp-response dt {
+    color: var(--admin-muted);
+    font-size: 8px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+.admin-rsvp-response dd {
+    margin: 4px 0 0;
+    color: var(--admin-copy);
+    font-size: 10px;
+}
+.admin-rsvp-actions { display: flex; justify-content: flex-end; }
+.admin-rsvp-actions a,
+.admin-access-edit-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 8px 13px;
+    border: 1px solid rgba(228, 184, 103, 0.22);
+    border-radius: 999px;
+    background: rgba(228, 184, 103, 0.08);
+    color: var(--admin-gold);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+.admin-rsvp-notes {
+    grid-column: 1 / -1;
+    margin: -3px 0 0;
+    padding: 10px 12px;
+    border-left: 2px solid rgba(228, 184, 103, 0.32);
+    color: var(--admin-muted);
+    font-size: 10px;
+    line-height: 1.55;
+}
+.admin-status-pending {
+    border-color: rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--admin-muted);
+}
+.admin-status-yes {
+    border-color: rgba(124, 185, 142, 0.28);
+    background: rgba(124, 185, 142, 0.12);
+    color: #9ed4aa;
+}
+.admin-status-no {
+    border-color: rgba(207, 143, 130, 0.28);
+    background: rgba(207, 143, 130, 0.12);
+    color: #efb3a9;
+}
+.admin-status-maybe {
+    border-color: rgba(223, 185, 99, 0.28);
+    background: rgba(223, 185, 99, 0.12);
+    color: #edcf86;
+}
+.admin-rsvp-edit-layout { align-items: start; }
+.admin-rsvp-edit-form { display: grid; gap: 20px; }
+.admin-rsvp-edit-form .admin-primary-button { width: 100%; }
+.admin-clear-rsvp {
+    margin-top: 22px;
+    padding: 16px;
+    border: 1px solid rgba(207, 143, 130, 0.2);
+    border-radius: 14px;
+    background: rgba(207, 143, 130, 0.05);
+}
+.admin-clear-rsvp h3 {
+    margin: 0;
+    color: #efb3a9;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 22px;
+}
+.admin-clear-rsvp p {
+    color: var(--admin-muted);
+    font-size: 10px;
+    line-height: 1.6;
+}
+.admin-access-row-actions {
+    grid-template-columns: minmax(210px, 0.8fr) minmax(430px, 1.4fr) auto;
+}
+.admin-access-edit-link { white-space: nowrap; }
+[data-rsvp-guest-count][aria-disabled="true"] {
+    opacity: 0.58;
+    cursor: not-allowed;
+}
+
+@media (max-width: 1220px) {
+    .admin-rsvp-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .admin-rsvp-filter-bar { grid-template-columns: 1fr 1fr; }
+    .admin-rsvp-filter-bar .admin-filter-search { grid-column: 1 / -1; }
+    .admin-rsvp-row { grid-template-columns: 1fr 1fr; }
+    .admin-rsvp-response { grid-column: 1 / -1; }
+    .admin-rsvp-actions { justify-content: flex-start; }
+    .admin-access-row-actions { grid-template-columns: 1fr; }
+    .admin-access-edit-link { justify-self: start; }
+}
+@media (max-width: 760px) {
+    .admin-rsvp-summary { grid-template-columns: 1fr 1fr; }
+    .admin-rsvp-filter-bar { grid-template-columns: 1fr; }
+    .admin-rsvp-filter-bar .admin-filter-search { grid-column: auto; }
+    .admin-rsvp-row { grid-template-columns: 1fr; }
+    .admin-rsvp-response { grid-column: auto; grid-template-columns: 1fr; }
+    .admin-rsvp-notes { grid-column: auto; }
+    .admin-rsvp-actions a { width: 100%; }
+}

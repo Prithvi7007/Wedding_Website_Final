@@ -1,0 +1,87 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Manage RSVP · Wedding Admin{% endblock %}
+
+{% block content %}
+<section class="admin-page-heading admin-heading-actions">
+    <div>
+        <p class="admin-eyebrow">Invitation #{{ invitation.invitation_id }}</p>
+        <h1>Manage RSVP</h1>
+        <p>{{ invitation.display_name }} · {{ event.title }}</p>
+    </div>
+    <a class="admin-secondary-link"
+       href="{{ url_for('admin.invitation_detail', invitation_id=invitation.invitation_id) }}">
+        Cancel
+    </a>
+</section>
+
+<section class="admin-detail-grid admin-rsvp-edit-layout">
+    <form method="post" class="admin-section admin-rsvp-edit-form" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Administrative Update</p>
+                <h2>Response Details</h2>
+            </div>
+            {% if rsvp %}
+                <span class="admin-status admin-status-{{ rsvp.attending|lower }}">Existing {{ rsvp.attending }}</span>
+            {% else %}
+                <span class="admin-status admin-status-pending">No response</span>
+            {% endif %}
+        </div>
+
+        <div class="admin-form-grid">
+            <div class="admin-field">
+                {{ form.attending.label }}
+                {{ form.attending(class_="admin-input", data_rsvp_status="") }}
+                {% for error in form.attending.errors %}<p class="admin-field-error">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="admin-field">
+                {{ form.guest_count.label }}
+                {{ form.guest_count(class_="admin-input", min="0", max=permission.max_guests, data_rsvp_guest_count="") }}
+                <p class="admin-helper-text">Invitation limit: {{ permission.max_guests }}</p>
+                {% for error in form.guest_count.errors %}<p class="admin-field-error">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="admin-field admin-field-wide">
+                {{ form.notes.label }}
+                {{ form.notes(class_="admin-textarea", rows="6", placeholder="Dietary restrictions, accessibility needs, or administrative notes") }}
+                {% for error in form.notes.errors %}<p class="admin-field-error">{{ error }}</p>{% endfor %}
+            </div>
+        </div>
+        <button class="admin-primary-button" type="submit">Save RSVP</button>
+    </form>
+
+    <aside class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Invitation Context</p>
+                <h2>Access Summary</h2>
+            </div>
+        </div>
+        <dl class="admin-detail-list">
+            <div><dt>Household</dt><dd>{{ invitation.display_name }}</dd></div>
+            <div><dt>Event</dt><dd>{{ event.title }}</dd></div>
+            <div><dt>Event date</dt><dd>{{ event.event_date.strftime("%b %d, %Y") }}</dd></div>
+            <div><dt>Maximum guests</dt><dd>{{ permission.max_guests }}</dd></div>
+        </dl>
+        <p class="admin-helper-text">
+            Selecting “No” automatically stores a guest count of zero.
+            Selecting “Yes” requires at least one attending guest.
+        </p>
+
+        {% if rsvp %}
+            <div class="admin-danger-zone admin-clear-rsvp">
+                <h3>Clear Response</h3>
+                <p>This deletes only the RSVP record. Event access remains assigned and the guest returns to “No response.”</p>
+                <form action="{{ url_for('admin.rsvp_clear', rsvp_id=rsvp.rsvp_id) }}"
+                      method="post"
+                      data-confirm-form="Clear this RSVP? The event will return to no response.">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="confirm_clear" value="1">
+                    <button class="admin-danger-button" type="submit">Clear RSVP</button>
+                </form>
+            </div>
+        {% endif %}
+    </aside>
+</section>
+{% endblock %}
