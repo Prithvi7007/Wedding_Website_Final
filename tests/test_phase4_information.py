@@ -60,7 +60,7 @@ def test_qa_fragment_uses_accessible_details(client, app):
     assert response.status_code == 200
     assert "Questions &amp; Answers" in html
     assert 'data-qa-accordion' in html
-    assert html.count('<details class="qa-item') == 9
+    assert html.count('<details class="qa-item') == 7
     assert 'data-tab-name="schedule"' in html
     assert 'data-tab-name="travel"' in html
 

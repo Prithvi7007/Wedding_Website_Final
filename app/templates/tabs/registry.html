@@ -1,87 +1,122 @@
 <section
     id="registry"
-    class="tab-panel information-panel registry-panel"
+    class="tab-panel information-panel registry-panel registry-panel-split"
     data-tab-panel="registry"
     data-information-root
     aria-labelledby="registry-heading"
 >
-    <div class="registry-hero registry-hero-with-zelle">
-        <div class="registry-copy">
-            <p class="information-eyebrow">With Love &amp; Gratitude</p>
-            <h2 id="registry-heading">Registry</h2>
+    <div class="registry-stack">
+        <section class="registry-section-block registry-section-gifts">
+            <div class="registry-hero">
+                <div class="registry-copy">
+                    <p class="information-eyebrow">With Love &amp; Gratitude</p>
+                    <h2 id="registry-heading">Registry</h2>
 
-            <p class="registry-message">
-                Your presence at our wedding is the greatest gift. For those who would
-                like to bless us further as we begin our life together, we have created
-                a wedding registry at Target and a Zelle option for a monetary gift.
-            </p>
+                    <p class="registry-message">
+                        Your presence at our wedding is the greatest gift. For those
+                        who would like to bless us further as we begin our life together,
+                        we have created a wedding registry at Target.
+                    </p>
 
-            <div class="registry-signature" aria-label="Adlin and Prithvi's wedding registry">
-                <span>Adlin</span>
-                <i aria-hidden="true">&amp;</i>
-                <span>Prithvi</span>
+                    <div
+                        class="registry-signature"
+                        aria-label="Adlin and Prithvi's wedding registry"
+                    >
+                        <span>Adlin</span>
+                        <i aria-hidden="true">&amp;</i>
+                        <span>Prithvi</span>
+                    </div>
+
+                    <a
+                        href="https://www.target.com/gift-registry/gift/Adlin-Prithvi"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="registry-target-button"
+                        aria-label="Open Adlin and Prithvi's Target wedding registry in a new tab"
+                    >
+                        <span>View Target Registry</span>
+                        <i aria-hidden="true">↗</i>
+                    </a>
+
+                    <p class="registry-note">
+                        The registry opens securely in a new tab.
+                    </p>
+                </div>
+
+                <aside class="registry-keepsake" aria-hidden="true">
+                    <div class="keepsake-corners"></div>
+                    <p>Wedding Registry</p>
+                    <strong>A &amp; P</strong>
+                    <span>November 2026 · Tampa</span>
+                    <div class="keepsake-flourish">❦</div>
+                </aside>
             </div>
+        </section>
 
-            <div class="registry-actions">
-                <a
-                    href="https://www.target.com/gift-registry/gift/Adlin-Prithvi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="registry-target-button"
-                    aria-label="Open Adlin and Prithvi's Target wedding registry in a new tab"
+        <section
+            class="registry-section-block registry-section-cash"
+            aria-labelledby="cash-fund-heading"
+        >
+            <div class="registry-hero cash-fund-hero">
+                <div class="registry-copy cash-fund-copy">
+                    <p class="information-eyebrow">A Gift Toward Our Future</p>
+                    <h2 id="cash-fund-heading">Cash Fund</h2>
+
+                    <p class="registry-message">
+                        For guests who would prefer to give a monetary gift, we have
+                        included our individual Zelle QR codes below.
+                    </p>
+
+                    <div
+                        class="registry-signature"
+                        aria-label="Adlin and Prithvi's cash fund"
+                    >
+                        <span>Adlin</span>
+                        <i aria-hidden="true">&amp;</i>
+                        <span>Prithvi</span>
+                    </div>
+
+                    <div class="cash-fund-actions">
+                        <a
+                            href="{{ asset_url('images/registry/adlin-zelle.jpeg') }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="registry-target-button cash-fund-button"
+                            aria-label="Open Adlin's Zelle QR code in a new tab"
+                        >
+                            <span>Adlin's Zelle QR</span>
+                            <i aria-hidden="true">↗</i>
+                        </a>
+
+                        <a
+                            href="{{ asset_url('images/registry/prithvi-zelle.jpeg') }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="registry-target-button cash-fund-button"
+                            aria-label="Open Prithvi's Zelle QR code in a new tab"
+                        >
+                            <span>Prithvi's Zelle QR</span>
+                            <i aria-hidden="true">↗</i>
+                        </a>
+                    </div>
+
+                    <p class="registry-note cash-fund-note">
+                        Each QR code opens full size in a new tab. Please confirm
+                        the recipient name before sending.
+                    </p>
+                </div>
+
+                <aside
+                    class="registry-keepsake cash-fund-keepsake"
+                    aria-hidden="true"
                 >
-                    <span>View Target Registry</span>
-                    <i aria-hidden="true">↗</i>
-                </a>
+                    <div class="keepsake-corners"></div>
+                    <p>Cash Fund</p>
+                    <strong>A &amp; P</strong>
+                    <span>For Our Next Chapter</span>
+                    <div class="keepsake-flourish">❦</div>
+                </aside>
             </div>
-
-            <p class="registry-note">
-                The Target registry opens securely in a new tab.
-            </p>
-        </div>
-
-        <aside class="registry-zelle-card" aria-labelledby="zelle-heading">
-            <div class="registry-zelle-glow" aria-hidden="true"></div>
-
-            <div class="registry-zelle-heading">
-                <p>Cash Gift</p>
-                <span aria-hidden="true">A &amp; P</span>
-            </div>
-
-            <h3 id="zelle-heading">A Gift Toward Our Future</h3>
-
-            <p class="registry-zelle-copy">
-                Guests who prefer to give a monetary gift may scan the code below
-                using Zelle in their banking app.
-            </p>
-
-            <a
-                class="registry-zelle-qr-link"
-                href="{{ asset_url('images/registry/adlin-zelle.jpeg') }}"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Open Adlin Lawrence's Zelle QR code at full size"
-            >
-                <img
-                    class="registry-zelle-qr"
-                    src="{{ asset_url('images/registry/adlin-zelle.jpeg') }}"
-                    width="1050"
-                    height="1278"
-                    alt="Zelle QR code for Adlin Lawrence"
-                    loading="lazy"
-                    decoding="async"
-                >
-            </a>
-
-            <strong class="registry-zelle-recipient">Recipient: Adlin Lawrence</strong>
-
-            <p class="registry-zelle-instruction">
-                Scan with your banking app or tap the QR code to open it full size.
-            </p>
-
-            <p class="registry-zelle-safety">
-                Please confirm the recipient name before sending.
-            </p>
-        </aside>
+        </section>
     </div>
 </section>

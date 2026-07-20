@@ -1814,3 +1814,154 @@ body[data-active-tab="qa"] .ambient-slideshow-shade {
         line-height: 1.65;
     }
 }
+
+
+/* REGISTRY DUAL CASH FUND V2 */
+
+.registry-panel-split {
+    display: block;
+    align-items: initial;
+    min-height: auto;
+    padding-top: calc(var(--header-height) + 34px);
+    padding-bottom: 0;
+}
+
+.registry-stack {
+    display: grid;
+    gap: clamp(84px, 10vw, 148px);
+    width: 100%;
+    padding-bottom: clamp(72px, 9vw, 124px);
+}
+
+.registry-section-block {
+    display: flex;
+    align-items: center;
+    min-height: calc(100svh - var(--header-height) - 54px);
+}
+
+.registry-section-block .registry-hero {
+    width: min(1220px, calc(100% - 64px));
+}
+
+.cash-fund-hero {
+    position: relative;
+}
+
+.cash-fund-hero::before {
+    content: "";
+    position: absolute;
+    inset: -44px -36px;
+    z-index: -2;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            ellipse 42% 70% at 22% 50%,
+            rgba(29, 22, 18, .50),
+            transparent 78%
+        ),
+        radial-gradient(
+            ellipse 42% 72% at 84% 48%,
+            rgba(57, 43, 32, .24),
+            transparent 80%
+        );
+    filter: blur(18px);
+}
+
+.cash-fund-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.cash-fund-button {
+    min-width: 248px;
+}
+
+.cash-fund-button:first-child {
+    border-color: rgba(239, 202, 130, .34);
+}
+
+.cash-fund-button:last-child {
+    border-color: rgba(218, 187, 137, .29);
+}
+
+.cash-fund-note {
+    max-width: 600px;
+    line-height: 1.5;
+}
+
+.cash-fund-keepsake {
+    background:
+        radial-gradient(
+            circle at 50% 12%,
+            rgba(255, 255, 255, .15),
+            transparent 34%
+        ),
+        radial-gradient(
+            ellipse at 50% 84%,
+            rgba(117, 75, 146, .15),
+            transparent 55%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(69, 50, 39, .71),
+            rgba(25, 20, 18, .86)
+        );
+}
+
+.cash-fund-keepsake p {
+    color: rgba(239, 205, 139, .82);
+}
+
+@media (max-width: 980px) {
+    .registry-panel-split {
+        padding-top: calc(var(--header-height) + 48px);
+    }
+
+    .registry-stack {
+        gap: 94px;
+    }
+
+    .registry-section-block {
+        min-height: auto;
+    }
+
+    .registry-section-block .registry-hero {
+        width: min(780px, calc(100% - 42px));
+    }
+
+    .cash-fund-actions {
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 700px) {
+    .registry-panel-split {
+        padding-top: calc(var(--header-height) + 42px);
+    }
+
+    .registry-stack {
+        gap: 72px;
+        padding-bottom: 64px;
+    }
+
+    .registry-section-block .registry-hero {
+        width: min(100%, calc(100% - 30px));
+    }
+
+    .cash-fund-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+
+    .cash-fund-button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .cash-fund-note {
+        max-width: 100%;
+    }
+}
