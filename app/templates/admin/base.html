@@ -58,6 +58,14 @@
             >
                 RSVPs
             </a>
+            <a
+                href="{{ url_for('admin.audit') }}"
+                {% if request.endpoint == 'admin.audit' %}
+                    aria-current="page"
+                {% endif %}
+            >
+                Audit
+            </a>
 
             <form
                 action="{{ url_for('admin.logout') }}"

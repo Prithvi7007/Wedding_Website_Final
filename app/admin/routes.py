@@ -8,6 +8,7 @@ from flask import (
     current_app,
     flash,
     g,
+    make_response,
     redirect,
     render_template,
     request,
@@ -21,6 +22,7 @@ from app.models import Event, Invitation, InvitationEventPermission, RSVP
 
 from .decorators import (
     SESSION_ADMIN_AUTHENTICATED,
+    SESSION_ADMIN_SESSION_ID,
     admin_required,
     clear_admin_session,
     establish_admin_session,
@@ -54,10 +56,36 @@ from .rsvp_services import (
     rsvp_for_permission,
     validate_rsvp_form,
 )
+from .audit_queries import (
+    audit_filter_options,
+    audit_list,
+    normalize_audit_filters,
+)
+from .audit_services import (
+    invitation_snapshot,
+    record_audit,
+    rsvp_snapshot,
+)
+from .login_security import (
+    check_login_rate_limit,
+    record_failed_login,
+    record_successful_login,
+)
 from .services import build_dashboard_snapshot
 
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
+
+
+@admin_bp.after_request
+def secure_admin_response(response):
+    response.headers["Cache-Control"] = (
+        "no-store, no-cache, must-revalidate, private, max-age=0"
+    )
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
 
 
 def _password_matches(candidate: str, configured: str) -> bool:
@@ -96,11 +124,78 @@ def login():
         ), 503
 
     if form.validate_on_submit():
+        rate_state = check_login_rate_limit()
+
+        if rate_state.blocked:
+            record_audit(
+                action="admin.login.blocked",
+                entity_type="admin_session",
+                details={
+                    "failed_attempts": rate_state.failed_attempts,
+                    "retry_after_seconds": rate_state.retry_after_seconds,
+                },
+            )
+            try:
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+                current_app.logger.exception(
+                    "Could not persist blocked admin login audit."
+                )
+
+            current_app.logger.warning(
+                "Admin login rate limited request_id=%s remote_addr=%s",
+                getattr(g, "request_id", "-"),
+                request.remote_addr or "-",
+            )
+            flash(
+                "Too many unsuccessful attempts. Try again later.",
+                "error",
+            )
+            response = make_response(
+                render_template(
+                    "admin/login.html",
+                    form=form,
+                    configuration_error=False,
+                ),
+                429,
+            )
+            response.headers["Retry-After"] = str(
+                rate_state.retry_after_seconds
+            )
+            return response
+
         if _password_matches(
             form.password.data or "",
             configured_password,
         ):
-            establish_admin_session()
+            session_id = establish_admin_session()
+            record_successful_login()
+            record_audit(
+                action="admin.login.succeeded",
+                entity_type="admin_session",
+                entity_id=session_id,
+            )
+
+            try:
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+                clear_admin_session()
+                current_app.logger.exception(
+                    "Admin login security event could not be persisted."
+                )
+                flash(
+                    "The admin portal is temporarily unavailable. "
+                    "Please try again.",
+                    "error",
+                )
+                return render_template(
+                    "admin/login.html",
+                    form=form,
+                    configuration_error=False,
+                ), 503
+
             current_app.logger.info(
                 "Admin login succeeded request_id=%s remote_addr=%s",
                 getattr(g, "request_id", "-"),
@@ -108,6 +203,30 @@ def login():
             )
             flash("Welcome to the wedding admin portal.", "success")
             return redirect(url_for("admin.dashboard"))
+
+        record_failed_login()
+        record_audit(
+            action="admin.login.failed",
+            entity_type="admin_session",
+        )
+
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            current_app.logger.exception(
+                "Admin login failure could not be persisted."
+            )
+            flash(
+                "The admin portal is temporarily unavailable. "
+                "Please try again.",
+                "error",
+            )
+            return render_template(
+                "admin/login.html",
+                form=form,
+                configuration_error=False,
+            ), 503
 
         current_app.logger.warning(
             "Admin login rejected request_id=%s remote_addr=%s",
@@ -126,6 +245,20 @@ def login():
 @admin_bp.post("/logout")
 @admin_required
 def logout():
+    session_id = session.get(SESSION_ADMIN_SESSION_ID)
+    record_audit(
+        action="admin.logout",
+        entity_type="admin_session",
+        entity_id=str(session_id) if session_id else None,
+    )
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception(
+            "Admin logout audit could not be persisted."
+        )
+
     current_app.logger.info(
         "Admin logout request_id=%s remote_addr=%s",
         getattr(g, "request_id", "-"),
@@ -187,6 +320,15 @@ def invitation_new():
             db.session.add(invitation)
             db.session.flush()
             sync_permissions(invitation, events, permission_values)
+            record_audit(
+                action="invitation.created",
+                entity_type="invitation",
+                entity_id=str(invitation.invitation_id),
+                after_state=invitation_snapshot(
+                    invitation,
+                    permission_values=permission_values,
+                ),
+            )
             db.session.commit()
         except Exception:
             db.session.rollback()
@@ -211,6 +353,7 @@ def invitation_new():
                     invitation_id=invitation.invitation_id,
                 )
             )
+
 
     for error in permission_errors:
         flash(error, "error")
@@ -273,10 +416,21 @@ def invitation_edit(invitation_id: int):
         permission_errors = []
 
     if form.validate_on_submit() and not permission_errors:
+        before_state = invitation_snapshot(invitation)
         apply_invitation_form(invitation, form)
 
         try:
             sync_permissions(invitation, events, permission_values)
+            record_audit(
+                action="invitation.updated",
+                entity_type="invitation",
+                entity_id=str(invitation.invitation_id),
+                before_state=before_state,
+                after_state=invitation_snapshot(
+                    invitation,
+                    permission_values=permission_values,
+                ),
+            )
             db.session.commit()
         except Exception:
             db.session.rollback()
@@ -304,6 +458,7 @@ def invitation_edit(invitation_id: int):
                 )
             )
 
+
     for error in permission_errors:
         flash(error, "error")
 
@@ -324,9 +479,21 @@ def invitation_edit(invitation_id: int):
 @admin_required
 def invitation_toggle_active(invitation_id: int):
     invitation = _get_invitation_or_404(invitation_id)
+    before_state = invitation_snapshot(invitation)
     invitation.is_active = not invitation.is_active
 
     try:
+        record_audit(
+            action=(
+                "invitation.activated"
+                if invitation.is_active
+                else "invitation.deactivated"
+            ),
+            entity_type="invitation",
+            entity_id=str(invitation.invitation_id),
+            before_state=before_state,
+            after_state=invitation_snapshot(invitation),
+        )
         db.session.commit()
     except Exception:
         db.session.rollback()
@@ -353,6 +520,7 @@ def invitation_toggle_active(invitation_id: int):
     )
 
 
+
 @admin_bp.post(
     "/invitations/<int:invitation_id>/regenerate-token"
 )
@@ -373,9 +541,18 @@ def invitation_regenerate_token(invitation_id: int):
             )
         )
 
+    before_state = invitation_snapshot(invitation)
     invitation.invite_token = generate_unique_invite_token()
 
     try:
+        record_audit(
+            action="invitation.token_regenerated",
+            entity_type="invitation",
+            entity_id=str(invitation.invitation_id),
+            before_state=before_state,
+            after_state=invitation_snapshot(invitation),
+            details={"previous_private_link_invalidated": True},
+        )
         db.session.commit()
     except Exception:
         db.session.rollback()
@@ -428,6 +605,26 @@ def rsvps_export():
     rows = all_rsvp_rows(filters)
     content = rsvp_csv(rows)
 
+    record_audit(
+        action="rsvp.exported",
+        entity_type="rsvp_export",
+        details={
+            "row_count": len(rows),
+            "query": filters.query,
+            "response": filters.response,
+            "invitation_status": filters.invitation_status,
+            "event_id": filters.event_id,
+            "sort": filters.sort,
+        },
+    )
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception(
+            "RSVP export audit could not be persisted."
+        )
+
     current_app.logger.info(
         "Admin exported RSVPs row_count=%s request_id=%s",
         len(rows),
@@ -443,6 +640,7 @@ def rsvps_export():
             )
         },
     )
+
 
 
 @admin_bp.route(
@@ -483,6 +681,8 @@ def rsvp_edit(invitation_id: int, event_id: str):
 
         if not validation_errors:
             created = rsvp is None
+            before_state = rsvp_snapshot(rsvp) if rsvp is not None else None
+
             if rsvp is None:
                 rsvp = RSVP(
                     invitation_id=invitation_id,
@@ -495,6 +695,22 @@ def rsvp_edit(invitation_id: int, event_id: str):
             apply_rsvp_form(rsvp, form)
 
             try:
+                db.session.flush()
+                record_audit(
+                    action=(
+                        "rsvp.created"
+                        if created
+                        else "rsvp.updated"
+                    ),
+                    entity_type="rsvp",
+                    entity_id=str(rsvp.rsvp_id),
+                    before_state=before_state,
+                    after_state=rsvp_snapshot(rsvp),
+                    details={
+                        "invitation_id": invitation_id,
+                        "event_id": event_id,
+                    },
+                )
                 db.session.commit()
             except Exception:
                 db.session.rollback()
@@ -526,6 +742,7 @@ def rsvp_edit(invitation_id: int, event_id: str):
                         invitation_id=invitation_id,
                     )
                 )
+
 
     for error in validation_errors:
         flash(error, "error")
@@ -559,8 +776,20 @@ def rsvp_clear(rsvp_id: int):
             )
         )
 
+    before_state = rsvp_snapshot(rsvp)
+
     try:
         db.session.delete(rsvp)
+        record_audit(
+            action="rsvp.cleared",
+            entity_type="rsvp",
+            entity_id=str(rsvp_id),
+            before_state=before_state,
+            details={
+                "invitation_id": invitation_id,
+                "event_id": event_id,
+            },
+        )
         db.session.commit()
     except Exception:
         db.session.rollback()
@@ -590,4 +819,20 @@ def rsvp_clear(rsvp_id: int):
             "admin.invitation_detail",
             invitation_id=invitation_id,
         )
+    )
+
+
+@admin_bp.get("/audit")
+@admin_required
+def audit():
+    filters = normalize_audit_filters(request.args)
+    pagination = audit_list(filters)
+    action_options, entity_options = audit_filter_options()
+
+    return render_template(
+        "admin/audit/list.html",
+        filters=filters,
+        pagination=pagination,
+        action_options=action_options,
+        entity_options=entity_options,
     )

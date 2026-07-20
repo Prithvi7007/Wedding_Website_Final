@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+import uuid
 from functools import wraps
 from typing import Any, Callable, TypeVar, cast
 
@@ -12,16 +13,22 @@ ViewFunction = TypeVar("ViewFunction", bound=Callable[..., Any])
 SESSION_ADMIN_AUTHENTICATED = "admin_authenticated"
 SESSION_ADMIN_LOGIN_AT = "admin_login_at"
 SESSION_ADMIN_LAST_SEEN = "admin_last_seen"
+SESSION_ADMIN_SESSION_ID = "admin_session_id"
 
 
-def establish_admin_session() -> None:
+def establish_admin_session() -> str:
     """Start a fresh administrator session after successful authentication."""
     now = int(time.time())
+    session_id = uuid.uuid4().hex
+
     session.clear()
     session.permanent = True
     session[SESSION_ADMIN_AUTHENTICATED] = True
     session[SESSION_ADMIN_LOGIN_AT] = now
     session[SESSION_ADMIN_LAST_SEEN] = now
+    session[SESSION_ADMIN_SESSION_ID] = session_id
+
+    return session_id
 
 
 def clear_admin_session() -> None:

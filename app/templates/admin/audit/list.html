@@ -1,0 +1,193 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Audit History · Wedding Admin{% endblock %}
+
+{% block content %}
+<section class="admin-page-heading admin-heading-actions">
+    <div>
+        <p class="admin-eyebrow">Persistent Change History</p>
+        <h1>Audit History</h1>
+        <p>
+            Review administrative logins, invitation changes, RSVP updates,
+            exports, and sensitive actions.
+        </p>
+    </div>
+    <span class="admin-audit-readonly">Read-only record</span>
+</section>
+
+<form method="get" class="admin-filter-bar admin-audit-filter-bar">
+    <div class="admin-filter-search">
+        <label for="audit-search">Search history</label>
+        <input
+            id="audit-search"
+            name="q"
+            type="search"
+            value="{{ filters.query }}"
+            placeholder="Action, entity, ID, request ID, or IP"
+        >
+    </div>
+
+    <div>
+        <label for="audit-action">Action</label>
+        <select id="audit-action" name="action">
+            <option value="">All actions</option>
+            {% for action in action_options %}
+                <option
+                    value="{{ action }}"
+                    {% if filters.action == action %}selected{% endif %}
+                >
+                    {{ action|replace(".", " · ") }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="audit-entity">Entity</label>
+        <select id="audit-entity" name="entity_type">
+            <option value="">All entities</option>
+            {% for entity_type in entity_options %}
+                <option
+                    value="{{ entity_type }}"
+                    {% if filters.entity_type == entity_type %}selected{% endif %}
+                >
+                    {{ entity_type|replace("_", " ")|title }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button class="admin-filter-button" type="submit">Apply</button>
+    <a class="admin-clear-filter" href="{{ url_for('admin.audit') }}">
+        Clear
+    </a>
+</form>
+
+<section class="admin-section">
+    <div class="admin-section-heading admin-list-summary">
+        <div>
+            <p class="admin-eyebrow">Administrative Timeline</p>
+            <h2>
+                {{ pagination.total }}
+                Entr{% if pagination.total == 1 %}y{% else %}ies{% endif %}
+            </h2>
+        </div>
+        <span>
+            Page {{ pagination.page }} of {{ pagination.pages or 1 }}
+        </span>
+    </div>
+
+    <div class="admin-audit-list">
+        {% for entry in pagination.items %}
+            <article class="admin-audit-entry">
+                <div class="admin-audit-marker" aria-hidden="true"></div>
+
+                <div class="admin-audit-main">
+                    <header>
+                        <div>
+                            <span class="admin-audit-action">
+                                {{ entry.action|replace(".", " · ") }}
+                            </span>
+                            <h3>
+                                {{ entry.entity_type|replace("_", " ")|title }}
+                                {% if entry.entity_id %}
+                                    #{{ entry.entity_id }}
+                                {% endif %}
+                            </h3>
+                        </div>
+                        <time datetime="{{ entry.created_at.isoformat() }}">
+                            {{ entry.created_at.strftime("%b %d, %Y · %I:%M %p") }}
+                        </time>
+                    </header>
+
+                    <dl class="admin-audit-meta">
+                        <div>
+                            <dt>Audit ID</dt>
+                            <dd>#{{ entry.audit_id }}</dd>
+                        </div>
+                        <div>
+                            <dt>IP</dt>
+                            <dd>{{ entry.remote_addr or "—" }}</dd>
+                        </div>
+                        <div>
+                            <dt>Request</dt>
+                            <dd>{{ entry.request_id or "—" }}</dd>
+                        </div>
+                        <div>
+                            <dt>Session</dt>
+                            <dd>
+                                {% if entry.session_id %}
+                                    {{ entry.session_id[:10] }}…
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </dd>
+                        </div>
+                    </dl>
+
+                    {% if entry.before_state or entry.after_state or entry.details %}
+                        <details class="admin-audit-details">
+                            <summary>View recorded details</summary>
+
+                            {% if entry.before_state %}
+                                <div>
+                                    <strong>Before</strong>
+                                    <pre>{{ entry.before_state|tojson(indent=2) }}</pre>
+                                </div>
+                            {% endif %}
+
+                            {% if entry.after_state %}
+                                <div>
+                                    <strong>After</strong>
+                                    <pre>{{ entry.after_state|tojson(indent=2) }}</pre>
+                                </div>
+                            {% endif %}
+
+                            {% if entry.details %}
+                                <div>
+                                    <strong>Additional details</strong>
+                                    <pre>{{ entry.details|tojson(indent=2) }}</pre>
+                                </div>
+                            {% endif %}
+                        </details>
+                    {% endif %}
+                </div>
+            </article>
+        {% else %}
+            <div class="admin-empty-state">
+                No audit entries match the selected filters.
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if pagination.pages > 1 %}
+        <nav class="admin-pagination" aria-label="Audit history pages">
+            {% for page_number in pagination.iter_pages(
+                left_edge=1,
+                left_current=2,
+                right_current=2,
+                right_edge=1
+            ) %}
+                {% if page_number %}
+                    <a
+                        href="{{ url_for(
+                            'admin.audit',
+                            q=filters.query,
+                            action=filters.action,
+                            entity_type=filters.entity_type,
+                            page=page_number
+                        ) }}"
+                        {% if page_number == pagination.page %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        {{ page_number }}
+                    </a>
+                {% else %}
+                    <span>…</span>
+                {% endif %}
+            {% endfor %}
+        </nav>
+    {% endif %}
+</section>
+{% endblock %}

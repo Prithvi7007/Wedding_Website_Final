@@ -73,6 +73,10 @@ class BaseConfig:
     ASSET_VERSION = "development"
     ADMIN_PASSWORD = ""
     ADMIN_SESSION_TIMEOUT_SECONDS = 1800
+    ADMIN_LOGIN_MAX_FAILURES = 5
+    ADMIN_LOGIN_FAILURE_WINDOW_SECONDS = 900
+    ADMIN_LOGIN_LOCKOUT_SECONDS = 1800
+    ADMIN_AUDIT_PAGE_SIZE = 50
     TRUST_PROXY_HEADERS = False
     LOG_LEVEL = "INFO"
     SEND_FILE_MAX_AGE_DEFAULT = 0
@@ -155,6 +159,27 @@ def apply_environment_config(app, selected_name: str) -> None:
         TRUST_PROXY_COUNT=_as_int("TRUST_PROXY_COUNT", 1, minimum=1),
         LOG_LEVEL=os.getenv("LOG_LEVEL", "INFO").strip().upper() or "INFO",
         PUBLIC_BASE_URL=os.getenv("PUBLIC_BASE_URL", "").strip(),
+        ADMIN_LOGIN_MAX_FAILURES=_as_int(
+            "WEDDING_ADMIN_LOGIN_MAX_FAILURES",
+            5,
+            minimum=2,
+        ),
+        ADMIN_LOGIN_FAILURE_WINDOW_SECONDS=(
+            _as_int(
+                "WEDDING_ADMIN_LOGIN_WINDOW_MINUTES",
+                15,
+                minimum=1,
+            )
+            * 60
+        ),
+        ADMIN_LOGIN_LOCKOUT_SECONDS=(
+            _as_int(
+                "WEDDING_ADMIN_LOCKOUT_MINUTES",
+                30,
+                minimum=1,
+            )
+            * 60
+        ),
     )
 
     if selected_name == "production":

@@ -1470,3 +1470,197 @@ a {
     .admin-rsvp-notes { grid-column: auto; }
     .admin-rsvp-actions a { width: 100%; }
 }
+
+
+/* ADMIN AUDIT AND SECURITY HARDENING — PHASE 4 */
+
+.admin-audit-readonly {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 8px 13px;
+    border: 1px solid rgba(228, 184, 103, 0.22);
+    border-radius: 999px;
+    background: rgba(228, 184, 103, 0.08);
+    color: var(--admin-gold);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.admin-audit-filter-bar {
+    grid-template-columns: minmax(260px, 1.6fr) minmax(190px, 0.8fr)
+        minmax(160px, 0.7fr) auto auto;
+}
+
+.admin-audit-list {
+    display: grid;
+    gap: 12px;
+}
+
+.admin-audit-entry {
+    position: relative;
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr);
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.027);
+}
+
+.admin-audit-marker {
+    width: 9px;
+    height: 9px;
+    margin-top: 7px;
+    border: 2px solid var(--admin-gold);
+    border-radius: 50%;
+    box-shadow: 0 0 0 5px rgba(228, 184, 103, 0.08);
+}
+
+.admin-audit-main {
+    min-width: 0;
+}
+
+.admin-audit-main > header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.admin-audit-action {
+    color: var(--admin-gold);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+}
+
+.admin-audit-main h3 {
+    margin: 5px 0 0;
+    color: var(--admin-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.admin-audit-main time {
+    flex: 0 0 auto;
+    color: var(--admin-muted);
+    font-size: 9px;
+    text-align: right;
+}
+
+.admin-audit-meta {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin: 13px 0 0;
+}
+
+.admin-audit-meta div {
+    min-width: 0;
+    padding: 9px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-audit-meta dt {
+    color: var(--admin-muted);
+    font-size: 8px;
+    letter-spacing: 0.75px;
+    text-transform: uppercase;
+}
+
+.admin-audit-meta dd {
+    margin: 4px 0 0;
+    overflow: hidden;
+    color: var(--admin-copy);
+    font-size: 9px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-audit-details {
+    margin-top: 13px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.admin-audit-details summary {
+    padding: 12px 0 2px;
+    color: var(--admin-gold);
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.admin-audit-details > div {
+    margin-top: 11px;
+}
+
+.admin-audit-details strong {
+    color: var(--admin-copy);
+    font-size: 9px;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+.admin-audit-details pre {
+    max-height: 340px;
+    margin: 7px 0 0;
+    padding: 13px;
+    overflow: auto;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 11px;
+    background: rgba(0, 0, 0, 0.22);
+    color: var(--admin-muted);
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 9px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+@media (max-width: 980px) {
+    .admin-audit-filter-bar {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-audit-filter-bar .admin-filter-search {
+        grid-column: 1 / -1;
+    }
+
+    .admin-audit-meta {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .admin-audit-filter-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-audit-filter-bar .admin-filter-search {
+        grid-column: auto;
+    }
+
+    .admin-audit-main > header {
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .admin-audit-main time {
+        text-align: left;
+    }
+}
+
+@media (max-width: 430px) {
+    .admin-audit-meta {
+        grid-template-columns: 1fr;
+    }
+}
