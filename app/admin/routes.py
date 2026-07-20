@@ -30,6 +30,7 @@ from .decorators import (
 from .forms import AdminLoginForm, AdminRSVPForm, InvitationForm
 from .invitation_queries import (
     all_events,
+    all_represent_sides,
     invitation_by_id,
     invitation_list,
     normalize_filters,
@@ -284,11 +285,13 @@ def dashboard():
 def invitations():
     filters = normalize_filters(request.args)
     events = all_events()
+    represent_sides = all_represent_sides()
     pagination = invitation_list(filters)
 
     return render_template(
         "admin/invitations/list.html",
         events=events,
+        represent_sides=represent_sides,
         filters=filters,
         pagination=pagination,
     )

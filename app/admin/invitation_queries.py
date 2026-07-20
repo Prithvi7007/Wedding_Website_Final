@@ -18,6 +18,7 @@ class InvitationListFilters:
     query: str
     status: str
     event_id: str
+    represent_side: str
     sort: str
     page: int
 
@@ -26,6 +27,7 @@ def normalize_filters(args: Any) -> InvitationListFilters:
     query = str(args.get("q", "")).strip()
     status = str(args.get("status", "all")).strip().lower()
     event_id = str(args.get("event", "")).strip()
+    represent_side = str(args.get("represent", "")).strip()
     sort = str(args.get("sort", "name")).strip().lower()
 
     try:
@@ -42,6 +44,7 @@ def normalize_filters(args: Any) -> InvitationListFilters:
         query=query,
         status=status,
         event_id=event_id,
+        represent_side=represent_side,
         sort=sort,
         page=page,
     )
@@ -52,6 +55,25 @@ def all_events() -> list[Event]:
         Event.display_order.asc(),
         Event.event_date.asc(),
         Event.title.asc(),
+    )
+    return list(db.session.scalars(statement).all())
+
+
+def all_represent_sides() -> list[str]:
+    distinct_values = (
+        select(Invitation.represent_side)
+        .where(
+            Invitation.represent_side.is_not(None),
+            func.trim(Invitation.represent_side) != "",
+        )
+        .distinct()
+        .subquery()
+    )
+    statement = (
+        select(distinct_values.c.represent_side)
+        .order_by(
+            func.lower(distinct_values.c.represent_side).asc()
+        )
     )
     return list(db.session.scalars(statement).all())
 
@@ -89,6 +111,19 @@ def invitation_list(filters: InvitationListFilters, per_page: int = 25):
             )
         )
         statement = statement.where(has_event_access)
+
+    if filters.represent_side == "__unassigned__":
+        statement = statement.where(
+            or_(
+                Invitation.represent_side.is_(None),
+                func.trim(Invitation.represent_side) == "",
+            )
+        )
+    elif filters.represent_side:
+        statement = statement.where(
+            func.lower(func.trim(Invitation.represent_side))
+            == filters.represent_side.lower()
+        )
 
     if filters.sort == "newest":
         statement = statement.order_by(

@@ -1664,3 +1664,45 @@ a {
         grid-template-columns: 1fr;
     }
 }
+
+/* ADMIN INVITATION REPRESENT FILTER */
+
+.admin-invitation-filter-bar {
+    grid-template-columns:
+        minmax(250px, 1.7fr)
+        repeat(4, minmax(135px, 0.7fr))
+        auto
+        auto;
+}
+
+.admin-invitation-meta {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 1180px) {
+    .admin-invitation-filter-bar {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-invitation-filter-bar .admin-filter-search {
+        grid-column: 1 / -1;
+    }
+
+    .admin-invitation-meta {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .admin-invitation-filter-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-invitation-filter-bar .admin-filter-search {
+        grid-column: auto;
+    }
+
+    .admin-invitation-meta {
+        grid-template-columns: 1fr 1fr;
+    }
+}

@@ -240,3 +240,56 @@ def test_invitation_detail_contains_copyable_private_url(client, app):
     assert response.status_code == 200
     assert "/invite/phase2-copy-link" in html
     assert "Copy Link" in html
+
+
+def test_invitation_list_filters_by_represent_side(client, app):
+    with app.app_context():
+        adlin_invitation = _invitation(
+            "phase2-represent-adlin",
+            "Adlin Side Family",
+        )
+        adlin_invitation.represent_side = "Adlin"
+
+        prithvi_invitation = _invitation(
+            "phase2-represent-prithvi",
+            "Prithvi Side Family",
+        )
+        prithvi_invitation.represent_side = "Prithvi"
+
+        unassigned_invitation = _invitation(
+            "phase2-represent-unassigned",
+            "Unassigned Family",
+        )
+
+        db.session.add_all(
+            [
+                adlin_invitation,
+                prithvi_invitation,
+                unassigned_invitation,
+            ]
+        )
+        db.session.commit()
+
+    _login(client)
+
+    response = client.get(
+        "/admin/invitations?represent=Adlin"
+    )
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Adlin Side Family" in html
+    assert "Prithvi Side Family" not in html
+    assert "Unassigned Family" not in html
+    assert 'value="Adlin"' in html
+    assert 'value="Prithvi"' in html
+
+    unassigned_response = client.get(
+        "/admin/invitations?represent=__unassigned__"
+    )
+    unassigned_html = unassigned_response.get_data(as_text=True)
+
+    assert unassigned_response.status_code == 200
+    assert "Unassigned Family" in unassigned_html
+    assert "Adlin Side Family" not in unassigned_html
+

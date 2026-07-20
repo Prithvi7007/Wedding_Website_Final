@@ -22,7 +22,7 @@
 
 <form
     method="get"
-    class="admin-filter-bar"
+    class="admin-filter-bar admin-invitation-filter-bar"
     aria-label="Invitation filters"
 >
     <div class="admin-filter-search">
@@ -63,6 +63,27 @@
                     {{ event.title }}
                 </option>
             {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="represent-filter">Represent</label>
+        <select id="represent-filter" name="represent">
+            <option value="">All sides</option>
+            {% for represent_side in represent_sides %}
+                <option
+                    value="{{ represent_side }}"
+                    {% if filters.represent_side|lower == represent_side|lower %}selected{% endif %}
+                >
+                    {{ represent_side }}
+                </option>
+            {% endfor %}
+            <option
+                value="__unassigned__"
+                {% if filters.represent_side == "__unassigned__" %}selected{% endif %}
+            >
+                Unassigned
+            </option>
         </select>
     </div>
 
@@ -139,6 +160,10 @@
 
                 <dl class="admin-invitation-meta">
                     <div>
+                        <dt>Represent</dt>
+                        <dd>{{ invitation.represent_side or "—" }}</dd>
+                    </div>
+                    <div>
                         <dt>Group</dt>
                         <dd>{{ invitation.guest_group or "—" }}</dd>
                     </div>
@@ -203,6 +228,7 @@
                             q=filters.query,
                             status=filters.status,
                             event=filters.event_id,
+                            represent=filters.represent_side,
                             sort=filters.sort,
                             page=page_number
                         ) }}"
