@@ -59,6 +59,7 @@ def create_app(config_name: str | None = None) -> Flask:
     csrf.init_app(app)
 
     from . import models  # noqa: F401
+    from .admin.routes import admin_bp
     from .dashboard.routes import dashboard_bp
     from .health.routes import health_bp
     from .invitations.routes import invitations_bp
@@ -66,6 +67,7 @@ def create_app(config_name: str | None = None) -> Flask:
     app.register_blueprint(health_bp)
     app.register_blueprint(invitations_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(admin_bp)
 
     app.before_request(prepare_request_security_context)
     app.after_request(apply_response_security)

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+    <meta name="theme-color" content="#16130f">
+    <title>Wedding Admin Sign In</title>
+    <link
+        rel="icon"
+        type="image/png"
+        href="{{ asset_url('images/favicon.png') }}"
+    >
+    <link
+        rel="stylesheet"
+        href="{{ asset_url('admin/admin.css') }}"
+    >
+</head>
+<body class="admin-body admin-login-body">
+    <main class="admin-login-shell">
+        <section class="admin-login-card" aria-labelledby="admin-login-title">
+            <p class="admin-login-kicker">Private Host Portal</p>
+            <h1 id="admin-login-title">Wedding Admin</h1>
+            <p class="admin-login-copy">
+                Secure access for managing invitations and wedding responses.
+            </p>
+
+            <div class="admin-flash-region" aria-live="polite">
+                {% for category, message in get_flashed_messages(with_categories=true) %}
+                    <div class="admin-flash admin-flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if configuration_error %}
+                <div class="admin-configuration-error">
+                    Administrator access is not configured on this server.
+                </div>
+            {% else %}
+                <form
+                    method="post"
+                    class="admin-login-form"
+                    novalidate
+                >
+                    {{ form.hidden_tag() }}
+
+                    <label for="{{ form.password.id }}">
+                        {{ form.password.label.text }}
+                    </label>
+                    {{ form.password(class_="admin-input") }}
+
+                    {% for error in form.password.errors %}
+                        <p class="admin-field-error">{{ error }}</p>
+                    {% endfor %}
+
+                    {{ form.submit(class_="admin-primary-button") }}
+                </form>
+            {% endif %}
+
+            <p class="admin-login-note">
+                This page is not linked from the public wedding website.
+            </p>
+        </section>
+    </main>
+</body>
+</html>

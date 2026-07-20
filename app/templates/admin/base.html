@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+    <meta name="theme-color" content="#16130f">
+    <title>{% block title %}Wedding Admin{% endblock %}</title>
+    <link
+        rel="icon"
+        type="image/png"
+        href="{{ asset_url('images/favicon.png') }}"
+    >
+    <link
+        rel="stylesheet"
+        href="{{ asset_url('admin/admin.css') }}"
+    >
+</head>
+<body class="admin-body">
+    <header class="admin-topbar">
+        <a
+            class="admin-brand"
+            href="{{ url_for('admin.dashboard') }}"
+            aria-label="Wedding admin dashboard"
+        >
+            <span class="admin-brand-kicker">Private Host Portal</span>
+            <strong>Adlin &amp; Prithvi</strong>
+        </a>
+
+        <nav class="admin-nav" aria-label="Admin navigation">
+            <a
+                href="{{ url_for('admin.dashboard') }}"
+                {% if request.endpoint == 'admin.dashboard' %}
+                    aria-current="page"
+                {% endif %}
+            >
+                Dashboard
+            </a>
+
+            <form
+                action="{{ url_for('admin.logout') }}"
+                method="post"
+            >
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+                <button type="submit">Sign Out</button>
+            </form>
+        </nav>
+    </header>
+
+    <div class="admin-flash-region" aria-live="polite">
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+            <div class="admin-flash admin-flash-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <main class="admin-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="admin-footer">
+        Private wedding administration portal
+    </footer>
+</body>
+</html>

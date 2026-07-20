@@ -71,6 +71,8 @@ class BaseConfig:
     MAX_CONTENT_LENGTH = 2 * 1024 * 1024
     PREFERRED_URL_SCHEME = "https"
     ASSET_VERSION = "development"
+    ADMIN_PASSWORD = ""
+    ADMIN_SESSION_TIMEOUT_SECONDS = 1800
     TRUST_PROXY_HEADERS = False
     LOG_LEVEL = "INFO"
     SEND_FILE_MAX_AGE_DEFAULT = 0
@@ -98,6 +100,8 @@ class TestingConfig(BaseConfig):
     SESSION_COOKIE_SECURE = False
     ASSET_VERSION = "test"
     LOG_LEVEL = "WARNING"
+    ADMIN_PASSWORD = "test-admin-password-for-testing"
+    ADMIN_SESSION_TIMEOUT_SECONDS = 1800
 
 
 def apply_environment_config(app, selected_name: str) -> None:
@@ -125,11 +129,25 @@ def apply_environment_config(app, selected_name: str) -> None:
             "such as 20260715-1 or a short Git commit hash."
         )
 
+    admin_password = os.getenv(
+        "WEDDING_ADMIN_PASSWORD",
+        "",
+    ).strip()
+
     app.config.update(
         SECRET_KEY=secret_key,
         SQLALCHEMY_DATABASE_URI=build_database_uri(),
         SESSION_COOKIE_SECURE=secure_cookie,
         ASSET_VERSION=asset_version or "development",
+        ADMIN_PASSWORD=admin_password,
+        ADMIN_SESSION_TIMEOUT_SECONDS=(
+            _as_int(
+                "WEDDING_ADMIN_SESSION_MINUTES",
+                30,
+                minimum=5,
+            )
+            * 60
+        ),
         TRUST_PROXY_HEADERS=_as_bool(
             "TRUST_PROXY_HEADERS",
             selected_name == "production",

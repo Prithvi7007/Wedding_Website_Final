@@ -1,0 +1,1 @@
+"""Secure wedding administration portal."""

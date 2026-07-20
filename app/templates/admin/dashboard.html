@@ -1,0 +1,230 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Wedding Admin Dashboard{% endblock %}
+
+{% block content %}
+<section class="admin-page-heading">
+    <div>
+        <p class="admin-eyebrow">Wedding Response Center</p>
+        <h1>Dashboard</h1>
+        <p>
+            Invitation-level response progress and confirmed guest totals.
+        </p>
+    </div>
+</section>
+
+<section class="admin-metric-grid" aria-label="Wedding response summary">
+    <article class="admin-metric-card">
+        <span>Active invitations</span>
+        <strong>{{ totals.total_active_invitations }}</strong>
+        <small>Households or invitation records</small>
+    </article>
+
+    <article class="admin-metric-card">
+        <span>Invitations responded</span>
+        <strong>{{ totals.responded_invitations }}</strong>
+        <small>At least one event response</small>
+    </article>
+
+    <article class="admin-metric-card">
+        <span>No response</span>
+        <strong>{{ totals.no_response_invitations }}</strong>
+        <small>No RSVP submitted for any event</small>
+    </article>
+
+    <article class="admin-metric-card admin-metric-highlight">
+        <span>Overall completion</span>
+        <strong>{{ "%.1f"|format(totals.completion_percentage) }}%</strong>
+        <small>Responded invitations ÷ active invitations</small>
+    </article>
+
+    <article class="admin-metric-card">
+        <span>Guests attending</span>
+        <strong>{{ totals.attending_guests }}</strong>
+        <small>Individual confirmed guests</small>
+    </article>
+
+    <article class="admin-metric-card">
+        <span>Declined responses</span>
+        <strong>{{ totals.declined_responses }}</strong>
+        <small>RSVP records marked No</small>
+    </article>
+
+    <article class="admin-metric-card">
+        <span>Maybe responses</span>
+        <strong>{{ totals.maybe_responses }}</strong>
+        <small>RSVP records awaiting a final decision</small>
+    </article>
+</section>
+
+<section class="admin-section">
+    <div class="admin-section-heading">
+        <div>
+            <p class="admin-eyebrow">Dynamic Event Summary</p>
+            <h2>Attendance by Event</h2>
+        </div>
+    </div>
+
+    <div class="admin-event-grid">
+        {% for event in events %}
+            <article class="admin-event-card">
+                <header>
+                    <div>
+                        <span>
+                            {{ event.event_date.strftime("%b %d, %Y") }}
+                        </span>
+                        <h3>{{ event.title }}</h3>
+                    </div>
+                    <strong>
+                        {{ "%.1f"|format(event.completion_percentage) }}%
+                    </strong>
+                </header>
+
+                <div class="admin-progress">
+                    <span
+                        style="width: {{ event.completion_percentage }}%"
+                    ></span>
+                </div>
+
+                <dl class="admin-event-stats">
+                    <div>
+                        <dt>Active invitations</dt>
+                        <dd>{{ event.active_invitation_count }}</dd>
+                    </div>
+                    <div>
+                        <dt>Responses</dt>
+                        <dd>{{ event.response_count }}</dd>
+                    </div>
+                    <div>
+                        <dt>Confirmed guests</dt>
+                        <dd>{{ event.confirmed_guest_count }}</dd>
+                    </div>
+                    <div>
+                        <dt>Maximum possible</dt>
+                        <dd>{{ event.maximum_possible_guests }}</dd>
+                    </div>
+                </dl>
+
+                <div class="admin-capacity">
+                    <div>
+                        <span>Confirmed capacity</span>
+                        <strong>
+                            {{ event.confirmed_guest_count }}
+                            /
+                            {{ event.maximum_possible_guests }}
+                        </strong>
+                    </div>
+                    <div class="admin-progress admin-progress-capacity">
+                        <span
+                            style="width: {{ event.capacity_percentage }}%"
+                        ></span>
+                    </div>
+                </div>
+
+                <footer>
+                    <span>Yes {{ event.yes_response_count }}</span>
+                    <span>No {{ event.no_response_count }}</span>
+                    <span>Maybe {{ event.maybe_response_count }}</span>
+                </footer>
+            </article>
+        {% else %}
+            <div class="admin-empty-state">
+                No wedding events were found.
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="admin-two-column">
+    <article class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Latest Changes</p>
+                <h2>Recent RSVP Activity</h2>
+            </div>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Invitation</th>
+                        <th>Event</th>
+                        <th>Status</th>
+                        <th>Guests</th>
+                        <th>Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in recent_activity %}
+                        <tr>
+                            <td data-label="Invitation">
+                                {{ item.display_name }}
+                            </td>
+                            <td data-label="Event">
+                                {{ item.event_title }}
+                            </td>
+                            <td data-label="Status">
+                                <span
+                                    class="admin-status admin-status-{{ item.attending|lower }}"
+                                >
+                                    {{ item.attending }}
+                                </span>
+                            </td>
+                            <td data-label="Guests">
+                                {{ item.guest_count }}
+                            </td>
+                            <td data-label="Updated">
+                                {% if item.updated_at %}
+                                    {{ item.updated_at.strftime("%b %d, %I:%M %p") }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">
+                                No RSVP activity has been recorded.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <article class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Follow Up</p>
+                <h2>No Response Yet</h2>
+            </div>
+        </div>
+
+        <div class="admin-unanswered-list">
+            {% for invitation in unanswered_invitations %}
+                <div>
+                    <span>{{ invitation.display_name }}</span>
+                    <small>
+                        Added
+                        {{ invitation.created_at.strftime("%b %d, %Y") }}
+                    </small>
+                </div>
+            {% else %}
+                <div class="admin-empty-state">
+                    Every active invitation has submitted at least one response.
+                </div>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+
+<aside class="admin-data-note">
+    <strong>Metric note:</strong>
+    “Guests attending” is an individual headcount. “Declined responses”
+    counts RSVP records because declined rows store a guest count of zero;
+    the current schema cannot truthfully infer the number of individuals
+    represented by a declined response.
+</aside>
+{% endblock %}
