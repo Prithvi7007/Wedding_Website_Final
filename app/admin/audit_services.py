@@ -9,7 +9,12 @@ from flask import g, has_request_context, request, session
 from app.extensions import db
 from app.models import AdminAuditLog, Invitation, RSVP
 
-from .decorators import SESSION_ADMIN_SESSION_ID
+from .decorators import (
+    SESSION_ADMIN_DISPLAY_NAME,
+    SESSION_ADMIN_ROLE,
+    SESSION_ADMIN_SESSION_ID,
+    SESSION_ADMIN_USERNAME,
+)
 
 
 def _json_safe(value: Any) -> Any:
@@ -120,6 +125,24 @@ def record_audit(
         else None
     )
 
+    safe_details = dict(details or {})
+    if has_request_context():
+        actor_username = str(
+            session.get(SESSION_ADMIN_USERNAME) or ""
+        )[:80] or None
+        actor_display_name = str(
+            session.get(SESSION_ADMIN_DISPLAY_NAME) or ""
+        )[:120] or None
+        actor_role = str(
+            session.get(SESSION_ADMIN_ROLE) or ""
+        )[:40] or None
+        if actor_username:
+            safe_details.setdefault("actor_username", actor_username)
+        if actor_display_name:
+            safe_details.setdefault("actor_display_name", actor_display_name)
+        if actor_role:
+            safe_details.setdefault("actor_role", actor_role)
+
     audit = AdminAuditLog(
         action=action.strip(),
         entity_type=entity_type.strip(),
@@ -130,7 +153,7 @@ def record_audit(
         user_agent=user_agent,
         before_state=_json_safe(before_state),
         after_state=_json_safe(after_state),
-        details=_json_safe(details),
+        details=_json_safe(safe_details) if safe_details else None,
     )
     db.session.add(audit)
     return audit

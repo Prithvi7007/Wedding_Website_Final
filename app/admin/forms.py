@@ -12,8 +12,17 @@ from wtforms.validators import DataRequired, InputRequired, Length, Optional
 
 
 class AdminLoginForm(FlaskForm):
+    username = StringField(
+        "Username",
+        validators=[Optional(), Length(max=80)],
+        render_kw={
+            "autocomplete": "username",
+            "autocapitalize": "none",
+            "spellcheck": "false",
+        },
+    )
     password = PasswordField(
-        "Administrator password",
+        "Password",
         validators=[DataRequired(message="Enter the administrator password.")],
         render_kw={
             "autocomplete": "current-password",

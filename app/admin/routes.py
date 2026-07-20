@@ -22,9 +22,17 @@ from app.models import Event, Invitation, InvitationEventPermission, RSVP
 
 from .decorators import (
     SESSION_ADMIN_AUTHENTICATED,
+    SESSION_ADMIN_ROLE,
     SESSION_ADMIN_SESSION_ID,
+    SESSION_ADMIN_USERNAME,
+    admin_only,
     admin_required,
+    admin_write_required,
     clear_admin_session,
+    current_admin_display_name,
+    current_admin_is_full,
+    current_admin_role,
+    current_admin_username,
     establish_admin_session,
 )
 from .forms import AdminLoginForm, AdminRSVPForm, InvitationForm
@@ -103,20 +111,47 @@ def _get_invitation_or_404(invitation_id: int) -> Invitation:
     return invitation
 
 
+@admin_bp.app_context_processor
+def inject_admin_identity():
+    return {
+        "current_admin_username": current_admin_username(),
+        "current_admin_display_name": current_admin_display_name(),
+        "current_admin_role": current_admin_role(),
+        "current_admin_is_full": current_admin_is_full(),
+    }
+
+
+def _configured_accounts() -> dict[str, dict[str, str]]:
+    raw = dict(current_app.config.get("ADMIN_ACCOUNTS", {}))
+    return {
+        str(username).strip().lower(): dict(account)
+        for username, account in raw.items()
+        if str(username).strip()
+    }
+
+
+def _accounts_are_ready(accounts: dict[str, dict[str, str]]) -> bool:
+    expected = {"prithvi", "adlin", "adlin_fam", "vk_fam"}
+    return set(accounts) == expected and all(
+        str(account.get("password", "")).strip()
+        and account.get("role") in {"admin", "viewer"}
+        for account in accounts.values()
+    )
+
+
 @admin_bp.route("/login", methods=["GET", "POST"])
 def login():
     if session.get(SESSION_ADMIN_AUTHENTICATED) is True:
         return redirect(url_for("admin.dashboard"))
 
     form = AdminLoginForm()
-    configured_password = str(
-        current_app.config.get("ADMIN_PASSWORD", "")
-    )
+    accounts = _configured_accounts()
+    configuration_error = not _accounts_are_ready(accounts)
 
-    if not configured_password:
+    if configuration_error:
         current_app.logger.error(
-            "Admin login is disabled because WEDDING_ADMIN_PASSWORD "
-            "is not configured."
+            "Admin login is disabled because all four named account "
+            "passwords are not configured."
         )
         return render_template(
             "admin/login.html",
@@ -125,13 +160,29 @@ def login():
         ), 503
 
     if form.validate_on_submit():
-        rate_state = check_login_rate_limit()
+        username = str(form.username.data or "").strip().lower()
+        if not username and current_app.testing:
+            username = str(
+                current_app.config.get(
+                    "ADMIN_TEST_DEFAULT_USERNAME", "prithvi"
+                )
+            ).strip().lower()
 
+        if not username:
+            form.username.errors.append("Enter your username.")
+            return render_template(
+                "admin/login.html",
+                form=form,
+                configuration_error=False,
+            )
+
+        rate_state = check_login_rate_limit()
         if rate_state.blocked:
             record_audit(
                 action="admin.login.blocked",
                 entity_type="admin_session",
                 details={
+                    "attempted_username": username,
                     "failed_attempts": rate_state.failed_attempts,
                     "retry_after_seconds": rate_state.retry_after_seconds,
                 },
@@ -143,16 +194,7 @@ def login():
                 current_app.logger.exception(
                     "Could not persist blocked admin login audit."
                 )
-
-            current_app.logger.warning(
-                "Admin login rate limited request_id=%s remote_addr=%s",
-                getattr(g, "request_id", "-"),
-                request.remote_addr or "-",
-            )
-            flash(
-                "Too many unsuccessful attempts. Try again later.",
-                "error",
-            )
+            flash("Too many unsuccessful attempts. Try again later.", "error")
             response = make_response(
                 render_template(
                     "admin/login.html",
@@ -166,18 +208,31 @@ def login():
             )
             return response
 
-        if _password_matches(
+        account = accounts.get(username)
+        accepted = account is not None and _password_matches(
             form.password.data or "",
-            configured_password,
-        ):
-            session_id = establish_admin_session()
+            str(account.get("password", "")),
+        )
+
+        if accepted and account is not None:
+            display_name = str(account["display_name"])
+            role = str(account["role"])
+            session_id = establish_admin_session(
+                username=username,
+                display_name=display_name,
+                role=role,
+            )
             record_successful_login()
             record_audit(
                 action="admin.login.succeeded",
                 entity_type="admin_session",
                 entity_id=session_id,
+                details={
+                    "actor_username": username,
+                    "actor_display_name": display_name,
+                    "actor_role": role,
+                },
             )
-
             try:
                 db.session.commit()
             except Exception:
@@ -198,19 +253,20 @@ def login():
                 ), 503
 
             current_app.logger.info(
-                "Admin login succeeded request_id=%s remote_addr=%s",
+                "Admin login succeeded username=%s role=%s request_id=%s",
+                username,
+                role,
                 getattr(g, "request_id", "-"),
-                request.remote_addr or "-",
             )
-            flash("Welcome to the wedding admin portal.", "success")
+            flash(f"Welcome, {display_name}.", "success")
             return redirect(url_for("admin.dashboard"))
 
         record_failed_login()
         record_audit(
             action="admin.login.failed",
             entity_type="admin_session",
+            details={"attempted_username": username},
         )
-
         try:
             db.session.commit()
         except Exception:
@@ -230,11 +286,11 @@ def login():
             ), 503
 
         current_app.logger.warning(
-            "Admin login rejected request_id=%s remote_addr=%s",
+            "Admin login rejected username=%s request_id=%s",
+            username,
             getattr(g, "request_id", "-"),
-            request.remote_addr or "-",
         )
-        flash("The administrator password was not accepted.", "error")
+        flash("The username or password was not accepted.", "error")
 
     return render_template(
         "admin/login.html",
@@ -247,10 +303,16 @@ def login():
 @admin_required
 def logout():
     session_id = session.get(SESSION_ADMIN_SESSION_ID)
+    username = session.get(SESSION_ADMIN_USERNAME)
+    role = session.get(SESSION_ADMIN_ROLE)
     record_audit(
         action="admin.logout",
         entity_type="admin_session",
         entity_id=str(session_id) if session_id else None,
+        details={
+            "actor_username": username,
+            "actor_role": role,
+        },
     )
     try:
         db.session.commit()
@@ -298,7 +360,7 @@ def invitations():
 
 
 @admin_bp.route("/invitations/new", methods=["GET", "POST"])
-@admin_required
+@admin_write_required
 def invitation_new():
     events = all_events()
     form = InvitationForm()
@@ -393,7 +455,7 @@ def invitation_detail(invitation_id: int):
     "/invitations/<int:invitation_id>/edit",
     methods=["GET", "POST"],
 )
-@admin_required
+@admin_write_required
 def invitation_edit(invitation_id: int):
     invitation = _get_invitation_or_404(invitation_id)
     events = all_events()
@@ -479,7 +541,7 @@ def invitation_edit(invitation_id: int):
 @admin_bp.post(
     "/invitations/<int:invitation_id>/toggle-active"
 )
-@admin_required
+@admin_write_required
 def invitation_toggle_active(invitation_id: int):
     invitation = _get_invitation_or_404(invitation_id)
     before_state = invitation_snapshot(invitation)
@@ -527,7 +589,7 @@ def invitation_toggle_active(invitation_id: int):
 @admin_bp.post(
     "/invitations/<int:invitation_id>/regenerate-token"
 )
-@admin_required
+@admin_write_required
 def invitation_regenerate_token(invitation_id: int):
     invitation = _get_invitation_or_404(invitation_id)
 
@@ -602,7 +664,7 @@ def rsvps():
 
 
 @admin_bp.get("/rsvps/export.csv")
-@admin_required
+@admin_only
 def rsvps_export():
     filters = normalize_rsvp_filters(request.args)
     rows = all_rsvp_rows(filters)
@@ -650,7 +712,7 @@ def rsvps_export():
     "/rsvps/invitation/<int:invitation_id>/event/<event_id>/edit",
     methods=["GET", "POST"],
 )
-@admin_required
+@admin_write_required
 def rsvp_edit(invitation_id: int, event_id: str):
     permission = db.session.get(
         InvitationEventPermission,
@@ -761,7 +823,7 @@ def rsvp_edit(invitation_id: int, event_id: str):
 
 
 @admin_bp.post("/rsvps/<int:rsvp_id>/clear")
-@admin_required
+@admin_write_required
 def rsvp_clear(rsvp_id: int):
     rsvp = db.session.get(RSVP, rsvp_id)
     if rsvp is None:
@@ -826,7 +888,7 @@ def rsvp_clear(rsvp_id: int):
 
 
 @admin_bp.get("/audit")
-@admin_required
+@admin_only
 def audit():
     filters = normalize_audit_filters(request.args)
     pagination = audit_list(filters)

@@ -24,7 +24,7 @@
             <p class="admin-login-kicker">Private Host Portal</p>
             <h1 id="admin-login-title">Wedding Admin</h1>
             <p class="admin-login-copy">
-                Secure access for managing invitations and wedding responses.
+                Named access for Adlin, Prithvi, and authorized family viewers.
             </p>
 
             <div class="admin-flash-region" aria-live="polite">
@@ -46,6 +46,15 @@
                     novalidate
                 >
                     {{ form.hidden_tag() }}
+
+                    <label for="{{ form.username.id }}">
+                        {{ form.username.label.text }}
+                    </label>
+                    {{ form.username(class_="admin-input") }}
+
+                    {% for error in form.username.errors %}
+                        <p class="admin-field-error">{{ error }}</p>
+                    {% endfor %}
 
                     <label for="{{ form.password.id }}">
                         {{ form.password.label.text }}

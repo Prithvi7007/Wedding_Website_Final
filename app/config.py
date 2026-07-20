@@ -71,7 +71,8 @@ class BaseConfig:
     MAX_CONTENT_LENGTH = 2 * 1024 * 1024
     PREFERRED_URL_SCHEME = "https"
     ASSET_VERSION = "development"
-    ADMIN_PASSWORD = ""
+    ADMIN_ACCOUNTS: dict[str, dict[str, str]] = {}
+    ADMIN_TEST_DEFAULT_USERNAME = ""
     ADMIN_SESSION_TIMEOUT_SECONDS = 1800
     ADMIN_LOGIN_MAX_FAILURES = 5
     ADMIN_LOGIN_FAILURE_WINDOW_SECONDS = 900
@@ -104,7 +105,29 @@ class TestingConfig(BaseConfig):
     SESSION_COOKIE_SECURE = False
     ASSET_VERSION = "test"
     LOG_LEVEL = "WARNING"
-    ADMIN_PASSWORD = "test-admin-password-for-testing"
+    ADMIN_ACCOUNTS = {
+        "prithvi": {
+            "display_name": "Prithvi",
+            "role": "admin",
+            "password": "test-admin-password-for-testing",
+        },
+        "adlin": {
+            "display_name": "Adlin",
+            "role": "admin",
+            "password": "test-adlin-password-for-testing",
+        },
+        "adlin_fam": {
+            "display_name": "Adlin Family",
+            "role": "viewer",
+            "password": "test-adlin-family-password",
+        },
+        "vk_fam": {
+            "display_name": "VK Family",
+            "role": "viewer",
+            "password": "test-vk-family-password",
+        },
+    }
+    ADMIN_TEST_DEFAULT_USERNAME = "prithvi"
     ADMIN_SESSION_TIMEOUT_SECONDS = 1800
 
 
@@ -133,17 +156,43 @@ def apply_environment_config(app, selected_name: str) -> None:
             "such as 20260715-1 or a short Git commit hash."
         )
 
-    admin_password = os.getenv(
-        "WEDDING_ADMIN_PASSWORD",
-        "",
-    ).strip()
+    admin_accounts = {
+        "prithvi": {
+            "display_name": "Prithvi",
+            "role": "admin",
+            "password": os.getenv(
+                "WEDDING_ADMIN_PRITHVI_PASSWORD", ""
+            ).strip(),
+        },
+        "adlin": {
+            "display_name": "Adlin",
+            "role": "admin",
+            "password": os.getenv(
+                "WEDDING_ADMIN_ADLIN_PASSWORD", ""
+            ).strip(),
+        },
+        "adlin_fam": {
+            "display_name": "Adlin Family",
+            "role": "viewer",
+            "password": os.getenv(
+                "WEDDING_ADMIN_ADLIN_FAM_PASSWORD", ""
+            ).strip(),
+        },
+        "vk_fam": {
+            "display_name": "VK Family",
+            "role": "viewer",
+            "password": os.getenv(
+                "WEDDING_ADMIN_VK_FAM_PASSWORD", ""
+            ).strip(),
+        },
+    }
 
     app.config.update(
         SECRET_KEY=secret_key,
         SQLALCHEMY_DATABASE_URI=build_database_uri(),
         SESSION_COOKIE_SECURE=secure_cookie,
         ASSET_VERSION=asset_version or "development",
-        ADMIN_PASSWORD=admin_password,
+        ADMIN_ACCOUNTS=admin_accounts,
         ADMIN_SESSION_TIMEOUT_SECONDS=(
             _as_int(
                 "WEDDING_ADMIN_SESSION_MINUTES",

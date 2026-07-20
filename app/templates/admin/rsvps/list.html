@@ -12,19 +12,23 @@
             update guest counts, and export the current view.
         </p>
     </div>
-    <a
-        class="admin-primary-link"
-        href="{{ url_for(
-            'admin.rsvps_export',
-            q=filters.query,
-            response=filters.response,
-            invitation_status=filters.invitation_status,
-            event=filters.event_id,
-            sort=filters.sort
-        ) }}"
-    >
-        Export CSV
-    </a>
+    {% if current_admin_is_full %}
+        <a
+            class="admin-primary-link"
+            href="{{ url_for(
+                'admin.rsvps_export',
+                q=filters.query,
+                response=filters.response,
+                invitation_status=filters.invitation_status,
+                event=filters.event_id,
+                sort=filters.sort
+            ) }}"
+        >
+            Export CSV
+        </a>
+    {% else %}
+        <span class="admin-view-only-badge">View-only access</span>
+    {% endif %}
 </section>
 
 <section class="admin-rsvp-summary" aria-label="Filtered RSVP summary">
@@ -183,9 +187,13 @@
                     </div>
                 </dl>
                 <div class="admin-rsvp-actions">
-                    <a href="{{ url_for('admin.rsvp_edit', invitation_id=row.invitation_id, event_id=row.event_id) }}">
-                        {% if row.rsvp_id %}Edit RSVP{% else %}Add RSVP{% endif %}
-                    </a>
+                    {% if current_admin_is_full %}
+                        <a href="{{ url_for('admin.rsvp_edit', invitation_id=row.invitation_id, event_id=row.event_id) }}">
+                            {% if row.rsvp_id %}Edit RSVP{% else %}Add RSVP{% endif %}
+                        </a>
+                    {% else %}
+                        <span class="admin-row-readonly">View only</span>
+                    {% endif %}
                 </div>
                 {% if row.notes %}
                     <details class="admin-rsvp-notes">

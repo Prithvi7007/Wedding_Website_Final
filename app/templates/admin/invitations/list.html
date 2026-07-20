@@ -12,12 +12,16 @@
             invitation records.
         </p>
     </div>
-    <a
-        class="admin-primary-link"
-        href="{{ url_for('admin.invitation_new') }}"
-    >
-        Add Invitation
-    </a>
+    {% if current_admin_is_full %}
+        <a
+            class="admin-primary-link"
+            href="{{ url_for('admin.invitation_new') }}"
+        >
+            Add Invitation
+        </a>
+    {% else %}
+        <span class="admin-view-only-badge">View-only access</span>
+    {% endif %}
 </section>
 
 <form
@@ -240,14 +244,16 @@
                     >
                         View
                     </a>
-                    <a
-                        href="{{ url_for(
-                            'admin.invitation_edit',
-                            invitation_id=invitation.invitation_id
-                        ) }}"
-                    >
-                        Edit
-                    </a>
+                    {% if current_admin_is_full %}
+                        <a
+                            href="{{ url_for(
+                                'admin.invitation_edit',
+                                invitation_id=invitation.invitation_id
+                            ) }}"
+                        >
+                            Edit
+                        </a>
+                    {% endif %}
                 </div>
             </article>
         {% else %}

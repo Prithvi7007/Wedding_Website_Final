@@ -130,7 +130,20 @@
                         </time>
                     </header>
 
-                    <dl class="admin-audit-meta">
+                    <dl class="admin-audit-meta admin-audit-meta-actor">
+                        <div>
+                            <dt>Actor</dt>
+                            <dd>
+                                {% if entry.details and entry.details.get("actor_display_name") %}
+                                    {{ entry.details.get("actor_display_name") }}
+                                    · {{ entry.details.get("actor_role", "unknown")|title }}
+                                {% elif entry.details and entry.details.get("attempted_username") %}
+                                    Attempted: {{ entry.details.get("attempted_username") }}
+                                {% else %}
+                                    Legacy record
+                                {% endif %}
+                            </dd>
+                        </div>
                         <div>
                             <dt>Audit ID</dt>
                             <dd>#{{ entry.audit_id }}</dd>

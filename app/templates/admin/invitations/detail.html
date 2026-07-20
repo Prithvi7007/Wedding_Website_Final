@@ -1,234 +1,514 @@
 {% extends "admin/base.html" %}
 
+
+
 {% block title %}{{ invitation.display_name }} · Wedding Admin{% endblock %}
 
+
+
 {% block content %}
+
 <section class="admin-page-heading admin-heading-actions">
+
     <div>
+
         <p class="admin-eyebrow">
+
             Invitation #{{ invitation.invitation_id }}
+
         </p>
+
         <h1>{{ invitation.display_name }}</h1>
+
         <p>
+
             {{ invitation.first_name }}
+
             {% if invitation.last_name %}{{ invitation.last_name }}{% endif %}
+
             {% if invitation.partner_name %} · {{ invitation.partner_name }}{% endif %}
+
         </p>
+
     </div>
+
+
 
     <div class="admin-heading-button-group">
+
         <a
+
             class="admin-secondary-link"
+
             href="{{ url_for('admin.invitations') }}"
+
         >
+
             All Invitations
+
         </a>
-        <a
-            class="admin-primary-link"
-            href="{{ url_for(
-                'admin.invitation_edit',
-                invitation_id=invitation.invitation_id
-            ) }}"
-        >
-            Edit Invitation
-        </a>
+
+        {% if current_admin_is_full %}
+
+            <a
+
+                class="admin-primary-link"
+
+                href="{{ url_for(
+
+                    'admin.invitation_edit',
+
+                    invitation_id=invitation.invitation_id
+
+                ) }}"
+
+            >
+
+                Edit Invitation
+
+            </a>
+
+        {% else %}
+
+            <span class="admin-view-only-badge">View-only access</span>
+
+        {% endif %}
+
     </div>
+
 </section>
 
+
+
 <section class="admin-detail-grid">
+
     <article class="admin-section">
+
         <div class="admin-section-heading">
+
             <div>
+
                 <p class="admin-eyebrow">Private Access</p>
+
                 <h2>Invitation Link</h2>
+
             </div>
+
             <span
+
                 class="admin-status {% if invitation.is_active %}admin-status-yes{% else %}admin-status-no{% endif %}"
+
             >
+
                 {% if invitation.is_active %}Active{% else %}Inactive{% endif %}
+
             </span>
+
         </div>
+
+
 
         <div class="admin-copy-field">
+
             <code>{{ private_url }}</code>
+
             <button
+
                 type="button"
+
                 data-copy-value="{{ private_url }}"
+
             >
+
                 Copy Link
+
             </button>
+
         </div>
+
+
 
         <p class="admin-helper-text">
+
             This URL identifies the invitation. Treat it as private.
+
         </p>
 
-        <div class="admin-inline-actions">
-            <form
-                action="{{ url_for(
-                    'admin.invitation_toggle_active',
-                    invitation_id=invitation.invitation_id
-                ) }}"
-                method="post"
-            >
-                <input
-                    type="hidden"
-                    name="csrf_token"
-                    value="{{ csrf_token() }}"
+
+
+        {% if current_admin_is_full %}
+
+            <div class="admin-inline-actions">
+
+                <form
+
+                    action="{{ url_for(
+
+                        'admin.invitation_toggle_active',
+
+                        invitation_id=invitation.invitation_id
+
+                    ) }}"
+
+                    method="post"
+
                 >
-                <button class="admin-secondary-button" type="submit">
-                    {% if invitation.is_active %}
-                        Deactivate Invitation
-                    {% else %}
-                        Reactivate Invitation
-                    {% endif %}
-                </button>
-            </form>
-        </div>
+
+                    <input
+
+                        type="hidden"
+
+                        name="csrf_token"
+
+                        value="{{ csrf_token() }}"
+
+                    >
+
+                    <button class="admin-secondary-button" type="submit">
+
+                        {% if invitation.is_active %}
+
+                            Deactivate Invitation
+
+                        {% else %}
+
+                            Reactivate Invitation
+
+                        {% endif %}
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        {% endif %}
+
     </article>
 
+
+
     <article class="admin-section">
+
         <div class="admin-section-heading">
+
             <div>
+
                 <p class="admin-eyebrow">Contact and Grouping</p>
+
                 <h2>Household Record</h2>
+
             </div>
+
         </div>
+
+
 
         <dl class="admin-detail-list">
+
             <div>
+
                 <dt>Representing side</dt>
+
                 <dd>{{ invitation.represent_side or "—" }}</dd>
+
             </div>
+
             <div>
+
                 <dt>Guest group</dt>
+
                 <dd>{{ invitation.guest_group or "—" }}</dd>
+
             </div>
+
             <div>
+
                 <dt>Email</dt>
+
                 <dd>{{ invitation.email or "—" }}</dd>
+
             </div>
+
             <div>
+
                 <dt>Phone</dt>
+
                 <dd>{{ invitation.phone or "—" }}</dd>
+
             </div>
+
             <div>
+
                 <dt>Created</dt>
+
                 <dd>
+
                     {{ invitation.created_at.strftime("%b %d, %Y") }}
+
                 </dd>
+
             </div>
+
             <div>
+
                 <dt>Source key</dt>
+
                 <dd>{{ invitation.source_key or "—" }}</dd>
+
             </div>
+
         </dl>
+
     </article>
+
 </section>
+
+
 
 <section class="admin-section">
+
     <div class="admin-section-heading">
+
         <div>
+
             <p class="admin-eyebrow">Permissions and Responses</p>
+
             <h2>Event Access</h2>
+
         </div>
+
         <a class="admin-secondary-link"
+
            href="{{ url_for('admin.rsvps', q=invitation.display_name, invitation_status='all') }}">
+
             View in RSVP Directory
+
         </a>
+
     </div>
+
+
 
     <div class="admin-event-access-list">
+
         {% for event in events %}
+
             {% set permission = permissions.get(event.event_id) %}
+
             {% set rsvp = rsvps.get(event.event_id) %}
+
             <article class="admin-access-row admin-access-row-actions {% if not permission %}admin-access-disabled{% endif %}">
+
                 <div>
+
                     <span>{{ event.event_date.strftime("%b %d") }}</span>
+
                     <h3>{{ event.title }}</h3>
+
                 </div>
+
                 <dl>
+
                     <div><dt>Access</dt><dd>{% if permission %}Invited{% else %}Not invited{% endif %}</dd></div>
+
                     <div><dt>Maximum guests</dt><dd>{% if permission %}{{ permission.max_guests }}{% else %}—{% endif %}</dd></div>
+
                     <div>
+
                         <dt>RSVP</dt>
+
                         <dd>
+
                             {% if rsvp %}
+
                                 <span class="admin-status admin-status-{{ rsvp.attending|lower }}">{{ rsvp.attending }}</span>
+
                                 · {{ rsvp.guest_count }} guest{% if rsvp.guest_count != 1 %}s{% endif %}
+
                             {% else %}
+
                                 <span class="admin-status admin-status-pending">No response</span>
+
                             {% endif %}
+
                         </dd>
+
                     </div>
+
                 </dl>
-                {% if permission %}
+
+                {% if permission and current_admin_is_full %}
+
                     <a class="admin-access-edit-link"
+
                        href="{{ url_for('admin.rsvp_edit', invitation_id=invitation.invitation_id, event_id=event.event_id) }}">
+
                         {% if rsvp %}Edit RSVP{% else %}Add RSVP{% endif %}
+
                     </a>
+
+                {% elif permission %}
+
+                    <span class="admin-row-readonly">View only</span>
+
                 {% endif %}
+
             </article>
+
         {% else %}
+
             <div class="admin-empty-state">No wedding events are configured.</div>
+
         {% endfor %}
+
     </div>
+
 </section>
+
+
 
 <section class="admin-detail-grid">
+
     <article class="admin-section">
+
         <div class="admin-section-heading">
+
             <div>
+
                 <p class="admin-eyebrow">Guest Copy</p>
+
                 <h2>Messages</h2>
+
             </div>
+
         </div>
 
+
+
         <div class="admin-message-block">
+
             <strong>General message</strong>
+
             <p>{{ invitation.message or "No general message." }}</p>
+
         </div>
+
         <div class="admin-message-block">
+
             <strong>Private invitation message</strong>
+
             <p>{{ invitation.invite_message or "No private message." }}</p>
+
         </div>
+
     </article>
 
-    <article class="admin-section admin-danger-zone">
-        <div class="admin-section-heading">
-            <div>
-                <p class="admin-eyebrow">Sensitive Action</p>
-                <h2>Regenerate Private Link</h2>
+
+
+    {% if current_admin_is_full %}
+
+        <article class="admin-section admin-danger-zone">
+
+            <div class="admin-section-heading">
+
+                <div>
+
+                    <p class="admin-eyebrow">Sensitive Action</p>
+
+                    <h2>Regenerate Private Link</h2>
+
+                </div>
+
             </div>
-        </div>
 
-        <p>
-            Regenerating the token immediately invalidates the previous private
-            invitation URL. Existing RSVP records are preserved.
-        </p>
+    
 
-        <form
-            action="{{ url_for(
-                'admin.invitation_regenerate_token',
-                invitation_id=invitation.invitation_id
-            ) }}"
-            method="post"
-            data-confirm-form="Create a new private link? The current link will stop working."
-        >
-            <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
+            <p>
+
+                Regenerating the token immediately invalidates the previous private
+
+                invitation URL. Existing RSVP records are preserved.
+
+            </p>
+
+    
+
+            <form
+
+                action="{{ url_for(
+
+                    'admin.invitation_regenerate_token',
+
+                    invitation_id=invitation.invitation_id
+
+                ) }}"
+
+                method="post"
+
+                data-confirm-form="Create a new private link? The current link will stop working."
+
             >
-            <input
-                type="hidden"
-                name="confirm_regenerate"
-                value="1"
-            >
-            <button class="admin-danger-button" type="submit">
-                Regenerate Link
-            </button>
-        </form>
-    </article>
+
+                <input
+
+                    type="hidden"
+
+                    name="csrf_token"
+
+                    value="{{ csrf_token() }}"
+
+                >
+
+                <input
+
+                    type="hidden"
+
+                    name="confirm_regenerate"
+
+                    value="1"
+
+                >
+
+                <button class="admin-danger-button" type="submit">
+
+                    Regenerate Link
+
+                </button>
+
+            </form>
+
+        </article>
+
+    {% else %}
+
+        <article class="admin-section admin-viewer-note">
+
+            <div class="admin-section-heading">
+
+                <div>
+
+                    <p class="admin-eyebrow">Family Access</p>
+
+                    <h2>Read-only record</h2>
+
+                </div>
+
+            </div>
+
+            <p>
+
+                You can review this household and its RSVP information.
+
+                Changes can only be made by Adlin or Prithvi.
+
+            </p>
+
+        </article>
+
+    {% endif %}
+
 </section>
+
 {% endblock %}
+

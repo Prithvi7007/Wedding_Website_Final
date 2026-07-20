@@ -2150,3 +2150,96 @@ form.is-submitting input[type="submit"] {
         animation-iteration-count: 1 !important;
     }
 }
+
+/* ADMIN NAMED ACCOUNTS — PHASE 5A */
+
+.admin-account-pill,
+.admin-view-only-badge,
+.admin-row-readonly {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(228, 184, 103, 0.20);
+    border-radius: 999px;
+    background: rgba(228, 184, 103, 0.07);
+    color: var(--admin-copy);
+}
+
+.admin-account-pill {
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 40px;
+    padding: 6px 12px;
+    line-height: 1.1;
+}
+
+.admin-account-pill span {
+    color: var(--admin-cream);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.admin-account-pill small {
+    margin-top: 3px;
+    color: var(--admin-gold);
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.admin-view-only-badge {
+    min-height: 42px;
+    padding: 9px 14px;
+    color: var(--admin-gold);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+}
+
+.admin-row-readonly {
+    min-height: 34px;
+    padding: 7px 11px;
+    color: var(--admin-muted);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+.admin-viewer-note {
+    border-color: rgba(228, 184, 103, 0.22);
+}
+
+.admin-viewer-note > p {
+    color: var(--admin-muted);
+    font-size: 11px;
+    line-height: 1.65;
+}
+
+.admin-audit-meta-actor {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.admin-login-form .admin-input + label {
+    margin-top: 8px;
+}
+
+@media (max-width: 1180px) {
+    .admin-audit-meta-actor {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .admin-account-pill {
+        flex: 0 0 auto;
+        align-items: center;
+        min-height: 38px;
+    }
+
+    .admin-audit-meta-actor {
+        grid-template-columns: 1fr 1fr;
+    }
+}

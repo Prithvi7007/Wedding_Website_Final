@@ -58,14 +58,27 @@
             >
                 RSVPs
             </a>
-            <a
-                href="{{ url_for('admin.audit') }}"
-                {% if request.endpoint == 'admin.audit' %}
-                    aria-current="page"
-                {% endif %}
-            >
-                Audit
-            </a>
+            {% if current_admin_is_full %}
+                <a
+                    href="{{ url_for('admin.audit') }}"
+                    {% if request.endpoint == 'admin.audit' %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    Audit
+                </a>
+            {% endif %}
+
+            <div class="admin-account-pill" aria-label="Signed-in account">
+                <span>{{ current_admin_display_name }}</span>
+                <small>
+                    {% if current_admin_is_full %}
+                        Administrator
+                    {% else %}
+                        View only
+                    {% endif %}
+                </small>
+            </div>
 
             <form
                 action="{{ url_for('admin.logout') }}"
