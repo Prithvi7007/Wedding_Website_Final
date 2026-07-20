@@ -28,7 +28,7 @@
 </section>
 
 <section class="admin-rsvp-summary" aria-label="Filtered RSVP summary">
-    <article><span>Invited event records</span><strong>{{ summary.total }}</strong></article>
+    <article><span>Invitation-event records</span><strong>{{ summary.total }}</strong></article>
     <article><span>Confirmed guests</span><strong>{{ summary.confirmed_guests }}</strong></article>
     <article><span>Yes responses</span><strong>{{ summary.yes }}</strong></article>
     <article><span>Declined</span><strong>{{ summary.no }}</strong></article>
@@ -36,7 +36,11 @@
     <article><span>No response</span><strong>{{ summary.no_response }}</strong></article>
 </section>
 
-<form method="get" class="admin-filter-bar admin-rsvp-filter-bar">
+<form
+    method="get"
+    class="admin-filter-bar admin-rsvp-filter-bar"
+    data-auto-submit
+>
     <div class="admin-filter-search">
         <label for="rsvp-search">Search RSVPs</label>
         <input id="rsvp-search" name="q" type="search"
@@ -86,6 +90,49 @@
     <a class="admin-clear-filter" href="{{ url_for('admin.rsvps') }}">Clear</a>
 </form>
 
+{% set has_rsvp_filters =
+    filters.query
+    or filters.response != "all"
+    or filters.event_id
+    or filters.invitation_status != "active"
+%}
+{% if has_rsvp_filters %}
+    <div class="admin-active-filters" aria-label="Active RSVP filters">
+        <span>Active filters</span>
+        {% if filters.query %}
+            <a class="admin-filter-chip"
+               href="{{ url_for('admin.rsvps', response=filters.response, invitation_status=filters.invitation_status, event=filters.event_id or none, sort=filters.sort) }}">
+                Search: {{ filters.query }} <b aria-hidden="true">×</b>
+            </a>
+        {% endif %}
+        {% if filters.response != "all" %}
+            <a class="admin-filter-chip"
+               href="{{ url_for('admin.rsvps', q=filters.query or none, response='all', invitation_status=filters.invitation_status, event=filters.event_id or none, sort=filters.sort) }}">
+                Response:
+                {% if filters.response == "no_response" %}No response{% else %}{{ filters.response|title }}{% endif %}
+                <b aria-hidden="true">×</b>
+            </a>
+        {% endif %}
+        {% if filters.event_id %}
+            {% for event in events %}
+                {% if event.event_id == filters.event_id %}
+                    <a class="admin-filter-chip"
+                       href="{{ url_for('admin.rsvps', q=filters.query or none, response=filters.response, invitation_status=filters.invitation_status, sort=filters.sort) }}">
+                        Event: {{ event.title }} <b aria-hidden="true">×</b>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if filters.invitation_status != "active" %}
+            <a class="admin-filter-chip"
+               href="{{ url_for('admin.rsvps', q=filters.query or none, response=filters.response, invitation_status='active', event=filters.event_id or none, sort=filters.sort) }}">
+                Invitation: {{ filters.invitation_status|title }} <b aria-hidden="true">×</b>
+            </a>
+        {% endif %}
+        <a class="admin-filter-clear-all" href="{{ url_for('admin.rsvps') }}">Clear all</a>
+    </div>
+{% endif %}
+
 <section class="admin-section">
     <div class="admin-section-heading admin-list-summary">
         <div>
@@ -126,7 +173,13 @@
                     </div>
                     <div>
                         <dt>Updated</dt>
-                        <dd>{% if row.updated_at %}{{ row.updated_at.strftime("%b %d, %Y") }}{% else %}—{% endif %}</dd>
+                        <dd>
+                            {% if row.updated_at %}
+                                {{ row.updated_at.strftime("%b %d, %Y · %I:%M %p") }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </dd>
                     </div>
                 </dl>
                 <div class="admin-rsvp-actions">
@@ -135,11 +188,20 @@
                     </a>
                 </div>
                 {% if row.notes %}
-                    <p class="admin-rsvp-notes"><strong>Notes:</strong> {{ row.notes }}</p>
+                    <details class="admin-rsvp-notes">
+                        <summary>View RSVP notes</summary>
+                        <p>{{ row.notes }}</p>
+                    </details>
                 {% endif %}
             </article>
         {% else %}
-            <div class="admin-empty-state">No RSVP records match the selected filters.</div>
+            <div class="admin-empty-state">
+                <strong>No RSVP records found</strong>
+                <span>No invitation-event records match the selected filters.</span>
+                <a class="admin-empty-action" href="{{ url_for('admin.rsvps') }}">
+                    Clear filters
+                </a>
+            </div>
         {% endfor %}
     </div>
 

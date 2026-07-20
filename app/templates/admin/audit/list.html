@@ -15,7 +15,11 @@
     <span class="admin-audit-readonly">Read-only record</span>
 </section>
 
-<form method="get" class="admin-filter-bar admin-audit-filter-bar">
+<form
+    method="get"
+    class="admin-filter-bar admin-audit-filter-bar"
+    data-auto-submit
+>
     <div class="admin-filter-search">
         <label for="audit-search">Search history</label>
         <input
@@ -62,6 +66,32 @@
         Clear
     </a>
 </form>
+
+{% set has_audit_filters = filters.query or filters.action or filters.entity_type %}
+{% if has_audit_filters %}
+    <div class="admin-active-filters" aria-label="Active audit filters">
+        <span>Active filters</span>
+        {% if filters.query %}
+            <a class="admin-filter-chip"
+               href="{{ url_for('admin.audit', action=filters.action or none, entity_type=filters.entity_type or none) }}">
+                Search: {{ filters.query }} <b aria-hidden="true">×</b>
+            </a>
+        {% endif %}
+        {% if filters.action %}
+            <a class="admin-filter-chip"
+               href="{{ url_for('admin.audit', q=filters.query or none, entity_type=filters.entity_type or none) }}">
+                Action: {{ filters.action|replace(".", " · ") }} <b aria-hidden="true">×</b>
+            </a>
+        {% endif %}
+        {% if filters.entity_type %}
+            <a class="admin-filter-chip"
+               href="{{ url_for('admin.audit', q=filters.query or none, action=filters.action or none) }}">
+                Entity: {{ filters.entity_type|replace("_", " ")|title }} <b aria-hidden="true">×</b>
+            </a>
+        {% endif %}
+        <a class="admin-filter-clear-all" href="{{ url_for('admin.audit') }}">Clear all</a>
+    </div>
+{% endif %}
 
 <section class="admin-section">
     <div class="admin-section-heading admin-list-summary">
@@ -155,7 +185,11 @@
             </article>
         {% else %}
             <div class="admin-empty-state">
-                No audit entries match the selected filters.
+                <strong>No audit entries found</strong>
+                <span>No audit records match the selected filters.</span>
+                <a class="admin-empty-action" href="{{ url_for('admin.audit') }}">
+                    Clear filters
+                </a>
             </div>
         {% endfor %}
     </div>

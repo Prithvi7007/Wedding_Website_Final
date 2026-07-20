@@ -14,47 +14,54 @@
 </section>
 
 <section class="admin-metric-grid" aria-label="Wedding response summary">
-    <article class="admin-metric-card">
+    <a class="admin-metric-card admin-metric-link"
+       href="{{ url_for('admin.invitations', status='active') }}">
         <span>Active invitations</span>
         <strong>{{ totals.total_active_invitations }}</strong>
-        <small>Households or invitation records</small>
-    </article>
+        <small>Households with active private invitations</small>
+    </a>
 
-    <article class="admin-metric-card">
-        <span>Invitations responded</span>
+    <a class="admin-metric-card admin-metric-link"
+       href="{{ url_for('admin.rsvps', invitation_status='active') }}">
+        <span>Households responding</span>
         <strong>{{ totals.responded_invitations }}</strong>
-        <small>At least one event response</small>
-    </article>
+        <small>At least one event response submitted</small>
+    </a>
 
-    <article class="admin-metric-card">
-        <span>No response</span>
+    <a class="admin-metric-card admin-metric-link"
+       href="{{ url_for('admin.rsvps', response='no_response', invitation_status='active') }}">
+        <span>No RSVP submitted</span>
         <strong>{{ totals.no_response_invitations }}</strong>
-        <small>No RSVP submitted for any event</small>
-    </article>
+        <small>Active households requiring follow-up</small>
+    </a>
 
-    <article class="admin-metric-card admin-metric-highlight">
+    <a class="admin-metric-card admin-metric-link admin-metric-highlight"
+       href="{{ url_for('admin.rsvps', response='no_response', invitation_status='active') }}">
         <span>Overall completion</span>
         <strong>{{ "%.1f"|format(totals.completion_percentage) }}%</strong>
-        <small>Responded invitations ÷ active invitations</small>
-    </article>
+        <small>Responding households ÷ active invitations</small>
+    </a>
 
-    <article class="admin-metric-card">
+    <a class="admin-metric-card admin-metric-link"
+       href="{{ url_for('admin.rsvps', response='yes', invitation_status='active') }}">
         <span>Guests attending</span>
         <strong>{{ totals.attending_guests }}</strong>
-        <small>Individual confirmed guests</small>
-    </article>
+        <small>Confirmed individual guest count</small>
+    </a>
 
-    <article class="admin-metric-card">
-        <span>Declined responses</span>
+    <a class="admin-metric-card admin-metric-link"
+       href="{{ url_for('admin.rsvps', response='no', invitation_status='active') }}">
+        <span>Declined event responses</span>
         <strong>{{ totals.declined_responses }}</strong>
-        <small>RSVP records marked No</small>
-    </article>
+        <small>Event responses marked declined</small>
+    </a>
 
-    <article class="admin-metric-card">
+    <a class="admin-metric-card admin-metric-link"
+       href="{{ url_for('admin.rsvps', response='maybe', invitation_status='active') }}">
         <span>Maybe responses</span>
         <strong>{{ totals.maybe_responses }}</strong>
-        <small>RSVP records awaiting a final decision</small>
-    </article>
+        <small>Responses awaiting a final decision</small>
+    </a>
 </section>
 
 <section class="admin-section">
@@ -67,7 +74,10 @@
 
     <div class="admin-event-grid">
         {% for event in events %}
-            <article class="admin-event-card">
+            <a
+                class="admin-event-card admin-event-link"
+                href="{{ url_for('admin.rsvps', event=event.event_id, invitation_status='active') }}"
+            >
                 <header>
                     <div>
                         <span>
@@ -100,14 +110,14 @@
                         <dd>{{ event.confirmed_guest_count }}</dd>
                     </div>
                     <div>
-                        <dt>Maximum possible</dt>
+                        <dt>Maximum invited</dt>
                         <dd>{{ event.maximum_possible_guests }}</dd>
                     </div>
                 </dl>
 
                 <div class="admin-capacity">
                     <div>
-                        <span>Confirmed capacity</span>
+                        <span>Confirmed attendance</span>
                         <strong>
                             {{ event.confirmed_guest_count }}
                             /
@@ -122,11 +132,11 @@
                 </div>
 
                 <footer>
-                    <span>Yes {{ event.yes_response_count }}</span>
-                    <span>No {{ event.no_response_count }}</span>
+                    <span>Attending {{ event.yes_response_count }}</span>
+                    <span>Declined {{ event.no_response_count }}</span>
                     <span>Maybe {{ event.maybe_response_count }}</span>
                 </footer>
-            </article>
+            </a>
         {% else %}
             <div class="admin-empty-state">
                 No wedding events were found.
@@ -157,7 +167,13 @@
                 </thead>
                 <tbody>
                     {% for item in recent_activity %}
-                        <tr>
+                        <tr
+                            class="admin-clickable-row"
+                            data-row-href="{{ url_for('admin.rsvp_edit', invitation_id=item.invitation_id, event_id=item.event_id) }}"
+                            tabindex="0"
+                            role="link"
+                            aria-label="Edit RSVP for {{ item.display_name }} and {{ item.event_title }}"
+                        >
                             <td data-label="Invitation">
                                 {{ item.display_name }}
                             </td>
@@ -176,7 +192,7 @@
                             </td>
                             <td data-label="Updated">
                                 {% if item.updated_at %}
-                                    {{ item.updated_at.strftime("%b %d, %I:%M %p") }}
+                                    {{ item.updated_at.strftime("%b %d, %Y · %I:%M %p") }}
                                 {% else %}
                                     —
                                 {% endif %}
@@ -198,19 +214,23 @@
         <div class="admin-section-heading">
             <div>
                 <p class="admin-eyebrow">Follow Up</p>
-                <h2>No Response Yet</h2>
+                <h2>No RSVP Submitted</h2>
             </div>
         </div>
 
         <div class="admin-unanswered-list">
             {% for invitation in unanswered_invitations %}
-                <div>
+                <a
+                    href="{{ url_for('admin.invitation_detail', invitation_id=invitation.invitation_id) }}"
+                >
                     <span>{{ invitation.display_name }}</span>
                     <small>
-                        Added
-                        {{ invitation.created_at.strftime("%b %d, %Y") }}
+                        {{ invitation.represent_side or "Unassigned side" }}
+                        {% if invitation.guest_group %}
+                            · {{ invitation.guest_group }}
+                        {% endif %}
                     </small>
-                </div>
+                </a>
             {% else %}
                 <div class="admin-empty-state">
                     Every active invitation has submitted at least one response.

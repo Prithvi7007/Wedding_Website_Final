@@ -24,6 +24,7 @@
     method="get"
     class="admin-filter-bar admin-invitation-filter-bar"
     aria-label="Invitation filters"
+    data-auto-submit
 >
     <div class="admin-filter-search">
         <label for="invitation-search">Search invitations</label>
@@ -117,6 +118,49 @@
     </a>
 </form>
 
+{% set has_invitation_filters =
+    filters.query
+    or filters.status != "all"
+    or filters.event_id
+    or filters.represent_side
+%}
+{% if has_invitation_filters %}
+    <div class="admin-active-filters" aria-label="Active invitation filters">
+        <span>Active filters</span>
+        {% if filters.query %}
+            <a class="admin-filter-chip"
+               href="{{ url_for('admin.invitations', status=filters.status, event=filters.event_id or none, represent=filters.represent_side or none, sort=filters.sort) }}">
+                Search: {{ filters.query }} <b aria-hidden="true">×</b>
+            </a>
+        {% endif %}
+        {% if filters.status != "all" %}
+            <a class="admin-filter-chip"
+               href="{{ url_for('admin.invitations', q=filters.query or none, status='all', event=filters.event_id or none, represent=filters.represent_side or none, sort=filters.sort) }}">
+                Status: {{ filters.status|title }} <b aria-hidden="true">×</b>
+            </a>
+        {% endif %}
+        {% if filters.event_id %}
+            {% for event in events %}
+                {% if event.event_id == filters.event_id %}
+                    <a class="admin-filter-chip"
+                       href="{{ url_for('admin.invitations', q=filters.query or none, status=filters.status, represent=filters.represent_side or none, sort=filters.sort) }}">
+                        Event: {{ event.title }} <b aria-hidden="true">×</b>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if filters.represent_side %}
+            <a class="admin-filter-chip"
+               href="{{ url_for('admin.invitations', q=filters.query or none, status=filters.status, event=filters.event_id or none, sort=filters.sort) }}">
+                Represent:
+                {% if filters.represent_side == "__unassigned__" %}Unassigned{% else %}{{ filters.represent_side }}{% endif %}
+                <b aria-hidden="true">×</b>
+            </a>
+        {% endif %}
+        <a class="admin-filter-clear-all" href="{{ url_for('admin.invitations') }}">Clear all</a>
+    </div>
+{% endif %}
+
 <section class="admin-section admin-invitation-section">
     <div class="admin-section-heading admin-list-summary">
         <div>
@@ -208,7 +252,11 @@
             </article>
         {% else %}
             <div class="admin-empty-state">
-                No invitations match the selected filters.
+                <strong>No invitations found</strong>
+                <span>No invitation records match the selected filters.</span>
+                <a class="admin-empty-action" href="{{ url_for('admin.invitations') }}">
+                    Clear filters
+                </a>
             </div>
         {% endfor %}
     </div>

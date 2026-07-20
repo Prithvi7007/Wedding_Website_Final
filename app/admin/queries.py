@@ -13,26 +13,17 @@ def _integer_scalar(statement) -> int:
 
 
 def dashboard_totals() -> dict[str, int]:
-    """Return invitation-level and person-level totals without mixing units."""
+    """Return all dashboard headline totals with one aggregate query."""
     normalized_status = func.lower(func.trim(RSVP.attending))
 
-    total_active = _integer_scalar(
-        select(func.count(Invitation.invitation_id)).where(
-            Invitation.is_active.is_(True)
-        )
-    )
-
-    responded_invitations = _integer_scalar(
-        select(func.count(distinct(RSVP.invitation_id)))
-        .join(
-            Invitation,
-            Invitation.invitation_id == RSVP.invitation_id,
-        )
-        .where(Invitation.is_active.is_(True))
-    )
-
-    attending_guests = _integer_scalar(
+    statement = (
         select(
+            func.count(
+                distinct(Invitation.invitation_id)
+            ).label("total_active_invitations"),
+            func.count(
+                distinct(RSVP.invitation_id)
+            ).label("responded_invitations"),
             func.coalesce(
                 func.sum(
                     case(
@@ -41,49 +32,45 @@ def dashboard_totals() -> dict[str, int]:
                     )
                 ),
                 0,
-            )
+            ).label("attending_guests"),
+            func.coalesce(
+                func.sum(
+                    case(
+                        (normalized_status == "no", 1),
+                        else_=0,
+                    )
+                ),
+                0,
+            ).label("declined_responses"),
+            func.coalesce(
+                func.sum(
+                    case(
+                        (normalized_status == "maybe", 1),
+                        else_=0,
+                    )
+                ),
+                0,
+            ).label("maybe_responses"),
         )
-        .join(
-            Invitation,
-            Invitation.invitation_id == RSVP.invitation_id,
+        .select_from(Invitation)
+        .outerjoin(
+            RSVP,
+            RSVP.invitation_id == Invitation.invitation_id,
         )
         .where(Invitation.is_active.is_(True))
     )
 
-    declined_responses = _integer_scalar(
-        select(func.count(RSVP.rsvp_id))
-        .join(
-            Invitation,
-            Invitation.invitation_id == RSVP.invitation_id,
-        )
-        .where(
-            Invitation.is_active.is_(True),
-            normalized_status == "no",
-        )
-    )
-
-    maybe_responses = _integer_scalar(
-        select(func.count(RSVP.rsvp_id))
-        .join(
-            Invitation,
-            Invitation.invitation_id == RSVP.invitation_id,
-        )
-        .where(
-            Invitation.is_active.is_(True),
-            normalized_status == "maybe",
-        )
-    )
+    row = db.session.execute(statement).mappings().one()
+    total_active = int(row["total_active_invitations"] or 0)
+    responded = int(row["responded_invitations"] or 0)
 
     return {
         "total_active_invitations": total_active,
-        "responded_invitations": responded_invitations,
-        "no_response_invitations": max(
-            0,
-            total_active - responded_invitations,
-        ),
-        "attending_guests": attending_guests,
-        "declined_responses": declined_responses,
-        "maybe_responses": maybe_responses,
+        "responded_invitations": responded,
+        "no_response_invitations": max(0, total_active - responded),
+        "attending_guests": int(row["attending_guests"] or 0),
+        "declined_responses": int(row["declined_responses"] or 0),
+        "maybe_responses": int(row["maybe_responses"] or 0),
     }
 
 
@@ -274,6 +261,8 @@ def invitations_without_any_response(
             Invitation.display_name,
             Invitation.first_name,
             Invitation.last_name,
+            Invitation.represent_side,
+            Invitation.guest_group,
             Invitation.created_at,
         )
         .where(

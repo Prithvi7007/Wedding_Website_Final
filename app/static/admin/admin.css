@@ -1706,3 +1706,447 @@ a {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* ADMIN PORTAL POLISH PASS */
+
+:root {
+    --admin-panel-strong: rgba(34, 31, 27, 0.94);
+    --admin-soft-line: rgba(255, 255, 255, 0.075);
+    --admin-focus-ring: rgba(228, 184, 103, 0.22);
+}
+
+.admin-body {
+    background-attachment: fixed;
+}
+
+.admin-topbar {
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.22);
+}
+
+.admin-nav a,
+.admin-nav button,
+.admin-primary-link,
+.admin-secondary-link,
+.admin-filter-button,
+.admin-clear-filter,
+.admin-secondary-button,
+.admin-danger-button,
+.admin-copy-field button,
+.admin-rsvp-actions a,
+.admin-access-edit-link {
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        color 160ms ease,
+        opacity 160ms ease,
+        transform 160ms ease;
+}
+
+.admin-nav a:hover,
+.admin-nav button:hover {
+    color: var(--admin-gold);
+}
+
+.admin-primary-link:hover,
+.admin-filter-button:hover,
+.admin-primary-button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+}
+
+.admin-secondary-link:hover,
+.admin-clear-filter:hover,
+.admin-secondary-button:hover,
+.admin-copy-field button:hover {
+    border-color: rgba(228, 184, 103, 0.35);
+    background: rgba(228, 184, 103, 0.08);
+    color: var(--admin-cream);
+}
+
+.admin-metric-link,
+.admin-event-link {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+    transition:
+        border-color 170ms ease,
+        box-shadow 170ms ease,
+        transform 170ms ease;
+}
+
+.admin-metric-link::after,
+.admin-event-link::after {
+    content: "↗";
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    color: rgba(228, 184, 103, 0.58);
+    font-size: 15px;
+    opacity: 0;
+    transform: translate(-4px, 4px);
+    transition: opacity 170ms ease, transform 170ms ease;
+}
+
+.admin-metric-link:hover,
+.admin-event-link:hover {
+    border-color: rgba(228, 184, 103, 0.34);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+    transform: translateY(-2px);
+}
+
+.admin-metric-link:hover::after,
+.admin-event-link:hover::after {
+    opacity: 1;
+    transform: translate(0, 0);
+}
+
+.admin-metric-link:focus-visible,
+.admin-event-link:focus-visible,
+.admin-clickable-row:focus-visible,
+.admin-filter-chip:focus-visible,
+.admin-empty-action:focus-visible,
+.admin-unanswered-list > a:focus-visible,
+.admin-nav a:focus-visible,
+.admin-nav button:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--admin-gold);
+    outline-offset: 3px;
+}
+
+.admin-filter-bar {
+    background:
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(255, 255, 255, 0.055),
+            transparent 56%
+        ),
+        rgba(25, 23, 20, 0.91);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.20);
+    backdrop-filter: blur(16px) saturate(125%);
+    -webkit-backdrop-filter: blur(16px) saturate(125%);
+}
+
+.admin-filter-bar:focus-within {
+    border-color: rgba(228, 184, 103, 0.30);
+}
+
+.admin-active-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: -10px 0 22px;
+}
+
+.admin-active-filters > span {
+    margin-right: 2px;
+    color: var(--admin-muted);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+}
+
+.admin-filter-chip,
+.admin-filter-clear-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 30px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+        border-color 150ms ease,
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.admin-filter-chip {
+    border: 1px solid rgba(228, 184, 103, 0.20);
+    background: rgba(228, 184, 103, 0.075);
+    color: var(--admin-copy);
+}
+
+.admin-filter-chip b {
+    color: var(--admin-gold);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.admin-filter-chip:hover {
+    border-color: rgba(228, 184, 103, 0.42);
+    background: rgba(228, 184, 103, 0.13);
+    color: var(--admin-cream);
+}
+
+.admin-filter-clear-all {
+    color: var(--admin-muted);
+}
+
+.admin-filter-clear-all:hover {
+    color: var(--admin-gold);
+}
+
+.admin-invitation-list,
+.admin-rsvp-list {
+    gap: 8px;
+}
+
+.admin-invitation-row,
+.admin-rsvp-row,
+.admin-audit-entry {
+    padding: 13px;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.admin-invitation-row:hover,
+.admin-rsvp-row:hover,
+.admin-audit-entry:hover {
+    border-color: rgba(228, 184, 103, 0.20);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.14);
+}
+
+.admin-invitation-meta div,
+.admin-rsvp-response div {
+    padding: 7px 9px;
+}
+
+.admin-row-actions a:hover,
+.admin-rsvp-actions a:hover {
+    color: var(--admin-cream);
+}
+
+.admin-clickable-row {
+    cursor: pointer;
+    transition: background-color 150ms ease;
+}
+
+.admin-clickable-row:hover {
+    background: rgba(228, 184, 103, 0.055);
+}
+
+.admin-unanswered-list > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 12px 14px;
+    border: 1px solid transparent;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.035);
+    color: inherit;
+    text-decoration: none;
+    transition:
+        border-color 150ms ease,
+        background-color 150ms ease,
+        transform 150ms ease;
+}
+
+.admin-unanswered-list > a:hover {
+    border-color: rgba(228, 184, 103, 0.22);
+    background: rgba(228, 184, 103, 0.07);
+    transform: translateX(2px);
+}
+
+.admin-unanswered-list > a span {
+    color: var(--admin-copy);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-unanswered-list > a small {
+    color: var(--admin-muted);
+    font-size: 10px;
+    text-align: right;
+}
+
+.admin-rsvp-notes {
+    grid-column: 1 / -1;
+    margin: -2px 0 0;
+    padding: 9px 11px;
+    border-left: 2px solid rgba(228, 184, 103, 0.32);
+    color: var(--admin-muted);
+    font-size: 10px;
+}
+
+.admin-rsvp-notes summary {
+    color: var(--admin-gold);
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.admin-rsvp-notes p {
+    margin: 9px 0 1px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.admin-empty-state {
+    display: grid;
+    justify-items: center;
+    gap: 7px;
+}
+
+.admin-empty-state strong {
+    color: var(--admin-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 23px;
+    font-weight: 600;
+}
+
+.admin-empty-state span {
+    color: var(--admin-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.admin-empty-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    margin-top: 5px;
+    padding: 7px 12px;
+    border: 1px solid rgba(228, 184, 103, 0.22);
+    border-radius: 999px;
+    background: rgba(228, 184, 103, 0.07);
+    color: var(--admin-gold);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.admin-flash {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.26);
+    transition:
+        opacity 210ms ease,
+        transform 210ms ease;
+}
+
+.admin-flash-dismiss {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.055);
+    color: var(--admin-muted);
+    cursor: pointer;
+    font-size: 17px;
+    line-height: 1;
+}
+
+.admin-flash-dismiss:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: var(--admin-cream);
+}
+
+.admin-flash.is-dismissing {
+    opacity: 0;
+    transform: translateY(-5px);
+}
+
+form.is-submitting {
+    cursor: wait;
+}
+
+form.is-submitting button[type="submit"],
+form.is-submitting input[type="submit"] {
+    cursor: wait;
+    opacity: 0.62;
+}
+
+@media (min-width: 761px) {
+    .admin-filter-bar {
+        position: sticky;
+        top: 78px;
+        z-index: 14;
+    }
+
+    .admin-nav a {
+        position: relative;
+        padding: 9px 0;
+    }
+
+    .admin-nav a::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 2px;
+        left: 0;
+        height: 1px;
+        background: var(--admin-gold);
+        opacity: 0;
+        transform: scaleX(0.45);
+        transition: opacity 150ms ease, transform 150ms ease;
+    }
+
+    .admin-nav a[aria-current="page"]::after {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
+@media (max-width: 760px) {
+    .admin-active-filters {
+        margin-top: -8px;
+    }
+
+    .admin-invitation-row,
+    .admin-rsvp-row,
+    .admin-audit-entry {
+        padding: 14px;
+    }
+
+    .admin-unanswered-list > a {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .admin-unanswered-list > a small {
+        text-align: left;
+    }
+
+    .admin-rsvp-notes {
+        grid-column: auto;
+    }
+
+    .admin-metric-link::after,
+    .admin-event-link::after {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

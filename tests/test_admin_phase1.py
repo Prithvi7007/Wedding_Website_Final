@@ -180,5 +180,5 @@ def test_admin_dashboard_metrics_are_distinct_and_dynamic(client, app):
     assert "No Response Household" in html
     assert "Guests attending" in html
     assert "Christian Wedding &amp; Reception" in html
-    assert "Declined responses" in html
+    assert "Declined event responses" in html
     assert "Attending Family" in html
