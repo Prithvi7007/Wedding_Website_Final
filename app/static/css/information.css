@@ -1786,3 +1786,31 @@ body[data-active-tab="qa"] .ambient-slideshow-shade {
         font-size: 17px;
     }
 }
+
+
+/* Q&A UPDATED ANSWERS V1 */
+
+.qa-contact-link {
+    color: rgba(239, 203, 130, .94);
+    font-weight: 650;
+    text-decoration: underline;
+    text-decoration-color: rgba(239, 203, 130, .38);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition:
+        color 180ms ease,
+        text-decoration-color 180ms ease;
+}
+
+.qa-contact-link:hover,
+.qa-contact-link:focus-visible {
+    color: #fff0ce;
+    text-decoration-color: rgba(255, 240, 206, .82);
+}
+
+@media (max-width: 700px) {
+    .qa-contact-link {
+        display: inline;
+        line-height: 1.65;
+    }
+}
