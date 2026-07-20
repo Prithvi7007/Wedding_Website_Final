@@ -85,15 +85,24 @@ def current_page_size() -> int:
 
 
 def audit_filter_options() -> tuple[list[str], list[str]]:
-    action_statement = (
+    action_values = (
         select(AdminAuditLog.action)
         .distinct()
-        .order_by(func.lower(AdminAuditLog.action).asc())
+        .subquery()
     )
-    entity_statement = (
+    entity_values = (
         select(AdminAuditLog.entity_type)
         .distinct()
-        .order_by(func.lower(AdminAuditLog.entity_type).asc())
+        .subquery()
+    )
+
+    action_statement = (
+        select(action_values.c.action)
+        .order_by(func.lower(action_values.c.action).asc())
+    )
+    entity_statement = (
+        select(entity_values.c.entity_type)
+        .order_by(func.lower(entity_values.c.entity_type).asc())
     )
 
     actions = list(db.session.scalars(action_statement).all())
