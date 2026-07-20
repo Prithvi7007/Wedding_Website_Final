@@ -112,7 +112,7 @@ function initializeRsvpForm() {
     }
 
     const syncGuestCount = () => {
-        if (statusField.value === "No") {
+        if (["No", "__clear__"].includes(statusField.value)) {
             const currentCount = Number.parseInt(
                 guestCountField.value || "0",
                 10,

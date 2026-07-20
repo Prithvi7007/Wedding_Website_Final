@@ -27,7 +27,12 @@
             Export CSV
         </a>
     {% else %}
-        <span class="admin-view-only-badge">View-only access</span>
+        <a
+            class="admin-secondary-link"
+            href="{{ url_for('admin.my_change_requests') }}"
+        >
+            My Change Requests
+        </a>
     {% endif %}
 </section>
 
@@ -47,9 +52,13 @@
 >
     <div class="admin-filter-search">
         <label for="rsvp-search">Search RSVPs</label>
-        <input id="rsvp-search" name="q" type="search"
-               value="{{ filters.query }}"
-               placeholder="Name, invitation ID, contact, group, or notes">
+        <input
+            id="rsvp-search"
+            name="q"
+            type="search"
+            value="{{ filters.query }}"
+            placeholder="Name, invitation ID, contact, group, or notes"
+        >
     </div>
     <div>
         <label for="response-filter">Response</label>
@@ -66,8 +75,10 @@
         <select id="rsvp-event-filter" name="event">
             <option value="">All events</option>
             {% for event in events %}
-                <option value="{{ event.event_id }}"
-                        {% if filters.event_id == event.event_id %}selected{% endif %}>
+                <option
+                    value="{{ event.event_id }}"
+                    {% if filters.event_id == event.event_id %}selected{% endif %}
+                >
                     {{ event.title }}
                 </option>
             {% endfor %}
@@ -104,36 +115,80 @@
     <div class="admin-active-filters" aria-label="Active RSVP filters">
         <span>Active filters</span>
         {% if filters.query %}
-            <a class="admin-filter-chip"
-               href="{{ url_for('admin.rsvps', response=filters.response, invitation_status=filters.invitation_status, event=filters.event_id or none, sort=filters.sort) }}">
+            <a
+                class="admin-filter-chip"
+                href="{{ url_for(
+                    'admin.rsvps',
+                    response=filters.response,
+                    invitation_status=filters.invitation_status,
+                    event=filters.event_id or none,
+                    sort=filters.sort
+                ) }}"
+            >
                 Search: {{ filters.query }} <b aria-hidden="true">×</b>
             </a>
         {% endif %}
         {% if filters.response != "all" %}
-            <a class="admin-filter-chip"
-               href="{{ url_for('admin.rsvps', q=filters.query or none, response='all', invitation_status=filters.invitation_status, event=filters.event_id or none, sort=filters.sort) }}">
+            <a
+                class="admin-filter-chip"
+                href="{{ url_for(
+                    'admin.rsvps',
+                    q=filters.query or none,
+                    response='all',
+                    invitation_status=filters.invitation_status,
+                    event=filters.event_id or none,
+                    sort=filters.sort
+                ) }}"
+            >
                 Response:
-                {% if filters.response == "no_response" %}No response{% else %}{{ filters.response|title }}{% endif %}
+                {% if filters.response == "no_response" %}
+                    No response
+                {% else %}
+                    {{ filters.response|title }}
+                {% endif %}
                 <b aria-hidden="true">×</b>
             </a>
         {% endif %}
         {% if filters.event_id %}
             {% for event in events %}
                 {% if event.event_id == filters.event_id %}
-                    <a class="admin-filter-chip"
-                       href="{{ url_for('admin.rsvps', q=filters.query or none, response=filters.response, invitation_status=filters.invitation_status, sort=filters.sort) }}">
+                    <a
+                        class="admin-filter-chip"
+                        href="{{ url_for(
+                            'admin.rsvps',
+                            q=filters.query or none,
+                            response=filters.response,
+                            invitation_status=filters.invitation_status,
+                            sort=filters.sort
+                        ) }}"
+                    >
                         Event: {{ event.title }} <b aria-hidden="true">×</b>
                     </a>
                 {% endif %}
             {% endfor %}
         {% endif %}
         {% if filters.invitation_status != "active" %}
-            <a class="admin-filter-chip"
-               href="{{ url_for('admin.rsvps', q=filters.query or none, response=filters.response, invitation_status='active', event=filters.event_id or none, sort=filters.sort) }}">
-                Invitation: {{ filters.invitation_status|title }} <b aria-hidden="true">×</b>
+            <a
+                class="admin-filter-chip"
+                href="{{ url_for(
+                    'admin.rsvps',
+                    q=filters.query or none,
+                    response=filters.response,
+                    invitation_status='active',
+                    event=filters.event_id or none,
+                    sort=filters.sort
+                ) }}"
+            >
+                Invitation: {{ filters.invitation_status|title }}
+                <b aria-hidden="true">×</b>
             </a>
         {% endif %}
-        <a class="admin-filter-clear-all" href="{{ url_for('admin.rsvps') }}">Clear all</a>
+        <a
+            class="admin-filter-clear-all"
+            href="{{ url_for('admin.rsvps') }}"
+        >
+            Clear all
+        </a>
     </div>
 {% endif %}
 
@@ -152,8 +207,18 @@
                 <div class="admin-rsvp-household">
                     <div class="admin-id-badge">#{{ row.invitation_id }}</div>
                     <div>
-                        <h3><a href="{{ url_for('admin.invitation_detail', invitation_id=row.invitation_id) }}">{{ row.display_name }}</a></h3>
-                        <p>{{ row.guest_group or "Ungrouped" }}{% if not row.is_active %} · Inactive invitation{% endif %}</p>
+                        <h3>
+                            <a href="{{ url_for(
+                                'admin.invitation_detail',
+                                invitation_id=row.invitation_id
+                            ) }}">
+                                {{ row.display_name }}
+                            </a>
+                        </h3>
+                        <p>
+                            {{ row.guest_group or "Ungrouped" }}
+                            {% if not row.is_active %} · Inactive invitation{% endif %}
+                        </p>
                     </div>
                 </div>
                 <div class="admin-rsvp-event">
@@ -165,15 +230,25 @@
                         <dt>Response</dt>
                         <dd>
                             {% if row.rsvp_id %}
-                                <span class="admin-status admin-status-{{ row.attending|lower }}">{{ row.attending }}</span>
+                                <span class="admin-status admin-status-{{ row.attending|lower }}">
+                                    {{ row.attending }}
+                                </span>
                             {% else %}
-                                <span class="admin-status admin-status-pending">No response</span>
+                                <span class="admin-status admin-status-pending">
+                                    No response
+                                </span>
                             {% endif %}
                         </dd>
                     </div>
                     <div>
                         <dt>Guests</dt>
-                        <dd>{% if row.rsvp_id %}{{ row.guest_count }} / {{ row.max_guests }}{% else %}— / {{ row.max_guests }}{% endif %}</dd>
+                        <dd>
+                            {% if row.rsvp_id %}
+                                {{ row.guest_count }} / {{ row.max_guests }}
+                            {% else %}
+                                — / {{ row.max_guests }}
+                            {% endif %}
+                        </dd>
                     </div>
                     <div>
                         <dt>Updated</dt>
@@ -188,11 +263,24 @@
                 </dl>
                 <div class="admin-rsvp-actions">
                     {% if current_admin_is_full %}
-                        <a href="{{ url_for('admin.rsvp_edit', invitation_id=row.invitation_id, event_id=row.event_id) }}">
+                        <a href="{{ url_for(
+                            'admin.rsvp_edit',
+                            invitation_id=row.invitation_id,
+                            event_id=row.event_id
+                        ) }}">
                             {% if row.rsvp_id %}Edit RSVP{% else %}Add RSVP{% endif %}
                         </a>
                     {% else %}
-                        <span class="admin-row-readonly">View only</span>
+                        <a
+                            class="admin-request-link"
+                            href="{{ url_for(
+                                'admin.rsvp_change_request',
+                                invitation_id=row.invitation_id,
+                                event_id=row.event_id
+                            ) }}"
+                        >
+                            Request Change
+                        </a>
                     {% endif %}
                 </div>
                 {% if row.notes %}
@@ -206,7 +294,10 @@
             <div class="admin-empty-state">
                 <strong>No RSVP records found</strong>
                 <span>No invitation-event records match the selected filters.</span>
-                <a class="admin-empty-action" href="{{ url_for('admin.rsvps') }}">
+                <a
+                    class="admin-empty-action"
+                    href="{{ url_for('admin.rsvps') }}"
+                >
                     Clear filters
                 </a>
             </div>
@@ -215,10 +306,27 @@
 
     {% if pagination.pages > 1 %}
         <nav class="admin-pagination" aria-label="RSVP pages">
-            {% for page_number in pagination.iter_pages(left_edge=1, left_current=2, right_current=2, right_edge=1) %}
+            {% for page_number in pagination.iter_pages(
+                left_edge=1,
+                left_current=2,
+                right_current=2,
+                right_edge=1
+            ) %}
                 {% if page_number %}
-                    <a href="{{ url_for('admin.rsvps', q=filters.query, response=filters.response, invitation_status=filters.invitation_status, event=filters.event_id, sort=filters.sort, page=page_number) }}"
-                       {% if page_number == pagination.page %}aria-current="page"{% endif %}>
+                    <a
+                        href="{{ url_for(
+                            'admin.rsvps',
+                            q=filters.query,
+                            response=filters.response,
+                            invitation_status=filters.invitation_status,
+                            event=filters.event_id,
+                            sort=filters.sort,
+                            page=page_number
+                        ) }}"
+                        {% if page_number == pagination.page %}
+                            aria-current="page"
+                        {% endif %}
+                    >
                         {{ page_number }}
                     </a>
                 {% else %}

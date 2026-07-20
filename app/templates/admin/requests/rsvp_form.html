@@ -1,0 +1,122 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Request RSVP Change · Wedding Admin{% endblock %}
+
+{% block content %}
+<section class="admin-page-heading admin-heading-actions">
+    <div>
+        <p class="admin-eyebrow">Family Change Request</p>
+        <h1>RSVP Update</h1>
+        <p>
+            {{ invitation.display_name }} · {{ event.title }}. The current
+            RSVP remains unchanged until Adlin or Prithvi approves this request.
+        </p>
+    </div>
+    <a
+        class="admin-secondary-link"
+        href="{{ url_for(
+            'admin.invitation_detail',
+            invitation_id=invitation.invitation_id
+        ) }}"
+    >
+        Cancel
+    </a>
+</section>
+
+<section class="admin-request-current-summary">
+    <article>
+        <span>Current response</span>
+        <strong>
+            {% if rsvp %}{{ rsvp.attending }}{% else %}No response{% endif %}
+        </strong>
+    </article>
+    <article>
+        <span>Current guests</span>
+        <strong>{% if rsvp %}{{ rsvp.guest_count }}{% else %}0{% endif %}</strong>
+    </article>
+    <article>
+        <span>Current maximum</span>
+        <strong>{{ permission.max_guests }}</strong>
+    </article>
+</section>
+
+<form method="post" class="admin-change-request-form" novalidate>
+    {{ form.hidden_tag() }}
+
+    <section class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Proposed RSVP</p>
+                <h2>Requested Values</h2>
+            </div>
+        </div>
+
+        <div class="admin-form-grid">
+            <div class="admin-field">
+                {{ form.attending.label }}
+                {{ form.attending(
+                    class_="admin-input",
+                    data_rsvp_status=""
+                ) }}
+                {% for error in form.attending.errors %}
+                    <p class="admin-field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            <div class="admin-field">
+                {{ form.guest_count.label }}
+                {{ form.guest_count(
+                    class_="admin-input",
+                    min="0",
+                    data_rsvp_guest_count=""
+                ) }}
+                {% for error in form.guest_count.errors %}
+                    <p class="admin-field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            <div class="admin-field">
+                {{ form.max_guests.label }}
+                {{ form.max_guests(
+                    class_="admin-input",
+                    min="1",
+                    max="100"
+                ) }}
+                {% for error in form.max_guests.errors %}
+                    <p class="admin-field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            <div class="admin-field admin-field-wide">
+                {{ form.notes.label }}
+                {{ form.notes(class_="admin-textarea", rows="4") }}
+                {% for error in form.notes.errors %}
+                    <p class="admin-field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Context for the Hosts</p>
+                <h2>Reason for Change</h2>
+            </div>
+        </div>
+
+        <div class="admin-field">
+            {{ form.request_note.label }}
+            {{ form.request_note(
+                class_="admin-textarea",
+                rows="5",
+                placeholder="Explain who confirmed the change or why the guest limit should be adjusted."
+            ) }}
+            {% for error in form.request_note.errors %}
+                <p class="admin-field-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <div class="admin-sticky-actions">
+        {{ form.submit(class_="admin-primary-button") }}
+    </div>
+</form>
+{% endblock %}

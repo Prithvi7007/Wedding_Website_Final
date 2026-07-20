@@ -58,7 +58,21 @@
             >
                 RSVPs
             </a>
+
             {% if current_admin_is_full %}
+                <a
+                    href="{{ url_for('admin.change_requests') }}"
+                    {% if request.endpoint and request.endpoint.startswith('admin.change_request') %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    Requests
+                    {% if pending_change_request_count %}
+                        <span class="admin-nav-count">
+                            {{ pending_change_request_count }}
+                        </span>
+                    {% endif %}
+                </a>
                 <a
                     href="{{ url_for('admin.audit') }}"
                     {% if request.endpoint == 'admin.audit' %}
@@ -66,6 +80,20 @@
                     {% endif %}
                 >
                     Audit
+                </a>
+            {% else %}
+                <a
+                    href="{{ url_for('admin.my_change_requests') }}"
+                    {% if request.endpoint and request.endpoint.startswith('admin.change_request') %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    My Requests
+                    {% if pending_change_request_count %}
+                        <span class="admin-nav-count">
+                            {{ pending_change_request_count }}
+                        </span>
+                    {% endif %}
                 </a>
             {% endif %}
 

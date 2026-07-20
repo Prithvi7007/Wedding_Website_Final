@@ -1,0 +1,84 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Request Household Change · Wedding Admin{% endblock %}
+
+{% block content %}
+<section class="admin-page-heading admin-heading-actions">
+    <div>
+        <p class="admin-eyebrow">Family Change Request</p>
+        <h1>Household Update</h1>
+        <p>
+            Propose corrections for {{ invitation.display_name }}. Nothing
+            changes until Adlin or Prithvi approves the request.
+        </p>
+    </div>
+    <a
+        class="admin-secondary-link"
+        href="{{ url_for(
+            'admin.invitation_detail',
+            invitation_id=invitation.invitation_id
+        ) }}"
+    >
+        Cancel
+    </a>
+</section>
+
+<form method="post" class="admin-change-request-form" novalidate>
+    {{ form.hidden_tag() }}
+
+    <section class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Proposed Household Details</p>
+                <h2>Requested Values</h2>
+            </div>
+        </div>
+
+        <div class="admin-form-grid">
+            {% for field in [
+                form.first_name,
+                form.last_name,
+                form.partner_name,
+                form.display_name,
+                form.represent_side,
+                form.guest_group,
+                form.email,
+                form.phone
+            ] %}
+                <div class="admin-field">
+                    {{ field.label }}
+                    {{ field(class_="admin-input") }}
+                    {% for error in field.errors %}
+                        <p class="admin-field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Context for the Hosts</p>
+                <h2>Reason for Change</h2>
+            </div>
+        </div>
+
+        <div class="admin-field">
+            {{ form.request_note.label }}
+            {{ form.request_note(
+                class_="admin-textarea",
+                rows="5",
+                placeholder="Explain what changed and why the hosts should approve it."
+            ) }}
+            {% for error in form.request_note.errors %}
+                <p class="admin-field-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <div class="admin-sticky-actions">
+        {{ form.submit(class_="admin-primary-button") }}
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends "admin/base.html" %}
+
+{% block title %}
+    {% if viewer_mode %}My Change Requests{% else %}Change Requests{% endif %}
+    · Wedding Admin
+{% endblock %}
+
+{% block content %}
+<section class="admin-page-heading admin-heading-actions">
+    <div>
+        <p class="admin-eyebrow">
+            {% if viewer_mode %}Family Submissions{% else %}Approval Inbox{% endif %}
+        </p>
+        <h1>
+            {% if viewer_mode %}My Requests{% else %}Change Requests{% endif %}
+        </h1>
+        <p>
+            {% if viewer_mode %}
+                Track corrections submitted to Adlin and Prithvi for review.
+            {% else %}
+                Review family-submitted corrections before they update an
+                invitation or RSVP record.
+            {% endif %}
+        </p>
+    </div>
+
+    {% if viewer_mode %}
+        <a
+            class="admin-secondary-link"
+            href="{{ url_for('admin.invitations') }}"
+        >
+            Browse Invitations
+        </a>
+    {% else %}
+        <span class="admin-request-count-badge">
+            {{ pending_count }} Pending
+        </span>
+    {% endif %}
+</section>
+
+<form
+    method="get"
+    class="admin-filter-bar admin-change-request-filter-bar"
+    data-auto-submit
+>
+    <div>
+        <label for="request-status-filter">Status</label>
+        <select id="request-status-filter" name="status">
+            <option value="all" {% if filters.status == "all" %}selected{% endif %}>All statuses</option>
+            <option value="pending" {% if filters.status == "pending" %}selected{% endif %}>Pending</option>
+            <option value="approved" {% if filters.status == "approved" %}selected{% endif %}>Approved</option>
+            <option value="rejected" {% if filters.status == "rejected" %}selected{% endif %}>Rejected</option>
+            <option value="cancelled" {% if filters.status == "cancelled" %}selected{% endif %}>Cancelled</option>
+        </select>
+    </div>
+    <div>
+        <label for="request-type-filter">Request type</label>
+        <select id="request-type-filter" name="type">
+            <option value="all" {% if filters.request_type == "all" %}selected{% endif %}>All requests</option>
+            <option value="invitation" {% if filters.request_type == "invitation" %}selected{% endif %}>Household</option>
+            <option value="rsvp" {% if filters.request_type == "rsvp" %}selected{% endif %}>RSVP</option>
+        </select>
+    </div>
+    <button class="admin-filter-button" type="submit">Apply</button>
+    <a
+        class="admin-clear-filter"
+        href="{% if viewer_mode %}{{ url_for('admin.my_change_requests') }}{% else %}{{ url_for('admin.change_requests') }}{% endif %}"
+    >
+        Clear
+    </a>
+</form>
+
+<section class="admin-section">
+    <div class="admin-section-heading admin-list-summary">
+        <div>
+            <p class="admin-eyebrow">
+                {% if viewer_mode %}Submission History{% else %}Review Queue{% endif %}
+            </p>
+            <h2>
+                {{ pagination.total }}
+                Request{% if pagination.total != 1 %}s{% endif %}
+            </h2>
+        </div>
+        <span>
+            Page {{ pagination.page }} of {{ pagination.pages or 1 }}
+        </span>
+    </div>
+
+    <div class="admin-change-request-list">
+        {% for item in pagination.items %}
+            <a
+                class="admin-change-request-card"
+                href="{{ url_for(
+                    'admin.change_request_detail',
+                    change_request_id=item.change_request_id
+                ) }}"
+            >
+                <div class="admin-change-request-card-main">
+                    <span class="admin-change-request-type">
+                        {% if item.request_type == "invitation" %}
+                            Household update
+                        {% else %}
+                            RSVP update
+                        {% endif %}
+                    </span>
+                    <h3>{{ item.invitation.display_name }}</h3>
+                    <p>
+                        {% if item.event %}
+                            {{ item.event.title }} ·
+                        {% endif %}
+                        Submitted by {{ item.requested_by_display_name }}
+                    </p>
+                </div>
+
+                <div class="admin-change-request-card-meta">
+                    <span class="admin-request-status admin-request-status-{{ item.status }}">
+                        {{ item.status|title }}
+                    </span>
+                    <time datetime="{{ item.created_at.isoformat() }}">
+                        {{ item.created_at.strftime("%b %d, %Y · %I:%M %p") }}
+                    </time>
+                </div>
+
+                <p class="admin-change-request-note">
+                    {{ item.request_note }}
+                </p>
+            </a>
+        {% else %}
+            <div class="admin-empty-state">
+                <strong>No change requests found</strong>
+                <span>
+                    {% if viewer_mode %}
+                        Requests submitted by this account will appear here.
+                    {% else %}
+                        There are no requests matching the selected filters.
+                    {% endif %}
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if pagination.pages > 1 %}
+        <nav class="admin-pagination" aria-label="Change request pages">
+            {% for page_number in pagination.iter_pages(
+                left_edge=1,
+                left_current=2,
+                right_current=2,
+                right_edge=1
+            ) %}
+                {% if page_number %}
+                    <a
+                        href="{% if viewer_mode %}{{ url_for(
+                            'admin.my_change_requests',
+                            status=filters.status,
+                            type=filters.request_type,
+                            page=page_number
+                        ) }}{% else %}{{ url_for(
+                            'admin.change_requests',
+                            status=filters.status,
+                            type=filters.request_type,
+                            page=page_number
+                        ) }}{% endif %}"
+                        {% if page_number == pagination.page %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        {{ page_number }}
+                    </a>
+                {% else %}
+                    <span>…</span>
+                {% endif %}
+            {% endfor %}
+        </nav>
+    {% endif %}
+</section>
+{% endblock %}

@@ -35,7 +35,13 @@ from .decorators import (
     current_admin_username,
     establish_admin_session,
 )
-from .forms import AdminLoginForm, AdminRSVPForm, InvitationForm
+from .forms import (
+    AdminLoginForm,
+    AdminRSVPForm,
+    InvitationChangeRequestForm,
+    InvitationForm,
+    RSVPChangeRequestForm,
+)
 from .invitation_queries import (
     all_events,
     all_represent_sides,
@@ -81,6 +87,22 @@ from .login_security import (
     record_successful_login,
 )
 from .services import build_dashboard_snapshot
+from .change_request_queries import (
+    change_request_by_id,
+    change_request_list,
+    existing_pending_request,
+    normalize_change_request_filters,
+    pending_change_request_count,
+)
+from .change_request_services import (
+    ChangeRequestConflict,
+    ChangeRequestError,
+    approve_change_request,
+    cancel_change_request,
+    create_invitation_change_request,
+    create_rsvp_change_request,
+    reject_change_request,
+)
 
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
@@ -113,11 +135,21 @@ def _get_invitation_or_404(invitation_id: int) -> Invitation:
 
 @admin_bp.app_context_processor
 def inject_admin_identity():
+    username = current_admin_username()
+    is_full = current_admin_is_full()
+    pending_count = 0
+
+    if session.get(SESSION_ADMIN_AUTHENTICATED) is True and username:
+        pending_count = pending_change_request_count(
+            requested_by=None if is_full else username
+        )
+
     return {
-        "current_admin_username": current_admin_username(),
+        "current_admin_username": username,
         "current_admin_display_name": current_admin_display_name(),
         "current_admin_role": current_admin_role(),
-        "current_admin_is_full": current_admin_is_full(),
+        "current_admin_is_full": is_full,
+        "pending_change_request_count": pending_count,
     }
 
 
@@ -886,6 +918,433 @@ def rsvp_clear(rsvp_id: int):
         )
     )
 
+
+@admin_bp.route(
+    "/invitations/<int:invitation_id>/request-change",
+    methods=["GET", "POST"],
+)
+@admin_required
+def invitation_change_request(invitation_id: int):
+    if current_admin_is_full():
+        return redirect(
+            url_for(
+                "admin.invitation_edit",
+                invitation_id=invitation_id,
+            )
+        )
+
+    invitation = _get_invitation_or_404(invitation_id)
+    username = current_admin_username()
+    display_name = current_admin_display_name()
+    if not username or not display_name:
+        clear_admin_session()
+        return redirect(url_for("admin.login"))
+
+    existing = existing_pending_request(
+        requested_by=username,
+        request_type="invitation",
+        invitation_id=invitation.invitation_id,
+        event_id=None,
+    )
+    if existing is not None:
+        flash(
+            "This account already has a pending household request "
+            "for this invitation.",
+            "warning",
+        )
+        return redirect(
+            url_for(
+                "admin.change_request_detail",
+                change_request_id=existing.change_request_id,
+            )
+        )
+
+    form = InvitationChangeRequestForm(obj=invitation)
+    if request.method == "GET":
+        form.request_note.data = ""
+
+    if form.validate_on_submit():
+        try:
+            change_request = create_invitation_change_request(
+                invitation=invitation,
+                form=form,
+                requested_by=username,
+                requested_by_display_name=display_name,
+            )
+            db.session.commit()
+        except ChangeRequestError as exc:
+            db.session.rollback()
+            flash(str(exc), "error")
+        except Exception:
+            db.session.rollback()
+            current_app.logger.exception(
+                "Could not submit invitation change request "
+                "invitation_id=%s request_id=%s",
+                invitation.invitation_id,
+                getattr(g, "request_id", "-"),
+            )
+            flash(
+                "The change request could not be submitted. "
+                "No changes were made.",
+                "error",
+            )
+        else:
+            flash(
+                "Household change request submitted for approval.",
+                "success",
+            )
+            return redirect(
+                url_for(
+                    "admin.change_request_detail",
+                    change_request_id=change_request.change_request_id,
+                )
+            )
+
+    return render_template(
+        "admin/requests/invitation_form.html",
+        form=form,
+        invitation=invitation,
+    )
+
+
+@admin_bp.route(
+    "/rsvps/invitation/<int:invitation_id>/event/<event_id>/request-change",
+    methods=["GET", "POST"],
+)
+@admin_required
+def rsvp_change_request(invitation_id: int, event_id: str):
+    if current_admin_is_full():
+        return redirect(
+            url_for(
+                "admin.rsvp_edit",
+                invitation_id=invitation_id,
+                event_id=event_id,
+            )
+        )
+
+    permission = db.session.get(
+        InvitationEventPermission,
+        (invitation_id, event_id),
+    )
+    invitation = db.session.get(Invitation, invitation_id)
+    event = db.session.get(Event, event_id)
+    if permission is None or invitation is None or event is None:
+        abort(404)
+
+    username = current_admin_username()
+    display_name = current_admin_display_name()
+    if not username or not display_name:
+        clear_admin_session()
+        return redirect(url_for("admin.login"))
+
+    existing = existing_pending_request(
+        requested_by=username,
+        request_type="rsvp",
+        invitation_id=invitation_id,
+        event_id=event_id,
+    )
+    if existing is not None:
+        flash(
+            "This account already has a pending RSVP request "
+            "for this event.",
+            "warning",
+        )
+        return redirect(
+            url_for(
+                "admin.change_request_detail",
+                change_request_id=existing.change_request_id,
+            )
+        )
+
+    rsvp = rsvp_for_permission(invitation_id, event_id)
+    form = RSVPChangeRequestForm()
+
+    if request.method == "GET":
+        form.attending.data = rsvp.attending if rsvp is not None else "Yes"
+        form.guest_count.data = (
+            rsvp.guest_count if rsvp is not None else 1
+        )
+        form.max_guests.data = permission.max_guests
+        form.notes.data = rsvp.notes if rsvp is not None else ""
+        form.request_note.data = ""
+
+    if form.validate_on_submit():
+        try:
+            change_request = create_rsvp_change_request(
+                invitation=invitation,
+                permission=permission,
+                rsvp=rsvp,
+                form=form,
+                requested_by=username,
+                requested_by_display_name=display_name,
+            )
+            db.session.commit()
+        except ChangeRequestError as exc:
+            db.session.rollback()
+            flash(str(exc), "error")
+        except Exception:
+            db.session.rollback()
+            current_app.logger.exception(
+                "Could not submit RSVP change request "
+                "invitation_id=%s event_id=%s request_id=%s",
+                invitation_id,
+                event_id,
+                getattr(g, "request_id", "-"),
+            )
+            flash(
+                "The RSVP change request could not be submitted. "
+                "No changes were made.",
+                "error",
+            )
+        else:
+            flash(
+                "RSVP change request submitted for approval.",
+                "success",
+            )
+            return redirect(
+                url_for(
+                    "admin.change_request_detail",
+                    change_request_id=change_request.change_request_id,
+                )
+            )
+
+    return render_template(
+        "admin/requests/rsvp_form.html",
+        form=form,
+        invitation=invitation,
+        event=event,
+        permission=permission,
+        rsvp=rsvp,
+    )
+
+
+@admin_bp.get("/requests")
+@admin_only
+def change_requests():
+    filters = normalize_change_request_filters(
+        request.args,
+        default_status="pending",
+    )
+    pagination = change_request_list(filters)
+    return render_template(
+        "admin/requests/list.html",
+        filters=filters,
+        pagination=pagination,
+        pending_count=pending_change_request_count(),
+        viewer_mode=False,
+    )
+
+
+@admin_bp.get("/requests/mine")
+@admin_required
+def my_change_requests():
+    if current_admin_is_full():
+        return redirect(url_for("admin.change_requests"))
+
+    username = current_admin_username()
+    if not username:
+        clear_admin_session()
+        return redirect(url_for("admin.login"))
+
+    filters = normalize_change_request_filters(
+        request.args,
+        default_status="all",
+    )
+    pagination = change_request_list(
+        filters,
+        requested_by=username,
+    )
+    return render_template(
+        "admin/requests/list.html",
+        filters=filters,
+        pagination=pagination,
+        pending_count=pending_change_request_count(
+            requested_by=username
+        ),
+        viewer_mode=True,
+    )
+
+
+@admin_bp.get("/requests/<int:change_request_id>")
+@admin_required
+def change_request_detail(change_request_id: int):
+    change_request = change_request_by_id(change_request_id)
+    if change_request is None:
+        abort(404)
+
+    username = current_admin_username()
+    if (
+        not current_admin_is_full()
+        and change_request.requested_by != username
+    ):
+        flash(
+            "You can only view requests submitted by your family account.",
+            "warning",
+        )
+        return redirect(url_for("admin.my_change_requests"))
+
+    return render_template(
+        "admin/requests/detail.html",
+        change_request=change_request,
+    )
+
+
+@admin_bp.post(
+    "/requests/<int:change_request_id>/approve"
+)
+@admin_write_required
+def change_request_approve(change_request_id: int):
+    change_request = change_request_by_id(change_request_id)
+    if change_request is None:
+        abort(404)
+
+    reviewer = current_admin_username()
+    if not reviewer:
+        clear_admin_session()
+        return redirect(url_for("admin.login"))
+
+    try:
+        approve_change_request(
+            change_request,
+            reviewed_by=reviewer,
+            review_note=request.form.get("review_note"),
+        )
+        db.session.commit()
+    except ChangeRequestConflict as exc:
+        db.session.rollback()
+        flash(str(exc), "warning")
+    except ChangeRequestError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception(
+            "Could not approve change request change_request_id=%s "
+            "request_id=%s",
+            change_request_id,
+            getattr(g, "request_id", "-"),
+        )
+        flash(
+            "The request could not be approved. No changes were made.",
+            "error",
+        )
+    else:
+        flash(
+            "Change request approved and applied successfully.",
+            "success",
+        )
+
+    return redirect(
+        url_for(
+            "admin.change_request_detail",
+            change_request_id=change_request_id,
+        )
+    )
+
+
+@admin_bp.post(
+    "/requests/<int:change_request_id>/reject"
+)
+@admin_write_required
+def change_request_reject(change_request_id: int):
+    change_request = change_request_by_id(change_request_id)
+    if change_request is None:
+        abort(404)
+
+    reviewer = current_admin_username()
+    if not reviewer:
+        clear_admin_session()
+        return redirect(url_for("admin.login"))
+
+    try:
+        reject_change_request(
+            change_request,
+            reviewed_by=reviewer,
+            review_note=request.form.get("review_note", ""),
+        )
+        db.session.commit()
+    except ChangeRequestError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception(
+            "Could not reject change request change_request_id=%s "
+            "request_id=%s",
+            change_request_id,
+            getattr(g, "request_id", "-"),
+        )
+        flash(
+            "The request could not be rejected.",
+            "error",
+        )
+    else:
+        flash("Change request rejected.", "success")
+
+    return redirect(
+        url_for(
+            "admin.change_request_detail",
+            change_request_id=change_request_id,
+        )
+    )
+
+
+@admin_bp.post(
+    "/requests/<int:change_request_id>/cancel"
+)
+@admin_required
+def change_request_cancel(change_request_id: int):
+    change_request = change_request_by_id(change_request_id)
+    if change_request is None:
+        abort(404)
+
+    username = current_admin_username()
+    if not username:
+        clear_admin_session()
+        return redirect(url_for("admin.login"))
+
+    if current_admin_is_full():
+        flash(
+            "Administrator accounts should approve or reject requests.",
+            "warning",
+        )
+        return redirect(
+            url_for(
+                "admin.change_request_detail",
+                change_request_id=change_request_id,
+            )
+        )
+
+    try:
+        cancel_change_request(
+            change_request,
+            cancelled_by=username,
+        )
+        db.session.commit()
+    except ChangeRequestError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception(
+            "Could not cancel change request change_request_id=%s "
+            "request_id=%s",
+            change_request_id,
+            getattr(g, "request_id", "-"),
+        )
+        flash(
+            "The request could not be cancelled.",
+            "error",
+        )
+    else:
+        flash("Change request cancelled.", "success")
+
+    return redirect(
+        url_for(
+            "admin.change_request_detail",
+            change_request_id=change_request_id,
+        )
+    )
 
 @admin_bp.get("/audit")
 @admin_only

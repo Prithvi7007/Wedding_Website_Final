@@ -104,3 +104,87 @@ class AdminRSVPForm(FlaskForm):
         validators=[Optional(), Length(max=4000)],
     )
     submit = SubmitField("Save RSVP")
+
+
+class InvitationChangeRequestForm(FlaskForm):
+    first_name = StringField(
+        "Primary first name",
+        validators=[
+            DataRequired(message="Enter the primary first name."),
+            Length(max=200),
+        ],
+    )
+    last_name = StringField(
+        "Last name",
+        validators=[Optional(), Length(max=200)],
+    )
+    partner_name = StringField(
+        "Partner or household member",
+        validators=[Optional(), Length(max=250)],
+    )
+    display_name = StringField(
+        "Invitation display name",
+        validators=[
+            DataRequired(message="Enter the invitation display name."),
+            Length(max=300),
+        ],
+    )
+    represent_side = StringField(
+        "Representing side",
+        validators=[Optional(), Length(max=120)],
+    )
+    guest_group = StringField(
+        "Guest group",
+        validators=[Optional(), Length(max=200)],
+    )
+    email = StringField(
+        "Email",
+        validators=[Optional(), Length(max=320)],
+    )
+    phone = StringField(
+        "Phone",
+        validators=[Optional(), Length(max=80)],
+    )
+    request_note = TextAreaField(
+        "Why should this be changed?",
+        validators=[
+            DataRequired(message="Explain why this change is needed."),
+            Length(max=2000),
+        ],
+    )
+    submit = SubmitField("Submit for Approval")
+
+
+class RSVPChangeRequestForm(FlaskForm):
+    attending = SelectField(
+        "Requested response",
+        choices=[
+            ("Yes", "Yes — attending"),
+            ("No", "No — declined"),
+            ("Maybe", "Maybe"),
+            ("__clear__", "Clear RSVP — no response"),
+        ],
+        validators=[DataRequired(message="Select an RSVP response.")],
+    )
+    guest_count = IntegerField(
+        "Requested attending",
+        validators=[InputRequired(message="Enter the guest count.")],
+        default=1,
+    )
+    max_guests = IntegerField(
+        "Requested maximum guests",
+        validators=[InputRequired(message="Enter the maximum guests.")],
+        default=1,
+    )
+    notes = TextAreaField(
+        "Requested RSVP notes",
+        validators=[Optional(), Length(max=4000)],
+    )
+    request_note = TextAreaField(
+        "Why should this be changed?",
+        validators=[
+            DataRequired(message="Explain why this change is needed."),
+            Length(max=2000),
+        ],
+    )
+    submit = SubmitField("Submit for Approval")

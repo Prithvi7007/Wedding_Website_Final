@@ -1,0 +1,257 @@
+{% extends "admin/base.html" %}
+
+{% macro display_value(value) -%}
+    {% if value is none or value == "" %}
+        —
+    {% elif value == "__clear__" %}
+        Clear RSVP / No response
+    {% else %}
+        {{ value }}
+    {% endif %}
+{%- endmacro %}
+
+{% block title %}Change Request #{{ change_request.change_request_id }} · Wedding Admin{% endblock %}
+
+{% block content %}
+<section class="admin-page-heading admin-heading-actions">
+    <div>
+        <p class="admin-eyebrow">
+            Change Request #{{ change_request.change_request_id }}
+        </p>
+        <h1>{{ change_request.invitation.display_name }}</h1>
+        <p>
+            {% if change_request.request_type == "invitation" %}
+                Household record update
+            {% else %}
+                RSVP update · {{ change_request.event.title }}
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="admin-heading-button-group">
+        <span class="admin-request-status admin-request-status-{{ change_request.status }}">
+            {{ change_request.status|title }}
+        </span>
+        <a
+            class="admin-secondary-link"
+            href="{% if current_admin_is_full %}{{ url_for('admin.change_requests') }}{% else %}{{ url_for('admin.my_change_requests') }}{% endif %}"
+        >
+            Back to Requests
+        </a>
+    </div>
+</section>
+
+<section class="admin-detail-grid admin-request-overview-grid">
+    <article class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Submitted By</p>
+                <h2>{{ change_request.requested_by_display_name }}</h2>
+            </div>
+        </div>
+        <dl class="admin-detail-list">
+            <div>
+                <dt>Username</dt>
+                <dd>{{ change_request.requested_by }}</dd>
+            </div>
+            <div>
+                <dt>Submitted</dt>
+                <dd>{{ change_request.created_at.strftime("%b %d, %Y · %I:%M %p") }}</dd>
+            </div>
+            <div>
+                <dt>Request type</dt>
+                <dd>{{ change_request.request_type|title }}</dd>
+            </div>
+            <div>
+                <dt>Status</dt>
+                <dd>{{ change_request.status|title }}</dd>
+            </div>
+        </dl>
+    </article>
+
+    <article class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Reason</p>
+                <h2>Request Note</h2>
+            </div>
+        </div>
+        <p class="admin-request-reason">
+            {{ change_request.request_note }}
+        </p>
+    </article>
+</section>
+
+<section class="admin-request-comparison">
+    <article class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Before</p>
+                <h2>Current Values</h2>
+            </div>
+        </div>
+        <dl class="admin-request-value-list">
+            {% for key, value in change_request.current_state.items() %}
+                <div>
+                    <dt>{{ key|replace("_", " ")|title }}</dt>
+                    <dd>{{ display_value(value) }}</dd>
+                </div>
+            {% endfor %}
+        </dl>
+    </article>
+
+    <article class="admin-section admin-request-proposed">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">After Approval</p>
+                <h2>Proposed Values</h2>
+            </div>
+        </div>
+        <dl class="admin-request-value-list">
+            {% for key, value in change_request.proposed_state.items() %}
+                <div
+                    {% if change_request.current_state.get(key) != value %}
+                        class="admin-request-value-changed"
+                    {% endif %}
+                >
+                    <dt>{{ key|replace("_", " ")|title }}</dt>
+                    <dd>{{ display_value(value) }}</dd>
+                </div>
+            {% endfor %}
+        </dl>
+    </article>
+</section>
+
+<section class="admin-section admin-request-record-link">
+    <div>
+        <p class="admin-eyebrow">Related Record</p>
+        <h2>{{ change_request.invitation.display_name }}</h2>
+        <p>
+            Review the household and its current event access before deciding.
+        </p>
+    </div>
+    <a
+        class="admin-secondary-link"
+        href="{{ url_for(
+            'admin.invitation_detail',
+            invitation_id=change_request.invitation_id
+        ) }}"
+    >
+        Open Invitation
+    </a>
+</section>
+
+{% if change_request.review_note %}
+    <section class="admin-section admin-request-review-note">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Host Decision</p>
+                <h2>Review Note</h2>
+            </div>
+        </div>
+        <p>{{ change_request.review_note }}</p>
+        <small>
+            Reviewed by {{ change_request.reviewed_by or "—" }}
+            {% if change_request.reviewed_at %}
+                · {{ change_request.reviewed_at.strftime("%b %d, %Y · %I:%M %p") }}
+            {% endif %}
+        </small>
+    </section>
+{% endif %}
+
+{% if change_request.status == "pending" and current_admin_is_full %}
+    <section class="admin-request-review-actions">
+        <article class="admin-section admin-request-approve-card">
+            <div class="admin-section-heading">
+                <div>
+                    <p class="admin-eyebrow">Approve</p>
+                    <h2>Apply This Change</h2>
+                </div>
+            </div>
+            <p>
+                Approval immediately applies the proposed values to the wedding
+                database and records the action in Audit History.
+            </p>
+            <form
+                method="post"
+                action="{{ url_for(
+                    'admin.change_request_approve',
+                    change_request_id=change_request.change_request_id
+                ) }}"
+                data-confirm-form="Approve and apply this request to the wedding database?"
+            >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="approve-review-note">Optional approval note</label>
+                <textarea
+                    id="approve-review-note"
+                    name="review_note"
+                    class="admin-textarea"
+                    rows="3"
+                ></textarea>
+                <button class="admin-primary-button" type="submit">
+                    Approve &amp; Apply
+                </button>
+            </form>
+        </article>
+
+        <article class="admin-section admin-request-reject-card">
+            <div class="admin-section-heading">
+                <div>
+                    <p class="admin-eyebrow">Reject</p>
+                    <h2>Decline This Request</h2>
+                </div>
+            </div>
+            <p>
+                Add a short explanation so the family account can see why the
+                request was not approved.
+            </p>
+            <form
+                method="post"
+                action="{{ url_for(
+                    'admin.change_request_reject',
+                    change_request_id=change_request.change_request_id
+                ) }}"
+            >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="reject-review-note">Rejection reason</label>
+                <textarea
+                    id="reject-review-note"
+                    name="review_note"
+                    class="admin-textarea"
+                    rows="3"
+                    required
+                ></textarea>
+                <button class="admin-danger-button" type="submit">
+                    Reject Request
+                </button>
+            </form>
+        </article>
+    </section>
+{% elif change_request.status == "pending" and not current_admin_is_full %}
+    <section class="admin-section admin-request-cancel-card">
+        <div class="admin-section-heading">
+            <div>
+                <p class="admin-eyebrow">Pending Review</p>
+                <h2>Waiting for the Hosts</h2>
+            </div>
+        </div>
+        <p>
+            Adlin or Prithvi can approve or reject this request. You can cancel
+            it while it is still pending.
+        </p>
+        <form
+            method="post"
+            action="{{ url_for(
+                'admin.change_request_cancel',
+                change_request_id=change_request.change_request_id
+            ) }}"
+            data-confirm-form="Cancel this pending change request?"
+        >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="admin-secondary-button" type="submit">
+                Cancel Request
+            </button>
+        </form>
+    </section>
+{% endif %}
+{% endblock %}

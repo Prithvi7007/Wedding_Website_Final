@@ -2243,3 +2243,356 @@ form.is-submitting input[type="submit"] {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* ADMIN CHANGE REQUESTS — PHASE 5B */
+
+.admin-nav-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    margin-left: 4px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--admin-gold);
+    color: #18130d;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0;
+}
+
+.admin-request-count-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 9px 15px;
+    border: 1px solid rgba(228, 184, 103, 0.30);
+    border-radius: 999px;
+    background: rgba(228, 184, 103, 0.10);
+    color: var(--admin-gold);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+}
+
+.admin-change-request-filter-bar {
+    grid-template-columns:
+        minmax(180px, 0.8fr)
+        minmax(180px, 0.8fr)
+        auto
+        auto;
+}
+
+.admin-change-request-list {
+    display: grid;
+    gap: 11px;
+}
+
+.admin-change-request-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px 20px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.028);
+    color: inherit;
+    text-decoration: none;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.admin-change-request-card:hover {
+    border-color: rgba(228, 184, 103, 0.28);
+    background: rgba(228, 184, 103, 0.055);
+    box-shadow: 0 15px 34px rgba(0, 0, 0, 0.18);
+    transform: translateY(-1px);
+}
+
+.admin-change-request-type {
+    color: var(--admin-gold);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+}
+
+.admin-change-request-card h3 {
+    margin: 5px 0 0;
+    color: var(--admin-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.admin-change-request-card-main p,
+.admin-change-request-card-meta time {
+    margin: 5px 0 0;
+    color: var(--admin-muted);
+    font-size: 9px;
+}
+
+.admin-change-request-card-meta {
+    display: grid;
+    align-content: start;
+    justify-items: end;
+    gap: 7px;
+}
+
+.admin-change-request-note {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding-top: 11px;
+    border-top: 1px solid rgba(255, 255, 255, 0.065);
+    color: var(--admin-copy);
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.admin-request-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 6px 10px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+.admin-request-status-pending {
+    border-color: rgba(223, 185, 99, 0.30);
+    background: rgba(223, 185, 99, 0.12);
+    color: #edcf86;
+}
+
+.admin-request-status-approved {
+    border-color: rgba(124, 185, 142, 0.30);
+    background: rgba(124, 185, 142, 0.12);
+    color: #a9d9b4;
+}
+
+.admin-request-status-rejected {
+    border-color: rgba(207, 143, 130, 0.30);
+    background: rgba(207, 143, 130, 0.12);
+    color: #efb3a9;
+}
+
+.admin-request-status-cancelled {
+    border-color: rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--admin-muted);
+}
+
+.admin-change-request-form {
+    display: grid;
+}
+
+.admin-change-request-form .admin-input,
+.admin-change-request-form .admin-textarea {
+    width: 100%;
+}
+
+.admin-request-current-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.admin-request-current-summary article {
+    padding: 16px;
+    border: 1px solid var(--admin-border);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.027);
+}
+
+.admin-request-current-summary span {
+    display: block;
+    color: var(--admin-muted);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.admin-request-current-summary strong {
+    display: block;
+    margin-top: 7px;
+    color: var(--admin-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 27px;
+    font-weight: 600;
+}
+
+.admin-request-overview-grid .admin-section {
+    margin-top: 0;
+}
+
+.admin-request-reason,
+.admin-request-review-note > p,
+.admin-request-review-actions article > p,
+.admin-request-cancel-card > p,
+.admin-request-record-link p {
+    color: var(--admin-muted);
+    font-size: 11px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+}
+
+.admin-request-comparison,
+.admin-request-review-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.admin-request-comparison .admin-section,
+.admin-request-review-actions .admin-section {
+    margin-top: 22px;
+}
+
+.admin-request-proposed {
+    border-color: rgba(228, 184, 103, 0.28);
+}
+
+.admin-request-value-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.admin-request-value-list > div {
+    display: grid;
+    grid-template-columns: minmax(130px, 0.55fr) minmax(0, 1fr);
+    gap: 14px;
+    padding: 10px 12px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.028);
+}
+
+.admin-request-value-list dt {
+    color: var(--admin-muted);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+.admin-request-value-list dd {
+    margin: 0;
+    color: var(--admin-copy);
+    font-size: 11px;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.admin-request-value-changed {
+    border-left: 2px solid var(--admin-gold);
+    background: rgba(228, 184, 103, 0.075) !important;
+}
+
+.admin-request-record-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.admin-request-record-link h2 {
+    margin: 4px 0 0;
+    color: var(--admin-cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.admin-request-review-note small {
+    color: var(--admin-gold);
+    font-size: 9px;
+}
+
+.admin-request-review-actions form {
+    display: grid;
+    gap: 10px;
+}
+
+.admin-request-review-actions label {
+    color: var(--admin-muted);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.admin-request-review-actions .admin-primary-button {
+    width: 100%;
+}
+
+.admin-request-approve-card {
+    border-color: rgba(124, 185, 142, 0.24);
+}
+
+.admin-request-reject-card {
+    border-color: rgba(207, 143, 130, 0.24);
+}
+
+.admin-request-cancel-card {
+    border-color: rgba(228, 184, 103, 0.20);
+}
+
+.admin-request-link {
+    white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+    .admin-request-comparison,
+    .admin-request-review-actions {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .admin-change-request-filter-bar {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .admin-change-request-card {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-change-request-card-meta {
+        justify-items: start;
+    }
+
+    .admin-request-current-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-change-request-filter-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-request-value-list > div {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+
+    .admin-request-record-link {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-request-record-link .admin-secondary-link {
+        width: 100%;
+    }
+}
