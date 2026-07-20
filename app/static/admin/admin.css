@@ -595,8 +595,14 @@ a {
 
 @media (max-width: 700px) {
     .admin-topbar {
-        align-items: flex-start;
-        padding: 14px 16px;
+        align-items: stretch;
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 14px;
+    }
+
+    .admin-brand {
+        width: 100%;
     }
 
     .admin-brand strong {
@@ -604,11 +610,42 @@ a {
     }
 
     .admin-nav {
-        gap: 12px;
+        width: 100%;
+        gap: 8px;
+        padding-bottom: 2px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
     }
 
-    .admin-nav a {
+    .admin-nav::-webkit-scrollbar {
         display: none;
+    }
+
+    .admin-nav a,
+    .admin-nav button {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 8px 11px;
+        border: 1px solid rgba(241, 204, 132, 0.16);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.035);
+        font-size: 9px;
+        letter-spacing: 0.8px;
+        white-space: nowrap;
+    }
+
+    .admin-nav a[aria-current="page"] {
+        border-color: rgba(228, 184, 103, 0.38);
+        background: rgba(228, 184, 103, 0.11);
+    }
+
+    .admin-nav form {
+        flex: 0 0 auto;
     }
 
     .admin-main {
