@@ -131,14 +131,19 @@ def test_desktop_invitation_rsvp_save_and_persistence(browser, wedding_url):
         page.close()
 
 
-def test_mobile_navigation_and_qa_are_readable(browser, wedding_url):
-    page = guest_page(browser, wedding_url, width=390, height=844)
+@pytest.mark.parametrize("width", [320, 390, 430])
+def test_mobile_navigation_and_qa_are_readable(browser, wedding_url, width):
+    page = guest_page(browser, wedding_url, width=width, height=844)
     try:
         page.get_by_role("link", name="Q&A", exact=True).click()
         expect(page.get_by_role("heading", name="Questions & Answers")).to_be_visible()
         page.get_by_text("Can I bring a guest?").click()
         expect(page.get_by_text("Your RSVP form shows the exact number")).to_be_visible()
-        assert page.evaluate("document.documentElement.scrollWidth") <= 392
+        actual_width = page.evaluate("document.documentElement.scrollWidth")
+        assert actual_width <= width + 2, (
+            f"Q&A document overflow at {width}px viewport: "
+            f"scrollWidth={actual_width}px"
+        )
         assert page.locator(".qa-item summary strong").first.evaluate(
             "el => getComputedStyle(el).color"
         ) != "rgb(0, 0, 0)"
