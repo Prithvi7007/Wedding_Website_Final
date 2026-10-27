@@ -1141,6 +1141,14 @@ body[data-active-tab="qa"] .ambient-slideshow-shade {
     filter: blur(7px);
 }
 
+/* The decorative glow must remain within the mobile Q&A viewport.
+   Its desktop right inset of -112px caused 484px scrollWidth at 390px. */
+@media (max-width: 700px) {
+    .information-intro::before {
+        inset: -36px -16px -34px;
+    }
+}
+
 .travel-story {
     border-color: rgba(255, 250, 240, .21);
     background:
