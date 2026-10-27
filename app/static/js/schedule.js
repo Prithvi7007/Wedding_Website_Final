@@ -310,6 +310,7 @@ export function mountSchedule(root = document) {
     let observer = null;
     let activeOverlay = null;
     let lastTrigger = null;
+    let pendingOverlayFocus = null;
 
     function getOverlay(kind, eventId) {
         const selector = `#${CSS.escape(`${kind}-overlay-${eventId}`)}`;
@@ -359,14 +360,21 @@ export function mountSchedule(root = document) {
         setBackgroundInteractive(false);
         setTriggerExpanded(lastTrigger, true);
 
-        window.setTimeout(() => {
-            overlay.querySelector(".overlay-close")?.focus({ preventScroll: true });
+        if (pendingOverlayFocus !== null) window.clearTimeout(pendingOverlayFocus);
+        pendingOverlayFocus = window.setTimeout(() => {
+            pendingOverlayFocus = null;
+            // Escape may close the sheet before this deferred focus runs.
+            if (activeOverlay === overlay && overlay.classList.contains("is-open")) {
+                overlay.querySelector(".overlay-close")?.focus({ preventScroll: true });
+            }
         }, 40);
     }
 
     function closeOverlay(kind, eventId, restoreFocus = true) {
         const overlay = getOverlay(kind, eventId);
         if (!overlay) return;
+        if (pendingOverlayFocus !== null) window.clearTimeout(pendingOverlayFocus);
+        pendingOverlayFocus = null;
 
         overlay.classList.remove("is-open");
         overlay.setAttribute("aria-hidden", "true");

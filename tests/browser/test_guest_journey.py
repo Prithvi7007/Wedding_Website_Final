@@ -151,7 +151,8 @@ def test_mobile_navigation_and_qa_are_readable(browser, wedding_url, width):
         page.close()
 
 
-def test_rsvp_keyboard_escape_and_focus_return(browser, wedding_url):
+@pytest.mark.parametrize("close_delay_ms", [0, 90])
+def test_rsvp_keyboard_escape_and_focus_return(browser, wedding_url, close_delay_ms):
     page = guest_page(browser, wedding_url)
     try:
         page.get_by_role("link", name="Schedule", exact=True).click()
@@ -159,8 +160,13 @@ def test_rsvp_keyboard_escape_and_focus_return(browser, wedding_url):
         trigger.focus()
         page.keyboard.press("Enter")
         expect(page.locator("#rsvp-overlay-haldi")).to_have_attribute("aria-hidden", "false")
+        if close_delay_ms:
+            page.wait_for_timeout(close_delay_ms)
+            expect(page.locator("#rsvp-overlay-haldi .overlay-close")).to_be_focused()
         page.keyboard.press("Escape")
         expect(page.locator("#rsvp-overlay-haldi")).to_have_attribute("aria-hidden", "true")
+        # Detect delayed focus stealing from an already-closed overlay.
+        page.wait_for_timeout(110)
         expect(trigger).to_be_focused()
     finally:
         page.close()
