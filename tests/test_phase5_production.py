@@ -1,3 +1,4 @@
+import hashlib
 import re
 from pathlib import Path
 
@@ -66,15 +67,21 @@ def test_csp_nonce_matches_slideshow_json_script(client, app):
     assert f'nonce="{nonce}"' in html
 
 
-def test_asset_urls_include_release_version(client, app):
+def test_asset_urls_include_content_fingerprints(client, app):
     _seed_and_login(client, app)
 
     response = client.get("/dashboard")
     html = response.get_data(as_text=True)
 
-    assert "/static/css/shell.css?v=test" in html
-    assert "/static/js/app.js?v=test" in html
-    assert "/static/images/slideshow/DSC06660-1170.webp?v=test" in html
+    for asset in (
+        "css/shell.css",
+        "js/app.js",
+        "images/slideshow/DSC06660-1170.webp",
+    ):
+        digest = hashlib.sha256(
+            (Path("app/static") / asset).read_bytes()
+        ).hexdigest()[:16]
+        assert f"/static/{asset}?v={digest}" in html
 
 
 def test_invitation_session_does_not_store_private_token(client, app):
