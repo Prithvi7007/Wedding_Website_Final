@@ -39,3 +39,5 @@ a { color: inherit; }
         inset 0 -1px 1px rgba(255,255,255,.055);
     --glass-filter: blur(10px) saturate(145%) brightness(.97);
 }
+
+/* Release-pipeline pilot: inert marker; does not alter Wedding V3 styling. */
