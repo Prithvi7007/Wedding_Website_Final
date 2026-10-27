@@ -1,0 +1,33 @@
+name: Wedding V3 CI
+
+on:
+  pull_request:
+    branches: [v3-production]
+  push:
+    branches: [v3-production]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: wedding-quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Python syntax
+        run: python -m compileall -q app tests wsgi.py
+
+      - name: Run automated tests
+        run: python -m pytest -q -p no:cacheprovider
