@@ -2,9 +2,9 @@ name: Wedding V3 CI
 
 on:
   pull_request:
-    branches: [v3-production]
+    branches: [main]
   push:
-    branches: [v3-production]
+    branches: [main]
 
 permissions:
   contents: read
