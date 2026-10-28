@@ -973,7 +973,8 @@ body.attire-overlay-open {
     }
 
     .schedule-intro::before {
-        inset: -32px -28px -30px -30px;
+        /* Keep the soft scrim within the viewport, including its blur. */
+        inset: -32px -8px -30px -8px;
     }
 
     .schedule-intro h2 {

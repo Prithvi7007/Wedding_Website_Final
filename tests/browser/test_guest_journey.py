@@ -255,3 +255,21 @@ def test_wedding_weekend_calendar_download_on_mobile(browser, wedding_url, width
         assert bounds["right"] <= width + 2
     finally:
         page.close()
+
+
+@pytest.mark.parametrize("width", [320, 390, 430])
+def test_schedule_layout_has_no_page_wide_horizontal_scroll(browser, wedding_url, width):
+    page = guest_page(browser, wedding_url, width=width, height=844)
+    try:
+        page.get_by_role("link", name="Schedule", exact=True).click()
+        expect(page.get_by_role("heading", name="Wedding Schedule")).to_be_visible()
+        actual_width = page.evaluate("document.documentElement.scrollWidth")
+        assert actual_width <= width + 2, (
+            f"Schedule should not scroll sideways at {width}px: "
+            f"document width {actual_width}px"
+        )
+        tabs = page.locator(".dashboard-tabs")
+        # Preserve deliberate, touch-scrollable top navigation.
+        assert tabs.evaluate("node => getComputedStyle(node).overflowX") == "auto"
+    finally:
+        page.close()
