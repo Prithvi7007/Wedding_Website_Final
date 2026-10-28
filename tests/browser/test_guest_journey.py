@@ -446,6 +446,6 @@ def test_heritage_preview_glass_accessibility_and_live_site_isolation(
 
         page.emulate_media(contrast="more")
         assert glass.evaluate("el => getComputedStyle(el).backdropFilter") == "none"
-        expect(page.get_by_role("link", name="Original invitation")).to_be_visible()
+        expect(page.get_by_role("link", name="Original invitation", exact=True)).to_be_visible()
     finally:
         page.close()
