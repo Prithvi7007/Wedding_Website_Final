@@ -42,3 +42,4 @@ jobs:
       - name: Execute real-browser guest regression suite
         run: python -m pytest -q -p no:cacheprovider tests/browser
 # Revalidate Chromium after RSVP autofocus fix.
+# Revalidate Chromium after PR 9 merge.
