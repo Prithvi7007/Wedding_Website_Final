@@ -116,4 +116,7 @@ export function mountFragmentNavigation(onContentMounted, initialCleanup = () =>
     if (params.get("tab") === "schedule") {
         focusLinkedScheduleEvent(content, params.get("event"));
     }
+
+    // Browser-ready flag is set only once the navigation listeners are bound.
+    document.documentElement.dataset.fragmentNavigationReady = "true";
 }
