@@ -15,7 +15,7 @@ from flask import (
 )
 
 from app.dashboard.media import build_slideshow_manifest
-from app.dashboard.presenters import present_event, present_events
+from app.dashboard.presenters import present_event, present_events, present_welcome_weekend
 from app.repositories import EventRepository, RSVPRepository
 from app.services import current_invitation
 from app.services.notifications_legacy import (
@@ -47,16 +47,24 @@ def _dashboard_context(active_tab: str) -> dict:
         "saved_rsvps": {},
     }
 
-    # Welcome and information tabs do not need RSVP/event queries. The schedule
-    # fragment loads this data only when the guest actually opens that tab.
-    if active_tab == "schedule":
+    # Personalize only Welcome and Schedule. Both use the invitation's
+    # approved event permissions, never the unrestricted event catalog.
+    if active_tab in ("welcome", "schedule"):
         allowed_events = EventRepository.allowed_for_invitation(
             invitation.invitation_id
         )
-        context["events"] = present_events(allowed_events)
-        context["saved_rsvps"] = RSVPRepository.saved_for_invitation(
+        saved_rsvps = RSVPRepository.saved_for_invitation(
             invitation.invitation_id
         )
+        if active_tab == "schedule":
+            context["events"] = present_events(allowed_events)
+            context["saved_rsvps"] = saved_rsvps
+        else:
+            weekend = present_welcome_weekend(allowed_events, saved_rsvps)
+            context["weekend_events"] = weekend
+            context["weekend_pending_count"] = sum(
+                item["is_pending"] for item in weekend
+            )
 
     return context
 

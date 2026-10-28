@@ -127,6 +127,9 @@ def test_desktop_invitation_rsvp_save_and_persistence(browser, wedding_url):
         page.reload()
         expect(page.locator("#event-card-haldi [data-response-text]")).to_contain_text("Attending")
         expect(page.get_by_role("button", name="Edit Response")).to_be_visible()
+        page.get_by_role("link", name="Welcome", exact=True).click()
+        expect(page.locator('[data-weekend-event-id="haldi"]')).to_contain_text("Attending")
+        expect(page.locator(".weekend-cta")).to_contain_text("Explore your schedule")
     finally:
         page.close()
 
@@ -174,5 +177,24 @@ def test_rsvp_keyboard_escape_and_focus_return(browser, wedding_url, close_delay
         # Detect delayed focus stealing from an already-closed overlay.
         page.wait_for_timeout(110)
         expect(trigger).to_be_focused()
+    finally:
+        page.close()
+
+@pytest.mark.parametrize("width", [320, 390, 430])
+def test_mobile_personal_weekend_preview_and_rsvp_link(browser, wedding_url, width):
+    page = guest_page(browser, wedding_url, width=width, height=844)
+    try:
+        preview = page.locator('[data-weekend-event-id="haldi"]')
+        expect(preview).to_contain_text("Awaiting your RSVP")
+        expect(page.locator(".weekend-cta")).to_contain_text("Continue your RSVP")
+        preview.scroll_into_view_if_needed()
+        actual_width = page.evaluate("document.documentElement.scrollWidth")
+        assert actual_width <= width + 2, (
+            f"Welcome weekend overflow at {width}px viewport: "
+            f"scrollWidth={actual_width}px"
+        )
+        page.locator(".weekend-cta").click()
+        expect(page.get_by_role("heading", name="Wedding Schedule")).to_be_visible()
+        expect(page.get_by_role("button", name="RSVP Now")).to_be_visible()
     finally:
         page.close()

@@ -94,3 +94,34 @@ def present_event(event: AllowedEvent) -> dict:
 
 def present_events(events: list[AllowedEvent]) -> list[dict]:
     return [present_event(event) for event in events]
+
+
+def present_welcome_weekend(events: list[AllowedEvent], saved_rsvps: dict) -> list[dict]:
+    """Describe only permitted events, never unrelated RSVP records."""
+    previews = []
+    for event in events:
+        saved = saved_rsvps.get(event.event_id)
+        response = saved.attending if saved is not None else None
+        if response == "Yes":
+            status = "Attending"
+            if saved.guest_count:
+                suffix = "guest" if saved.guest_count == 1 else "guests"
+                status += f" · {saved.guest_count} {suffix}"
+        elif response == "No":
+            status = "Unable to attend"
+        elif response == "Maybe":
+            status = "Maybe · Response noted"
+        else:
+            status = "Awaiting your RSVP"
+        previews.append({
+            "event_id": event.event_id,
+            "title": event.title,
+            "date_display": _format_date(event.event_date),
+            "month": event.event_date.strftime("%b"),
+            "day": event.event_date.day,
+            "venue": event.venue_name or event.location,
+            "status": status,
+            "status_kind": response.lower() if response else "pending",
+            "is_pending": response is None,
+        })
+    return previews
