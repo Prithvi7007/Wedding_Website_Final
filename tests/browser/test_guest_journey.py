@@ -278,6 +278,11 @@ def test_schedule_layout_has_no_page_wide_horizontal_scroll(browser, wedding_url
 def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_outcome):
     page = guest_page(browser, wedding_url, width=390, height=844)
     try:
+        # Only exercise the enhanced navigation after the ES module has bound
+        # its click listener; otherwise a fast CI runner may follow the href.
+        expect(page.locator("html")).to_have_attribute(
+            "data-fragment-navigation-ready", "true"
+        )
         # Make the first fragment request finish *after* a later tab request.
         # The success case simulates a fetch that cannot be canceled by
         # AbortController; the failure case simulates a late network error.
@@ -290,6 +295,7 @@ def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_o
                     return originalFetch(url, options);
                 }
                 return new Promise((resolve, reject) => {
+                    document.documentElement.dataset.travelIntercepted = "yes";
                     window.__releaseTravel = shouldFail => {
                         if (shouldFail) {
                             window.__travelSettled = true;
@@ -315,7 +321,9 @@ def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_o
         }""")
 
         page.get_by_role("link", name="Travel", exact=True).click()
-        assert page.evaluate("() => typeof window.__releaseTravel === 'function'")
+        expect(page.locator("html")).to_have_attribute(
+            "data-travel-intercepted", "yes"
+        )
         page.get_by_role("link", name="Q&A", exact=True).click()
 
         expect(page.get_by_role("heading", name="Questions & Answers")).to_be_visible()
