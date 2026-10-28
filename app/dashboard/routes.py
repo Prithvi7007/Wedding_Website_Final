@@ -153,6 +153,7 @@ def save_rsvp():
     allowed_event = EventRepository.allowed_event_for_invitation(
         invitation.invitation_id,
         event_id,
+        for_update=True,
     )
     if allowed_event is None:
         if _wants_json():

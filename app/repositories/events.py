@@ -70,6 +70,8 @@ class EventRepository:
     def allowed_event_for_invitation(
         invitation_id: int,
         event_id: str,
+        *,
+        for_update: bool = False,
     ) -> AllowedEvent | None:
         statement = (
             select(Event, InvitationEventPermission.max_guests)
@@ -82,6 +84,11 @@ class EventRepository:
                 Event.event_id == event_id,
             )
         )
+        if for_update:
+            # Lock this invitation's event permission until RSVP commit so
+            # overlapping guest submissions serialize before reading the
+            # previous RSVP state. SQLite ignores FOR UPDATE in unit tests.
+            statement = statement.with_for_update(of=InvitationEventPermission)
         row = db.session.execute(statement).one_or_none()
         if row is None:
             return None
