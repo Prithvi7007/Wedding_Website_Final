@@ -9,14 +9,22 @@ from __future__ import annotations
 
 import logging
 import os
+import time
+import uuid
 from dataclasses import dataclass
 from datetime import datetime
 from html import escape
 from typing import Any, Mapping, Sequence
 
 import resend
+from resend.http_client_requests import RequestsClient
 
 logger = logging.getLogger(__name__)
+
+# A short network timeout limits the delay after the RSVP was already saved.
+EMAIL_REQUEST_TIMEOUT_SECONDS = 5
+EMAIL_MAX_ATTEMPTS = 2
+resend.default_http_client = RequestsClient(timeout=EMAIL_REQUEST_TIMEOUT_SECONDS)
 
 
 @dataclass(frozen=True)
@@ -203,11 +211,9 @@ def send_rsvp_notification(
     sender: str | None = None,
     recipients: Sequence[str] | None = None,
 ) -> NotificationResult:
-    """Send an RSVP alert through Resend without raising into the RSVP route.
+    """Attempt bounded, idempotent delivery after committing an RSVP.
 
-    Missing configuration or provider failures are logged and returned as a
-    failed result. This ensures that an email outage never rolls back or blocks
-    a successfully saved RSVP.
+    A durable retry queue needs a separate database migration and worker.
     """
 
     resolved_api_key = api_key or os.getenv("RESEND_API_KEY")
@@ -227,37 +233,70 @@ def send_rsvp_notification(
         logger.warning("RSVP notification skipped: %s.", message)
         return NotificationResult(sent=False, error=message)
 
-    subject, html, text = build_rsvp_email(notification)
+    try:
+        subject, html, plain_text = build_rsvp_email(notification)
+    except Exception:
+        logger.exception("RSVP notification rendering failed")
+        return NotificationResult(sent=False, error="render_failed")
+
+    payload = {
+        "from": resolved_sender,
+        "to": resolved_recipients,
+        "subject": subject,
+        "html": html,
+        "text": plain_text,
+    }
     resend.api_key = resolved_api_key
 
-    try:
-        response: Mapping[str, Any] | Any = resend.Emails.send(
-            {
-                "from": resolved_sender,
-                "to": resolved_recipients,
-                "subject": subject,
-                "html": html,
-                "text": text,
-            }
-        )
+    # Unique per RSVP submission, stable across the attempts of this send.
+    # Resend deduplicates identical requests with this key for 24 hours.
+    idempotency_key = f"wedding-rsvp/{uuid.uuid4().hex}"
+    for attempt in range(1, EMAIL_MAX_ATTEMPTS + 1):
+        try:
+            response: Mapping[str, Any] | Any = resend.Emails.send(
+                payload, {"idempotency_key": idempotency_key}
+            )
+            if isinstance(response, Mapping):
+                message_id = response.get("id")
+            else:
+                message_id = getattr(response, "id", None)
+            if not message_id:
+                logger.warning("RSVP email provider returned no ID attempt=%s", attempt)
+                return NotificationResult(sent=False, error="unconfirmed_response")
 
-        if isinstance(response, Mapping):
-            message_id = response.get("id")
-        else:
-            message_id = getattr(response, "id", None)
+            logger.info(
+                "RSVP notification accepted message_id=%s attempts=%s",
+                message_id,
+                attempt,
+            )
+            return NotificationResult(sent=True, message_id=str(message_id))
+        except Exception as exc:
+            try:
+                status = int(getattr(exc, "code", 0))
+            except (TypeError, ValueError):
+                status = 0
+            error_type = str(getattr(exc, "error_type", ""))
+            transient = (
+                status == 429
+                or status >= 500
+                or error_type == "HttpClientError"
+                or error_type == "concurrent_idempotent_requests"
+            )
+            # Never include guest names, recipients, notes or provider messages.
+            logger.warning(
+                "RSVP notification provider failure attempt=%s status=%s type=%s",
+                attempt,
+                status or "unknown",
+                type(exc).__name__,
+            )
+            if not transient or attempt == EMAIL_MAX_ATTEMPTS:
+                return NotificationResult(
+                    sent=False,
+                    error=(
+                        "temporary_delivery_failure"
+                        if transient else "permanent_delivery_failure"
+                    ),
+                )
+            time.sleep(0.15 * attempt)
 
-        logger.info(
-            "RSVP notification sent for guest=%s event=%s message_id=%s",
-            notification.guest_name,
-            notification.event_title,
-            message_id,
-        )
-        return NotificationResult(sent=True, message_id=message_id)
-
-    except Exception as exc:  # Provider/network errors must not break RSVP saving.
-        logger.exception(
-            "Failed to send RSVP notification for guest=%s event=%s",
-            notification.guest_name,
-            notification.event_title,
-        )
-        return NotificationResult(sent=False, error=str(exc))
+    return NotificationResult(sent=False, error="temporary_delivery_failure")

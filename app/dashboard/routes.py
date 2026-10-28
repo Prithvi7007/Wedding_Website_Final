@@ -19,6 +19,7 @@ from app.dashboard.presenters import present_event, present_events, present_welc
 from app.repositories import EventRepository, RSVPRepository
 from app.services import current_invitation
 from app.services.notifications_legacy import (
+    NotificationResult,
     RSVPNotification,
     RSVPState,
     send_rsvp_notification,
@@ -249,7 +250,19 @@ def save_rsvp():
         current=current_state,
         submitted_at=datetime.now().astimezone(),
     )
-    notification_result = send_rsvp_notification(notification)
+    try:
+        notification_result = send_rsvp_notification(notification)
+    except Exception:
+        # A post-commit email error must never look like an unsaved RSVP.
+        current_app.logger.exception(
+            "Unexpected post-commit email failure invitation_id=%s event_id=%s",
+            invitation.invitation_id,
+            event_id,
+        )
+        notification_result = NotificationResult(
+            sent=False,
+            error="unexpected_notification_failure",
+        )
 
     if notification_result.sent:
         current_app.logger.info(
