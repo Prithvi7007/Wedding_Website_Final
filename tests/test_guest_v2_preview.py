@@ -77,6 +77,7 @@ def test_v2_preview_uses_existing_guest_permissions_and_read_only_rsvp(client, a
     assert 'name="attending"' not in html
     assert '<form' not in html
     assert "guest-v2-heritage.css" in html
+    assert "guest-live-heritage.css" not in html
     assert "guest-v2-heritage.js" in html
     assert 'class="heritage-signature"' in html
     assert "Parisienne" in html
@@ -119,5 +120,6 @@ def test_v2_preview_does_not_replace_live_navigation(client, app):
     assert 'class="dashboard-shell"' in current_html
     assert "Guest concept" not in current_html
     assert 'guest-v2-heritage.css' not in current_html
+    assert 'guest-live-heritage.css' in current_html
     assert 'guest-v2-heritage.js' not in current_html
     assert "/dashboard/preview/guest-v2" not in current_html
