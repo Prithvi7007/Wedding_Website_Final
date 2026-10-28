@@ -335,6 +335,6 @@ def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_o
             "aria-current", "page"
         )
         expect(page.locator("#tab-content")).not_to_have_attribute("aria-busy", "true")
-        assert page.locator("#tab-content").get_by_text("Travel Guide").count() == 0
+        assert page.locator("#tab-content [data-tab-panel='travel']").count() == 0
     finally:
         page.close()
