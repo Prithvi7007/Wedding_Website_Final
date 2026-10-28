@@ -282,6 +282,56 @@ def save_rsvp():
     return redirect(url_for("dashboard.shell", tab="schedule"))
 
 
+def _calendar_event_lines(event, dtstamp: str) -> list[str]:
+    """Render the same calendar event for single and weekend exports."""
+    timezone_name = event.timezone or "America/New_York"
+    return [
+        "BEGIN:VEVENT",
+        f"UID:{_escape_ics_text(event.event_id)}@adlinprithvi.cloud",
+        f"DTSTAMP:{dtstamp}",
+        f"DTSTART;TZID={timezone_name}:{_calendar_timestamp(event, 'start_time')}",
+        f"DTEND;TZID={timezone_name}:{_calendar_timestamp(event, 'end_time')}",
+        f"SUMMARY:{_escape_ics_text(event.title)}",
+        f"DESCRIPTION:{_escape_ics_text(event.description)}",
+        f"LOCATION:{_escape_ics_text(event.location)}",
+        "END:VEVENT",
+    ]
+
+
+@dashboard_bp.get("/calendar/weekend.ics")
+def weekend_calendar():
+    invitation = current_invitation()
+    if invitation is None:
+        return redirect(url_for("invitations.home"))
+
+    # Export only events permitted for the signed-in private invitation.
+    events = EventRepository.allowed_for_invitation(invitation.invitation_id)
+    if not events:
+        abort(404)
+
+    dtstamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    calendar_lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Adlin and Prithvi Wedding//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "X-WR-CALNAME:Adlin and Prithvi Wedding Weekend",
+    ]
+    for event in events:
+        calendar_lines.extend(_calendar_event_lines(event, dtstamp))
+    calendar_lines.extend(["END:VCALENDAR", ""])
+
+    return Response(
+        "\r\n".join(calendar_lines),
+        mimetype="text/calendar; charset=utf-8",
+        headers={
+            "Content-Disposition": 'attachment; filename="adlin-prithvi-weekend.ics"',
+            "Cache-Control": "private, no-store",
+        },
+    )
+
+
 @dashboard_bp.get("/calendar/<event_id>.ics")
 def apple_calendar_event(event_id: str):
     invitation = current_invitation()
@@ -295,28 +345,13 @@ def apple_calendar_event(event_id: str):
     if event is None:
         abort(404)
 
-    timezone_name = event.timezone or "America/New_York"
     calendar_lines = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
         "PRODID:-//Adlin and Prithvi Wedding//EN",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
-        "BEGIN:VEVENT",
-        f"UID:{event.event_id}@adlinprithvi.cloud",
-        f"DTSTAMP:{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}",
-        (
-            f"DTSTART;TZID={timezone_name}:"
-            f"{_calendar_timestamp(event, 'start_time')}"
-        ),
-        (
-            f"DTEND;TZID={timezone_name}:"
-            f"{_calendar_timestamp(event, 'end_time')}"
-        ),
-        f"SUMMARY:{_escape_ics_text(event.title)}",
-        f"DESCRIPTION:{_escape_ics_text(event.description)}",
-        f"LOCATION:{_escape_ics_text(event.location)}",
-        "END:VEVENT",
+        *_calendar_event_lines(event, datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")),
         "END:VCALENDAR",
         "",
     ]
