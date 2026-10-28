@@ -676,3 +676,63 @@ def test_original_gallery_autoplay_respects_motion_preferences(browser, wedding_
         assert page.evaluate("window.__galleryTimers.size") == 0
     finally:
         page.close()
+
+@pytest.mark.parametrize("width", [320, 360, 390, 430, 700])
+def test_original_mobile_navigation_labels_are_evenly_centered(
+    browser, wedding_url, width,
+):
+    page = guest_page(browser, wedding_url, width=width, height=844)
+    try:
+        page.goto(f"{wedding_url}/dashboard?tab=welcome")
+        nav = page.get_by_role("navigation", name="Wedding portal navigation")
+        labels = nav.locator(".dashboard-tab")
+        expect(labels).to_have_count(5)
+
+        def check_alignment():
+            positions = nav.evaluate("""element => {
+                const navBox = element.getBoundingClientRect();
+                const labels = [...element.querySelectorAll(".dashboard-tab")];
+                return {
+                    width: navBox.width,
+                    left: navBox.left,
+                    centers: labels.map(label => {
+                        const box = label.getBoundingClientRect();
+                        return box.left + box.width / 2 - navBox.left;
+                    }),
+                    boxes: labels.map(label => {
+                        const box = label.getBoundingClientRect();
+                        return {left: box.left, right: box.right};
+                    }),
+                    display: getComputedStyle(element).display,
+                };
+            }""")
+            assert positions["display"] == "grid"
+            assert len(positions["centers"]) == 5
+            for i, center in enumerate(positions["centers"]):
+                expected = positions["width"] * (i + .5) / 5
+                assert abs(center - expected) <= 2, (
+                    f"Navigation label {i} is off-center at {width}px: "
+                    f"{center} vs {expected}"
+                )
+            for left, right in zip(positions["boxes"], positions["boxes"][1:]):
+                assert left["right"] <= right["left"] + 1, (
+                    f"Navigation labels overlap at {width}px"
+                )
+            assert page.evaluate(
+                "document.documentElement.scrollWidth <= innerWidth + 2"
+            )
+
+        check_alignment()
+        # The compact scrolling header must retain the same equal columns.
+        page.evaluate("window.scrollTo({top: 450, behavior: 'instant'})")
+        expect(page.locator(".dashboard-header")).to_have_class(
+            re.compile(r"is-condensed")
+        )
+        check_alignment()
+        page.evaluate("window.scrollTo({top: 0, behavior: 'instant'})")
+        expect(page.locator(".dashboard-header")).not_to_have_class(
+            re.compile(r"is-condensed")
+        )
+        check_alignment()
+    finally:
+        page.close()
