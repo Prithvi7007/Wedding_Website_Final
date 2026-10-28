@@ -72,7 +72,15 @@
                         <span class="weekend-day">{{ event.day }}</span>
                     </div>
                     <div class="weekend-event-copy">
-                        <h3>{{ event.title }}</h3>
+                        <h3>
+                            <a class="weekend-event-link"
+                               href="{{ url_for('dashboard.shell', tab='schedule', event=event.event_id) }}"
+                               data-tab-name="schedule"
+                               data-fragment-url="{{ url_for('dashboard.tab_fragment', tab_name='schedule') }}"
+                               aria-label="View {{ event.title }} in your schedule">
+                                {{ event.title }} <span aria-hidden="true">↗</span>
+                            </a>
+                        </h3>
                         <p>{{ event.date_display }}{% if event.venue %} · {{ event.venue }}{% endif %}</p>
                     </div>
                     <p class="weekend-response weekend-response-{{ event.status_kind }}"
@@ -90,8 +98,9 @@
                         Your replies are saved. We can't wait to celebrate with you.
                     {% endif %}
                 </p>
+                {% set next_event = (weekend_events | selectattr('is_pending') | first) if weekend_pending_count else none %}
                 <a class="weekend-cta"
-                   href="{{ url_for('dashboard.shell', tab='schedule') }}"
+                   href="{{ url_for('dashboard.shell', tab='schedule', event=next_event.event_id) if next_event else url_for('dashboard.shell', tab='schedule') }}"
                    data-tab-name="schedule"
                    data-fragment-url="{{ url_for('dashboard.tab_fragment', tab_name='schedule') }}">
                     {{ 'Continue your RSVP' if weekend_pending_count else 'Explore your schedule' }}

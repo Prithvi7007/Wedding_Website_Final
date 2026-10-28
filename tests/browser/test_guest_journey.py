@@ -196,5 +196,33 @@ def test_mobile_personal_weekend_preview_and_rsvp_link(browser, wedding_url, wid
         page.locator(".weekend-cta").click()
         expect(page.get_by_role("heading", name="Wedding Schedule")).to_be_visible()
         expect(page.get_by_role("button", name="RSVP Now")).to_be_visible()
+        expect(page.locator("#event-title-haldi")).to_be_focused()
+    finally:
+        page.close()
+
+
+def test_welcome_event_link_targets_invited_event_after_navigation_and_refresh(browser, wedding_url):
+    page = guest_page(browser, wedding_url)
+    try:
+        event_link = page.get_by_role("link", name="View Haldi in your schedule")
+        expect(event_link).to_have_attribute("href", re.compile(r"tab=schedule.*event=haldi"))
+        event_link.click()
+        expect(page).to_have_url(re.compile(r"tab=schedule.*event=haldi"))
+        expect(page.locator("#event-title-haldi")).to_be_focused()
+        expect(page.locator("#event-card-haldi")).to_be_visible()
+
+        # History and copied links preserve which event the guest selected.
+        page.reload()
+        expect(page.locator("#event-title-haldi")).to_be_focused()
+        page.go_back()
+        expect(page.locator(".weekend-event-link")).to_be_visible()
+        page.go_forward()
+        expect(page.locator("#event-title-haldi")).to_be_focused()
+
+        # Uninvited or obsolete event IDs cannot target content outside
+        # this guest's permitted schedule.
+        page.goto(f"{wedding_url}/dashboard?tab=schedule&event=uninvited")
+        expect(page.get_by_role("heading", name="Wedding Schedule")).to_be_visible()
+        expect(page.locator('[data-schedule-event="uninvited"]')).to_have_count(0)
     finally:
         page.close()
