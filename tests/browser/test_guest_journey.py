@@ -261,8 +261,20 @@ def test_wedding_weekend_calendar_download_on_mobile(browser, wedding_url, width
 def test_schedule_layout_has_no_page_wide_horizontal_scroll(browser, wedding_url, width):
     page = guest_page(browser, wedding_url, width=width, height=844)
     try:
+        # The schedule loads through an async tab fragment. Wait until the
+        # navigation handler is ready and the newly inserted layout has
+        # settled before measuring page-wide overflow. A visible heading can
+        # appear one rendering frame before the outgoing panel is removed.
+        expect(page.locator("html")).to_have_attribute(
+            "data-fragment-navigation-ready", "true"
+        )
         page.get_by_role("link", name="Schedule", exact=True).click()
         expect(page.get_by_role("heading", name="Wedding Schedule")).to_be_visible()
+        page.wait_for_function("""() => {
+            const panel = document.querySelector('[data-tab-panel="schedule"]');
+            return panel && panel.isConnected &&
+                document.documentElement.scrollWidth <= innerWidth + 2;
+        }""", timeout=10000)
         actual_width = page.evaluate("document.documentElement.scrollWidth")
         assert actual_width <= width + 2, (
             f"Schedule should not scroll sideways at {width}px: "
