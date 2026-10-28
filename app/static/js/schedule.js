@@ -311,11 +311,16 @@ export function mountSchedule(root = document) {
     let activeOverlay = null;
     let lastTrigger = null;
     let pendingOverlayFocusFrame = null;
+    let pendingOverlayFocusTimeout = null;
 
     function cancelPendingOverlayFocus() {
         if (pendingOverlayFocusFrame !== null) {
             window.cancelAnimationFrame(pendingOverlayFocusFrame);
             pendingOverlayFocusFrame = null;
+        }
+        if (pendingOverlayFocusTimeout !== null) {
+            window.clearTimeout(pendingOverlayFocusTimeout);
+            pendingOverlayFocusTimeout = null;
         }
     }
 
@@ -374,18 +379,28 @@ export function mountSchedule(root = document) {
         setBackgroundInteractive(false);
         setTriggerExpanded(lastTrigger, true);
 
-        // Visibility transitions keep a newly opened dialog unfocusable during
-        // the first layout frame. Focus after the next painted frame, not during
-        // the click handler (and never after a closed or replaced dialog).
+        // Wait for the visibility transition before focusing. Chromium can
+        // occasionally ignore one animation-frame focus attempt; keep a
+        // cancellable fallback without stealing focus from a dialog field.
         cancelPendingOverlayFocus();
+        const focusIfNeeded = () => {
+            if (activeOverlay !== overlay || !overlay.classList.contains("is-open")) return;
+            if (overlay.contains(document.activeElement)) return;
+            const close = overlay.querySelector(".overlay-close");
+            if (close && window.getComputedStyle(close).visibility === "visible") {
+                close.focus({ preventScroll: true });
+            }
+        };
         pendingOverlayFocusFrame = window.requestAnimationFrame(() => {
             pendingOverlayFocusFrame = window.requestAnimationFrame(() => {
                 pendingOverlayFocusFrame = null;
-                if (activeOverlay === overlay && overlay.classList.contains("is-open")) {
-                    overlay.querySelector(".overlay-close")?.focus({ preventScroll: true });
-                }
+                focusIfNeeded();
             });
         });
+        pendingOverlayFocusTimeout = window.setTimeout(() => {
+            pendingOverlayFocusTimeout = null;
+            focusIfNeeded();
+        }, 180);
     }
 
     function closeOverlay(kind, eventId, restoreFocus = true) {
