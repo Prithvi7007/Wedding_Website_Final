@@ -310,6 +310,14 @@ export function mountSchedule(root = document) {
     let observer = null;
     let activeOverlay = null;
     let lastTrigger = null;
+    let pendingOverlayFocusFrame = null;
+
+    function cancelPendingOverlayFocus() {
+        if (pendingOverlayFocusFrame !== null) {
+            window.cancelAnimationFrame(pendingOverlayFocusFrame);
+            pendingOverlayFocusFrame = null;
+        }
+    }
 
     function getOverlay(kind, eventId) {
         const selector = `#${CSS.escape(`${kind}-overlay-${eventId}`)}`;
@@ -359,15 +367,24 @@ export function mountSchedule(root = document) {
         setBackgroundInteractive(false);
         setTriggerExpanded(lastTrigger, true);
 
-        // Move keyboard focus into the now-visible modal synchronously.
-        // Delayed autofocus can lose a race with fragment navigation or steal
-        // focus back after Escape closes the sheet.
-        overlay.querySelector(".overlay-close")?.focus({ preventScroll: true });
+        // Visibility transitions keep a newly opened dialog unfocusable during
+        // the first layout frame. Focus after the next painted frame, not during
+        // the click handler (and never after a closed or replaced dialog).
+        cancelPendingOverlayFocus();
+        pendingOverlayFocusFrame = window.requestAnimationFrame(() => {
+            pendingOverlayFocusFrame = window.requestAnimationFrame(() => {
+                pendingOverlayFocusFrame = null;
+                if (activeOverlay === overlay && overlay.classList.contains("is-open")) {
+                    overlay.querySelector(".overlay-close")?.focus({ preventScroll: true });
+                }
+            });
+        });
     }
 
     function closeOverlay(kind, eventId, restoreFocus = true) {
         const overlay = getOverlay(kind, eventId);
         if (!overlay) return;
+        cancelPendingOverlayFocus();
         overlay.classList.remove("is-open");
         overlay.setAttribute("aria-hidden", "true");
         document.body.classList.remove(`${kind}-overlay-open`);
