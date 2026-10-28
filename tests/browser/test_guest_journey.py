@@ -338,3 +338,64 @@ def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_o
         assert page.locator("#tab-content [data-tab-panel='travel']").count() == 0
     finally:
         page.close()
+
+def test_ambient_photo_autoplay_respects_motion_and_visibility(browser, wedding_url):
+    # Track the real browser's active intervals without waiting through a
+    # whole slide cycle or weakening the website's Content Security Policy.
+    page = browser.new_page(
+        viewport={"width": 390, "height": 844},
+        reduced_motion="reduce",
+    )
+    page.add_init_script("""(() => {
+        window.__activeIntervals = new Map();
+        const realSetInterval = window.setInterval.bind(window);
+        const realClearInterval = window.clearInterval.bind(window);
+        window.setInterval = (fn, delay, ...args) => {
+            const timer = realSetInterval(fn, delay, ...args);
+            window.__activeIntervals.set(timer, delay);
+            return timer;
+        };
+        window.clearInterval = timer => {
+            window.__activeIntervals.delete(timer);
+            return realClearInterval(timer);
+        };
+    })();""")
+
+    def active_slideshow_timers():
+        return page.evaluate("""() => [...window.__activeIntervals.values()]
+            .filter(delay => delay === 7500).length""")
+
+    try:
+        page.goto(f"{wedding_url}/invite/browser-fixture-token")
+        page.get_by_role(
+            "button", name="Open your private wedding invitation"
+        ).click()
+        expect(page).to_have_url(re.compile(r"/dashboard"))
+        page.wait_for_load_state("load")
+        assert active_slideshow_timers() == 0
+
+        # Enabling motion after load starts one timer, not duplicated timers.
+        page.emulate_media(reduced_motion="no-preference")
+        assert active_slideshow_timers() == 1
+
+        page.evaluate("""() => {
+            Object.defineProperty(document, "hidden", {
+                configurable: true, value: true,
+            });
+            document.dispatchEvent(new Event("visibilitychange"));
+        }""")
+        assert active_slideshow_timers() == 0
+
+        page.evaluate("""() => {
+            Object.defineProperty(document, "hidden", {
+                configurable: true, value: false,
+            });
+            document.dispatchEvent(new Event("visibilitychange"));
+        }""")
+        assert active_slideshow_timers() == 1
+
+        page.emulate_media(reduced_motion="reduce")
+        assert active_slideshow_timers() == 0
+        expect(page.locator("[data-slide-buffer].is-active")).to_have_count(1)
+    finally:
+        page.close()

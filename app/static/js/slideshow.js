@@ -39,6 +39,7 @@ export function createSlideshow() {
     let activeBufferIndex = 0;
     let transitioning = false;
     let timerId = null;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     function updateDots() {
         document.querySelectorAll("[data-slide-index]").forEach((dot) => {
@@ -50,7 +51,16 @@ export function createSlideshow() {
     }
 
     function restartTimer() {
-        if (timerId) window.clearInterval(timerId);
+        if (timerId !== null) {
+            window.clearInterval(timerId);
+            timerId = null;
+        }
+
+        // The photos are decorative: guests who prefer reduced motion get
+        // a beautiful static first frame instead of an involuntary slideshow.
+        // Stop work entirely in background tabs and for one-image manifests.
+        if (document.hidden || reducedMotion.matches || slides.length < 2) return;
+
         timerId = window.setInterval(() => goTo(currentIndex + 1, false), INTERVAL_MS);
     }
 
@@ -95,14 +105,10 @@ export function createSlideshow() {
         if (dot) goTo(Number(dot.dataset.slideIndex));
     });
 
-    document.addEventListener("visibilitychange", () => {
-        if (document.hidden && timerId) {
-            window.clearInterval(timerId);
-            timerId = null;
-        } else if (!document.hidden) {
-            restartTimer();
-        }
-    });
+    // Re-evaluate autoplay whenever the guest hides the page or changes
+    // their system motion preference while this page is already open.
+    document.addEventListener("visibilitychange", restartTimer);
+    reducedMotion.addEventListener("change", restartTimer);
 
     updateDots();
     restartTimer();
