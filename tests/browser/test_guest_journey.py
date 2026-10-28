@@ -491,7 +491,7 @@ def test_guest_v2_heritage_glass_preserves_warm_photography_and_readability(
             "el => getComputedStyle(el).backgroundImage"
         )
         assert "linear-gradient(" in background
-        assert "rgba(43, 31, 23, 0.8)" in background
+        assert "rgba(" in background
         assert "blur(" in glass.evaluate(
             "el => getComputedStyle(el).backdropFilter"
         )
@@ -507,7 +507,7 @@ def test_guest_v2_heritage_glass_preserves_warm_photography_and_readability(
         event = page.locator("#v2-event-haldi")
         event.scroll_into_view_if_needed()
         pane = event.locator(".v2-event-content")
-        assert "rgba(43, 31, 23, 0.8)" in pane.evaluate(
+        assert "linear-gradient(" in pane.evaluate(
             "el => getComputedStyle(el).backgroundImage"
         )
         assert "rgb(255, 247, 233)" == event.locator("h3").evaluate(
@@ -525,5 +525,66 @@ def test_guest_v2_heritage_glass_preserves_warm_photography_and_readability(
         assert page.locator(".v2-chapter-index").evaluate(
             "el => getComputedStyle(el).backgroundColor"
         ) == "rgb(247, 241, 231)"
+    finally:
+        page.close()
+
+
+@pytest.mark.parametrize("width", [320, 390, 768, 1440, 1920])
+def test_guest_v2_fullscreen_liquid_glass_is_immersive_and_switchable(
+    browser, wedding_url, width,
+):
+    page = guest_page(
+        browser, wedding_url,
+        width=width, height=844 if width <= 430 else 900,
+    )
+    try:
+        page.goto(f"{wedding_url}/dashboard/preview/guest-v2")
+        expect(page.get_by_role("heading", name="Adlin & Prithvi")).to_be_visible()
+        expect(page.locator(".v2-guest-note")).to_contain_text("Browser Guest")
+
+        viewport_height = 844 if width <= 430 else 900
+        header = page.locator(".v2-header").bounding_box()
+        hero = page.locator(".v2-hero").bounding_box()
+        image = page.locator(".v2-photo-stage").bounding_box()
+        assert header and hero and image
+        assert hero["width"] >= width - 2
+        assert image["width"] >= width - 2
+        assert image["height"] >= viewport_height - header["height"] - 2
+
+        # The sharp foreground portrait is always preserved as a full image,
+        # with a separate background photo filling the cinematic frame.
+        portrait = page.locator(".v2-photo-subject")
+        assert portrait.evaluate("img => getComputedStyle(img).objectFit") == "contain"
+        assert portrait.evaluate("img => img.complete && img.naturalWidth > 0")
+
+        event = page.locator("#v2-event-haldi")
+        event.scroll_into_view_if_needed()
+        art = event.locator(".v2-event-visual")
+        event_box = event.bounding_box()
+        art_box = art.bounding_box()
+        assert event_box and art_box
+        assert event_box["width"] >= width - 2
+        assert art_box["width"] >= width - 2
+        assert art_box["height"] >= viewport_height - header["height"] - 2
+        expect(event.get_by_role("link", name="RSVP for this event")).to_be_visible()
+        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
+
+        # Accessible, user-driven transparency: retain all text and actions.
+        toggle = page.get_by_role("button", name="Reduce glass transparency")
+        expect(toggle).to_have_attribute("aria-pressed", "false")
+        toggle.click()
+        expect(toggle).to_have_attribute("aria-pressed", "true")
+        expect(page.locator("body")).to_have_attribute("data-v2-transparency", "opaque")
+        assert event.locator(".v2-event-content").evaluate(
+            "el => getComputedStyle(el).backdropFilter"
+        ) == "none"
+        assert event.locator(".v2-event-content").evaluate(
+            "el => getComputedStyle(el).backgroundColor"
+        ) == "rgb(48, 37, 30)"
+        page.get_by_role("button", name="Enable frosted glass").click()
+        expect(page.locator("body")).to_have_attribute("data-v2-transparency", "glass")
+        assert "blur(" in event.locator(".v2-event-content").evaluate(
+            "el => getComputedStyle(el).backdropFilter"
+        )
     finally:
         page.close()

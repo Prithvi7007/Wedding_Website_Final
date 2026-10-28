@@ -79,6 +79,10 @@ def test_v2_preview_uses_existing_guest_permissions_and_read_only_rsvp(client, a
     assert "guest-v2.css" in html
     assert "v2-hero-atmosphere" in html
     assert "guest-v2-glass.css" in html
+    assert "guest-v2-fullscreen.css" in html
+    assert "guest-v2-liquid.js" in html
+    assert "v2-guest-note" in html
+    assert "data-v2-transparency-toggle" in html
 
     with app.app_context():
         assert db.session.scalar(db.select(db.func.count(RSVP.rsvp_id))) == 0
@@ -112,4 +116,6 @@ def test_v2_preview_does_not_replace_live_navigation(client, app):
     assert "Guest concept" not in current_html
     assert 'guest-v2.css' not in current_html
     assert 'guest-v2-glass.css' not in current_html
+    assert 'guest-v2-fullscreen.css' not in current_html
+    assert 'guest-v2-liquid.js' not in current_html
     assert "/dashboard/preview/guest-v2" not in current_html

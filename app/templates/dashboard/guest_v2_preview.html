@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="{{ asset_url('css/guest-v2.css') }}">
     <link rel="stylesheet" href="{{ asset_url('css/guest-v2-glass.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/guest-v2-fullscreen.css') }}">
 </head>
 <body class="guest-v2">
     <a class="v2-skip" href="#main-content">Skip to your invitation</a>
@@ -28,7 +29,8 @@
         </nav>
 
         <div class="v2-header-actions">
-            <span class="v2-preview-label">Guest concept · V2</span>
+            <span class="v2-preview-label">Full-screen concept · V2</span>
+            <button type="button" class="v2-transparency-toggle" data-v2-transparency-toggle aria-pressed="false" aria-label="Reduce glass transparency">Solid glass</button>
             <a class="v2-back-link" href="{{ url_for('dashboard.shell', tab='welcome') }}">
                 Current website <span aria-hidden="true">↗</span>
             </a>
@@ -56,20 +58,11 @@
                     Adlin <span class="v2-amp">&amp;</span><br> Prithvi
                 </h1>
                 <div class="v2-copy-rule" aria-hidden="true"><span>✦</span></div>
-                <p class="v2-dear">A personal invitation for <strong>{{ guest_name }}</strong></p>
-                <div class="v2-invite-message">
-                    {% if personal_message %}
-                        <p>{{ personal_message }}</p>
-                    {% else %}
-                        <p>With joyous hearts, we invite you to celebrate the beginning of our life together.</p>
-                        <p>We can't wait to share these beautiful moments with you.</p>
-                    {% endif %}
-                </div>
                 <a class="v2-primary-link" href="#celebrations">
                     Explore your celebrations
                     <span aria-hidden="true">↗</span>
                 </a>
-                <p class="v2-preview-note">Design preview only. RSVP updates still happen on the current website.</p>
+                <p class="v2-preview-note">Full-screen design preview · Your RSVP stays on the current website.</p>
             </div>
 
             <div class="v2-hero-visual">
@@ -108,6 +101,22 @@
                 <p class="v2-photo-credit">A story worth celebrating <span>✧</span> 2026</p>
             </div>
         </section>
+
+        <aside class="v2-guest-note" aria-labelledby="v2-guest-note-title">
+            <div class="v2-guest-note-ornament" aria-hidden="true">✦</div>
+            <div class="v2-guest-note-copy">
+                <p class="v2-overline">A note from us</p>
+                <h2 id="v2-guest-note-title" class="v2-dear">Dear <strong>{{ guest_name }}</strong>,</h2>
+                <div class="v2-invite-message">
+                    {% if personal_message %}
+                        <p>{{ personal_message }}</p>
+                    {% else %}
+                        <p>With joyous hearts, we invite you to celebrate the beginning of our life together.</p>
+                        <p>We can't wait to share these beautiful moments with you.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
 
         <section class="v2-chapters" id="celebrations" aria-labelledby="v2-celebrations-heading">
             <header class="v2-chapters-intro">
@@ -211,5 +220,6 @@
         <span>Made with love · November 2026</span>
         <a href="{{ url_for('dashboard.shell', tab='welcome') }}">Back to the current website ↗</a>
     </footer>
+    <script src="{{ asset_url('js/guest-v2-liquid.js') }}" defer></script>
 </body>
 </html>
