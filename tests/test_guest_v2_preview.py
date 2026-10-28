@@ -76,13 +76,17 @@ def test_v2_preview_uses_existing_guest_permissions_and_read_only_rsvp(client, a
     assert 'href="/dashboard?tab=schedule&amp;event=haldi"' in html
     assert 'name="attending"' not in html
     assert '<form' not in html
-    assert "guest-v2.css" in html
-    assert "v2-hero-atmosphere" in html
-    assert "guest-v2-glass.css" in html
-    assert "guest-v2-fullscreen.css" in html
-    assert "guest-v2-liquid.js" in html
-    assert "v2-guest-note" in html
-    assert "data-v2-transparency-toggle" in html
+    assert "guest-v2-heritage.css" in html
+    assert "guest-v2-heritage.js" in html
+    assert 'class="heritage-signature"' in html
+    assert "Parisienne" in html
+    assert 'class="heritage-personal-letter"' in html
+    assert 'data-slideshow-root' in html
+    assert 'data-slide-index="5"' in html
+    assert 'data-countdown' in html
+    assert 'data-heritage-transparency' in html
+    assert "Full-screen concept" not in html
+    assert "Guest concept" not in html
 
     with app.app_context():
         assert db.session.scalar(db.select(db.func.count(RSVP.rsvp_id))) == 0
@@ -114,8 +118,6 @@ def test_v2_preview_does_not_replace_live_navigation(client, app):
     assert current.status_code == 200
     assert 'class="dashboard-shell"' in current_html
     assert "Guest concept" not in current_html
-    assert 'guest-v2.css' not in current_html
-    assert 'guest-v2-glass.css' not in current_html
-    assert 'guest-v2-fullscreen.css' not in current_html
-    assert 'guest-v2-liquid.js' not in current_html
+    assert 'guest-v2-heritage.css' not in current_html
+    assert 'guest-v2-heritage.js' not in current_html
     assert "/dashboard/preview/guest-v2" not in current_html
