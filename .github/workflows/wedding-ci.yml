@@ -1,3 +1,4 @@
+
 name: Wedding V3 CI
 
 on:
@@ -13,7 +14,7 @@ jobs:
   quality:
     name: wedding-quality
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -31,3 +32,12 @@ jobs:
 
       - name: Run automated tests
         run: python -m pytest -q -p no:cacheprovider
+
+      - name: Install Playwright browser test framework
+        run: python -m pip install playwright==1.56.0
+
+      - name: Install Chromium browser
+        run: python -m playwright install --with-deps chromium
+
+      - name: Execute real-browser guest regression suite
+        run: python -m pytest -q -p no:cacheprovider tests/browser
