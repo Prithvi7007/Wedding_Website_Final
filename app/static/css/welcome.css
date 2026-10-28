@@ -175,3 +175,96 @@
         );
     }
 }
+
+/* PERSONAL WEEKEND STORY: editorial chapter beneath the untouched hero. */
+.welcome-hero { position: relative; min-height: 100svh; }
+.welcome-weekend {
+    position: relative;
+    z-index: 10;
+    padding: clamp(64px, 8vw, 110px) clamp(24px, 8vw, 120px) clamp(96px, 10vw, 148px);
+    background: linear-gradient(180deg, rgba(19, 15, 13, .87), rgba(21, 17, 15, .96) 28%, rgba(19, 15, 13, .98));
+    color: var(--cream);
+}
+.weekend-story { max-width: 1080px; margin: 0 auto; }
+.weekend-eyebrow {
+    margin: 0 0 14px;
+    color: var(--gold-bright);
+    font: 600 12px/1.4 "Manrope", sans-serif;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+}
+.weekend-intro h2 {
+    margin: 0 0 16px;
+    font: 500 clamp(40px, 5.5vw, 76px)/1 "Cormorant Garamond", Georgia, serif;
+    letter-spacing: -.02em;
+}
+.weekend-lede {
+    max-width: 620px;
+    margin: 0 0 clamp(34px, 5vw, 64px);
+    color: var(--copy);
+    font: 500 clamp(19px, 2vw, 24px)/1.5 "Cormorant Garamond", Georgia, serif;
+}
+.weekend-events { margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(229, 185, 116, .40); }
+.weekend-event {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr) minmax(140px, max-content);
+    gap: clamp(18px, 3.6vw, 52px);
+    align-items: center;
+    min-width: 0;
+    padding: clamp(22px, 3vw, 36px) 0;
+    border-bottom: 1px solid rgba(229, 185, 116, .27);
+}
+.weekend-date { display: flex; flex-direction: column; align-items: center; color: var(--gold-bright); }
+.weekend-month { font: 700 10px/1.3 "Manrope", sans-serif; letter-spacing: .20em; text-transform: uppercase; }
+.weekend-day { font: 500 48px/1 "Cormorant Garamond", Georgia, serif; }
+.weekend-event-copy { min-width: 0; }
+.weekend-event-copy h3 {
+    margin: 0 0 6px;
+    font: 500 clamp(27px, 3vw, 40px)/1.12 "Cormorant Garamond", Georgia, serif;
+    overflow-wrap: anywhere;
+}
+.weekend-event-copy p { margin: 0; color: var(--copy); font: 500 12px/1.55 "Manrope", sans-serif; }
+.weekend-response {
+    margin: 0;
+    color: var(--muted);
+    font: 600 11px/1.55 "Manrope", sans-serif;
+    letter-spacing: .035em;
+    text-align: right;
+}
+.weekend-response-yes { color: #f1d7a4; }
+.weekend-response-pending { color: #ffcf89; }
+.weekend-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: baseline;
+    flex-wrap: wrap;
+    padding-top: 34px;
+}
+.weekend-replies { max-width: 560px; margin: 0; color: var(--copy); font: 500 18px/1.5 "Cormorant Garamond", Georgia, serif; }
+.weekend-cta {
+    display: inline-flex;
+    gap: 15px;
+    align-items: center;
+    min-height: 44px;
+    color: var(--gold-bright);
+    font: 700 11px/1.5 "Manrope", sans-serif;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-underline-offset: 7px;
+    text-decoration-color: rgba(239, 193, 117, .55);
+}
+.weekend-cta:hover, .weekend-cta:focus-visible { color: #fff6df; }
+.weekend-cta:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 5px; }
+.weekend-cta span { font-size: 19px; line-height: 1; }
+@media (max-width: 700px) {
+    .welcome-weekend { padding: 62px 22px 100px; }
+    .weekend-event { grid-template-columns: 54px minmax(0, 1fr); gap: 8px 18px; }
+    .weekend-date { align-self: start; padding-top: 3px; }
+    .weekend-day { font-size: 39px; }
+    .weekend-event-copy h3 { font-size: clamp(27px, 7vw, 34px); }
+    .weekend-event-copy p { font-size: 11px; }
+    .weekend-response { grid-column: 2; text-align: left; }
+    .weekend-footer { gap: 18px; flex-direction: column; }
+}
