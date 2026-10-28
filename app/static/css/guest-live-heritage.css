@@ -86,7 +86,7 @@ body.dashboard-page {
  * The timeline belongs to the page, not as another sticky pane over faces. */
 .dashboard-page .schedule-panel,
 .dashboard-page .information-panel {
-    width: min(calc(100% - 2 * var(--guest-edge)), 1760px);
+    width: min(calc(100% - var(--guest-edge) - var(--guest-edge)), 1760px);
     padding-top: calc(var(--header-height) + clamp(26px, 4.5vw, 66px));
 }
 .dashboard-page .schedule-intro,
@@ -193,7 +193,7 @@ body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
         linear-gradient(90deg, rgba(16,13,11,.40), rgba(16,13,11,.08) 72%);
 }
 .dashboard-page .travel-edition {
-    width: min(100% - 28px, 1540px);
+    width: min(calc(100% - 28px), 1540px);
     gap: clamp(14px, 1.8vw, 26px);
 }
 .dashboard-page .travel-story {
@@ -347,7 +347,7 @@ body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
     .dashboard-page .travel-edition,
     .dashboard-page .qa-grid { width: calc(100% - 12px); }
     .dashboard-page .registry-section-block .registry-hero {
-        width: min(100% - 20px, 780px);
+        width: min(calc(100% - 20px), 780px);
     }
 }
 @media (max-width: 430px) {
