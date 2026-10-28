@@ -361,7 +361,7 @@ def test_heritage_preview_preserves_original_invitation_identity_and_fullscreen_
         expect(page.get_by_role("heading", name="Browser Guest")).to_be_visible()
         expect(page.get_by_role("heading", name="The celebrations ahead.")).to_be_visible()
         expect(page.get_by_role("link", name="View your wedding weekend")).to_be_visible()
-        expect(page.locator("[data-countdown-days]")).to_have_text(re.compile(r"\\d+"))
+        expect(page.locator("[data-countdown-days]")).to_have_text(re.compile(r"[0-9]+"))
         assert "Parisienne" in page.locator(".heritage-signature").evaluate(
             "el => getComputedStyle(el).fontFamily"
         )
@@ -428,7 +428,7 @@ def test_heritage_preview_glass_accessibility_and_live_site_isolation(
             "el => getComputedStyle(el).backdropFilter"
         )
 
-        toggle = page.locator("[data-heritage-transparency]")
+        toggle = page.locator("button[data-heritage-transparency]")
         expect(toggle).to_have_attribute("aria-pressed", "false")
         toggle.click()
         expect(toggle).to_have_attribute("aria-pressed", "true")
