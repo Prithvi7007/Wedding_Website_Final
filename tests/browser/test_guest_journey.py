@@ -162,7 +162,8 @@ def test_rsvp_keyboard_escape_and_focus_return(browser, wedding_url, close_delay
         expect(page.locator("#rsvp-overlay-haldi")).to_have_attribute("aria-hidden", "false")
         if close_delay_ms:
             page.wait_for_timeout(close_delay_ms)
-            expect(page.locator("#rsvp-overlay-haldi .overlay-close")).to_be_focused()
+        # The dialog must take focus whenever it opens, not only on a timer.
+        expect(page.locator("#rsvp-overlay-haldi .overlay-close")).to_be_focused()
         page.keyboard.press("Escape")
         expect(page.locator("#rsvp-overlay-haldi")).to_have_attribute("aria-hidden", "true")
         # Detect delayed focus stealing from an already-closed overlay.
