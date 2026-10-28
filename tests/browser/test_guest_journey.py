@@ -627,13 +627,20 @@ def test_original_gallery_autoplay_respects_motion_preferences(browser, wedding_
             window.__galleryTimers = new Set();
             const realSet = window.setInterval.bind(window);
             const realClear = window.clearInterval.bind(window);
+            const publishTimerCount = () => {
+                document.documentElement.dataset.galleryTimers = String(window.__galleryTimers.size);
+            };
             window.setInterval = (callback, period, ...args) => {
                 const timer = realSet(callback, period, ...args);
-                if (period === 7500) window.__galleryTimers.add(timer);
+                if (period === 7500) {
+                    window.__galleryTimers.add(timer);
+                    publishTimerCount();
+                }
                 return timer;
             };
             window.clearInterval = timer => {
                 window.__galleryTimers.delete(timer);
+                publishTimerCount();
                 return realClear(timer);
             };
         })()""")
@@ -645,9 +652,9 @@ def test_original_gallery_autoplay_respects_motion_preferences(browser, wedding_
 
         # Opting back into motion starts one timer, never duplicates.
         page.emulate_media(reduced_motion="no-preference")
-        page.wait_for_function("window.__galleryTimers.size === 1")
+        expect(page.locator("html")).to_have_attribute("data-gallery-timers", "1")
         page.emulate_media(reduced_motion="reduce")
-        page.wait_for_function("window.__galleryTimers.size === 0")
+        expect(page.locator("html")).to_have_attribute("data-gallery-timers", "0")
 
         # Manual browsing is still available when autoplay is disabled.
         page.get_by_role("button", name="Next photograph").click()
