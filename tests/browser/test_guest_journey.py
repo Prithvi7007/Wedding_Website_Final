@@ -584,3 +584,95 @@ def test_heritage_schedule_rsvp_calendar_and_width_remain_functional(
         assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
     finally:
         page.close()
+
+@pytest.mark.parametrize("width", [320, 390, 768, 1440, 1920])
+def test_original_gallery_protects_portrait_and_compacts_header_on_scroll(
+    browser, wedding_url, width,
+):
+    page = guest_page(browser, wedding_url, width=width,
+                      height=844 if width <= 430 else 900)
+    try:
+        page.goto(f"{wedding_url}/dashboard?tab=welcome")
+        expect(page.locator("html")).to_have_attribute(
+            "data-fragment-navigation-ready", "true"
+        )
+        header = page.locator(".dashboard-header")
+        initial_height = header.bounding_box()["height"]
+        assert initial_height >= 70
+
+        # The landscape shots remain cinematic, but the vertical portrait
+        # must not be cover-cropped, on phones OR desktop.
+        first = page.locator(".ambient-slide.is-active:not(.is-leaving)")
+        expect(first).to_have_attribute("data-slide-fit", "cover")
+        page.get_by_role("button", name="Photograph 3").click()
+        expect(page.get_by_role("button", name="Photograph 3")).to_have_attribute(
+            "aria-current", "true"
+        )
+        portrait = page.locator(".ambient-slide.is-active:not(.is-leaving)")
+        expect(portrait).to_have_attribute("data-slide-fit", "contain")
+        assert portrait.locator("img").evaluate(
+            "img => getComputedStyle(img).objectFit"
+        ) == "contain"
+        assert "DSC06717" in portrait.evaluate(
+            "el => getComputedStyle(el, '::before').backgroundImage"
+        )
+        assert portrait.locator("img").evaluate(
+            "img => parseFloat(getComputedStyle(img).paddingTop) > 100"
+        )
+
+        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
+        page.evaluate("window.scrollTo({top: 450, behavior: 'instant'})")
+        expect(header).to_have_class(re.compile(r"is-condensed"))
+        assert header.bounding_box()["height"] < initial_height
+        expect(page.get_by_role("navigation", name="Wedding portal navigation")).to_be_visible()
+        page.evaluate("window.scrollTo({top: 0, behavior: 'instant'})")
+        expect(header).not_to_have_class(re.compile(r"is-condensed"))
+    finally:
+        page.close()
+
+
+def test_original_gallery_autoplay_respects_motion_preferences(browser, wedding_url):
+    page = guest_page(browser, wedding_url)
+    try:
+        # Instrument only the 7.5s photo timer, not the 1s countdown.
+        page.add_init_script("""(() => {
+            window.__galleryTimers = new Set();
+            const realSet = window.setInterval.bind(window);
+            const realClear = window.clearInterval.bind(window);
+            const publishTimerCount = () => {
+                document.documentElement.dataset.galleryTimers = String(window.__galleryTimers.size);
+            };
+            window.setInterval = (callback, period, ...args) => {
+                const timer = realSet(callback, period, ...args);
+                if (period === 7500) {
+                    window.__galleryTimers.add(timer);
+                    publishTimerCount();
+                }
+                return timer;
+            };
+            window.clearInterval = timer => {
+                window.__galleryTimers.delete(timer);
+                publishTimerCount();
+                return realClear(timer);
+            };
+        })()""")
+        page.reload()
+        expect(page.locator("html")).to_have_attribute(
+            "data-fragment-navigation-ready", "true"
+        )
+        assert page.evaluate("window.__galleryTimers.size") == 0
+
+        # Opting back into motion starts one timer, never duplicates.
+        page.emulate_media(reduced_motion="no-preference")
+        expect(page.locator("html")).to_have_attribute("data-gallery-timers", "1")
+        page.emulate_media(reduced_motion="reduce")
+        expect(page.locator("html")).to_have_attribute("data-gallery-timers", "0")
+
+        # Manual browsing is still available when autoplay is disabled.
+        page.get_by_role("button", name="Next photograph").click()
+        expect(page.get_by_role("button", name="Photograph 2")).to_have_attribute(
+            "aria-current", "true"
+        )
+        assert page.evaluate("window.__galleryTimers.size") == 0
+    finally:
+        page.close()

@@ -438,3 +438,96 @@ body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
         transform: none;
     }
 }
+
+/* PHOTOGRAPHY & HEADER — original guest experience only.
+ * One portrait among the six engagement photographs cannot be safely
+ * full-screen cover-cropped. Keep its full frame visible and fill the
+ * surrounding area with the same image as softly blurred ambience. */
+.dashboard-page .ambient-slide[data-slide-fit="contain"] {
+    isolation: isolate;
+}
+.dashboard-page .ambient-slide[data-slide-fit="contain"]::before {
+    content: "";
+    position: absolute;
+    inset: -24px;
+    z-index: 0;
+    pointer-events: none;
+    background-image: var(--ambient-photo);
+    background-size: cover;
+    background-position: var(--position-desktop, center);
+    filter: blur(26px) brightness(.62) saturate(.83);
+    transform: scale(1.06);
+}
+.dashboard-page .ambient-slide[data-slide-fit="contain"] img {
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+    padding-top: var(--header-height);
+    object-fit: contain;
+    object-position: center;
+    filter: brightness(.96) saturate(1.03);
+}
+
+/* Keep the original Parisienne signature and all five tabs; trim the
+ * three-row header only after the guest begins scrolling. Since the
+ * header is fixed, the content does not jump when the chrome contracts. */
+.dashboard-page .dashboard-header {
+    transition: background 220ms ease, padding 220ms ease;
+}
+.dashboard-page .dashboard-header.is-condensed {
+    padding-top: 4px;
+    background:
+        linear-gradient(180deg, rgba(23, 17, 13, .93), rgba(27, 19, 14, .78) 90%, rgba(27, 19, 14, .50));
+    -webkit-backdrop-filter: blur(12px) saturate(125%);
+    backdrop-filter: blur(12px) saturate(125%);
+}
+.dashboard-page .dashboard-header.is-condensed .dashboard-meta {
+    display: none;
+}
+.dashboard-page .dashboard-header.is-condensed .dashboard-title {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    font-size: clamp(34px, 3.1vw, 44px);
+    line-height: 1;
+}
+.dashboard-page .dashboard-header.is-condensed .dashboard-tabs {
+    min-height: 36px;
+    gap: clamp(18px, 3.5vw, 54px);
+}
+.dashboard-page .dashboard-header.is-condensed .dashboard-tab {
+    min-height: 35px;
+    font-size: clamp(11px, 1vw, 13px);
+    letter-spacing: 1.4px;
+}
+
+@media (max-width: 700px) {
+    .dashboard-page .ambient-slide[data-slide-fit="contain"]::before {
+        background-position: var(--position-mobile, center);
+    }
+    .dashboard-page .dashboard-header.is-condensed {
+        padding: 3px 12px 0;
+    }
+    .dashboard-page .dashboard-header.is-condensed .dashboard-title {
+        font-size: clamp(28px, 8vw, 37px);
+        margin: 1px auto 3px;
+    }
+    .dashboard-page .dashboard-header.is-condensed .dashboard-tabs {
+        min-height: 36px;
+        gap: clamp(14px, 3.5vw, 22px);
+    }
+    .dashboard-page .dashboard-header.is-condensed .dashboard-tab {
+        min-height: 36px;
+        font-size: 11px;
+        letter-spacing: .6px;
+    }
+}
+@media (max-width: 430px) {
+    .dashboard-page .dashboard-header.is-condensed .dashboard-tab {
+        font-size: 10px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-page .dashboard-header {
+        transition: none;
+    }
+}

@@ -1,4 +1,5 @@
 import { createSlideshow } from "./slideshow.js";
+import { mountCompactGuestHeader } from "./guest-header.js";
 import { mountCountdown } from "./countdown.js";
 import { runLoginSparkles } from "./effects.js";
 import { mountSchedule } from "./schedule.js";
@@ -11,6 +12,7 @@ function mountTabContent(root = document) {
 }
 
 createSlideshow();
+mountCompactGuestHeader();
 const cleanupInitialTab = mountTabContent(document);
 mountFragmentNavigation(mountTabContent, cleanupInitialTab);
 runLoginSparkles();
