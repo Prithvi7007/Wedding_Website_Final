@@ -293,16 +293,19 @@ def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_o
                     window.__releaseTravel = shouldFail => {
                         if (shouldFail) {
                             window.__travelSettled = true;
+                                document.documentElement.dataset.travelSettled = "yes";
                             reject(new Error("simulated stale network failure"));
                             return;
                         }
                         originalFetch(url, {...options, signal: undefined}).then(
                             response => {
                                 window.__travelSettled = true;
+                                document.documentElement.dataset.travelSettled = "yes";
                                 resolve(response);
                             },
                             error => {
                                 window.__travelSettled = true;
+                                document.documentElement.dataset.travelSettled = "yes";
                                 reject(error);
                             },
                         );
@@ -312,7 +315,7 @@ def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_o
         }""")
 
         page.get_by_role("link", name="Travel", exact=True).click()
-        page.wait_for_function("typeof window.__releaseTravel === 'function'")
+        assert page.evaluate("() => typeof window.__releaseTravel === 'function'")
         page.get_by_role("link", name="Q&A", exact=True).click()
 
         expect(page.get_by_role("heading", name="Questions & Answers")).to_be_visible()
@@ -321,7 +324,7 @@ def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_o
         )
 
         page.evaluate("(fail) => window.__releaseTravel(fail)", delayed_outcome == "error")
-        page.wait_for_function("window.__travelSettled")
+        expect(page.locator("html")).to_have_attribute("data-travel-settled", "yes")
 
         # The stale response/error must not overwrite the chosen tab or force
         # a full reload. History, loading state and accessibility stay synced.
