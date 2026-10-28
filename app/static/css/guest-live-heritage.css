@@ -262,16 +262,25 @@ body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
         margin: 5px auto 5px;
         line-height: .95;
     }
+    /* Five equal columns keep the labels visually balanced, including
+       when the signature header condenses after scrolling. */
     .dashboard-page .dashboard-tabs {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         min-height: 40px;
-        justify-content: flex-start;
-        gap: clamp(15px, 4vw, 25px);
-        padding: 0 3px;
+        justify-content: stretch;
+        gap: 0;
+        padding: 0;
+        overflow-x: visible;
     }
     .dashboard-page .dashboard-tab {
+        min-width: 0;
         min-height: 39px;
+        justify-self: center;
+        justify-content: center;
         font-size: 11px;
         letter-spacing: 1.1px;
+        white-space: nowrap;
     }
     .dashboard-page .ambient-slideshow-shade {
         background: linear-gradient(90deg, rgba(20,15,12,.69), rgba(20,15,12,.43) 45%, rgba(17,13,11,.08)),
@@ -353,7 +362,7 @@ body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
 @media (max-width: 430px) {
     body.dashboard-page { --header-height: 119px; }
     .dashboard-page .dashboard-title { font-size: clamp(40px, 12vw, 49px); }
-    .dashboard-page .dashboard-tabs { gap: 15px; }
+    .dashboard-page .dashboard-tabs { gap: 0; }
     .dashboard-page .dashboard-tab { font-size: 10px; letter-spacing: .65px; }
     .dashboard-page .welcome-copy { padding-inline: 15px; }
     .dashboard-page .welcome-copy h2 { width: 84%; font-size: clamp(36px, 9.7vw, 43px); }
@@ -513,7 +522,7 @@ body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
     }
     .dashboard-page .dashboard-header.is-condensed .dashboard-tabs {
         min-height: 36px;
-        gap: clamp(14px, 3.5vw, 22px);
+        gap: 0;
     }
     .dashboard-page .dashboard-header.is-condensed .dashboard-tab {
         min-height: 36px;
