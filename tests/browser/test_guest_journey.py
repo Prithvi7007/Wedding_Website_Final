@@ -570,7 +570,8 @@ def test_guest_v2_fullscreen_liquid_glass_is_immersive_and_switchable(
         assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
 
         # Accessible, user-driven transparency: retain all text and actions.
-        toggle = page.get_by_role("button", name="Reduce glass transparency")
+        toggle = page.locator("[data-v2-transparency-toggle]")
+        expect(toggle).to_have_attribute("aria-label", "Reduce glass transparency")
         expect(toggle).to_have_attribute("aria-pressed", "false")
         toggle.click()
         expect(toggle).to_have_attribute("aria-pressed", "true")
@@ -581,7 +582,8 @@ def test_guest_v2_fullscreen_liquid_glass_is_immersive_and_switchable(
         assert event.locator(".v2-event-content").evaluate(
             "el => getComputedStyle(el).backgroundColor"
         ) == "rgb(48, 37, 30)"
-        page.get_by_role("button", name="Enable frosted glass").click()
+        expect(toggle).to_have_attribute("aria-label", "Enable frosted glass")
+        toggle.click()
         expect(page.locator("body")).to_have_attribute("data-v2-transparency", "glass")
         assert "blur(" in event.locator(".v2-event-content").evaluate(
             "el => getComputedStyle(el).backdropFilter"
