@@ -184,6 +184,14 @@
             Please RSVP for each celebration shown below. Your response helps us plan
             seating, dining, parking, and every thoughtful detail of the weekend.
         </p>
+        {% if events %}
+        <a class="schedule-weekend-calendar"
+           href="{{ url_for('dashboard.weekend_calendar') }}"
+           download
+           aria-label="Download all celebrations in your private invitation as a calendar file">
+            <span aria-hidden="true">✦</span> Add my weekend to calendar <span aria-hidden="true">↗</span>
+        </a>
+        {% endif %}
     </header>
 
     {% if events %}

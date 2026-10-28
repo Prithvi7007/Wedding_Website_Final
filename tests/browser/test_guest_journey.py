@@ -226,3 +226,32 @@ def test_welcome_event_link_targets_invited_event_after_navigation_and_refresh(b
         expect(page.locator('[data-schedule-event="uninvited"]')).to_have_count(0)
     finally:
         page.close()
+
+
+@pytest.mark.parametrize("width", [320, 390, 430])
+def test_wedding_weekend_calendar_download_on_mobile(browser, wedding_url, width):
+    page = guest_page(browser, wedding_url, width=width, height=844)
+    try:
+        page.get_by_role("link", name="Schedule", exact=True).click()
+        link = page.get_by_role(
+            "link",
+            name="Download all celebrations in your private invitation as a calendar file",
+        )
+        expect(link).to_be_visible()
+        with page.expect_download() as download_info:
+            link.click()
+        download = download_info.value
+        assert download.suggested_filename == "adlin-prithvi-weekend.ics"
+        data = download.path().read_text(encoding="utf-8")
+        assert "BEGIN:VEVENT" in data
+        assert "SUMMARY:Haldi" in data
+        # Check the new control directly. The tab navigation is an
+        # intentionally horizontal scroller on narrow screens.
+        bounds = link.evaluate("""element => {
+            const rect = element.getBoundingClientRect();
+            return {left: rect.left, right: rect.right};
+        }""")
+        assert bounds["left"] >= -2
+        assert bounds["right"] <= width + 2
+    finally:
+        page.close()
