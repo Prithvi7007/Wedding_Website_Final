@@ -405,3 +405,63 @@ def test_guest_v2_preview_is_uncropped_responsive_and_read_only(
         expect(rsvp).to_have_attribute("href", re.compile(r"tab=schedule.*event=haldi"))
     finally:
         page.close()
+
+@pytest.mark.parametrize("width", [390, 1440])
+def test_guest_v2_glass_surfaces_preserve_portraits_and_clear_rsvp(browser, wedding_url, width):
+    page = guest_page(
+        browser, wedding_url,
+        width=width,
+        height=844 if width < 800 else 900,
+    )
+    try:
+        page.goto(f"{wedding_url}/dashboard/preview/guest-v2")
+        expect(page.get_by_role("heading", name="Adlin & Prithvi")).to_be_visible()
+        expect(page.locator(".v2-hero-copy")).to_be_visible()
+
+        # The glass must be genuine blur, not an opaque card with a border.
+        def style(selector):
+            return page.locator(selector).evaluate("""element => {
+                const computed = getComputedStyle(element);
+                return {
+                    blur: computed.backdropFilter || computed.webkitBackdropFilter,
+                    background: computed.backgroundImage,
+                };
+            }""")
+
+        for selector in (".v2-header", ".v2-hero-copy", ".v2-chapter-index", ".v2-event-content"):
+            surface = style(selector)
+            assert "blur(" in surface["blur"], f"{selector} has no frosted backing"
+        assert "gradient(" in style(".v2-hero-copy")["background"]
+
+        portrait = page.locator(".v2-photo-subject")
+        expect(portrait).to_have_js_property("complete", True)
+        assert portrait.evaluate("el => el.naturalWidth > 0")
+        assert portrait.evaluate("el => getComputedStyle(el).objectFit") == "contain"
+
+        hero = page.locator(".v2-hero-copy").bounding_box()
+        photo = page.locator(".v2-photo-stage").bounding_box()
+        assert hero is not None and photo is not None
+        if width >= 800:
+            assert hero["x"] + hero["width"] > photo["x"] + 15
+        else:
+            assert hero["y"] < photo["y"] + photo["height"]
+
+        page.locator("#v2-event-haldi").scroll_into_view_if_needed()
+        event = page.locator("#v2-event-haldi")
+        visual = event.locator(".v2-event-visual").bounding_box()
+        content = event.locator(".v2-event-content").bounding_box()
+        assert visual is not None and content is not None
+        if width >= 800:
+            assert content["x"] < visual["x"] + visual["width"]
+        else:
+            assert content["y"] < visual["y"] + visual["height"]
+
+        expect(event.get_by_role("link", name="RSVP for this event")).to_be_visible()
+        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
+
+        # Guests who need stronger contrast get opaque, non-blurred surfaces.
+        page.emulate_media(contrast="more")
+        assert style(".v2-event-content")["blur"] == "none"
+        assert style(".v2-hero-copy")["blur"] == "none"
+    finally:
+        page.close()
