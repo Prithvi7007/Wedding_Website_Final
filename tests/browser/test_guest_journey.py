@@ -255,3 +255,37 @@ def test_wedding_weekend_calendar_download_on_mobile(browser, wedding_url, width
         assert bounds["right"] <= width + 2
     finally:
         page.close()
+
+
+@pytest.mark.parametrize("width", [320, 390, 430])
+def test_schedule_layout_has_no_page_wide_horizontal_scroll(browser, wedding_url, width):
+    page = guest_page(browser, wedding_url, width=width, height=844)
+    try:
+        page.get_by_role("link", name="Schedule", exact=True).click()
+        expect(page.get_by_role("heading", name="Wedding Schedule")).to_be_visible()
+        diagnostic = page.evaluate("""() => {
+            const measure = () => document.documentElement.scrollWidth;
+            const baseline = measure();
+            const selectors = [
+                '.dashboard-header', '.dashboard-tabs', '.dashboard-shell',
+                '.schedule-panel', '.schedule-intro', '.schedule-journey',
+                '.cinematic-event-list', '.cinematic-event-card',
+                '.event-glass-panel', '.ambient-slideshow',
+                '.rsvp-petal-container', '.rsvp-petal-canvas',
+            ];
+            const results = {};
+            for (const selector of selectors) {
+                const node = document.querySelector(selector);
+                if (!node) continue;
+                const before = node.style.display;
+                node.style.display = 'none';
+                results[selector] = measure();
+                node.style.display = before;
+            }
+            return {baseline, results};
+        }""")
+        assert diagnostic["baseline"] <= width + 2, (
+            f"Schedule page width {width}: {diagnostic}"
+        )
+    finally:
+        page.close()
