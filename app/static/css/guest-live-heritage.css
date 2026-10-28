@@ -271,7 +271,6 @@ body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
         justify-content: stretch;
         gap: 0;
         padding: 0;
-        overflow-x: visible;
     }
     .dashboard-page .dashboard-tab {
         min-width: 0;
@@ -538,5 +537,13 @@ body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
 @media (prefers-reduced-motion: reduce) {
     .dashboard-page .dashboard-header {
         transition: none;
+    }
+}
+
+/* Preserve readable 10px labels without collision on 320px phones. */
+@media (max-width: 360px) {
+    .dashboard-page .dashboard-tab,
+    .dashboard-page .dashboard-header.is-condensed .dashboard-tab {
+        letter-spacing: 0;
     }
 }
