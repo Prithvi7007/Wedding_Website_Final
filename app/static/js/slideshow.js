@@ -19,6 +19,8 @@ function applySlide(buffer, slide, highPriority = false) {
 
     buffer.style.setProperty("--position-desktop", slide.positionDesktop);
     buffer.style.setProperty("--position-mobile", slide.positionMobile);
+    buffer.style.setProperty("--ambient-photo", `url("${slide.fallback}")`);
+    buffer.dataset.slideFit = slide.fit === "contain" ? "contain" : "cover";
     avif.srcset = slide.avifSrcset;
     webp.srcset = slide.webpSrcset;
     image.fetchPriority = highPriority ? "high" : "auto";
@@ -39,6 +41,7 @@ export function createSlideshow() {
     let activeBufferIndex = 0;
     let transitioning = false;
     let timerId = null;
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     function updateDots() {
         document.querySelectorAll("[data-slide-index]").forEach((dot) => {
@@ -50,7 +53,9 @@ export function createSlideshow() {
     }
 
     function restartTimer() {
-        if (timerId) window.clearInterval(timerId);
+        if (timerId !== null) window.clearInterval(timerId);
+        timerId = null;
+        if (document.hidden || motionPreference.matches || slides.length < 2) return;
         timerId = window.setInterval(() => goTo(currentIndex + 1, false), INTERVAL_MS);
     }
 
@@ -95,14 +100,12 @@ export function createSlideshow() {
         if (dot) goTo(Number(dot.dataset.slideIndex));
     });
 
-    document.addEventListener("visibilitychange", () => {
-        if (document.hidden && timerId) {
-            window.clearInterval(timerId);
-            timerId = null;
-        } else if (!document.hidden) {
-            restartTimer();
-        }
-    });
+    document.addEventListener("visibilitychange", restartTimer);
+    if (typeof motionPreference.addEventListener === "function") {
+        motionPreference.addEventListener("change", restartTimer);
+    } else {
+        motionPreference.addListener(restartTimer);
+    }
 
     updateDots();
     restartTimer();

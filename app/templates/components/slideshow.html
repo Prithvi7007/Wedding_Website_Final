@@ -3,7 +3,8 @@
     <picture
         class="ambient-slide is-active"
         data-slide-buffer="0"
-        style="--position-desktop: {{ first_slide.positionDesktop }}; --position-mobile: {{ first_slide.positionMobile }};"
+        data-slide-fit="{{ first_slide.fit }}"
+        style="--position-desktop: {{ first_slide.positionDesktop }}; --position-mobile: {{ first_slide.positionMobile }}; --ambient-photo: url('{{ first_slide.fallback }}');"
     >
         <source data-slide-source="avif" type="image/avif" srcset="{{ first_slide.avifSrcset }}" sizes="100vw">
         <source data-slide-source="webp" type="image/webp" srcset="{{ first_slide.webpSrcset }}" sizes="100vw">
@@ -19,7 +20,7 @@
         >
     </picture>
 
-    <picture class="ambient-slide" data-slide-buffer="1">
+    <picture class="ambient-slide" data-slide-buffer="1" data-slide-fit="cover">
         <source data-slide-source="avif" type="image/avif" sizes="100vw">
         <source data-slide-source="webp" type="image/webp" sizes="100vw">
         <img

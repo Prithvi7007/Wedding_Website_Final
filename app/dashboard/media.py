@@ -10,15 +10,16 @@ class SlideshowSource:
     name: str
     position_desktop: str
     position_mobile: str
+    fit: str = "cover"
 
 
 SLIDESHOW_SOURCES: tuple[SlideshowSource, ...] = (
-    SlideshowSource("DSC06660", "61% 48%", "68% center"),
-    SlideshowSource("DSC06692", "63% 45%", "68% center"),
-    SlideshowSource("DSC06717", "68% 50%", "72% center"),
-    SlideshowSource("DSC06785", "59% 48%", "65% center"),
-    SlideshowSource("DSC06855", "64% 44%", "69% center"),
-    SlideshowSource("DSC06882", "67% 50%", "71% center"),
+    SlideshowSource("DSC06660", "61% 32%", "68% center"),
+    SlideshowSource("DSC06692", "63% 32%", "68% center"),
+    SlideshowSource("DSC06717", "50% 50%", "50% 50%", "contain"),
+    SlideshowSource("DSC06785", "59% 32%", "65% center"),
+    SlideshowSource("DSC06855", "64% 32%", "69% center"),
+    SlideshowSource("DSC06882", "67% 32%", "71% center"),
 )
 
 WIDTHS: tuple[int, ...] = (480, 768, 1170, 1600, 2048)
@@ -44,6 +45,7 @@ def build_slideshow_manifest() -> list[dict[str, str]]:
             "fallback": _asset_url(source.name, 1170, "webp"),
             "positionDesktop": source.position_desktop,
             "positionMobile": source.position_mobile,
+            "fit": source.fit,
         }
         for source in SLIDESHOW_SOURCES
     ]
