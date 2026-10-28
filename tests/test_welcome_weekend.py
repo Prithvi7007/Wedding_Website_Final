@@ -85,6 +85,12 @@ def test_welcome_shows_only_invited_events_and_real_rsvp_states(client, app):
         assert "Your reply is saved for 3" in html
         assert "of 4 celebrations." in html
         assert "Continue your RSVP" in html
+        assert html.count('class="weekend-event-link"') == 4
+        assert 'aria-label="View Golden Haldi in your schedule"' in html
+        # The first unanswered celebration is dinner; earlier saved replies
+        # do not redirect guests away from their next RSVP.
+        assert 'href="/dashboard?tab=schedule&amp;event=dinner"' in html
+        assert 'href="/dashboard?tab=schedule&amp;event=haldi"' in html
         assert html.index("Golden Haldi") < html.index("Telugu Ceremony")
         assert html.index("Telugu Ceremony") < html.index("Wedding Reception")
         assert html.index("Wedding Reception") < html.index("Family Dinner")
@@ -106,3 +112,4 @@ def test_welcome_keeps_original_hero_without_invited_events(client, app):
     assert "View Your Schedule" in html
     assert 'class="welcome-weekend"' not in html
     assert "A weekend written for you" not in html
+    assert "weekend-event-link" not in html

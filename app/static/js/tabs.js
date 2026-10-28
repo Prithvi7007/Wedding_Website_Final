@@ -10,12 +10,35 @@ function setActiveTab(tabName) {
     });
 }
 
+// Target only event cards rendered for this invitation. Unknown IDs fall
+// back to the Schedule introduction without fetching any other event.
+function focusLinkedScheduleEvent(content, eventId) {
+    if (!eventId) return false;
+    const card = [...content.querySelectorAll("[data-schedule-event]")]
+        .find((element) => element.dataset.scheduleEvent === eventId);
+    if (!card) return false;
+
+    content.querySelectorAll("[data-action='journey']").forEach((stop) => {
+        const active = stop.dataset.eventTarget === card.id;
+        stop.classList.toggle("is-active", active);
+        if (active) stop.setAttribute("aria-current", "step");
+        else stop.removeAttribute("aria-current");
+    });
+    const heading = card.querySelector("h3");
+    if (heading) {
+        heading.tabIndex = -1;
+        heading.focus({ preventScroll: true });
+    }
+    card.scrollIntoView({ behavior: "auto", block: "start" });
+    return true;
+}
+
 export function mountFragmentNavigation(onContentMounted, initialCleanup = () => {}) {
     const content = document.getElementById("tab-content");
     if (!content) return;
     cleanupCurrentTab = initialCleanup;
 
-    async function navigate(link, pushHistory = true) {
+    async function navigate(link, pushHistory = true, historyEventId = null) {
         const tabName = link.dataset.tabName;
         const fragmentUrl = link.dataset.fragmentUrl;
         if (!tabName || !fragmentUrl) return;
@@ -42,8 +65,11 @@ export function mountFragmentNavigation(onContentMounted, initialCleanup = () =>
             if (pushHistory) {
                 history.pushState({ tabName }, "", link.href);
             }
-            window.scrollTo({ top: 0, behavior: "smooth" });
             content.focus({ preventScroll: true });
+            const eventId = historyEventId || new URL(link.href, location.href).searchParams.get("event");
+            if (tabName !== "schedule" || !focusLinkedScheduleEvent(content, eventId)) {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
         } catch (error) {
             console.error(error);
             window.location.assign(link.href);
@@ -63,6 +89,12 @@ export function mountFragmentNavigation(onContentMounted, initialCleanup = () =>
         const params = new URLSearchParams(location.search);
         const tabName = params.get("tab") || "welcome";
         const link = document.querySelector(`a[data-tab-name="${CSS.escape(tabName)}"]`);
-        if (link) navigate(link, false);
+        if (link) navigate(link, false, params.get("event"));
     });
+
+    // Copied links and refreshes should land on the same permitted card.
+    const params = new URLSearchParams(location.search);
+    if (params.get("tab") === "schedule") {
+        focusLinkedScheduleEvent(content, params.get("event"));
+    }
 }
