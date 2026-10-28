@@ -20,8 +20,10 @@ def _make_event(event_id: str, title: str, order: int) -> Event:
 
 
 def _login(client, invitation_id):
-    with client.session_transaction() as session:
-        session["invitation_id"] = invitation_id
+    with client.application.app_context():
+        token = db.session.get(Invitation, invitation_id).invite_token
+    response = client.post(f"/invite/{token}/open")
+    assert response.status_code == 302
 
 
 def test_welcome_shows_only_invited_events_and_real_rsvp_states(client, app):

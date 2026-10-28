@@ -665,7 +665,7 @@ def invitation_regenerate_token(invitation_id: int):
             getattr(g, "request_id", "-"),
         )
         flash(
-            "A new private link was created. The previous link no longer works.",
+            "New private link created. Previous links and open guest sessions are now invalid.",
             "success",
         )
 

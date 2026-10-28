@@ -252,8 +252,9 @@
             </div>
 
             <p>
-                Regenerating the token immediately invalidates the previous
-                private invitation URL. Existing RSVP records are preserved.
+                Regenerating this link revokes the old URL and any guest
+                sessions already open with it. Guests will need the new link
+                to access the invitation again. Saved RSVPs are preserved.
             </p>
 
             <form
@@ -262,7 +263,7 @@
                     invitation_id=invitation.invitation_id
                 ) }}"
                 method="post"
-                data-confirm-form="Create a new private link? The current link will stop working."
+                data-confirm-form="Regenerate this link? The current URL and all open guest sessions will stop working. Saved RSVPs are preserved."
             >
                 <input
                     type="hidden"

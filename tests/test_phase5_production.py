@@ -90,6 +90,8 @@ def test_invitation_session_does_not_store_private_token(client, app):
     with client.session_transaction() as session:
         assert session["invitation_id"] == invitation_id
         assert "invite_token" not in session
+        assert len(session["invitation_token_binding"]) == 64
+        assert session["invitation_token_binding"] != "phase5-private-token"
         assert session.permanent is True
 
 
