@@ -77,6 +77,7 @@ def test_v2_preview_uses_existing_guest_permissions_and_read_only_rsvp(client, a
     assert 'name="attending"' not in html
     assert '<form' not in html
     assert "guest-v2.css" in html
+    assert "v2-hero-atmosphere" in html
     assert "guest-v2-glass.css" in html
 
     with app.app_context():
