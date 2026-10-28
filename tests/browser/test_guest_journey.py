@@ -348,197 +348,7 @@ def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_o
         page.close()
 
 @pytest.mark.parametrize("width", [320, 390, 768, 1440, 1920])
-def test_guest_v2_preview_is_uncropped_responsive_and_read_only(
-    browser, wedding_url, width,
-):
-    from pathlib import Path
-
-    page = guest_page(
-        browser, wedding_url,
-        width=width,
-        height=900 if width >= 768 else 844,
-    )
-    try:
-        page.goto(f"{wedding_url}/dashboard/preview/guest-v2")
-        expect(page.get_by_role("heading", name="Adlin & Prithvi")).to_be_visible()
-        expect(page.get_by_role("heading", name="Every moment, beautifully yours.")).to_have_count(1)
-        expect(page.get_by_role("link", name="RSVP for this event")).to_be_visible()
-
-        # The photographic subject is never cropped by cover sizing.
-        portrait = page.locator(".v2-photo-subject")
-        expect(portrait).to_be_visible()
-        expect(portrait).to_have_js_property("complete", True)
-        assert portrait.evaluate("img => img.naturalWidth > 0")
-        assert portrait.evaluate(
-            "img => getComputedStyle(img).objectFit"
-        ) == "contain"
-
-        header_bottom = page.locator(".v2-header").bounding_box()["y"] + (
-            page.locator(".v2-header").bounding_box()["height"]
-        )
-        subject_top = portrait.bounding_box()["y"]
-        assert subject_top >= header_bottom - 2, (
-            f"Portrait overlaps navigation at {width}px: "
-            f"subject top={subject_top}, header bottom={header_bottom}"
-        )
-
-        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
-
-        if width in (390, 1440):
-            artifacts = Path("preview-artifacts")
-            artifacts.mkdir(exist_ok=True)
-            page.screenshot(
-                path=str(artifacts / f"guest-v2-welcome-{width}.png"),
-                animations="disabled",
-            )
-
-        page.get_by_role("link", name="Explore your celebrations").click()
-        assert page.evaluate("location.hash") == "#celebrations"
-        event = page.locator("#v2-event-haldi")
-        expect(event).to_be_visible()
-        expect(event.get_by_text("Awaiting your RSVP")).to_be_visible()
-        expect(event.get_by_text("12:00 PM")).to_be_visible()
-
-        if width in (390, 1440):
-            event.scroll_into_view_if_needed()
-            page.screenshot(
-                path=str(artifacts / f"guest-v2-celebration-{width}.png"),
-                animations="disabled",
-            )
-
-        # From this concept guests must intentionally return to the proven
-        # live RSVP flow; no preview form is allowed to change data.
-        assert page.locator("form").count() == 0
-        rsvp = event.get_by_role("link", name="RSVP for this event")
-        expect(rsvp).to_have_attribute("href", re.compile(r"tab=schedule.*event=haldi"))
-    finally:
-        page.close()
-
-@pytest.mark.parametrize("width", [390, 1440])
-def test_guest_v2_glass_surfaces_preserve_portraits_and_clear_rsvp(browser, wedding_url, width):
-    page = guest_page(
-        browser, wedding_url,
-        width=width,
-        height=844 if width < 800 else 900,
-    )
-    try:
-        page.goto(f"{wedding_url}/dashboard/preview/guest-v2")
-        expect(page.get_by_role("heading", name="Adlin & Prithvi")).to_be_visible()
-        expect(page.locator(".v2-hero-copy")).to_be_visible()
-
-        # The glass must be genuine blur, not an opaque card with a border.
-        def style(selector):
-            return page.locator(selector).evaluate("""element => {
-                const computed = getComputedStyle(element);
-                return {
-                    blur: computed.backdropFilter || computed.webkitBackdropFilter,
-                    background: computed.backgroundImage,
-                };
-            }""")
-
-        for selector in (".v2-header", ".v2-hero-copy", ".v2-chapter-index", ".v2-event-content"):
-            surface = style(selector)
-            assert "blur(" in surface["blur"], f"{selector} has no frosted backing"
-        assert "gradient(" in style(".v2-hero-copy")["background"]
-
-        portrait = page.locator(".v2-photo-subject")
-        expect(portrait).to_have_js_property("complete", True)
-        assert portrait.evaluate("el => el.naturalWidth > 0")
-        assert portrait.evaluate("el => getComputedStyle(el).objectFit") == "contain"
-
-        hero = page.locator(".v2-hero-copy").bounding_box()
-        photo = page.locator(".v2-photo-stage").bounding_box()
-        assert hero is not None and photo is not None
-        if width >= 800:
-            assert hero["x"] + hero["width"] > photo["x"] + 15
-        else:
-            assert hero["y"] < photo["y"] + photo["height"]
-
-        page.locator("#v2-event-haldi").scroll_into_view_if_needed()
-        event = page.locator("#v2-event-haldi")
-        visual = event.locator(".v2-event-visual").bounding_box()
-        content = event.locator(".v2-event-content").bounding_box()
-        assert visual is not None and content is not None
-        if width >= 800:
-            assert content["x"] < visual["x"] + visual["width"]
-        else:
-            assert content["y"] < visual["y"] + visual["height"]
-
-        expect(event.get_by_role("link", name="RSVP for this event")).to_be_visible()
-        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
-
-        # Guests who need stronger contrast get opaque, non-blurred surfaces.
-        page.emulate_media(contrast="more")
-        assert style(".v2-event-content")["blur"] == "none"
-        assert style(".v2-hero-copy")["blur"] == "none"
-    finally:
-        page.close()
-
-@pytest.mark.parametrize("width", [320, 390, 768, 1440, 1920])
-def test_guest_v2_heritage_glass_preserves_warm_photography_and_readability(
-    browser, wedding_url, width,
-):
-    page = guest_page(
-        browser,
-        wedding_url,
-        width=width,
-        height=844 if width <= 430 else 900,
-    )
-    try:
-        page.goto(f"{wedding_url}/dashboard/preview/guest-v2")
-        expect(page.get_by_role("heading", name="Adlin & Prithvi")).to_be_visible()
-
-        # The original wedding's photographic mood is visible through
-        # the glass, not replaced by an opaque cream rectangle.
-        atmosphere = page.locator(".v2-hero-atmosphere img")
-        expect(atmosphere).to_have_js_property("complete", True)
-        assert atmosphere.evaluate("image => image.naturalWidth > 0")
-
-        glass = page.locator(".v2-hero-copy")
-        background = glass.evaluate(
-            "el => getComputedStyle(el).backgroundImage"
-        )
-        assert "linear-gradient(" in background
-        assert "rgba(" in background
-        assert "blur(" in glass.evaluate(
-            "el => getComputedStyle(el).backdropFilter"
-        )
-
-        portrait = page.locator(".v2-photo-subject")
-        assert portrait.evaluate("el => getComputedStyle(el).objectFit") == "contain"
-        header_color = page.locator(".v2-header").evaluate(
-            "el => getComputedStyle(el).backgroundColor"
-        )
-        assert "rgba(" in header_color
-        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
-
-        event = page.locator("#v2-event-haldi")
-        event.scroll_into_view_if_needed()
-        pane = event.locator(".v2-event-content")
-        assert "linear-gradient(" in pane.evaluate(
-            "el => getComputedStyle(el).backgroundImage"
-        )
-        assert "rgb(255, 247, 233)" == event.locator("h3").evaluate(
-            "el => getComputedStyle(el).color"
-        )
-        expect(event.get_by_role("link", name="RSVP for this event")).to_be_visible()
-        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
-
-        # Accessibility mode keeps dark readable content while removing blur,
-        # and returns the event index to opaque ivory for dark-text contrast.
-        page.emulate_media(contrast="more")
-        assert pane.evaluate(
-            "el => getComputedStyle(el).backdropFilter"
-        ) == "none"
-        assert page.locator(".v2-chapter-index").evaluate(
-            "el => getComputedStyle(el).backgroundColor"
-        ) == "rgb(247, 241, 231)"
-    finally:
-        page.close()
-
-
-@pytest.mark.parametrize("width", [320, 390, 768, 1440, 1920])
-def test_guest_v2_fullscreen_liquid_glass_is_immersive_and_switchable(
+def test_heritage_preview_preserves_original_invitation_identity_and_fullscreen_photos(
     browser, wedding_url, width,
 ):
     page = guest_page(
@@ -548,53 +358,94 @@ def test_guest_v2_fullscreen_liquid_glass_is_immersive_and_switchable(
     try:
         page.goto(f"{wedding_url}/dashboard/preview/guest-v2")
         expect(page.get_by_role("heading", name="Adlin & Prithvi")).to_be_visible()
-        expect(page.locator(".v2-guest-note")).to_contain_text("Browser Guest")
+        expect(page.get_by_role("heading", name="Browser Guest")).to_be_visible()
+        expect(page.get_by_role("heading", name="The celebrations ahead.")).to_be_visible()
+        expect(page.get_by_role("link", name="View your wedding weekend")).to_be_visible()
+        expect(page.locator("[data-countdown-days]")).to_have_text(re.compile(r"\\d+"))
+        assert "Parisienne" in page.locator(".heritage-signature").evaluate(
+            "el => getComputedStyle(el).fontFamily"
+        )
 
-        viewport_height = 844 if width <= 430 else 900
-        header = page.locator(".v2-header").bounding_box()
-        hero = page.locator(".v2-hero").bounding_box()
-        image = page.locator(".v2-photo-stage").bounding_box()
-        assert header and hero and image
+        # The original six curated photos, rather than a boxed split portrait.
+        expect(page.locator("[data-slide-index]")).to_have_count(6)
+        image = page.locator(".ambient-slide.is-active img")
+        assert image.evaluate("el => el.complete && el.naturalWidth > 0")
+        assert image.evaluate("el => getComputedStyle(el).objectFit") == "cover"
+        expect(page.locator("html")).to_have_attribute(
+            "data-heritage-gallery-ready", "true"
+        )
+
+        hero = page.locator(".heritage-hero").bounding_box()
+        photo = page.locator(".ambient-slideshow").bounding_box()
+        assert hero and photo
+        viewport_h = 844 if width <= 430 else 900
         assert hero["width"] >= width - 2
-        assert image["width"] >= width - 2
-        assert image["height"] >= viewport_height - header["height"] - 2
-
-        # The sharp foreground portrait is always preserved as a full image,
-        # with a separate background photo filling the cinematic frame.
-        portrait = page.locator(".v2-photo-subject")
-        assert portrait.evaluate("img => getComputedStyle(img).objectFit") == "contain"
-        assert portrait.evaluate("img => img.complete && img.naturalWidth > 0")
-
-        event = page.locator("#v2-event-haldi")
-        event.scroll_into_view_if_needed()
-        art = event.locator(".v2-event-visual")
-        event_box = event.bounding_box()
-        art_box = art.bounding_box()
-        assert event_box and art_box
-        assert event_box["width"] >= width - 2
-        assert art_box["width"] >= width - 2
-        assert art_box["height"] >= viewport_height - header["height"] - 2
-        expect(event.get_by_role("link", name="RSVP for this event")).to_be_visible()
+        assert photo["width"] >= width - 2
+        assert photo["height"] >= viewport_h - 2
         assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
 
-        # Accessible, user-driven transparency: retain all text and actions.
-        toggle = page.locator("[data-v2-transparency-toggle]")
-        expect(toggle).to_have_attribute("aria-label", "Reduce glass transparency")
+        # Photo navigation remains under guest control with reduced motion.
+        page.get_by_role("button", name="Next photograph").click()
+        expect(page.locator('[data-slide-index="1"]')).to_have_attribute(
+            "aria-current", "true"
+        )
+
+        # Permissions and real event artwork, not a generic chapter card.
+        page.get_by_role("link", name="View your wedding weekend").click()
+        assert page.evaluate("location.hash") == "#celebrations"
+        event = page.locator("#heritage-event-haldi")
+        event.scroll_into_view_if_needed()
+        expect(event.get_by_role("heading", name="Haldi")).to_be_visible()
+        expect(event.get_by_text("Awaiting your RSVP")).to_be_visible()
+        expect(event.get_by_text("12:00 PM")).to_be_visible()
+        art = event.locator(".heritage-event-art img")
+        assert art.evaluate("el => el.complete && el.naturalWidth > 0")
+        assert art.evaluate("el => getComputedStyle(el).objectFit") == "cover"
+        assert event.bounding_box()["width"] >= width - 2
+        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
+
+        assert page.locator("form").count() == 0
+        expect(event.get_by_role("link", name="RSVP for this event")).to_have_attribute(
+            "href", re.compile(r"tab=schedule.*event=haldi")
+        )
+    finally:
+        page.close()
+
+
+@pytest.mark.parametrize("width", [390, 1440])
+def test_heritage_preview_glass_accessibility_and_live_site_isolation(
+    browser, wedding_url, width,
+):
+    page = guest_page(
+        browser, wedding_url,
+        width=width, height=844 if width < 800 else 900,
+    )
+    try:
+        page.goto(f"{wedding_url}/dashboard/preview/guest-v2")
+        glass = page.locator(".heritage-event-glass")
+        glass.scroll_into_view_if_needed()
+        assert "blur(" in glass.evaluate(
+            "el => getComputedStyle(el).backdropFilter"
+        )
+
+        toggle = page.locator("[data-heritage-transparency]")
         expect(toggle).to_have_attribute("aria-pressed", "false")
         toggle.click()
         expect(toggle).to_have_attribute("aria-pressed", "true")
-        expect(page.locator("body")).to_have_attribute("data-v2-transparency", "opaque")
-        assert event.locator(".v2-event-content").evaluate(
+        expect(page.locator("body")).to_have_attribute(
+            "data-heritage-transparency", "solid"
+        )
+        assert glass.evaluate(
             "el => getComputedStyle(el).backdropFilter"
         ) == "none"
-        assert event.locator(".v2-event-content").evaluate(
-            "el => getComputedStyle(el).backgroundColor"
-        ) == "rgb(48, 37, 30)"
-        expect(toggle).to_have_attribute("aria-label", "Enable frosted glass")
         toggle.click()
-        expect(page.locator("body")).to_have_attribute("data-v2-transparency", "glass")
-        assert "blur(" in event.locator(".v2-event-content").evaluate(
-            "el => getComputedStyle(el).backdropFilter"
+        expect(toggle).to_have_attribute("aria-pressed", "false")
+        expect(page.locator("body")).to_have_attribute(
+            "data-heritage-transparency", "glass"
         )
+
+        page.emulate_media(contrast="more")
+        assert glass.evaluate("el => getComputedStyle(el).backdropFilter") == "none"
+        expect(page.get_by_role("link", name="Original invitation")).to_be_visible()
     finally:
         page.close()

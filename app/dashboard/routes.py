@@ -174,6 +174,7 @@ def guest_v2_preview():
         render_template(
             "dashboard/guest_v2_preview.html",
             invitation=invitation,
+            slideshow=build_slideshow_manifest(),
             events=present_events(allowed_events),
             saved_rsvps=saved_rsvps,
             weekend_events=weekend,
