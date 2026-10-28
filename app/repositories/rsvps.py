@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.extensions import db
 from app.models import RSVP
@@ -32,21 +30,39 @@ class RSVPRepository:
         guest_count: int,
         notes: str,
     ) -> RSVP:
-        record = RSVPRepository.get_for_event(invitation_id, event_id)
-        if record is None:
-            record = RSVP(
-                invitation_id=invitation_id,
-                event_id=event_id,
-                attending=attending,
-                guest_count=guest_count,
-                notes=notes,
-            )
-            db.session.add(record)
+        # PostgreSQL's ON CONFLICT turns two simultaneous first responses
+        # into one durable RSVP rather than a duplicate-key error. SQLite
+        # supports the same statement in our disposable test database.
+        dialect = db.session.get_bind().dialect.name
+        if dialect == "postgresql":
+            from sqlalchemy.dialects.postgresql import insert
+        elif dialect == "sqlite":
+            from sqlalchemy.dialects.sqlite import insert
         else:
-            record.attending = attending
-            record.guest_count = guest_count
-            record.notes = notes
-            record.updated_at = datetime.now()
+            raise RuntimeError(f"Unsupported RSVP database dialect: {dialect}")
 
+        statement = insert(RSVP).values(
+            invitation_id=invitation_id,
+            event_id=event_id,
+            attending=attending,
+            guest_count=guest_count,
+            notes=notes,
+        )
+        statement = statement.on_conflict_do_update(
+            index_elements=[RSVP.invitation_id, RSVP.event_id],
+            set_={
+                "attending": statement.excluded.attending,
+                "guest_count": statement.excluded.guest_count,
+                "notes": statement.excluded.notes,
+                "updated_at": func.current_timestamp(),
+            },
+        )
+        # RETURNING gives the saved row without a second query after commit.
+        # Refresh a previously loaded ORM instance if the RSVP was updated.
+        saved = db.session.scalar(
+            statement.returning(RSVP).execution_options(populate_existing=True)
+        )
+        if saved is None:
+            raise RuntimeError("The RSVP upsert returned no saved row.")
         db.session.commit()
-        return record
+        return saved
