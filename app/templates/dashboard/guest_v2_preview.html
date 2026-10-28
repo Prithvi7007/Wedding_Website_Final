@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f2eee7">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Guest Experience V2 Preview | Adlin &amp; Prithvi</title>
+    <link rel="icon" type="image/png" href="{{ asset_url('images/favicon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{{ asset_url('css/guest-v2.css') }}">
+</head>
+<body class="guest-v2">
+    <a class="v2-skip" href="#main-content">Skip to your invitation</a>
+
+    <header class="v2-header">
+        <a class="v2-mark" href="#welcome" aria-label="Adlin and Prithvi — top of page">
+            <span class="v2-monogram" aria-hidden="true">A<span>&amp;</span>P</span>
+            <span class="v2-mark-label">Adlin &amp; Prithvi</span>
+        </a>
+
+        <nav class="v2-main-nav" aria-label="Preview sections">
+            <a href="#welcome">Welcome</a>
+            <a href="#celebrations">Celebrations</a>
+        </nav>
+
+        <div class="v2-header-actions">
+            <span class="v2-preview-label">Guest concept · V2</span>
+            <a class="v2-back-link" href="{{ url_for('dashboard.shell', tab='welcome') }}">
+                Current website <span aria-hidden="true">↗</span>
+            </a>
+        </div>
+    </header>
+
+    <main id="main-content">
+        {% set guest_name = (invitation.display_name or invitation.first_name or 'Dear Guest') | title %}
+        {% set personal_message = invitation.invite_message or invitation.message %}
+
+        <section class="v2-hero" id="welcome" aria-labelledby="v2-welcome-heading">
+            <div class="v2-hero-copy">
+                <p class="v2-overline"><span class="v2-rule" aria-hidden="true"></span> Our wedding weekend · November 2026</p>
+                <p class="v2-intro">A celebration of love, togetherness &amp; new beginnings</p>
+                <h1 id="v2-welcome-heading">
+                    Adlin <span class="v2-amp">&amp;</span><br> Prithvi
+                </h1>
+                <div class="v2-copy-rule" aria-hidden="true"><span>✦</span></div>
+                <p class="v2-dear">A personal invitation for <strong>{{ guest_name }}</strong></p>
+                <div class="v2-invite-message">
+                    {% if personal_message %}
+                        <p>{{ personal_message }}</p>
+                    {% else %}
+                        <p>With joyous hearts, we invite you to celebrate the beginning of our life together.</p>
+                        <p>We can't wait to share these beautiful moments with you.</p>
+                    {% endif %}
+                </div>
+                <a class="v2-primary-link" href="#celebrations">
+                    Explore your celebrations
+                    <span aria-hidden="true">↗</span>
+                </a>
+                <p class="v2-preview-note">Design preview only. RSVP updates still happen on the current website.</p>
+            </div>
+
+            <div class="v2-hero-visual">
+                <div class="v2-photo-stage">
+                    <img
+                        class="v2-photo-backdrop"
+                        src="{{ asset_url('images/slideshow/DSC06717-768.webp') }}"
+                        alt=""
+                        aria-hidden="true"
+                        width="768"
+                        height="1151"
+                    >
+                    <picture>
+                        <source type="image/avif" srcset="
+                            {{ asset_url('images/slideshow/DSC06717-768.avif') }} 768w,
+                            {{ asset_url('images/slideshow/DSC06717-1170.avif') }} 1170w,
+                            {{ asset_url('images/slideshow/DSC06717-1600.avif') }} 1600w
+                        " sizes="(max-width: 800px) 100vw, 52vw">
+                        <source type="image/webp" srcset="
+                            {{ asset_url('images/slideshow/DSC06717-768.webp') }} 768w,
+                            {{ asset_url('images/slideshow/DSC06717-1170.webp') }} 1170w,
+                            {{ asset_url('images/slideshow/DSC06717-1600.webp') }} 1600w
+                        " sizes="(max-width: 800px) 100vw, 52vw">
+                        <img
+                            class="v2-photo-subject"
+                            src="{{ asset_url('images/slideshow/DSC06717-1170.webp') }}"
+                            width="1170"
+                            height="1754"
+                            alt="Portrait from Adlin and Prithvi's wedding photography"
+                            fetchpriority="high"
+                            decoding="async"
+                        >
+                    </picture>
+                    <div class="v2-photo-vignette" aria-hidden="true"></div>
+                </div>
+                <p class="v2-photo-credit">A story worth celebrating <span>✧</span> 2026</p>
+            </div>
+        </section>
+
+        <section class="v2-chapters" id="celebrations" aria-labelledby="v2-celebrations-heading">
+            <header class="v2-chapters-intro">
+                <p class="v2-overline">The celebrations</p>
+                <h2 id="v2-celebrations-heading">Every moment,<br><em>beautifully yours.</em></h2>
+                <p>Your invitation includes the celebrations below. Explore each chapter, see the details, and respond when you're ready.</p>
+                {% if weekend_events %}
+                    <p class="v2-replies">
+                        {{ weekend_events|length - weekend_pending_count }} of {{ weekend_events|length }}
+                        responses saved
+                    </p>
+                {% endif %}
+            </header>
+
+            {% if events %}
+                <nav class="v2-chapter-index" aria-label="Jump to an invited celebration">
+                    {% for event in events %}
+                        <a href="#v2-event-{{ event.event_id }}">
+                            <span class="v2-index-number">{{ '%02d'|format(loop.index) }}</span>
+                            <span>{{ event.timeline_title }}</span>
+                            <span aria-hidden="true">↘</span>
+                        </a>
+                    {% endfor %}
+                </nav>
+
+                <div class="v2-event-list">
+                    {% for event in events %}
+                        {% set saved = saved_rsvps.get(event.event_id) %}
+                        <article
+                            class="v2-event v2-event-{{ event.theme }}"
+                            id="v2-event-{{ event.event_id }}"
+                            aria-labelledby="v2-event-title-{{ event.event_id }}"
+                        >
+                            <div class="v2-event-visual">
+                                {% if event.theme in ('haldi', 'hindu', 'christian') %}
+                                    {% set image_name = 'church' if event.theme == 'christian' else event.theme %}
+                                    <picture>
+                                        <source media="(max-width: 700px)" srcset="{{ asset_url('images/schedule/schedule-' ~ image_name ~ '-mobile.webp') }}">
+                                        <img
+                                            src="{{ asset_url('images/schedule/schedule-' ~ image_name ~ '-desktop.webp') }}"
+                                            alt="{{ event.title }} celebration artwork"
+                                            loading="lazy"
+                                            decoding="async"
+                                        >
+                                    </picture>
+                                {% else %}
+                                    <img
+                                        src="{{ asset_url('images/slideshow/DSC06660-1170.webp') }}"
+                                        alt="Wedding photography"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
+                                {% endif %}
+                                <span class="v2-event-photo-number" aria-hidden="true">{{ '%02d'|format(loop.index) }} / {{ '%02d'|format(events|length) }}</span>
+                            </div>
+                            <div class="v2-event-content">
+                                <p class="v2-overline">Chapter {{ '%02d'|format(loop.index) }} · {{ event.date_display }}</p>
+                                <h3 id="v2-event-title-{{ event.event_id }}">{{ event.title }}</h3>
+                                <p class="v2-event-kicker">{{ event.kicker }}</p>
+
+                                <dl class="v2-event-facts">
+                                    <div><dt>When</dt><dd><time datetime="{{ event.event_date.isoformat() }}">{{ event.date_display }}</time><br><span>{{ event.time_display }} · {{ event.timezone or 'America/New_York' }}</span></dd></div>
+                                    <div><dt>Where</dt><dd>{{ event.venue_name or 'Venue details' }}<br><span>{{ event.location }}</span></dd></div>
+                                </dl>
+
+                                <div class="v2-event-response">
+                                    <span class="v2-response-dot {% if saved %}v2-response-dot-saved{% endif %}" aria-hidden="true"></span>
+                                    {% if saved %}
+                                        {% if saved.attending == 'Yes' %}
+                                            You're attending{% if saved.guest_count %} · {{ saved.guest_count }} guest{{ 's' if saved.guest_count != 1 else '' }}{% endif %}
+                                        {% elif saved.attending == 'No' %}
+                                            Your response: unable to attend
+                                        {% else %}
+                                            Your response: maybe
+                                        {% endif %}
+                                    {% else %}
+                                        Awaiting your RSVP
+                                    {% endif %}
+                                </div>
+                                <div class="v2-event-actions">
+                                    <a class="v2-primary-link v2-event-rsvp" href="{{ url_for('dashboard.shell', tab='schedule', event=event.event_id) }}">
+                                        {{ 'Review your RSVP' if saved else 'RSVP for this event' }} <span aria-hidden="true">↗</span>
+                                    </a>
+                                    <a class="v2-secondary-link" href="{{ url_for('dashboard.apple_calendar_event', event_id=event.event_id) }}">Add to calendar <span aria-hidden="true">↗</span></a>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="v2-no-events">
+                    <p>Your celebration details are being prepared. Please check back soon.</p>
+                    <a href="{{ url_for('dashboard.shell', tab='welcome') }}">Return to your invitation</a>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer class="v2-footer">
+        <span class="v2-footer-monogram">A <span>&amp;</span> P</span>
+        <span>Made with love · November 2026</span>
+        <a href="{{ url_for('dashboard.shell', tab='welcome') }}">Back to the current website ↗</a>
+    </footer>
+</body>
+</html>
