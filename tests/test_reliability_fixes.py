@@ -45,8 +45,10 @@ def _seed_invitation_and_event(app):
 
 
 def _login(client, invitation_id):
-    with client.session_transaction() as session:
-        session["invitation_id"] = invitation_id
+    with client.application.app_context():
+        token = db.session.get(Invitation, invitation_id).invite_token
+    response = client.post(f"/invite/{token}/open")
+    assert response.status_code == 302
 
 
 def test_expired_ajax_fragment_returns_401(client):

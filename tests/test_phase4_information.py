@@ -21,8 +21,9 @@ def _seed_invitation(app):
 def _login(client, app, invitation_id):
     with app.app_context():
         invitation = db.session.get(Invitation, invitation_id)
-        with client.session_transaction() as session:
-            session["invitation_id"] = invitation.invitation_id
+        token = invitation.invite_token
+    response = client.post(f"/invite/{token}/open")
+    assert response.status_code == 302
 
 
 def test_travel_fragment_renders_editorial_guide(client, app):

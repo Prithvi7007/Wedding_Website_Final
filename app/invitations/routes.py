@@ -2,6 +2,7 @@ from flask import Blueprint, redirect, render_template, session, url_for
 
 from app.repositories import InvitationRepository
 from app.services import establish_invitation_session
+from app.services.session import SESSION_INVITATION_BINDING, SESSION_INVITATION_ID
 
 
 invitations_bp = Blueprint("invitations", __name__)
@@ -21,7 +22,8 @@ def open_invitation(invite_token: str):
 
     # A private link must always stop on its invitation landing page first.
     # Do not let a previously authenticated invitation bypass this screen.
-    session.pop("invitation_id", None)
+    session.pop(SESSION_INVITATION_ID, None)
+    session.pop(SESSION_INVITATION_BINDING, None)
 
     return render_template(
         "invitation/open.html",
