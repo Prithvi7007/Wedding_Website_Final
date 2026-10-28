@@ -263,29 +263,13 @@ def test_schedule_layout_has_no_page_wide_horizontal_scroll(browser, wedding_url
     try:
         page.get_by_role("link", name="Schedule", exact=True).click()
         expect(page.get_by_role("heading", name="Wedding Schedule")).to_be_visible()
-        diagnostic = page.evaluate("""() => {
-            const measure = () => document.documentElement.scrollWidth;
-            const baseline = measure();
-            const selectors = [
-                '.dashboard-header', '.dashboard-tabs', '.dashboard-shell',
-                '.schedule-panel', '.schedule-intro', '.schedule-journey',
-                '.cinematic-event-list', '.cinematic-event-card',
-                '.event-glass-panel', '.ambient-slideshow',
-                '.rsvp-petal-container', '.rsvp-petal-canvas',
-            ];
-            const results = {};
-            for (const selector of selectors) {
-                const node = document.querySelector(selector);
-                if (!node) continue;
-                const before = node.style.display;
-                node.style.display = 'none';
-                results[selector] = measure();
-                node.style.display = before;
-            }
-            return {baseline, results};
-        }""")
-        assert diagnostic["baseline"] <= width + 2, (
-            f"Schedule page width {width}: {diagnostic}"
+        actual_width = page.evaluate("document.documentElement.scrollWidth")
+        assert actual_width <= width + 2, (
+            f"Schedule should not scroll sideways at {width}px: "
+            f"document width {actual_width}px"
         )
+        tabs = page.locator(".dashboard-tabs")
+        # Preserve deliberate, touch-scrollable top navigation.
+        assert tabs.evaluate("node => getComputedStyle(node).overflowX") == "auto"
     finally:
         page.close()
