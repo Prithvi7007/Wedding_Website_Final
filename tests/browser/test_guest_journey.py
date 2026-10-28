@@ -338,3 +338,70 @@ def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_o
         assert page.locator("#tab-content [data-tab-panel='travel']").count() == 0
     finally:
         page.close()
+
+@pytest.mark.parametrize("width", [320, 390, 768, 1440, 1920])
+def test_guest_v2_preview_is_uncropped_responsive_and_read_only(
+    browser, wedding_url, width,
+):
+    from pathlib import Path
+
+    page = guest_page(
+        browser, wedding_url,
+        width=width,
+        height=900 if width >= 768 else 844,
+    )
+    try:
+        page.goto(f"{wedding_url}/dashboard/preview/guest-v2")
+        expect(page.get_by_role("heading", name="Adlin & Prithvi")).to_be_visible()
+        expect(page.get_by_role("heading", name="Every moment, beautifully yours.")).to_have_count(1)
+        expect(page.get_by_role("link", name="RSVP for this event")).to_be_visible()
+
+        # The photographic subject is never cropped by cover sizing.
+        portrait = page.locator(".v2-photo-subject")
+        expect(portrait).to_be_visible()
+        expect(portrait).to_have_js_property("complete", True)
+        assert portrait.evaluate("img => img.naturalWidth > 0")
+        assert portrait.evaluate(
+            "img => getComputedStyle(img).objectFit"
+        ) == "contain"
+
+        header_bottom = page.locator(".v2-header").bounding_box()["y"] + (
+            page.locator(".v2-header").bounding_box()["height"]
+        )
+        subject_top = portrait.bounding_box()["y"]
+        assert subject_top >= header_bottom - 2, (
+            f"Portrait overlaps navigation at {width}px: "
+            f"subject top={subject_top}, header bottom={header_bottom}"
+        )
+
+        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
+
+        if width in (390, 1440):
+            artifacts = Path("preview-artifacts")
+            artifacts.mkdir(exist_ok=True)
+            page.screenshot(
+                path=str(artifacts / f"guest-v2-welcome-{width}.png"),
+                animations="disabled",
+            )
+
+        page.get_by_role("link", name="Explore your celebrations").click()
+        assert page.evaluate("location.hash") == "#celebrations"
+        event = page.locator("#v2-event-haldi")
+        expect(event).to_be_visible()
+        expect(event.get_by_text("Awaiting your RSVP")).to_be_visible()
+        expect(event.get_by_text("12:00 PM")).to_be_visible()
+
+        if width in (390, 1440):
+            event.scroll_into_view_if_needed()
+            page.screenshot(
+                path=str(artifacts / f"guest-v2-celebration-{width}.png"),
+                animations="disabled",
+            )
+
+        # From this concept guests must intentionally return to the proven
+        # live RSVP flow; no preview form is allowed to change data.
+        assert page.locator("form").count() == 0
+        rsvp = event.get_by_role("link", name="RSVP for this event")
+        expect(rsvp).to_have_attribute("href", re.compile(r"tab=schedule.*event=haldi"))
+    finally:
+        page.close()

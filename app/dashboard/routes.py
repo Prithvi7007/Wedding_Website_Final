@@ -154,6 +154,38 @@ def shell():
     return render_template("dashboard/shell.html", **context)
 
 
+@dashboard_bp.get("/preview/guest-v2")
+def guest_v2_preview():
+    """Isolated, read-only guest redesign preview.
+
+    Uses the same invitation permissions and RSVP snapshots as the live
+    dashboard. No new forms or navigation links are added to production.
+    """
+    invitation = current_invitation()
+    if invitation is None:
+        return redirect(url_for("invitations.home"))
+
+    allowed_events = EventRepository.allowed_for_invitation(
+        invitation.invitation_id
+    )
+    saved_rsvps = RSVPRepository.saved_for_invitation(invitation.invitation_id)
+    weekend = present_welcome_weekend(allowed_events, saved_rsvps)
+    response = Response(
+        render_template(
+            "dashboard/guest_v2_preview.html",
+            invitation=invitation,
+            events=present_events(allowed_events),
+            saved_rsvps=saved_rsvps,
+            weekend_events=weekend,
+            weekend_pending_count=sum(event["is_pending"] for event in weekend),
+        ),
+        mimetype="text/html",
+    )
+    response.headers["Cache-Control"] = "private, no-store"
+    response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
+
+
 @dashboard_bp.get("/tab/<tab_name>")
 def tab_fragment(tab_name: str):
     invitation = current_invitation()
