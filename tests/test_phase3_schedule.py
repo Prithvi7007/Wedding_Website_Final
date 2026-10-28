@@ -170,8 +170,8 @@ def test_weekend_calendar_is_private_and_invitation_scoped(client, app):
     assert body.count("END:VEVENT") == 2
     assert body.index("SUMMARY:Haldi") < body.index("SUMMARY:Telugu\\, Wedding\\; Blessings")
     assert "SUMMARY:Private invitation only" not in body
-    assert "DTSTART;TZID=America/New_York:20261119T120000" in body
-    assert "DTSTART;TZID=America/New_York:20261120T090000" in body
+    assert "DTSTART:20261119T170000Z" in body
+    assert "DTSTART:20261120T140000Z" in body
     assert "DESCRIPTION:Family\\, friends\\; celebrate" in body
 
     schedule = client.get("/dashboard/tab/schedule")
@@ -206,4 +206,4 @@ def test_single_calendar_export_is_preserved(client, app):
     assert body.count("BEGIN:VEVENT") == 1
     assert body.count("END:VEVENT") == 1
     assert "SUMMARY:Haldi" in body
-    assert "DTSTART;TZID=America/New_York:20261119T120000" in body
+    assert "DTSTART:20261119T170000Z" in body
