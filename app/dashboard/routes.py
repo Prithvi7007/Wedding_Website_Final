@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 from flask import (
     Blueprint,
@@ -93,18 +94,51 @@ def _rsvp_summary(attending: str, guest_count: int) -> str:
 def _escape_ics_text(value: str | None) -> str:
     if not value:
         return ""
+    # Normalize line breaks before escaping, including lone carriage returns.
     return (
-        value.replace("\\", "\\\\")
+        value.replace("\r\n", "\n")
+        .replace("\r", "\n")
+        .replace("\\", "\\\\")
         .replace(",", "\\,")
         .replace(";", "\\;")
-        .replace("\r\n", "\\n")
         .replace("\n", "\\n")
     )
 
 
+def _fold_calendar_lines(lines: list[str]) -> str:
+    """RFC 5545 content lines are at most 75 UTF-8 octets.
+
+    Fold on Unicode code point boundaries so multibyte names remain intact.
+    A continuation line starts with one space, included in its 75-octet limit.
+    """
+    folded: list[str] = []
+    for line in lines:
+        if not line:
+            folded.append("")
+            continue
+        part = ""
+        used = 0
+        for character in line:
+            width = len(character.encode("utf-8"))
+            if used + width > 75:
+                folded.append(part)
+                part = " "
+                used = 1
+            part += character
+            used += width
+        folded.append(part)
+    return "\r\n".join(folded)
+
+
 def _calendar_timestamp(event, field_name: str) -> str:
-    combined = datetime.combine(event.event_date, getattr(event, field_name))
-    return combined.strftime("%Y%m%dT%H%M%S")
+    # UTC timestamps are unambiguous across Apple, Outlook and Google clients
+    # and do not require a VTIMEZONE component.
+    local = datetime.combine(
+        event.event_date,
+        getattr(event, field_name),
+        tzinfo=ZoneInfo(event.timezone or "America/New_York"),
+    )
+    return local.astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
 @dashboard_bp.get("")
@@ -298,13 +332,12 @@ def save_rsvp():
 
 def _calendar_event_lines(event, dtstamp: str) -> list[str]:
     """Render the same calendar event for single and weekend exports."""
-    timezone_name = event.timezone or "America/New_York"
     return [
         "BEGIN:VEVENT",
         f"UID:{_escape_ics_text(event.event_id)}@adlinprithvi.cloud",
         f"DTSTAMP:{dtstamp}",
-        f"DTSTART;TZID={timezone_name}:{_calendar_timestamp(event, 'start_time')}",
-        f"DTEND;TZID={timezone_name}:{_calendar_timestamp(event, 'end_time')}",
+        f"DTSTART:{_calendar_timestamp(event, 'start_time')}",
+        f"DTEND:{_calendar_timestamp(event, 'end_time')}",
         f"SUMMARY:{_escape_ics_text(event.title)}",
         f"DESCRIPTION:{_escape_ics_text(event.description)}",
         f"LOCATION:{_escape_ics_text(event.location)}",
@@ -337,7 +370,7 @@ def weekend_calendar():
     calendar_lines.extend(["END:VCALENDAR", ""])
 
     return Response(
-        "\r\n".join(calendar_lines),
+        _fold_calendar_lines(calendar_lines),
         mimetype="text/calendar; charset=utf-8",
         headers={
             "Content-Disposition": 'attachment; filename="adlin-prithvi-weekend.ics"',
@@ -369,7 +402,7 @@ def apple_calendar_event(event_id: str):
         "END:VCALENDAR",
         "",
     ]
-    calendar_content = "\r\n".join(calendar_lines)
+    calendar_content = _fold_calendar_lines(calendar_lines)
 
     safe_filename = "".join(
         character if character.isalnum() or character in "-_" else "-"
