@@ -405,3 +405,28 @@ body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
         backdrop-filter: none;
     }
 }
+
+/* Width audit: decorative scrims must not enlarge the document. A tablet's
+ * Schedule intro formerly painted 90px past its panel; a phone's registry
+ * flourish/rotated keepsake extended past the right edge. Keep both effects
+ * inside their actual available display width instead of hiding body overflow. */
+@media (min-width: 701px) and (max-width: 1100px) {
+    .dashboard-page .schedule-intro::before,
+    .dashboard-page .information-intro::before {
+        inset: -30px 0 -27px;
+    }
+}
+@media (max-width: 700px) {
+    .dashboard-page .registry-copy::before {
+        left: -8px;
+        right: -8px;
+    }
+    .dashboard-page .cash-fund-hero::before {
+        left: 0;
+        right: 0;
+    }
+    .dashboard-page .registry-keepsake,
+    .dashboard-page .registry-zelle-card {
+        transform: none;
+    }
+}

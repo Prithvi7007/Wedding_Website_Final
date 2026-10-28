@@ -476,10 +476,22 @@ def test_original_heritage_glass_uses_screen_width_on_every_guest_tab(
 
             viewport_width = page.evaluate("window.innerWidth")
             content_width = page.evaluate("document.documentElement.scrollWidth")
-            assert content_width <= viewport_width + 2, (
-                f"{tab} overflows: viewport={viewport_width}, "
-                f"document={content_width}"
-            )
+            if content_width > viewport_width + 2:
+                offenders = page.evaluate("""() =>
+                    [...document.querySelectorAll('body *')]
+                        .map(el => ({
+                            name: el.tagName.toLowerCase() + '.' +
+                                String(el.className || '').slice(0, 80),
+                            right: Math.round(el.getBoundingClientRect().right),
+                            left: Math.round(el.getBoundingClientRect().left),
+                        }))
+                        .filter(el => el.right > innerWidth + 2 || el.left < -2)
+                        .slice(0, 8)
+                """)
+                pytest.fail(
+                    f"{tab} overflows at {viewport_width}px: "
+                    f"document={content_width}; elements={offenders}"
+                )
             assert page.locator(".dashboard-header").bounding_box()["width"] >= width - 2
             assert page.locator(".ambient-slideshow").bounding_box()["width"] >= width - 2
             assert page.locator(".dashboard-content").bounding_box()["width"] >= width - 2
