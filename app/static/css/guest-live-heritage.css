@@ -415,6 +415,14 @@ body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
     .dashboard-page .information-intro::before {
         inset: -30px 0 -27px;
     }
+    .dashboard-page .registry-copy::before {
+        left: 0;
+        right: 0;
+    }
+    .dashboard-page .cash-fund-hero::before {
+        left: 0;
+        right: 0;
+    }
 }
 @media (max-width: 700px) {
     .dashboard-page .registry-copy::before {
