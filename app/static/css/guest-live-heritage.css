@@ -1,0 +1,407 @@
+/*
+ * Guest-facing Heritage Light pass — original five-tab invitation.
+ *
+ * One shared finishing layer for the EXISTING wedding UI. This keeps the
+ * custom signature, guest-specific content, RSVP dialogs, original artwork
+ * and six-photo slideshow; it makes the photography more visible through
+ * optical glass, improves responsive page width, and reduces display type.
+ * No layout rules in this file are applied to the separate V2 preview.
+ */
+
+body.dashboard-page {
+    --header-height: 146px;
+    --guest-edge: clamp(14px, 3.2vw, 64px);
+    --guest-glass-border: rgba(255, 243, 218, .29);
+    --guest-gold-hairline: rgba(235, 195, 126, .43);
+}
+
+/* Preserve the original three-line signature header but remove visual mass. */
+.dashboard-page .dashboard-header {
+    padding: 10px clamp(18px, 4.2vw, 78px) 0;
+    background: linear-gradient(180deg, rgba(23, 17, 13, .52), rgba(24, 17, 13, .15) 68%, transparent);
+    -webkit-backdrop-filter: blur(5px) saturate(125%);
+    backdrop-filter: blur(5px) saturate(125%);
+}
+.dashboard-page .dashboard-meta { min-height: 28px; font-size: 11px; letter-spacing: 1.6px; }
+.dashboard-page .dashboard-meta span:last-child { font-size: 12px; letter-spacing: .8px; }
+.dashboard-page .dashboard-title {
+    font-size: clamp(53px, 4.4vw, 69px);
+    line-height: .92;
+    margin: 5px auto 6px;
+}
+.dashboard-page .dashboard-tabs { min-height: 41px; gap: clamp(22px, 4.7vw, 68px); }
+.dashboard-page .dashboard-tab {
+    min-height: 40px;
+    font-size: 14px;
+    letter-spacing: 2.5px;
+}
+.dashboard-page .ambient-slideshow-shade {
+    background:
+        radial-gradient(circle at 74% 28%, rgba(235,174,83,.07), transparent 34%),
+        linear-gradient(90deg, rgba(22,17,13,.70), rgba(21,16,13,.51) 28%, rgba(19,15,12,.24) 54%, rgba(14,12,10,.035) 82%),
+        linear-gradient(180deg, rgba(18,15,12,.16), transparent 35%, rgba(16,13,11,.26));
+}
+.dashboard-page .ambient-slideshow-vignette {
+    background: linear-gradient(180deg, transparent 75%, rgba(15,12,10,.23));
+}
+
+/* WELCOME — the photography is the scene, never a card background.
+ * Use the original feathered reading scrim; reduce the display typography. */
+.dashboard-page .welcome-copy {
+    width: min(43vw, 570px);
+    margin-left: clamp(40px, 6.5vw, 116px);
+    padding-top: calc(var(--header-height) + 35px);
+}
+.dashboard-page .welcome-copy::before {
+    background:
+        radial-gradient(ellipse 78% 73% at 30% 48%, rgba(14,11,9,.36), rgba(15,11,9,.15) 57%, transparent 86%);
+    -webkit-backdrop-filter: blur(5px) saturate(124%);
+    backdrop-filter: blur(5px) saturate(124%);
+}
+.dashboard-page .welcome-eyebrow { font-size: clamp(22px, 1.9vw, 27px); }
+.dashboard-page .welcome-copy h2 {
+    max-width: 100%;
+    font-size: clamp(42px, 3.9vw, 59px);
+    line-height: 1.02;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+}
+.dashboard-page .welcome-message {
+    max-width: 530px;
+    font-size: clamp(17px, 1.24vw, 20px);
+    line-height: 1.48;
+}
+.dashboard-page .welcome-schedule-button {
+    border-color: var(--guest-glass-border);
+    background: radial-gradient(ellipse 88% 55% at 50% 0, rgba(255,255,255,.12), transparent 65%),
+        linear-gradient(155deg, rgba(230,214,191,.10), rgba(29,23,18,.18));
+    -webkit-backdrop-filter: blur(8px) saturate(138%);
+    backdrop-filter: blur(8px) saturate(138%);
+}
+.dashboard-page .countdown-inline > div::before {
+    background: linear-gradient(160deg, rgba(244,231,206,.11), rgba(28,22,17,.09));
+}
+
+/* SCHEDULE — read the original event artwork as one continuous composition.
+ * The timeline belongs to the page, not as another sticky pane over faces. */
+.dashboard-page .schedule-panel,
+.dashboard-page .information-panel {
+    width: min(calc(100% - 2 * var(--guest-edge)), 1760px);
+    padding-top: calc(var(--header-height) + clamp(26px, 4.5vw, 66px));
+}
+.dashboard-page .schedule-intro,
+.dashboard-page .information-intro {
+    width: min(800px, calc(100% - 24px));
+    margin: 0 0 clamp(24px, 3.2vw, 44px) clamp(10px, 4vw, 70px);
+}
+.dashboard-page .schedule-intro h2,
+.dashboard-page .information-intro h2 {
+    font-size: clamp(42px, 4.3vw, 65px);
+    line-height: 1.02;
+}
+.dashboard-page .schedule-intro > p:not(.schedule-eyebrow),
+.dashboard-page .information-intro > p:last-child {
+    font-size: clamp(17px, 1.24vw, 20px);
+    max-width: 680px;
+}
+.dashboard-page .schedule-intro::before,
+.dashboard-page .information-intro::before {
+    background: radial-gradient(ellipse 76% 77% at 29% 47%, rgba(15,11,9,.46), rgba(15,11,9,.15) 56%, transparent 81%);
+    filter: blur(5px);
+}
+.dashboard-page .schedule-journey {
+    position: relative;
+    top: auto;
+    z-index: 4;
+    width: min(960px, calc(100% - 30px));
+    margin: 0 auto clamp(22px, 3.7vw, 46px);
+    border-color: rgba(245,225,191,.30);
+    background: linear-gradient(125deg, rgba(247,233,202,.13), rgba(33,23,18,.23));
+    -webkit-backdrop-filter: blur(8px) saturate(127%);
+    backdrop-filter: blur(8px) saturate(127%);
+    box-shadow: 0 12px 34px rgba(0,0,0,.15), inset 0 1px rgba(255,245,220,.19);
+}
+.dashboard-page .cinematic-event-list {
+    gap: clamp(24px, 3vw, 52px);
+}
+.dashboard-page .cinematic-event-card {
+    display: flex;
+    align-items: center;
+    min-height: clamp(680px, 86svh, 920px);
+    padding: 35px clamp(25px, 5vw, 96px);
+    scroll-margin-top: calc(var(--header-height) + 22px);
+    border-color: rgba(251,230,195,.26);
+    border-radius: clamp(18px, 2.5vw, 30px);
+}
+.dashboard-page .cinematic-event-scrim {
+    background:
+        linear-gradient(90deg, rgba(19,13,10,.61), rgba(19,13,10,.33) 34%, rgba(19,13,10,.07) 67%, transparent),
+        linear-gradient(180deg, transparent 46%, rgba(18,13,10,.25));
+}
+.dashboard-page .event-glass-panel {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: min(520px, 47%);
+    max-height: none;
+    margin: 0;
+    padding: clamp(24px, 3vw, 42px);
+    overflow: visible; /* Calendar popover should not be clipped by its pane. */
+    border: 1px solid rgba(255,243,218,.34);
+    border-radius: clamp(20px, 2.4vw, 29px);
+    background:
+        radial-gradient(ellipse 86% 28% at 50% -5%, rgba(255,255,255,.15), transparent 75%),
+        linear-gradient(145deg, rgba(57,39,27,.26), rgba(22,17,15,.32) 60%, rgba(17,14,13,.40));
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+    backdrop-filter: blur(12px) saturate(130%);
+    box-shadow: 0 20px 55px rgba(0,0,0,.21), inset 0 1px rgba(255,255,255,.24);
+    transform: none;
+}
+.dashboard-page .event-glass-panel h3 {
+    font-size: clamp(41px, 4vw, 62px);
+    line-height: 1;
+}
+.dashboard-page .event-kicker { margin-bottom: 19px; font-size: 17px; }
+.dashboard-page .event-facts { gap: 15px; padding: 16px 0; }
+.dashboard-page .event-attire-section { min-height: 89px; padding: 12px 0; }
+.dashboard-page .event-response-summary {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    gap: 13px;
+    padding-top: 14px;
+}
+.dashboard-page .event-primary-actions { justify-content: flex-start; }
+.dashboard-page .event-glass-button,
+.dashboard-page .attire-inspiration-trigger {
+    border-color: rgba(253,234,202,.28);
+    background: linear-gradient(150deg, rgba(255,255,255,.13), rgba(240,219,181,.025));
+}
+
+/* Travel, Registry and Q&A — quieter transparent glass over the shared
+ * wedding slideshow. Don't turn this into a second dashboard-card system. */
+body.dashboard-page[data-active-tab="travel"] .ambient-slideshow-shade,
+body.dashboard-page[data-active-tab="qa"] .ambient-slideshow-shade {
+    background:
+        linear-gradient(90deg, rgba(18,14,11,.62), rgba(20,15,12,.38) 50%, rgba(17,13,11,.22)),
+        linear-gradient(180deg, rgba(16,13,11,.17), rgba(16,13,11,.39));
+}
+body.dashboard-page[data-active-tab="registry"] .ambient-slideshow-shade {
+    background:
+        radial-gradient(ellipse 75% 80% at 25% 54%, rgba(17,13,11,.57), rgba(17,13,11,.28) 60%, transparent 87%),
+        linear-gradient(90deg, rgba(16,13,11,.40), rgba(16,13,11,.08) 72%);
+}
+.dashboard-page .travel-edition {
+    width: min(100% - 28px, 1540px);
+    gap: clamp(14px, 1.8vw, 26px);
+}
+.dashboard-page .travel-story {
+    border-color: rgba(254,238,213,.27);
+    background:
+        radial-gradient(ellipse 90% 34% at 50% 0%, rgba(255,255,255,.13), transparent 73%),
+        linear-gradient(145deg, rgba(37,28,24,.33), rgba(14,13,12,.42) 58%, rgba(12,12,12,.49));
+    -webkit-backdrop-filter: blur(10px) saturate(128%);
+    backdrop-filter: blur(10px) saturate(128%);
+    box-shadow: 0 23px 52px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.20);
+}
+.dashboard-page .travel-card-image {
+    filter: sepia(.025) brightness(1) saturate(1.01) contrast(1.015);
+}
+.dashboard-page .registry-copy h2 {
+    font-size: clamp(49px, 5vw, 77px);
+}
+.dashboard-page .registry-message {
+    font-size: clamp(19px, 1.55vw, 23px);
+}
+.dashboard-page .registry-section-block .registry-hero {
+    width: min(1380px, calc(100% - 44px));
+}
+.dashboard-page .registry-keepsake,
+.dashboard-page .registry-zelle-card {
+    border-color: rgba(254,238,209,.30);
+    background:
+        radial-gradient(ellipse 88% 40% at 50% 0%, rgba(255,255,255,.13), transparent 72%),
+        linear-gradient(145deg, rgba(72,49,33,.36), rgba(19,16,14,.52));
+    -webkit-backdrop-filter: blur(12px) saturate(136%);
+    backdrop-filter: blur(12px) saturate(136%);
+    box-shadow: 0 24px 58px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.24);
+}
+.dashboard-page .qa-grid {
+    width: min(calc(100% - 24px), 1320px);
+    border-color: rgba(254,238,209,.26);
+    background:
+        radial-gradient(ellipse 88% 27% at 50% 0%, rgba(255,255,255,.12), transparent 71%),
+        linear-gradient(145deg, rgba(36,28,24,.28), rgba(12,12,12,.43));
+    -webkit-backdrop-filter: blur(10px) saturate(130%);
+    backdrop-filter: blur(10px) saturate(130%);
+    box-shadow: 0 24px 62px rgba(0,0,0,.21), inset 0 1px rgba(255,255,255,.21);
+}
+.dashboard-page .qa-item {
+    background: linear-gradient(150deg, rgba(255,255,255,.065), rgba(24,18,15,.08));
+}
+.dashboard-page .qa-item[open] {
+    background: linear-gradient(150deg, rgba(239,195,118,.09), rgba(20,16,14,.15));
+}
+
+/* Device and content-width corrections. No landscape-only clipping or
+ * min-width columns that push buttons off 320px screens. */
+@media (max-width: 1080px) {
+    body.dashboard-page { --header-height: 133px; }
+    .dashboard-page .dashboard-title { font-size: clamp(50px, 6vw, 64px); }
+    .dashboard-page .dashboard-tabs { gap: clamp(20px, 3vw, 40px); }
+    .dashboard-page .event-glass-panel { width: min(560px, 59%); }
+}
+@media (max-width: 700px) {
+    body.dashboard-page { --header-height: 125px; --guest-edge: 9px; }
+    .dashboard-page .dashboard-header { padding: 7px 12px 0; }
+    .dashboard-page .dashboard-meta { min-height: 23px; font-size: 8px; letter-spacing: .65px; }
+    .dashboard-page .dashboard-meta span:last-child { font-size: 9px; letter-spacing: .4px; }
+    .dashboard-page .dashboard-title {
+        font-size: clamp(42px, 11.5vw, 54px);
+        margin: 5px auto 5px;
+        line-height: .95;
+    }
+    .dashboard-page .dashboard-tabs {
+        min-height: 40px;
+        justify-content: flex-start;
+        gap: clamp(15px, 4vw, 25px);
+        padding: 0 3px;
+    }
+    .dashboard-page .dashboard-tab {
+        min-height: 39px;
+        font-size: 11px;
+        letter-spacing: 1.1px;
+    }
+    .dashboard-page .ambient-slideshow-shade {
+        background: linear-gradient(90deg, rgba(20,15,12,.69), rgba(20,15,12,.43) 45%, rgba(17,13,11,.08)),
+            linear-gradient(180deg, rgba(18,13,10,.15), transparent 40%, rgba(16,12,10,.32));
+    }
+    .dashboard-page .welcome-copy {
+        width: 100%;
+        margin: 0;
+        padding: calc(var(--header-height) + 65px) 20px 95px;
+    }
+    .dashboard-page .welcome-eyebrow { width: min(83%, 430px); font-size: 21px; }
+    .dashboard-page .welcome-copy h2 {
+        width: min(82%, 450px);
+        font-size: clamp(37px, 8.4vw, 53px);
+    }
+    .dashboard-page .welcome-message {
+        width: min(82%, 440px);
+        font-size: clamp(16px, 3.45vw, 19px);
+    }
+    .dashboard-page .welcome-schedule-wrap { width: min(100%, 430px); }
+    .dashboard-page .schedule-panel,
+    .dashboard-page .information-panel { padding-top: calc(var(--header-height) + 27px); }
+    .dashboard-page .schedule-intro,
+    .dashboard-page .information-intro {
+        width: calc(100% - 25px);
+        margin: 0 auto 28px;
+    }
+    .dashboard-page .schedule-intro h2,
+    .dashboard-page .information-intro h2 { font-size: clamp(40px, 9vw, 55px); }
+    .dashboard-page .schedule-intro > p:not(.schedule-eyebrow),
+    .dashboard-page .information-intro > p:last-child { font-size: 17px; }
+    .dashboard-page .schedule-journey {
+        width: calc(100% - 8px);
+        top: auto;
+        margin-bottom: 19px;
+        padding: 9px 13px;
+    }
+    .dashboard-page .cinematic-event-list { gap: 19px; }
+    .dashboard-page .cinematic-event-card {
+        min-height: max(800px, 90svh);
+        align-items: flex-end;
+        padding: 180px 12px 12px;
+        scroll-margin-top: calc(var(--header-height) + 12px);
+        border-radius: 20px;
+    }
+    .dashboard-page .cinematic-event-scrim {
+        background:
+            linear-gradient(180deg, rgba(18,13,10,.02) 0%, rgba(18,13,10,.04) 30%, rgba(18,13,10,.42) 61%, rgba(14,11,10,.69)),
+            linear-gradient(90deg, rgba(18,13,10,.17), transparent 62%);
+    }
+    .dashboard-page .event-glass-panel {
+        position: relative;
+        width: 100%;
+        margin: 0;
+        padding: 24px clamp(18px, 4vw, 27px);
+        border-radius: 22px;
+        background: linear-gradient(150deg, rgba(59,39,27,.33), rgba(19,15,13,.52));
+        -webkit-backdrop-filter: blur(11px) saturate(129%);
+        backdrop-filter: blur(11px) saturate(129%);
+    }
+    .dashboard-page .event-glass-panel h3 { font-size: clamp(40px, 9vw, 58px); }
+    .dashboard-page .event-facts { gap: 13px; }
+    .dashboard-page .event-primary-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .dashboard-page .event-glass-button {
+        min-width: 0;
+        width: 100%;
+        min-height: 45px;
+        padding-inline: 7px;
+        font-size: 9px;
+        letter-spacing: .2px;
+        white-space: normal;
+    }
+    .dashboard-page .travel-edition,
+    .dashboard-page .qa-grid { width: calc(100% - 12px); }
+    .dashboard-page .registry-section-block .registry-hero {
+        width: min(100% - 20px, 780px);
+    }
+}
+@media (max-width: 430px) {
+    body.dashboard-page { --header-height: 119px; }
+    .dashboard-page .dashboard-title { font-size: clamp(40px, 12vw, 49px); }
+    .dashboard-page .dashboard-tabs { gap: 15px; }
+    .dashboard-page .dashboard-tab { font-size: 10px; letter-spacing: .65px; }
+    .dashboard-page .welcome-copy { padding-inline: 15px; }
+    .dashboard-page .welcome-copy h2 { width: 84%; font-size: clamp(36px, 9.7vw, 43px); }
+    .dashboard-page .welcome-message { width: 83%; font-size: 16px; }
+    .dashboard-page .cinematic-event-card { min-height: max(870px, 96svh); padding: 162px 9px 9px; }
+    .dashboard-page .event-glass-panel { padding: 22px 16px; }
+    .dashboard-page .event-facts { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .dashboard-page .event-fact strong { font-size: 19px; }
+    .dashboard-page .event-attire-section { min-height: 80px; }
+    .dashboard-page .event-glass-panel h3 { font-size: clamp(38px, 11vw, 47px); }
+    .dashboard-page .event-glass-button { font-size: 8.5px; }
+    .dashboard-page .registry-copy h2 { font-size: clamp(43px, 11vw, 59px); }
+}
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .dashboard-page .event-glass-panel,
+    .dashboard-page .travel-story,
+    .dashboard-page .qa-grid,
+    .dashboard-page .registry-keepsake,
+    .dashboard-page .registry-zelle-card { background: rgba(29,22,18,.90); }
+}
+@media (prefers-contrast: more), (prefers-reduced-transparency: reduce) {
+    .dashboard-page .event-glass-panel,
+    .dashboard-page .travel-story,
+    .dashboard-page .qa-grid,
+    .dashboard-page .registry-keepsake,
+    .dashboard-page .registry-zelle-card {
+        background: rgba(25,19,16,.97);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        border-color: rgba(255,233,197,.74);
+    }
+    .dashboard-page .welcome-copy::before {
+        background: radial-gradient(ellipse at 26% 48%, rgba(15,11,9,.80), transparent 90%);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+}
+@media (forced-colors: active) {
+    .dashboard-page .event-glass-panel,
+    .dashboard-page .travel-story,
+    .dashboard-page .qa-grid,
+    .dashboard-page .registry-keepsake,
+    .dashboard-page .registry-zelle-card {
+        color: CanvasText;
+        background: Canvas;
+        border: 1px solid CanvasText;
+        box-shadow: none;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+}

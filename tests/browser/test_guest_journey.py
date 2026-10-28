@@ -449,3 +449,114 @@ def test_heritage_preview_glass_accessibility_and_live_site_isolation(
         expect(page.get_by_role("link", name="Original invitation", exact=True)).to_be_visible()
     finally:
         page.close()
+
+@pytest.mark.parametrize("width", [320, 390, 768, 1440, 1920])
+def test_original_heritage_glass_uses_screen_width_on_every_guest_tab(
+    browser, wedding_url, width,
+):
+    page = guest_page(
+        browser, wedding_url, width=width,
+        height=844 if width <= 430 else 900,
+    )
+    try:
+        for tab, heading in (
+            ("welcome", "Browser Guest"),
+            ("schedule", "Wedding Schedule"),
+            ("travel", "Travel Guide"),
+            ("registry", None),
+            ("qa", "Questions & Answers"),
+        ):
+            page.goto(f"{wedding_url}/dashboard?tab={tab}")
+            expect(page.locator('body[data-active-tab]')).to_have_attribute(
+                "data-active-tab", tab
+            )
+            expect(page.locator(".dashboard-title")).to_be_visible()
+            if heading:
+                expect(page.get_by_role("heading", name=heading)).to_be_visible()
+
+            viewport_width = page.evaluate("window.innerWidth")
+            content_width = page.evaluate("document.documentElement.scrollWidth")
+            assert content_width <= viewport_width + 2, (
+                f"{tab} overflows: viewport={viewport_width}, "
+                f"document={content_width}"
+            )
+            assert page.locator(".dashboard-header").bounding_box()["width"] >= width - 2
+            assert page.locator(".ambient-slideshow").bounding_box()["width"] >= width - 2
+            assert page.locator(".dashboard-content").bounding_box()["width"] >= width - 2
+
+            if tab == "welcome":
+                size = page.locator(".welcome-copy h2").evaluate(
+                    "el => parseFloat(getComputedStyle(el).fontSize)"
+                )
+                assert size <= (59 if width > 700 else 54), (
+                    f"Guest name too large at {width}px: {size}px"
+                )
+                assert page.locator(".welcome-copy").evaluate(
+                    "el => getComputedStyle(el, '::before').backgroundImage"
+                ) != "none"
+            elif tab == "schedule":
+                card = page.locator("#event-card-haldi")
+                glass = card.locator(".event-glass-panel")
+                expect(glass).to_be_visible()
+                card_box = card.bounding_box()
+                panel_box = glass.bounding_box()
+                assert card_box and panel_box
+                assert panel_box["x"] >= card_box["x"] - 2
+                assert panel_box["x"] + panel_box["width"] <= (
+                    card_box["x"] + card_box["width"] + 2
+                )
+                assert panel_box["y"] >= card_box["y"] - 2
+                assert panel_box["y"] + panel_box["height"] <= (
+                    card_box["y"] + card_box["height"] + 2
+                )
+                assert "schedule-haldi-" in card.evaluate(
+                    "el => getComputedStyle(el).backgroundImage"
+                )
+                assert "blur(" in glass.evaluate(
+                    "el => getComputedStyle(el).backdropFilter"
+                )
+                if width > 1080:
+                    assert panel_box["width"] < card_box["width"] * .5
+                assert page.locator(".schedule-journey").evaluate(
+                    "el => getComputedStyle(el).position"
+                ) == "relative"
+            elif tab == "travel":
+                assert "blur(" in page.locator(".travel-story").first.evaluate(
+                    "el => getComputedStyle(el).backdropFilter"
+                )
+            elif tab == "qa":
+                assert "blur(" in page.locator(".qa-grid").evaluate(
+                    "el => getComputedStyle(el).backdropFilter"
+                )
+    finally:
+        page.close()
+
+
+@pytest.mark.parametrize("width", [320, 390, 1440])
+def test_heritage_schedule_rsvp_calendar_and_width_remain_functional(
+    browser, wedding_url, width,
+):
+    page = guest_page(
+        browser, wedding_url, width=width,
+        height=844 if width < 700 else 900,
+    )
+    try:
+        page.goto(f"{wedding_url}/dashboard?tab=schedule")
+        card = page.locator("#event-card-haldi")
+        expect(card.get_by_role("heading", name="Haldi")).to_be_visible()
+        expect(card.get_by_role("button", name="RSVP Now")).to_be_visible()
+
+        card.get_by_role("button", name="+ Calendar").click()
+        menu = card.locator("#calendar-menu-haldi")
+        expect(menu).to_be_visible()
+        expect(menu.get_by_role("link", name="Apple Calendar")).to_be_visible()
+
+        card.get_by_role("button", name="RSVP Now").click()
+        form = page.locator("#rsvp-form-haldi")
+        expect(form).to_be_visible()
+        form.locator('input[name="attending"][value="Yes"]').check(force=True)
+        form.locator("button.confirm-response-btn").click()
+        expect(card.locator("[data-response-text]")).to_contain_text("Attending")
+        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
+    finally:
+        page.close()
