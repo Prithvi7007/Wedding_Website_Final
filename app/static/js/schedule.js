@@ -319,6 +319,13 @@ export function mountSchedule(root = document) {
         }
     }
 
+    function keepKeyboardFocusInModal() {
+        const overlay = activeOverlay;
+        if (!overlay || !overlay.classList.contains("is-open")) return;
+        if (overlay.contains(document.activeElement)) return;
+        overlay.querySelector(".overlay-close")?.focus({ preventScroll: true });
+    }
+
     function getOverlay(kind, eventId) {
         const selector = `#${CSS.escape(`${kind}-overlay-${eventId}`)}`;
         return modalLayer?.querySelector(selector) || schedule.querySelector(selector);
@@ -619,6 +626,23 @@ export function mountSchedule(root = document) {
         interactionRoot.addEventListener("change", handleScheduleChange, { signal });
         interactionRoot.addEventListener("submit", handleScheduleSubmit, { signal });
     });
+
+    // A modal must contain keyboard focus throughout its lifetime. Native
+    // focus changes (including blur to <body>) can occur after autofocus,
+    // especially while overlays are transitioning in Chromium.
+    document.addEventListener("focusin", (event) => {
+        if (activeOverlay && !activeOverlay.contains(event.target)) {
+            keepKeyboardFocusInModal();
+        }
+    }, { signal, capture: true });
+
+    document.addEventListener("focusout", (event) => {
+        if (!activeOverlay || !activeOverlay.contains(event.target)) return;
+        const overlay = activeOverlay;
+        window.requestAnimationFrame(() => {
+            if (activeOverlay === overlay) keepKeyboardFocusInModal();
+        });
+    }, { signal, capture: true });
 
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && activeOverlay) {
