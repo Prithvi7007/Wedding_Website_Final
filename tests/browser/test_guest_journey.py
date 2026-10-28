@@ -273,3 +273,65 @@ def test_schedule_layout_has_no_page_wide_horizontal_scroll(browser, wedding_url
         assert tabs.evaluate("node => getComputedStyle(node).overflowX") == "auto"
     finally:
         page.close()
+
+@pytest.mark.parametrize("delayed_outcome", ["success", "error"])
+def test_rapid_tab_switch_ignores_stale_response(browser, wedding_url, delayed_outcome):
+    page = guest_page(browser, wedding_url, width=390, height=844)
+    try:
+        # Make the first fragment request finish *after* a later tab request.
+        # The success case simulates a fetch that cannot be canceled by
+        # AbortController; the failure case simulates a late network error.
+        page.evaluate("""() => {
+            const originalFetch = window.fetch.bind(window);
+            window.__releaseTravel = null;
+            window.__travelSettled = false;
+            window.fetch = (url, options) => {
+                if (!String(url).includes("/dashboard/tab/travel")) {
+                    return originalFetch(url, options);
+                }
+                return new Promise((resolve, reject) => {
+                    window.__releaseTravel = shouldFail => {
+                        if (shouldFail) {
+                            window.__travelSettled = true;
+                            reject(new Error("simulated stale network failure"));
+                            return;
+                        }
+                        originalFetch(url, {...options, signal: undefined}).then(
+                            response => {
+                                window.__travelSettled = true;
+                                resolve(response);
+                            },
+                            error => {
+                                window.__travelSettled = true;
+                                reject(error);
+                            },
+                        );
+                    };
+                });
+            };
+        }""")
+
+        page.get_by_role("link", name="Travel", exact=True).click()
+        page.wait_for_function("typeof window.__releaseTravel === 'function'")
+        page.get_by_role("link", name="Q&A", exact=True).click()
+
+        expect(page.get_by_role("heading", name="Questions & Answers")).to_be_visible()
+        expect(page.locator(".dashboard-tab[data-tab-name='qa']")).to_have_attribute(
+            "aria-current", "page"
+        )
+
+        page.evaluate("(fail) => window.__releaseTravel(fail)", delayed_outcome == "error")
+        page.wait_for_function("window.__travelSettled")
+
+        # The stale response/error must not overwrite the chosen tab or force
+        # a full reload. History, loading state and accessibility stay synced.
+        expect(page.get_by_role("heading", name="Questions & Answers")).to_be_visible()
+        expect(page).to_have_url(re.compile(r"tab=qa"))
+        expect(page.locator("body")).to_have_attribute("data-active-tab", "qa")
+        expect(page.locator(".dashboard-tab[data-tab-name='qa']")).to_have_attribute(
+            "aria-current", "page"
+        )
+        expect(page.locator("#tab-content")).not_to_have_attribute("aria-busy", "true")
+        assert page.locator("#tab-content").get_by_text("Travel Guide").count() == 0
+    finally:
+        page.close()

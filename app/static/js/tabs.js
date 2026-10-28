@@ -37,18 +37,30 @@ export function mountFragmentNavigation(onContentMounted, initialCleanup = () =>
     const content = document.getElementById("tab-content");
     if (!content) return;
     cleanupCurrentTab = initialCleanup;
+    let currentNavigation = null;
+    let navigationSequence = 0;
 
     async function navigate(link, pushHistory = true, historyEventId = null) {
         const tabName = link.dataset.tabName;
         const fragmentUrl = link.dataset.fragmentUrl;
         if (!tabName || !fragmentUrl) return;
 
+        // Only the newest requested tab may render, update browser history,
+        // or clear loading state. Cancel the older fetch when possible and
+        // guard the response body read if cancellation comes too late.
+        const sequence = ++navigationSequence;
+        currentNavigation?.abort();
+        const controller = new AbortController();
+        currentNavigation = controller;
+
         content.setAttribute("aria-busy", "true");
         try {
             const response = await fetch(fragmentUrl, {
                 credentials: "same-origin",
                 headers: { "X-Requested-With": "XMLHttpRequest" },
+                signal: controller.signal,
             });
+            if (sequence !== navigationSequence) return;
 
             if (response.status === 401) {
                 window.location.assign("/");
@@ -57,8 +69,11 @@ export function mountFragmentNavigation(onContentMounted, initialCleanup = () =>
 
             if (!response.ok) throw new Error(`Tab request failed: ${response.status}`);
 
+            const markup = await response.text();
+            if (sequence !== navigationSequence) return;
+
             cleanupCurrentTab();
-            content.innerHTML = await response.text();
+            content.innerHTML = markup;
             setActiveTab(tabName);
             cleanupCurrentTab = onContentMounted(content) || (() => {});
 
@@ -71,10 +86,14 @@ export function mountFragmentNavigation(onContentMounted, initialCleanup = () =>
                 window.scrollTo({ top: 0, behavior: "smooth" });
             }
         } catch (error) {
+            if (sequence !== navigationSequence || error?.name === "AbortError") return;
             console.error(error);
             window.location.assign(link.href);
         } finally {
-            content.removeAttribute("aria-busy");
+            if (sequence === navigationSequence) {
+                currentNavigation = null;
+                content.removeAttribute("aria-busy");
+            }
         }
     }
 
