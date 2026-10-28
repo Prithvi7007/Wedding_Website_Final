@@ -465,3 +465,65 @@ def test_guest_v2_glass_surfaces_preserve_portraits_and_clear_rsvp(browser, wedd
         assert style(".v2-hero-copy")["blur"] == "none"
     finally:
         page.close()
+
+@pytest.mark.parametrize("width", [320, 390, 768, 1440, 1920])
+def test_guest_v2_heritage_glass_preserves_warm_photography_and_readability(
+    browser, wedding_url, width,
+):
+    page = guest_page(
+        browser,
+        wedding_url,
+        width=width,
+        height=844 if width <= 430 else 900,
+    )
+    try:
+        page.goto(f"{wedding_url}/dashboard/preview/guest-v2")
+        expect(page.get_by_role("heading", name="Adlin & Prithvi")).to_be_visible()
+
+        # The original wedding's photographic mood is visible through
+        # the glass, not replaced by an opaque cream rectangle.
+        atmosphere = page.locator(".v2-hero-atmosphere img")
+        expect(atmosphere).to_have_js_property("complete", True)
+        assert atmosphere.evaluate("image => image.naturalWidth > 0")
+
+        glass = page.locator(".v2-hero-copy")
+        background = glass.evaluate(
+            "el => getComputedStyle(el).backgroundImage"
+        )
+        assert "linear-gradient(" in background
+        assert "rgba(43, 31, 23, 0.8)" in background
+        assert "blur(" in glass.evaluate(
+            "el => getComputedStyle(el).backdropFilter"
+        )
+
+        portrait = page.locator(".v2-photo-subject")
+        assert portrait.evaluate("el => getComputedStyle(el).objectFit") == "contain"
+        header_color = page.locator(".v2-header").evaluate(
+            "el => getComputedStyle(el).backgroundColor"
+        )
+        assert "rgba(" in header_color
+        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
+
+        event = page.locator("#v2-event-haldi")
+        event.scroll_into_view_if_needed()
+        pane = event.locator(".v2-event-content")
+        assert "rgba(43, 31, 23, 0.8)" in pane.evaluate(
+            "el => getComputedStyle(el).backgroundImage"
+        )
+        assert "rgb(255, 247, 233)" == event.locator("h3").evaluate(
+            "el => getComputedStyle(el).color"
+        )
+        expect(event.get_by_role("link", name="RSVP for this event")).to_be_visible()
+        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
+
+        # Accessibility mode keeps dark readable content while removing blur,
+        # and returns the event index to opaque ivory for dark-text contrast.
+        page.emulate_media(contrast="more")
+        assert pane.evaluate(
+            "el => getComputedStyle(el).backdropFilter"
+        ) == "none"
+        assert page.locator(".v2-chapter-index").evaluate(
+            "el => getComputedStyle(el).backgroundColor"
+        ) == "rgb(247, 241, 231)"
+    finally:
+        page.close()

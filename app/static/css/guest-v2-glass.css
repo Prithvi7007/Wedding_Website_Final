@@ -1,11 +1,13 @@
-/* Guest Experience V2 / Glass edition
-   Frosted ivory surfaces and editorial photography, never glass over faces.
-   Loaded ONLY by the invitation-protected V2 preview. */
+/* Guest V2 / Heritage glass: modern wedding editorial meets the
+   original invitation's warm, cinematic bronze glass.
+   ONLY the invitation-protected V2 preview loads this stylesheet. */
 
 .guest-v2 {
-    --v2-glass-bg: linear-gradient(133deg, rgba(255, 255, 255, .84) 0%, rgba(250, 244, 234, .76) 54%, rgba(245, 235, 219, .72) 100%);
-    --v2-glass-edge: rgba(255, 255, 255, .85);
-    --v2-glass-shadow: 0 25px 75px rgba(54, 42, 31, .13), inset 0 1px 0 rgba(255, 255, 255, .68);
+    --v2-glass-bg: linear-gradient(125deg, rgba(43, 31, 23, .80), rgba(78, 51, 32, .70) 57%, rgba(45, 37, 30, .76));
+    --v2-glass-edge: rgba(247, 228, 193, .31);
+    --v2-glass-shadow: 0 28px 90px rgba(26, 18, 14, .30), inset 0 1px 0 rgba(255, 239, 206, .17);
+    --v2-glass-ink: #f9f2e9;
+    --v2-glass-muted: #e7d8c7;
 }
 
 /* A translucent, single-row navigation; no stacked dashboard bars. */
@@ -13,41 +15,68 @@
     position: sticky;
     top: 0;
     z-index: 80;
-    background: rgba(246, 240, 230, .84);
-    border-bottom: 1px solid rgba(255, 255, 255, .78);
-    box-shadow: 0 7px 28px rgba(69, 55, 41, .065);
-    -webkit-backdrop-filter: blur(24px) saturate(1.18);
-    backdrop-filter: blur(24px) saturate(1.18);
+    color: #f7f0e6;
+    background: rgba(47, 35, 27, .79);
+    border-bottom: 1px solid rgba(222, 188, 138, .27);
+    box-shadow: 0 7px 32px rgba(29, 21, 17, .19);
+    -webkit-backdrop-filter: blur(22px) saturate(1.2);
+    backdrop-filter: blur(22px) saturate(1.2);
 }
 
-/* A subtly atmospheric paper backdrop gives the frosted invitation depth. */
+/* Real wedding imagery behind the invitation makes the glass genuinely
+   translucent, without throwing another photo over the couple's faces. */
 .guest-v2 .v2-hero {
     position: relative;
     isolation: isolate;
-    background:
-        radial-gradient(ellipse 65% 70% at 24% 37%, rgba(200, 171, 125, .25), transparent 75%),
-        radial-gradient(ellipse 70% 75% at 63% 87%, rgba(162, 185, 166, .18), transparent 70%),
-        #eee7dc;
+    background: #74604f;
 }
+.guest-v2 .v2-hero-atmosphere {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+.guest-v2 .v2-hero-atmosphere img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.085);
+    filter: blur(16px) saturate(.88) brightness(.78);
+}
+.guest-v2 .v2-hero-atmosphere::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, rgba(43, 30, 21, .50), rgba(83, 59, 36, .22) 55%, rgba(35, 29, 24, .30));
+}
+.guest-v2 .v2-mark-label,
+.guest-v2 .v2-back-link { color: #f4e9d8; }
+.guest-v2 .v2-preview-label { color: #d6bfa0; }
+.guest-v2 .v2-main-nav a:hover,
+.guest-v2 .v2-back-link:hover { color: #e9bc77; }
+.guest-v2 .v2-back-link { border-bottom-color: rgba(245, 219, 185, .70); }
 
 .guest-v2 .v2-hero-copy {
     position: relative;
     z-index: 3;
     min-width: 0;
+    align-self: center;
+    color: var(--v2-glass-ink);
     margin:
-        clamp(20px, 3vw, 48px)
+        clamp(18px, 2.5vw, 34px)
         calc(-1 * clamp(34px, 4.5vw, 84px))
-        clamp(20px, 3vw, 48px)
+        clamp(18px, 2.5vw, 34px)
         clamp(16px, 3vw, 52px);
     padding:
-        clamp(36px, 5.5vw, 85px)
-        clamp(26px, 5.2vw, 92px);
+        clamp(32px, 4vw, 64px)
+        clamp(28px, 4.8vw, 85px);
     border: 1px solid var(--v2-glass-edge);
     border-radius: 26px;
     background: var(--v2-glass-bg);
     box-shadow: var(--v2-glass-shadow);
-    -webkit-backdrop-filter: blur(28px) saturate(1.22);
-    backdrop-filter: blur(28px) saturate(1.22);
+    -webkit-backdrop-filter: blur(25px) saturate(1.2);
+    backdrop-filter: blur(25px) saturate(1.2);
 }
 
 .guest-v2 .v2-hero-copy::before,
@@ -58,7 +87,7 @@
     left: 30px;
     right: 30px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .92), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 235, 203, .58), transparent);
     pointer-events: none;
 }
 
@@ -66,6 +95,23 @@
     z-index: 1;
     background: #b7aa98;
 }
+.guest-v2 .v2-hero h1 {
+    font-size: clamp(70px, 7.5vw, 132px);
+    line-height: .82;
+    color: #fff7ed;
+}
+.guest-v2 .v2-hero .v2-intro,
+.guest-v2 .v2-dear { color: #f6e5c9; }
+.guest-v2 .v2-hero .v2-overline,
+.guest-v2 .v2-hero .v2-copy-rule,
+.guest-v2 .v2-hero .v2-amp { color: #e2bb7e; }
+.guest-v2 .v2-hero .v2-rule { background: #e2bb7e; }
+.guest-v2 .v2-hero .v2-invite-message { color: var(--v2-glass-muted); }
+.guest-v2 .v2-hero .v2-preview-note { color: #d9c9b5; }
+.guest-v2 .v2-hero .v2-copy-rule::before,
+.guest-v2 .v2-hero .v2-copy-rule::after { background: rgba(251, 226, 191, .28); }
+.guest-v2 .v2-hero .v2-primary-link { background: #e4c492; border-color: #e4c492; color: #32261b !important; }
+.guest-v2 .v2-hero .v2-primary-link:hover { background: #f2d8b0; }
 
 /* Keep the complete portrait: the glass overlaps only the photograph edge.
    No cropping changes or overlays placed on the couple's faces. */
@@ -79,17 +125,17 @@
 /* A soft translucent table of contents instead of separate tiles. */
 .guest-v2 .v2-chapters {
     background:
-        radial-gradient(ellipse 62% 28% at 12% 18%, rgba(211, 183, 143, .26), transparent 80%),
-        radial-gradient(ellipse 52% 39% at 88% 66%, rgba(190, 203, 189, .20), transparent 75%),
-        #ebe4da;
+        radial-gradient(ellipse 62% 28% at 12% 18%, rgba(211, 183, 143, .35), transparent 80%),
+        radial-gradient(ellipse 52% 39% at 88% 66%, rgba(132, 112, 83, .18), transparent 75%),
+        #eee6d9;
 }
 .guest-v2 .v2-chapter-index {
     gap: 0;
     border: 1px solid rgba(255, 255, 255, .76);
     border-radius: 15px;
     overflow: hidden;
-    background: rgba(255, 255, 255, .43);
-    box-shadow: 0 12px 36px rgba(54, 42, 31, .055);
+    background: rgba(255, 250, 240, .56);
+    box-shadow: 0 12px 36px rgba(54, 42, 31, .10);
     -webkit-backdrop-filter: blur(18px) saturate(1.14);
     backdrop-filter: blur(18px) saturate(1.14);
 }
@@ -117,6 +163,7 @@
     padding: clamp(30px, 4vw, 62px);
     border: 1px solid var(--v2-glass-edge);
     border-radius: 24px;
+    color: var(--v2-glass-ink);
     background: var(--v2-glass-bg);
     box-shadow: var(--v2-glass-shadow);
     -webkit-backdrop-filter: blur(26px) saturate(1.20);
@@ -127,12 +174,26 @@
     margin-right: calc(-1 * clamp(38px, 5vw, 82px));
 }
 .guest-v2 .v2-event-facts {
-    border-top-color: rgba(74, 62, 46, .19);
-    border-bottom-color: rgba(74, 62, 46, .19);
+    border-top-color: rgba(247, 221, 185, .28);
+    border-bottom-color: rgba(247, 221, 185, .28);
 }
+.guest-v2 .v2-event .v2-overline,
+.guest-v2 .v2-event-facts dt { color: #e2ba7b; }
+.guest-v2 .v2-event h3,
+.guest-v2 .v2-event-facts dd { color: #fff7e9; }
+.guest-v2 .v2-event-kicker { color: #ecd2ac; }
+.guest-v2 .v2-event-facts dd span,
+.guest-v2 .v2-event-response { color: #ecddc9; }
+.guest-v2 .v2-event .v2-secondary-link { color: #f0d1a2 !important; }
+.guest-v2 .v2-event .v2-primary-link {
+    background: #e4c492;
+    color: #2e261e !important;
+    border-color: #e4c492;
+}
+.guest-v2 .v2-event .v2-primary-link:hover { background: #f2d8b0; }
 .guest-v2 .v2-event h3,
 .guest-v2 .v2-hero h1 {
-    text-shadow: 0 1px 0 rgba(255, 255, 255, .24);
+    text-shadow: 0 1px 1px rgba(11, 8, 5, .12);
 }
 
 /* The opaque CTA remains easy to read and find on every translucent surface. */
@@ -147,10 +208,12 @@
     .guest-v2 .v2-hero-copy {
         padding-inline: clamp(24px, 3.4vw, 60px);
     }
+    .guest-v2 .v2-hero h1 { font-size: clamp(68px, 8.6vw, 108px); }
 }
 @media (max-width: 800px) {
     /* The phone portrait remains fully visible ABOVE the glass invitation. */
     .guest-v2 .v2-hero-copy {
+        align-self: auto;
         order: 0;
         margin: -48px clamp(15px, 3.2vw, 28px) 0;
         padding: clamp(33px, 5.8vw, 55px) clamp(23px, 5.5vw, 42px) clamp(39px, 6vw, 64px);
@@ -159,6 +222,7 @@
     .guest-v2 .v2-hero-visual {
         order: -1;
     }
+    .guest-v2 .v2-hero h1 { font-size: clamp(77px, 13.5vw, 115px); }
     .guest-v2 .v2-photo-stage {
         border-radius: 0;
         box-shadow: none;
@@ -186,6 +250,7 @@
         padding: 37px 21px 44px;
         border-radius: 19px;
     }
+    .guest-v2 .v2-hero h1 { font-size: clamp(67px, 15vw, 93px); }
     .guest-v2 .v2-chapter-index {
         border-radius: 13px;
     }
@@ -214,19 +279,21 @@
     .guest-v2 .v2-event-content,
     .guest-v2 .v2-chapter-index,
     .guest-v2 .v2-header {
-        background: #f4efe6;
+        background: #34271e;
     }
+    .guest-v2 .v2-chapter-index { background: #f7f1e7; }
 }
 @media (prefers-contrast: more), (prefers-reduced-transparency: reduce) {
     .guest-v2 .v2-hero-copy,
     .guest-v2 .v2-event-content,
     .guest-v2 .v2-chapter-index,
     .guest-v2 .v2-header {
-        background: #f7f1e7;
+        background: #30251d;
         -webkit-backdrop-filter: none;
         backdrop-filter: none;
-        border-color: #746658;
+        border-color: #efdbba;
     }
+    .guest-v2 .v2-chapter-index { background: #f7f1e7; }
 }
 @media (forced-colors: active) {
     .guest-v2 .v2-hero-copy,

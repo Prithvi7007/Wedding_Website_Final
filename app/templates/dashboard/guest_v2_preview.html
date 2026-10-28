@@ -40,6 +40,15 @@
         {% set personal_message = invitation.invite_message or invitation.message %}
 
         <section class="v2-hero" id="welcome" aria-labelledby="v2-welcome-heading">
+            <div class="v2-hero-atmosphere" aria-hidden="true">
+                <img
+                    src="{{ asset_url('images/slideshow/DSC06660-1170.webp') }}"
+                    width="1170"
+                    height="780"
+                    alt=""
+                    decoding="async"
+                >
+            </div>
             <div class="v2-hero-copy">
                 <p class="v2-overline"><span class="v2-rule" aria-hidden="true"></span> Our wedding weekend · November 2026</p>
                 <p class="v2-intro">A celebration of love, togetherness &amp; new beginnings</p>
