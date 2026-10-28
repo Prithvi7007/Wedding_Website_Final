@@ -245,6 +245,17 @@ def test_wedding_weekend_calendar_download_on_mobile(browser, wedding_url, width
         data = download.path().read_text(encoding="utf-8")
         assert "BEGIN:VEVENT" in data
         assert "SUMMARY:Haldi" in data
-        assert page.evaluate("document.documentElement.scrollWidth") <= width + 2
+        actual_width = page.evaluate("document.documentElement.scrollWidth")
+        overflow = page.evaluate("""() => [...document.querySelectorAll('*')]
+            .map(el => {
+                const box = el.getBoundingClientRect();
+                return {selector: el.tagName.toLowerCase() + (el.className && typeof el.className === 'string' ? '.' + el.className.trim().replaceAll(' ', '.') : ''),
+                    left: Math.round(box.left), right: Math.round(box.right),
+                    scrollWidth: el.scrollWidth};
+            })
+            .filter(item => item.right > innerWidth + 2 || item.left < -2)
+            .slice(0, 16)
+        """)
+        assert actual_width <= width + 2, f"Schedule overflow: {actual_width} at {width}px; offenders={overflow}"
     finally:
         page.close()
