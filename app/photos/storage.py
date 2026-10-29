@@ -18,6 +18,8 @@ from uuid import uuid4
 from flask import current_app
 from werkzeug.datastructures import FileStorage
 
+from app.photos import r2
+
 PHOTO_ID = re.compile(r"^[a-f0-9]{32}$")
 ALLOWED_FORMATS = {"JPEG", "PNG", "WEBP"}
 MAX_FILES_PER_POST = 6
@@ -50,8 +52,18 @@ def storage_ready() -> bool:
     root = storage_root()
     if root is None:
         return False
-    return all((root / sub).is_dir() and not (root / sub).is_symlink()
-               for sub in ("files", "metadata")) and os.access(root / "files", os.W_OK) and os.access(root / "metadata", os.W_OK)
+    metadata_dir = root / "metadata"
+    metadata_ready = (metadata_dir.is_dir() and not metadata_dir.is_symlink()
+                      and os.access(metadata_dir, os.W_OK))
+    backend = str(current_app.config.get("WEDDING_PHOTO_BACKEND", "r2"))
+    if backend == "r2":
+        return metadata_ready and r2.configured()
+    # Local image persistence is reserved for isolated automated tests.
+    if backend == "local" and current_app.testing:
+        images = root / "files"
+        return (metadata_ready and images.is_dir() and not images.is_symlink()
+                and os.access(images, os.W_OK))
+    return False
 
 
 def _root_or_raise() -> Path:
@@ -161,19 +173,24 @@ def save_photos(uploads: list[FileStorage], name: str | None, moment: str, *, ga
         if current_count + len(normalized) > MAX_STORED_PHOTOS:
             raise PhotoUploadError("Our photo inbox is full for now. Please tell the hosts.")
 
-        written: list[tuple[Path, Path]] = []
+        remote = current_app.config.get("WEDDING_PHOTO_BACKEND") == "r2"
+        written: list[tuple[str, Path]] = []
         try:
             for data in normalized:
                 photo_id = uuid4().hex
-                image_file = photo_path(root, photo_id)
                 metadata_file = _metadata_file(root, photo_id)
-                fd = os.open(image_file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-                with os.fdopen(fd, "wb") as output:
-                    output.write(data)
-                    output.flush()
-                    os.fsync(output.fileno())
-                written.append((image_file, metadata_file))
-                _save_json(metadata_file, {
+                if remote:
+                    # Private R2 object: no permanent JPEG is written to VPS.
+                    r2.put_image(photo_id, data)
+                else:
+                    image_file = photo_path(root, photo_id)
+                    fd = os.open(image_file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+                    with os.fdopen(fd, "wb") as output:
+                        output.write(data)
+                        output.flush()
+                        os.fsync(output.fileno())
+                written.append((photo_id, metadata_file))
+                record = {
                     "id": photo_id,
                     "created_at": datetime.now(timezone.utc).isoformat(),
                     "status": "pending",
@@ -181,11 +198,21 @@ def save_photos(uploads: list[FileStorage], name: str | None, moment: str, *, ga
                     "guest_name": guest_name,
                     "moment": moment,
                     "bytes": len(data),
-                })
+                }
+                if remote:
+                    r2.backup_metadata(photo_id, record)
+                _save_json(metadata_file, record)
         except Exception:
-            for image_file, metadata_file in written:
-                image_file.unlink(missing_ok=True)
+            for photo_id, metadata_file in written:
                 metadata_file.unlink(missing_ok=True)
+                if remote:
+                    try:
+                        r2.delete_image(photo_id)
+                        r2.delete_metadata(photo_id)
+                    except r2.RemotePhotoError:
+                        current_app.logger.warning("Cloud image rollback incomplete id=%s", photo_id)
+                else:
+                    photo_path(root, photo_id).unlink(missing_ok=True)
             raise
         finally:
             fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
@@ -209,11 +236,13 @@ def list_photos() -> list[dict]:
     return sorted(records, key=lambda row: row.get("created_at", ""), reverse=True)
 
 
-def get_photo(photo_id: str) -> tuple[dict, Path]:
+def get_photo(photo_id: str) -> tuple[dict, Path | BytesIO]:
     root = _root_or_raise()
     record = _read_json(_metadata_file(root, photo_id))
     if record.get("id") != photo_id or record.get("status") == "deleted":
         raise FileNotFoundError("Unknown photo.")
+    if current_app.config.get("WEDDING_PHOTO_BACKEND") == "r2":
+        return record, r2.get_image(photo_id)
     path = photo_path(root, photo_id)
     if not path.is_file() or path.is_symlink():
         raise FileNotFoundError("Photo not found.")
@@ -249,8 +278,12 @@ def review_photo(photo_id: str, action: str, actor: str) -> None:
             record.pop("published_at", None)
         record["reviewed_by"] = actor
         record["reviewed_at"] = datetime.now(timezone.utc).isoformat()
-        if action == "delete":
-            # Remove private image bytes before recording the deletion tombstone.
+        if current_app.config.get("WEDDING_PHOTO_BACKEND") == "r2":
+            # Cloud recovery state is mirrored before updating local moderation.
+            r2.backup_metadata(photo_id, record)
+            if action == "delete":
+                r2.delete_image(photo_id)
+        elif action == "delete":
             photo_path(root, photo_id).unlink(missing_ok=True)
         _save_json(metadata_file, record)
         fcntl.flock(lock.fileno(), fcntl.LOCK_UN)

@@ -25,6 +25,7 @@ def photo_inbox(app, tmp_path):
     app.config.update(
         WEDDING_PHOTO_ENABLED=True,
         WEDDING_PHOTO_GALLERY_ENABLED=True,
+        WEDDING_PHOTO_BACKEND="local",
         WEDDING_PHOTO_STORAGE_DIR=str(root),
         WEDDING_PHOTO_SHARE_TOKEN=SHARE_TOKEN,
         PUBLIC_BASE_URL="http://localhost",

@@ -27,6 +27,7 @@ def photo_site(tmp_path):
     app.config.update(
         WEDDING_PHOTO_ENABLED=True,
         WEDDING_PHOTO_GALLERY_ENABLED=True,
+        WEDDING_PHOTO_BACKEND="local",
         WEDDING_PHOTO_STORAGE_DIR=str(root),
         WEDDING_PHOTO_SHARE_TOKEN=TOKEN,
     )

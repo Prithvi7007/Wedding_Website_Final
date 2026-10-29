@@ -83,6 +83,11 @@ class BaseConfig:
     SEND_FILE_MAX_AGE_DEFAULT = 0
     WEDDING_PHOTO_ENABLED = False
     WEDDING_PHOTO_GALLERY_ENABLED = False
+    WEDDING_PHOTO_BACKEND = "r2"
+    WEDDING_R2_ACCOUNT_ID = ""
+    WEDDING_R2_BUCKET = ""
+    WEDDING_R2_ACCESS_KEY_ID = ""
+    WEDDING_R2_SECRET_ACCESS_KEY = ""
     WEDDING_PHOTO_STORAGE_DIR = ""
     WEDDING_PHOTO_SHARE_TOKEN = ""
 
@@ -214,6 +219,11 @@ def apply_environment_config(app, selected_name: str) -> None:
         PUBLIC_BASE_URL=os.getenv("PUBLIC_BASE_URL", "").strip(),
         WEDDING_PHOTO_ENABLED=_as_bool("WEDDING_PHOTO_ENABLED", False),
         WEDDING_PHOTO_GALLERY_ENABLED=_as_bool("WEDDING_PHOTO_GALLERY_ENABLED", False),
+        WEDDING_PHOTO_BACKEND="r2",
+        WEDDING_R2_ACCOUNT_ID=os.getenv("WEDDING_R2_ACCOUNT_ID", "").strip(),
+        WEDDING_R2_BUCKET=os.getenv("WEDDING_R2_BUCKET", "").strip(),
+        WEDDING_R2_ACCESS_KEY_ID=os.getenv("WEDDING_R2_ACCESS_KEY_ID", "").strip(),
+        WEDDING_R2_SECRET_ACCESS_KEY=os.getenv("WEDDING_R2_SECRET_ACCESS_KEY", "").strip(),
         WEDDING_PHOTO_STORAGE_DIR=os.getenv("WEDDING_PHOTO_STORAGE_DIR", "").strip(),
         WEDDING_PHOTO_SHARE_TOKEN=os.getenv("WEDDING_PHOTO_SHARE_TOKEN", "").strip(),
         ADMIN_LOGIN_MAX_FAILURES=_as_int(
