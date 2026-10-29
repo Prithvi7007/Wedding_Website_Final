@@ -9,3 +9,4 @@ resend>=2.0,<3
 pytest>=8,<10
 Pillow>=11,<13
 qrcode>=8,<9
+boto3>=1.40,<2

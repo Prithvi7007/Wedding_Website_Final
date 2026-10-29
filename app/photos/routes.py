@@ -15,6 +15,7 @@ from app.photos.storage import (
     PhotoUploadError, get_photo, list_photos, review_photo, save_photos,
     storage_ready,
 )
+from app.photos.r2 import RemotePhotoError
 
 
 photos_bp = Blueprint("photos", __name__)
@@ -81,6 +82,19 @@ def _public_access(token: str, *, gallery: bool = False) -> None:
 
 def _wants_json() -> bool:
     return request.accept_mimetypes.best == "application/json"
+
+
+@photos_bp.errorhandler(RemotePhotoError)
+def r2_unavailable(_error):
+    message = "Photo storage is temporarily unavailable. Please try again later."
+    if _wants_json():
+        return jsonify(success=False, message=message), 503
+    if request.endpoint == "photos.guest_upload":
+        return render_template("photos/guest_upload.html", error=message, success=0,
+                               gallery_enabled=_gallery_enabled()), 503
+    return render_template("errors/generic.html", status_code=503,
+                           heading="Photos temporarily unavailable",
+                           message=message), 503
 
 
 @photos_bp.errorhandler(RequestEntityTooLarge)
