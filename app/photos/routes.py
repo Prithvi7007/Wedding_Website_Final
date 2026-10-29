@@ -62,8 +62,19 @@ def _enabled() -> bool:
     )
 
 
-def _public_access(token: str) -> None:
-    if not _enabled() or not hmac.compare_digest(_token(), token):
+def _gallery_enabled() -> bool:
+    return (
+        current_app.config.get("WEDDING_PHOTO_GALLERY_ENABLED") is True
+        and len(_token()) >= 24
+        and all(character.isalnum() or character in "-_" for character in _token())
+        and storage_ready()
+        and _public_url() is not None
+    )
+
+
+def _public_access(token: str, *, gallery: bool = False) -> None:
+    allowed = _gallery_enabled() if gallery else _enabled()
+    if not allowed or not hmac.compare_digest(_token(), token):
         abort(404)
 
 
@@ -76,30 +87,36 @@ def too_large(_error):
     message = "These photos are too large together. Try uploading fewer at a time."
     if _wants_json():
         return jsonify(success=False, message=message), 413
-    return render_template("photos/guest_upload.html", error=message, success=0), 413
+    return render_template("photos/guest_upload.html", error=message, success=0,
+                           gallery_enabled=_gallery_enabled()), 413
 
 
 @photos_bp.route("/photos/<token>", methods=["GET", "POST"])
 def guest_upload(token: str):
     _public_access(token)
     if request.method == "GET":
-        return render_template("photos/guest_upload.html", error=None, success=0)
+        return render_template("photos/guest_upload.html", error=None, success=0,
+                               gallery_enabled=_gallery_enabled())
 
     if request.form.get("website", "").strip():
         # Honeypot: never store a bot's attachment.
         abort(400)
 
     try:
+        if request.form.get("gallery_consent") != "yes":
+            raise PhotoUploadError("Please confirm that approved photos may appear in the wedding guest gallery.")
         count = save_photos(
             [upload for upload in request.files.getlist("photos") if upload.filename],
             request.form.get("guest_name"),
             request.form.get("moment", "Wedding weekend"),
+            gallery_consent=True,
         )
     except PhotoUploadError as error:
         if _wants_json():
             return jsonify(success=False, message=str(error)), 400
         return render_template(
             "photos/guest_upload.html", error=str(error), success=0,
+            gallery_enabled=_gallery_enabled(),
         ), 400
 
     if _wants_json():
@@ -115,13 +132,57 @@ def guest_thanks(token: str):
         count = max(1, min(int(request.args.get("count", "1")), 6))
     except ValueError:
         count = 1
-    return render_template("photos/guest_upload.html", error=None, success=count)
+    return render_template("photos/guest_upload.html", error=None, success=count,
+                           gallery_enabled=_gallery_enabled())
+
+
+@photos_bp.get("/photos/<token>/gallery")
+def guest_gallery(token: str):
+    """Only explicitly published photographs appear to QR-link holders."""
+    _public_access(token, gallery=True)
+    approved = [
+        photo for photo in list_photos() if photo.get("status") == "approved"
+        and photo.get("gallery_consent") is True and bool(photo.get("published_at"))
+    ]
+    try:
+        page = max(1, int(request.args.get("page", "1")))
+    except ValueError:
+        page = 1
+    per_page = 24
+    pages = max(1, (len(approved) + per_page - 1) // per_page)
+    page = min(page, pages)
+    return render_template(
+        "photos/guest_gallery.html",
+        photos=approved[(page - 1) * per_page:page * per_page],
+        total=len(approved),
+        page=page, pages=pages, token=token,
+    )
+
+
+@photos_bp.get("/photos/<token>/gallery/<photo_id>.jpg")
+def guest_gallery_image(token: str, photo_id: str):
+    _public_access(token, gallery=True)
+    try:
+        record, path = get_photo(photo_id)
+    except (FileNotFoundError, ValueError):
+        abort(404)
+    # Checking approval on EVERY image request protects against stale gallery
+    # HTML and revocation: pending / deleted image bytes must never leak.
+    if (record.get("status") != "approved" or record.get("gallery_consent") is not True
+            or not record.get("published_at")):
+        abort(404)
+    return send_file(
+        path,
+        mimetype="image/jpeg",
+        conditional=False,
+        max_age=0,
+    )
 
 
 @photos_bp.get("/admin/photos")
 @admin_write_required
 def admin_photos():
-    if not _enabled():
+    if not (_enabled() or _gallery_enabled()):
         return render_template("photos/admin_inbox.html", enabled=False, records=[],
                                total=0, pending=0, page=1, pages=1,
                                share_url=None, show="pending")
@@ -143,7 +204,8 @@ def admin_photos():
 
     return render_template(
         "photos/admin_inbox.html",
-        enabled=True, records=selected[(page - 1)*page_size:page*page_size],
+        enabled=True, upload_enabled=_enabled(), gallery_enabled=_gallery_enabled(),
+        records=selected[(page - 1)*page_size:page*page_size],
         total=len(active),
         pending=sum(item.get("status") == "pending" for item in active),
         page=page, pages=pages, show=show, share_url=_public_url(),
@@ -191,12 +253,15 @@ def admin_photo_image(photo_id: str):
 @photos_bp.post("/admin/photos/<photo_id>/<action>")
 @admin_write_required
 def admin_photo_review(photo_id: str, action: str):
-    if action not in ("approve", "delete"):
+    if action not in ("approve", "delete", "publish", "unpublish"):
         abort(404)
     try:
         review_photo(photo_id, action, actor=current_admin_username() or "host")
     except (FileNotFoundError, ValueError):
         abort(404)
-    flash("Photo approved for your private collection." if action == "approve"
-          else "Photo permanently removed.", "success")
-    return redirect(url_for("photos.admin_photos", show="pending"))
+    messages = {"approve": "Photo saved privately. Publish it separately to share.",
+                "publish": "Photo published in the guest gallery.",
+                "unpublish": "Photo removed from the guest gallery.",
+                "delete": "Photo permanently removed."}
+    flash(messages[action], "success")
+    return redirect(url_for("photos.admin_photos", show="approved" if action in ("publish", "unpublish") else "pending"))

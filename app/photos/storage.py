@@ -141,7 +141,7 @@ def _safe_name(value: str | None) -> str:
     return text
 
 
-def save_photos(uploads: list[FileStorage], name: str | None, moment: str) -> int:
+def save_photos(uploads: list[FileStorage], name: str | None, moment: str, *, gallery_consent: bool = False) -> int:
     root = _root_or_raise()
     if not 1 <= len(uploads) <= MAX_FILES_PER_POST:
         raise PhotoUploadError("Choose between 1 and 6 photos at a time.")
@@ -177,6 +177,7 @@ def save_photos(uploads: list[FileStorage], name: str | None, moment: str) -> in
                     "id": photo_id,
                     "created_at": datetime.now(timezone.utc).isoformat(),
                     "status": "pending",
+                    "gallery_consent": bool(gallery_consent),
                     "guest_name": guest_name,
                     "moment": moment,
                     "bytes": len(data),
@@ -220,7 +221,7 @@ def get_photo(photo_id: str) -> tuple[dict, Path]:
 
 
 def review_photo(photo_id: str, action: str, actor: str) -> None:
-    if action not in {"approve", "delete"}:
+    if action not in {"approve", "delete", "publish", "unpublish"}:
         raise ValueError("Unsupported review action")
     import fcntl
     root = _root_or_raise()
@@ -230,7 +231,22 @@ def review_photo(photo_id: str, action: str, actor: str) -> None:
         record = _read_json(metadata_file)
         if record.get("id") != photo_id or record.get("status") == "deleted":
             raise FileNotFoundError("Unknown photo.")
-        record["status"] = "approved" if action == "approve" else "deleted"
+        if action == "approve":
+            if record.get("status") != "pending":
+                raise ValueError("Only pending photos can be approved.")
+            record["status"] = "approved"
+            record.pop("published_at", None)
+        elif action == "publish":
+            if record.get("status") != "approved" or record.get("gallery_consent") is not True:
+                raise ValueError("Photo must be approved and consented before publication.")
+            record["published_at"] = datetime.now(timezone.utc).isoformat()
+        elif action == "unpublish":
+            if record.get("status") != "approved":
+                raise ValueError("Only approved photos can be unpublished.")
+            record.pop("published_at", None)
+        else:
+            record["status"] = "deleted"
+            record.pop("published_at", None)
         record["reviewed_by"] = actor
         record["reviewed_at"] = datetime.now(timezone.utc).isoformat()
         if action == "delete":

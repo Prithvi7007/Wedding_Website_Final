@@ -31,10 +31,11 @@
                 {{ success }} {{ 'photo' if success == 1 else 'photos' }} safely received.
                 Thank you for seeing our day through your eyes.
             </p>
-            <p class="photo-drop-note">Your photos are private, and only the hosts can view them.</p>
+            <p class="photo-drop-note">Your photos are waiting for host review. The hosts may choose to publish selected moments in the guest gallery.</p>
             <a href="{{ url_for('photos.guest_upload', token=request.view_args.token) }}" class="photo-drop-button">
                 Share more memories <span aria-hidden="true">↗</span>
             </a>
+            {% if gallery_enabled %}<a class="photo-drop-gallery-link" href="{{ url_for('photos.guest_gallery', token=request.view_args.token) }}">Explore the guest gallery <span aria-hidden="true">↗</span></a>{% endif %}
         </section>
         {% else %}
         <section class="photo-drop-card">
@@ -92,18 +93,23 @@
                         </select>
                     </label>
                 </div>
+                <label class="photo-drop-consent">
+                    <input type="checkbox" name="gallery_consent" value="yes" required>
+                    <span>I agree that the hosts may publish selected, approved photos for anyone with the wedding QR link to view.</span>
+                </label>
                 <button class="photo-drop-button" type="submit" data-photo-submit disabled>
                     Share these moments <span aria-hidden="true">↗</span>
                 </button>
                 <p class="photo-drop-progress" data-photo-progress role="status" aria-live="polite"></p>
             </form>
+            {% if gallery_enabled %}<a class="photo-drop-gallery-link" href="{{ url_for('photos.guest_gallery', token=request.view_args.token) }}">View shared wedding photos <span aria-hidden="true">↗</span></a>{% endif %}
         </section>
         {% endif %}
 
         <footer class="photo-drop-footer">
             <span>Made with love, kept with care.</span>
             <span class="photo-drop-footer-heart" aria-hidden="true">♡</span>
-            <span>Only Adlin &amp; Prithvi can view your uploads.</span>
+            <span>Only photos explicitly published by the hosts appear in the guest gallery.</span>
         </footer>
     </main>
 </body>

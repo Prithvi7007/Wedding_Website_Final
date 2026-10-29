@@ -37,7 +37,11 @@ def _content_security_policy() -> str:
         f"script-src 'self' 'nonce-{nonce}'",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com data:",
-        "img-src 'self' data:",
+        # Guest photo preview uses short-lived blob: object URLs for local files.
+        # Allow this ONLY on the private-by-link uploader, not on invitations,
+        # dashboards or admin pages.
+        ("img-src 'self' data: blob:" if request.endpoint == "photos.guest_upload"
+         else "img-src 'self' data:"),
         "connect-src 'self'",
         "media-src 'self'",
         "manifest-src 'self'",

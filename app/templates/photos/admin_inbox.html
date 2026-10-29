@@ -6,7 +6,7 @@
   <div>
     <p class="admin-eyebrow">Guest Memories</p>
     <h1>Photo Collection</h1>
-    <p>Private guest uploads, curated by the hosts. Nothing is published automatically.</p>
+    <p>Private guest uploads, curated by the hosts. Approval keeps a photo privately; publishing is a separate action.</p>
   </div>
 </section>
 
@@ -33,7 +33,7 @@
       <button type="button" class="photo-admin-button" data-copy-value="{{ share_url }}">Copy upload link</button>
       <a class="photo-admin-button photo-admin-button-outline" href="{{ url_for('photos.admin_qr') }}" download="adlin-prithvi-photo-qr.svg">Save QR (SVG)</a>
     </div>
-    <small>Keep this QR for your wedding guests. Anyone holding the link can upload; uploaded photos stay private to your admin accounts.</small>
+    <small>Keep this QR for your wedding guests. Anyone holding the link can upload; only explicitly published, consented photos can be viewed.</small>
   </article>
 
   <article class="photo-admin-card photo-admin-stats">
@@ -41,7 +41,8 @@
     <div class="photo-admin-number">{{ total }}</div>
     <p>Total photos in your private collection</p>
     <div class="photo-admin-pending"><strong>{{ pending }}</strong><span>Waiting for host review</span></div>
-    <p class="photo-admin-hint">New uploads are never shown publicly. Approved photos remain private until a separate gallery is intentionally introduced.</p>
+    <p class="photo-admin-hint">New uploads remain private. First approve for your collection, then explicitly publish each photo to share with QR-link holders.</p>
+    {% if gallery_enabled %}<a class="photo-admin-button photo-admin-button-outline" href="{{ url_for('photos.guest_gallery', token=share_url.rsplit('/', 1)[-1]) }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Preview guest gallery</a>{% endif %}
   </article>
 </section>
 
@@ -69,13 +70,30 @@
       <strong>{{ photo.guest_name or 'Anonymous guest' }}</strong>
       <span>{{ photo.moment }} · {{ photo.created_at[:10] }}</span>
       <span class="photo-admin-status photo-admin-status-{{ photo.status }}">{{ photo.status|title }}</span>
+      {% if photo.published_at %}<span class="photo-admin-status">Published in gallery</span>{% endif %}
     </div>
     <div class="photo-admin-photo-actions">
       {% if photo.status == 'pending' %}
-      <form method="post" action="{{ url_for('photos.admin_photo_review', photo_id=photo.id, action='approve') }}">
+      <form method="post" action="{{ url_for('photos.admin_photo_review', photo_id=photo.id, action='approve') }}"
+            data-confirm-form="Publish this photograph to the guest gallery? Anyone holding the QR link can view it.">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="photo-admin-button" type="submit">Keep</button>
+        <button class="photo-admin-button" type="submit">Approve &amp; share</button>
       </form>
+      {% endif %}
+      {% if photo.status == 'approved' %}
+        {% if photo.published_at %}
+          <form method="post" action="{{ url_for('photos.admin_photo_review', photo_id=photo.id, action='unpublish') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="photo-admin-button photo-admin-button-outline" type="submit">Unpublish</button>
+          </form>
+        {% elif photo.gallery_consent %}
+          <form method="post" action="{{ url_for('photos.admin_photo_review', photo_id=photo.id, action='publish') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="photo-admin-button" type="submit">Publish</button>
+          </form>
+        {% else %}
+          <small>Private only · no gallery consent</small>
+        {% endif %}
       {% endif %}
       <a class="photo-admin-button photo-admin-button-outline"
          href="{{ url_for('photos.admin_photo_image', photo_id=photo.id, download=1) }}">Download</a>

@@ -1,5 +1,6 @@
 """Chromium smoke test for the stand-alone QR guest photo experience."""
 from io import BytesIO
+import json
 import re
 import threading
 
@@ -25,6 +26,7 @@ def photo_site(tmp_path):
     app = create_app("testing")
     app.config.update(
         WEDDING_PHOTO_ENABLED=True,
+        WEDDING_PHOTO_GALLERY_ENABLED=True,
         WEDDING_PHOTO_STORAGE_DIR=str(root),
         WEDDING_PHOTO_SHARE_TOKEN=TOKEN,
     )
@@ -73,12 +75,42 @@ def test_qr_guest_can_upload_photo_from_phone_without_login(browser, photo_site,
         expect(page.get_by_role("status")).to_contain_text("1 photo selected")
         page.get_by_role("textbox", name=re.compile("Your name")).fill("Wedding Guest")
         page.get_by_role("combobox", name="Which moment?").select_option("Reception")
+        page.get_by_role("checkbox", name=re.compile("once approved by the hosts")).check()
         page.get_by_role("button", name=re.compile("Share this moment")).click()
 
         expect(page).to_have_url(re.compile(r"/thanks\?count=1$"), timeout=12000)
         expect(page.get_by_role("heading", name="We got your moments.")).to_be_visible()
         assert len(list((root / "files").glob("*.jpg"))) == 1
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
-        assert page.request.get(f"{url}/admin/photos").status == 302
+        assert page.request.get(f"{url}/admin/photos", max_redirects=0).status == 302
+        photo_id = next((root / "files").glob("*.jpg")).stem
+        image_url = f"{url}/photos/{TOKEN}/gallery/{photo_id}.jpg"
+        assert page.request.get(image_url).status == 404
+
+        # Pending photos never appear in the QR-accessible gallery.
+        page.get_by_role("link", name=re.compile("Explore the guest gallery")).click()
+        expect(page.get_by_role("heading", name="Our story is still unfolding.")).to_be_visible()
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
+
+        # Simulate the host review in this isolated browser fixture.
+        metadata = root / "metadata" / f"{photo_id}.json"
+        record = json.loads(metadata.read_text(encoding="utf-8"))
+        record["status"] = "approved"
+        metadata.write_text(json.dumps(record), encoding="utf-8")
+        page.reload()
+        expect(page.get_by_role("heading", name="Our story is still unfolding.")).to_be_visible()
+        assert page.request.get(image_url).status == 404
+        record["published_at"] = "2026-10-29T00:00:00+00:00"
+        metadata.write_text(json.dumps(record), encoding="utf-8")
+        page.reload()
+        expect(page.get_by_role("link", name="View Reception wedding photograph")).to_be_visible()
+        assert page.request.get(image_url).status == 200
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
+
+        record["status"] = "deleted"
+        metadata.write_text(json.dumps(record), encoding="utf-8")
+        page.reload()
+        expect(page.get_by_role("heading", name="Our story is still unfolding.")).to_be_visible()
+        assert page.request.get(image_url).status == 404
     finally:
         page.close()

@@ -1,7 +1,7 @@
 # Guest photo QR — opt-in launch checklist
 
-The QR photo collection adds a **public-by-link uploader** and a **private host inbox**.
-Guest uploads are never shown publicly and never touch invitation/RSVP records.
+The QR photo collection adds a **public-by-link uploader**, a **private host moderation inbox**, and a **guest-visible gallery of approved photos**.
+Pending uploads never appear to other guests. Approved images are available to anyone holding the unlisted QR link; invitation/RSVP records are unaffected.
 The feature is **disabled by default**. Deploying these code changes alone does
 not make guest uploads available.
 
@@ -17,7 +17,9 @@ not make guest uploads available.
 - Each uploaded photo is limited to 12 MiB; each request to 32 MiB. The server
   decodes and resizes photos to at most 2600 pixels on the longest side and
   strips all original EXIF/GPS metadata by re-encoding fresh RGB pixels.
-- Guests see a thank-you screen. **There is no public gallery.**
+- Guests must explicitly acknowledge that host-approved photos may be displayed in the guest gallery.
+- Guests see a thank-you screen and a link to the approved-only gallery. Pending photos, submitter names and deleted images are never exposed in gallery HTML or image routes.
+- Approving a photo publishes it to anyone holding the QR link. Deleting it removes live access, but cannot recall previously downloaded copies or backups.
 
 ## Host prerequisites: must be in place BEFORE enabling
 
@@ -75,10 +77,8 @@ not make guest uploads available.
 - Test the QR from an actual iPhone and Android device over HTTPS.
 - Confirm JPG, camera-roll HEIC conversion where supported, and multiple-photo
   upload. Confirm the correct success message and no public gallery.
-- Verify a submitted photo appears under Pending in Admin; approve it,
-  download it, and delete a test photo. Verify a signed-out visitor, an
-  uninvited link holder, and the view-only family accounts cannot access photo
-  bytes or review actions.
+- Verify a submitted photo appears under Pending in Admin and stays hidden in the guest gallery. Approve it, verify it appears at /photos/<token>/gallery and its image is visible to QR holders, then delete it and verify both listing and image URL become unavailable.
+- Verify users without the QR token and view-only family accounts cannot access pending photo bytes, admin download or review. Anyone holding the QR link can view **approved** images without an invitation.
 - Verify upload errors show clear messages and Nginx doesn't reject normal
   batches before they reach Flask. Test at narrow 320px width.
 - Confirm backups actually include the storage directory, then print the QR.
@@ -89,10 +89,10 @@ not make guest uploads available.
 
 - Metadata is private, atomic JSON per photo. A filesystem lock serializes
   write/review operations across Gunicorn workers; no PostgreSQL migration.
-- Only the full Wedding admin role may view the image bytes, approve, download
-  or delete. Approved means retained for your private collection; publishing
-  requires a separate, explicit gallery feature.
-- The guest form has Flask-WTF CSRF protection and an anti-bot honeypot.
+- Only full Wedding admin accounts may view pending photos, approve, download and delete. Approved images are served to holders of the unlisted QR link. Submitter names are never published to the guest gallery.
+- Admin approval is an explicit publication action; review each image carefully because QR recipients can copy approved photos.
+- The guest form has Flask-WTF CSRF protection, an anti-bot honeypot and server-validated consent.
+- The QR upload page alone permits local blob: image previews in its Content Security Policy for phone uploads; the rest of the site retains its current policy.
 - Do not put uploaded image files under the application's static folders.
 - The QR is server-generated SVG, not rendered through a third-party QR
   website, so the secret token stays on your own domain.

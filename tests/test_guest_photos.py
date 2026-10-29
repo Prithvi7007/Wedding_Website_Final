@@ -23,6 +23,7 @@ def photo_inbox(app, tmp_path):
     (root / "metadata").mkdir(parents=True)
     app.config.update(
         WEDDING_PHOTO_ENABLED=True,
+        WEDDING_PHOTO_GALLERY_ENABLED=True,
         WEDDING_PHOTO_STORAGE_DIR=str(root),
         WEDDING_PHOTO_SHARE_TOKEN=SHARE_TOKEN,
         PUBLIC_BASE_URL="http://localhost",
@@ -46,6 +47,7 @@ def sample_jpg(*, with_exif=False):
 def photo_form(image=None, **fields):
     return {
         "guest_name": fields.get("guest_name", "A dear guest"),
+        "gallery_consent": "yes",
         "moment": fields.get("moment", "Haldi"),
         "photos": (image or sample_jpg(), "memory.jpg"),
     }
@@ -59,6 +61,7 @@ def login_host(client, username="prithvi", password="test-admin-password-for-tes
 def test_default_closed_and_no_admin_setup_leak(client):
     assert client.get(SHARE_PATH).status_code == 404
     assert client.post(SHARE_PATH, data=photo_form()).status_code == 404
+    assert client.get(SHARE_PATH + "/gallery").status_code == 404
     assert client.get("/admin/photos").status_code == 302
     login_host(client)
     admin = client.get("/admin/photos")
@@ -78,6 +81,9 @@ def test_private_qr_and_guest_upload_page(client, photo_inbox):
     assert b"Guest Photos" not in result.data
     assert result.headers["X-Robots-Tag"].startswith("noindex")
     assert result.headers["Cache-Control"].startswith("private, no-store")
+    assert "img-src 'self' data: blob:" in result.headers["Content-Security-Policy"]
+    assert "img-src 'self' data: blob:" not in client.get("/").headers["Content-Security-Policy"]
+    assert client.get("/photos/wrong-token-that-looks-long-enough/gallery").status_code == 404
 
 
 def test_upload_removes_exif_and_requires_host_for_photo_bytes(client, photo_inbox):
@@ -101,6 +107,12 @@ def test_upload_removes_exif_and_requires_host_for_photo_bytes(client, photo_inb
         assert cleaned.width == 420 and cleaned.height == 260
 
     private_path = f"/admin/photos/{record_id}/image"
+    guest_image_path = f"{SHARE_PATH}/gallery/{record_id}.jpg"
+    empty_gallery = client.get(SHARE_PATH + "/gallery")
+    assert empty_gallery.status_code == 200
+    assert b"Our story is still unfolding." in empty_gallery.data
+    assert record_id.encode() not in empty_gallery.data
+    assert client.get(guest_image_path).status_code == 404
     assert client.get(private_path).status_code == 302
     assert client.get(f"/photos/{SHARE_TOKEN}/{record_id}").status_code == 404
 
@@ -131,16 +143,38 @@ def test_upload_removes_exif_and_requires_host_for_photo_bytes(client, photo_inb
     approved = client.get("/admin/photos?show=approved")
     assert approved.status_code == 200
     assert b"status-approved" in approved.data
+    # Moderation and publication are two explicit host actions.
+    assert record_id.encode() not in client.get(SHARE_PATH + "/gallery").data
+    assert client.get(guest_image_path).status_code == 404
+    published = client.post(f"/admin/photos/{record_id}/publish")
+    assert published.status_code == 302
+    gallery = client.get(SHARE_PATH + "/gallery")
+    assert gallery.status_code == 200
+    assert b"1 memory shared with love" in gallery.data
+    assert record_id.encode() in gallery.data
+    assert b"A dear guest" not in gallery.data  # Names remain admin-only.
+    shared_image = client.get(guest_image_path)
+    assert shared_image.status_code == 200
+    assert shared_image.mimetype == "image/jpeg"
+    assert shared_image.headers["Cache-Control"].startswith("private, no-store")
+    assert client.post(f"/admin/photos/{record_id}/unpublish").status_code == 302
+    assert client.get(guest_image_path).status_code == 404
+    assert record_id.encode() not in client.get(SHARE_PATH + "/gallery").data
+    assert client.post(f"/admin/photos/{record_id}/publish").status_code == 302
+    assert client.get(guest_image_path).status_code == 200
     removed = client.post(f"/admin/photos/{record_id}/delete")
     assert removed.status_code == 302
     assert not images[0].exists()
     assert client.get(private_path).status_code == 404
+    assert client.get(guest_image_path).status_code == 404
+    assert record_id.encode() not in client.get(SHARE_PATH + "/gallery").data
     assert client.post(f"/admin/photos/{record_id}/approve").status_code == 404
 
 
 def test_upload_accepts_batch_and_escapes_untrusted_name(client, photo_inbox):
     payload = {
         "guest_name": "<script>alert('hello')</script>",
+        "gallery_consent": "yes",
         "moment": "Reception",
         "photos": [(sample_jpg(), "one.jpg"), (sample_jpg(), "two.jpg")],
     }
@@ -178,6 +212,7 @@ def test_invalid_mime_oversized_and_more_than_six_are_atomic(client, photo_inbox
         SHARE_PATH,
         data={
             "moment": "Wedding weekend",
+            "gallery_consent": "yes",
             "photos": [(sample_jpg(), f"photo-{n}.jpg") for n in range(7)],
         },
         content_type="multipart/form-data",
@@ -215,7 +250,7 @@ def test_viewer_cannot_review_or_download_guest_photos(client, photo_inbox):
 def test_honeypot_and_missing_upload_dont_store_content(client, photo_inbox):
     assert client.post(SHARE_PATH, data={"website": "spam",
         "photos": (sample_jpg(), "test.jpg")}, content_type="multipart/form-data").status_code == 400
-    response = client.post(SHARE_PATH, data={"moment": "Wedding weekend"},
+    response = client.post(SHARE_PATH, data={"moment": "Wedding weekend", "gallery_consent": "yes"},
                            content_type="multipart/form-data")
     assert response.status_code == 400
     assert b"Choose between 1 and 6" in response.data
@@ -230,3 +265,15 @@ def test_upload_response_rejects_invalid_moment(client, photo_inbox):
     assert response.status_code == 400
     assert response.json["success"] is False
     assert "valid celebration" in response.json["message"]
+
+def test_gallery_requires_explicit_upload_consent(client, photo_inbox):
+    form = photo_form()
+    del form["gallery_consent"]
+    response = client.post(
+        SHARE_PATH, data=form, content_type="multipart/form-data",
+        headers={"Accept": "application/json"},
+    )
+    assert response.status_code == 400
+    assert response.json["success"] is False
+    assert "guest gallery" in response.json["message"]
+    assert not list((photo_inbox / "files").glob("*.jpg"))

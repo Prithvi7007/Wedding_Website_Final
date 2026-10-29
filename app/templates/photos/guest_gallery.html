@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#19130f">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>Through Your Eyes · Adlin &amp; Prithvi</title>
+    <link rel="icon" type="image/png" href="{{ asset_url('images/favicon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{{ asset_url('css/photo-drop.css') }}">
+</head>
+<body class="photo-drop-page photo-gallery-page">
+    <div class="photo-drop-backdrop" aria-hidden="true"></div>
+    <main class="photo-drop-wrap">
+        <header class="photo-drop-header">
+            <p class="photo-drop-overline">THE WEDDING WEEKEND · NOVEMBER 2026</p>
+            <p class="photo-drop-signature">Adlin <span>&amp;</span> Prithvi</p>
+            <div class="photo-drop-header-rule" aria-hidden="true"><span>✦</span></div>
+        </header>
+
+        <section class="photo-drop-card photo-gallery-intro">
+            <p class="photo-drop-kicker">A COLLECTION MADE TOGETHER</p>
+            <h1>Through <em>your eyes.</em></h1>
+            <p class="photo-drop-description">The celebrations, the laughter, the little moments we might have missed. A wedding remembered by everyone who was there.</p>
+            <p class="photo-gallery-count">{{ total }} {{ 'memory' if total == 1 else 'memories' }} shared with love</p>
+            <a class="photo-drop-button" href="{{ url_for('photos.guest_upload', token=token) }}">Add your moments <span aria-hidden="true">↗</span></a>
+        </section>
+
+        <section class="photo-gallery-section" aria-label="Host-approved wedding photographs">
+            {% if photos %}
+            <div class="photo-gallery-grid">
+                {% for photo in photos %}
+                <a class="photo-gallery-photo"
+                   href="{{ url_for('photos.guest_gallery_image', token=token, photo_id=photo.id) }}"
+                   target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"
+                   aria-label="View {{ photo.moment }} wedding photograph">
+                    <img src="{{ url_for('photos.guest_gallery_image', token=token, photo_id=photo.id) }}"
+                         alt="{{ photo.moment }} — a wedding memory shared by a guest"
+                         loading="lazy" decoding="async">
+                    <span class="photo-gallery-caption">{{ photo.moment }}</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="photo-gallery-empty">
+                <span aria-hidden="true">♡</span>
+                <h2>Our story is still unfolding.</h2>
+                <p>Photos will appear here as the hosts approve them. In the meantime, share a favorite moment of your own.</p>
+            </div>
+            {% endif %}
+        </section>
+
+        {% if pages > 1 %}
+        <nav class="photo-gallery-pages" aria-label="Gallery pages">
+            {% if page > 1 %}
+            <a href="{{ url_for('photos.guest_gallery', token=token, page=page-1) }}">Previous</a>
+            {% endif %}
+            <span>Page {{ page }} of {{ pages }}</span>
+            {% if page < pages %}
+            <a href="{{ url_for('photos.guest_gallery', token=token, page=page+1) }}">Next</a>
+            {% endif %}
+        </nav>
+        {% endif %}
+
+        <footer class="photo-drop-footer">
+            <span>Only photos approved by the hosts appear here.</span>
+            <span class="photo-drop-footer-heart" aria-hidden="true">♡</span>
+            <span>Please share this gallery only with wedding guests.</span>
+        </footer>
+    </main>
+</body>
+</html>
