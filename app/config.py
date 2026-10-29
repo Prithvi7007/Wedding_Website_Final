@@ -81,6 +81,10 @@ class BaseConfig:
     TRUST_PROXY_HEADERS = False
     LOG_LEVEL = "INFO"
     SEND_FILE_MAX_AGE_DEFAULT = 0
+    WEDDING_PHOTO_ENABLED = False
+    WEDDING_PHOTO_GALLERY_ENABLED = False
+    WEDDING_PHOTO_STORAGE_DIR = ""
+    WEDDING_PHOTO_SHARE_TOKEN = ""
 
 
 class DevelopmentConfig(BaseConfig):
@@ -208,6 +212,10 @@ def apply_environment_config(app, selected_name: str) -> None:
         TRUST_PROXY_COUNT=_as_int("TRUST_PROXY_COUNT", 1, minimum=1),
         LOG_LEVEL=os.getenv("LOG_LEVEL", "INFO").strip().upper() or "INFO",
         PUBLIC_BASE_URL=os.getenv("PUBLIC_BASE_URL", "").strip(),
+        WEDDING_PHOTO_ENABLED=_as_bool("WEDDING_PHOTO_ENABLED", False),
+        WEDDING_PHOTO_GALLERY_ENABLED=_as_bool("WEDDING_PHOTO_GALLERY_ENABLED", False),
+        WEDDING_PHOTO_STORAGE_DIR=os.getenv("WEDDING_PHOTO_STORAGE_DIR", "").strip(),
+        WEDDING_PHOTO_SHARE_TOKEN=os.getenv("WEDDING_PHOTO_SHARE_TOKEN", "").strip(),
         ADMIN_LOGIN_MAX_FAILURES=_as_int(
             "WEDDING_ADMIN_LOGIN_MAX_FAILURES",
             5,

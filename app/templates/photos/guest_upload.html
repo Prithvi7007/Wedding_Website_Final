@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#19130f">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>Share a Moment · Adlin &amp; Prithvi</title>
+    <link rel="icon" type="image/png" href="{{ asset_url('images/favicon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{{ asset_url('css/photo-drop.css') }}">
+    <script src="{{ asset_url('js/photo-drop.js') }}" defer></script>
+</head>
+<body class="photo-drop-page">
+    <div class="photo-drop-backdrop" aria-hidden="true"></div>
+    <main class="photo-drop-wrap">
+        <header class="photo-drop-header">
+            <p class="photo-drop-overline">THE WEDDING WEEKEND · NOVEMBER 2026</p>
+            <p class="photo-drop-signature">Adlin <span>&amp;</span> Prithvi</p>
+            <div class="photo-drop-header-rule" aria-hidden="true"><span>✦</span></div>
+        </header>
+
+        {% if success %}
+        <section class="photo-drop-card photo-drop-thanks" aria-live="polite">
+            <span class="photo-drop-success-icon" aria-hidden="true">♡</span>
+            <p class="photo-drop-kicker">A little piece of forever</p>
+            <h1>We got your moments.</h1>
+            <p class="photo-drop-description">
+                {{ success }} {{ 'photo' if success == 1 else 'photos' }} safely received.
+                Thank you for seeing our day through your eyes.
+            </p>
+            <p class="photo-drop-note">Your photos are waiting for host review. The hosts may choose to publish selected moments in the guest gallery.</p>
+            <a href="{{ url_for('photos.guest_upload', token=request.view_args.token) }}" class="photo-drop-button">
+                Share more memories <span aria-hidden="true">↗</span>
+            </a>
+            {% if gallery_enabled %}<a class="photo-drop-gallery-link" href="{{ url_for('photos.guest_gallery', token=request.view_args.token) }}">Explore the guest gallery <span aria-hidden="true">↗</span></a>{% endif %}
+        </section>
+        {% else %}
+        <section class="photo-drop-card">
+            <div class="photo-drop-title-row">
+                <p class="photo-drop-kicker">THROUGH YOUR EYES</p>
+                <span class="photo-drop-star" aria-hidden="true">✦</span>
+            </div>
+            <h1>Every little moment <em>matters.</em></h1>
+            <p class="photo-drop-description">
+                The candid laughs. The happy tears. The tiny moments we may have missed.
+                Add your favorites to our wedding memories.
+            </p>
+
+            {% if error %}
+            <div class="photo-drop-error" role="alert">{{ error }}</div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" class="photo-drop-form" data-photo-drop-form>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="photo-drop-trap" aria-hidden="true">
+                    <label for="website">Website</label>
+                    <input id="website" name="website" tabindex="-1" autocomplete="off">
+                </div>
+                <label class="photo-drop-select" for="wedding-photos" data-drop-zone>
+                    <span class="photo-drop-upload-icon" aria-hidden="true">
+                        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                            <rect x="8" y="12" width="32" height="28" rx="5"/>
+                            <circle cx="19" cy="22" r="3"/>
+                            <path d="M10 35l10-9 7 7 5-5 7 7M24 6v12M18 12l6-6 6 6"/>
+                        </svg>
+                    </span>
+                    <strong>Choose your photos</strong>
+                    <span>Tap to browse your camera roll</span>
+                    <small>Up to 6 photos at once · JPG, PNG, WebP, or photos your phone can convert</small>
+                </label>
+                <input class="photo-drop-file-input" id="wedding-photos" name="photos"
+                       type="file" accept="image/*" multiple required data-photo-input>
+                <div class="photo-drop-preview" data-photo-preview aria-live="polite"></div>
+
+                <div class="photo-drop-fields">
+                    <label>
+                        <span>Your name <small>(optional)</small></span>
+                        <input name="guest_name" type="text" maxlength="60" autocomplete="name"
+                               placeholder="What should we call you?">
+                    </label>
+                    <label>
+                        <span>Which moment?</span>
+                        <select name="moment">
+                            <option>Wedding weekend</option>
+                            <option>Haldi</option>
+                            <option>Hindu ceremony</option>
+                            <option>Church ceremony</option>
+                            <option>Reception</option>
+                            <option>Behind the scenes</option>
+                        </select>
+                    </label>
+                </div>
+                <label class="photo-drop-consent">
+                    <input type="checkbox" name="gallery_consent" value="yes" required>
+                    <span>I agree that the hosts may publish selected, approved photos for anyone with the wedding QR link to view.</span>
+                </label>
+                <button class="photo-drop-button" type="submit" data-photo-submit disabled>
+                    Share these moments <span aria-hidden="true">↗</span>
+                </button>
+                <p class="photo-drop-progress" data-photo-progress role="status" aria-live="polite"></p>
+            </form>
+            {% if gallery_enabled %}<a class="photo-drop-gallery-link" href="{{ url_for('photos.guest_gallery', token=request.view_args.token) }}">View shared wedding photos <span aria-hidden="true">↗</span></a>{% endif %}
+        </section>
+        {% endif %}
+
+        <footer class="photo-drop-footer">
+            <span>Made with love, kept with care.</span>
+            <span class="photo-drop-footer-heart" aria-hidden="true">♡</span>
+            <span>Only photos explicitly published by the hosts appear in the guest gallery.</span>
+        </footer>
+    </main>
+</body>
+</html>
