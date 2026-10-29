@@ -1,0 +1,101 @@
+{% extends "admin/base.html" %}
+{% block title %}Guest Photo Inbox · Wedding Admin{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ asset_url('admin/photo-drop-admin.css') }}">
+<section class="admin-page-heading">
+  <div>
+    <p class="admin-eyebrow">Guest Memories</p>
+    <h1>Photo Collection</h1>
+    <p>Private guest uploads, curated by the hosts. Nothing is published automatically.</p>
+  </div>
+</section>
+
+{% if not enabled %}
+<section class="admin-section photo-admin-setup">
+  <p class="admin-eyebrow">Not active yet</p>
+  <h2>Prepare your photo inbox</h2>
+  <p>For guest privacy, uploads remain disabled until an operator configures a durable,
+     backed-up photo directory, the private QR access token, HTTPS base URL, and
+     the matching Nginx upload limits. The new code alone does not expose an uploader.</p>
+  <p>See the repository's <code>docs/WEDDING_PHOTO_DROP.md</code> for the release checklist.</p>
+</section>
+{% else %}
+<section class="photo-admin-grid">
+  <article class="photo-admin-card photo-admin-qr">
+    <p class="admin-eyebrow">The QR your guests will scan</p>
+    <h2>One scan, a thousand memories.</h2>
+    <p>Print this for the welcome table, guestbook, or reception tables.</p>
+    <div class="photo-admin-qr-image">
+      <img src="{{ url_for('photos.admin_qr') }}" width="240" height="240" alt="Private QR code linking to the guest photo uploader">
+    </div>
+    <div class="photo-admin-share-url">{{ share_url }}</div>
+    <div class="photo-admin-actions">
+      <button type="button" class="photo-admin-button" data-copy-value="{{ share_url }}">Copy upload link</button>
+      <a class="photo-admin-button photo-admin-button-outline" href="{{ url_for('photos.admin_qr') }}" download="adlin-prithvi-photo-qr.svg">Save QR (SVG)</a>
+    </div>
+    <small>Keep this QR for your wedding guests. Anyone holding the link can upload; uploaded photos stay private to your admin accounts.</small>
+  </article>
+
+  <article class="photo-admin-card photo-admin-stats">
+    <p class="admin-eyebrow">Your guest photo inbox</p>
+    <div class="photo-admin-number">{{ total }}</div>
+    <p>Total photos in your private collection</p>
+    <div class="photo-admin-pending"><strong>{{ pending }}</strong><span>Waiting for host review</span></div>
+    <p class="photo-admin-hint">New uploads are never shown publicly. Approved photos remain private until a separate gallery is intentionally introduced.</p>
+  </article>
+</section>
+
+<div class="photo-admin-collection-title">
+  <div>
+    <p class="admin-eyebrow">Behind the lens</p>
+    <h2>Guest Submissions</h2>
+  </div>
+  <nav class="photo-admin-filters" aria-label="Photo review filters">
+    <a href="{{ url_for('photos.admin_photos', show='pending') }}" {% if show == 'pending' %}aria-current="page"{% endif %}>Pending</a>
+    <a href="{{ url_for('photos.admin_photos', show='approved') }}" {% if show == 'approved' %}aria-current="page"{% endif %}>Approved</a>
+    <a href="{{ url_for('photos.admin_photos', show='all') }}" {% if show == 'all' %}aria-current="page"{% endif %}>All</a>
+  </nav>
+</div>
+
+<section class="photo-admin-gallery" aria-label="Uploaded photographs">
+  {% for photo in records %}
+  <article class="photo-admin-photo">
+    <a href="{{ url_for('photos.admin_photo_image', photo_id=photo.id) }}"
+       target="_blank" rel="noopener" aria-label="Open {{ photo.moment }} photo privately">
+      <img src="{{ url_for('photos.admin_photo_image', photo_id=photo.id) }}"
+           alt="Guest-submitted {{ photo.moment }} photograph" loading="lazy">
+    </a>
+    <div class="photo-admin-photo-meta">
+      <strong>{{ photo.guest_name or 'Anonymous guest' }}</strong>
+      <span>{{ photo.moment }} · {{ photo.created_at[:10] }}</span>
+      <span class="photo-admin-status photo-admin-status-{{ photo.status }}">{{ photo.status|title }}</span>
+    </div>
+    <div class="photo-admin-photo-actions">
+      {% if photo.status == 'pending' %}
+      <form method="post" action="{{ url_for('photos.admin_photo_review', photo_id=photo.id, action='approve') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="photo-admin-button" type="submit">Keep</button>
+      </form>
+      {% endif %}
+      <a class="photo-admin-button photo-admin-button-outline"
+         href="{{ url_for('photos.admin_photo_image', photo_id=photo.id, download=1) }}">Download</a>
+      <form method="post" action="{{ url_for('photos.admin_photo_review', photo_id=photo.id, action='delete') }}"
+            data-confirm-form="Permanently delete this guest photo?">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="photo-admin-delete" type="submit" aria-label="Permanently delete photo">Delete</button>
+      </form>
+    </div>
+  </article>
+  {% else %}
+    <div class="photo-admin-empty">No {{ show if show != 'all' else '' }} photographs to show yet.</div>
+  {% endfor %}
+</section>
+{% if pages > 1 %}
+<nav class="photo-admin-pagination" aria-label="Photo inbox pages">
+  {% if page > 1 %}<a href="{{ url_for('photos.admin_photos', show=show, page=page-1) }}">Previous</a>{% endif %}
+  <span>Page {{ page }} of {{ pages }}</span>
+  {% if page < pages %}<a href="{{ url_for('photos.admin_photos', show=show, page=page+1) }}">Next</a>{% endif %}
+</nav>
+{% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,40 @@
+.photo-admin-setup{max-width:860px;padding:28px;line-height:1.7}
+.photo-admin-setup code{color:var(--admin-gold)}
+.photo-admin-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:22px;margin-bottom:38px}
+.photo-admin-card{padding:clamp(22px,3vw,34px);border:1px solid var(--admin-border);border-radius:23px;background:linear-gradient(145deg,rgba(57,43,32,.7),rgba(24,22,19,.86));box-shadow:0 19px 44px rgba(0,0,0,.18)}
+.photo-admin-card h2,.photo-admin-collection-title h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(29px,4vw,44px);font-weight:600;color:var(--admin-cream);line-height:1.03;margin:11px 0}
+.photo-admin-card p{line-height:1.6}
+.photo-admin-qr-image{display:grid;place-items:center;width:min(100%,275px);padding:14px;background:#fff9ec;border-radius:18px;margin:20px 0}
+.photo-admin-qr-image img{display:block;width:100%;height:auto;max-width:240px}
+.photo-admin-share-url{overflow-wrap:anywhere;font-size:12px;color:#efd7b0;padding:12px;background:rgba(0,0,0,.2);border-radius:10px}
+.photo-admin-actions{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}
+.photo-admin-button,.photo-admin-delete{display:inline-flex;justify-content:center;align-items:center;min-height:37px;padding:9px 13px;border:1px solid rgba(231,185,114,.52);border-radius:9px;background:#bd965f;color:#22180e;font-size:11px;font-weight:700;text-decoration:none;cursor:pointer}
+.photo-admin-button-outline{background:rgba(249,220,163,.06);color:#f7dbab}
+.photo-admin-delete{border-color:rgba(226,130,120,.35);background:rgba(144,57,46,.19);color:#ffd6cb}
+.photo-admin-card small{font-size:11px;line-height:1.6;color:var(--admin-muted)}
+.photo-admin-number{font-family:"Cormorant Garamond",Georgia,serif;font-size:110px;line-height:1;color:var(--admin-gold);margin-top:36px}
+.photo-admin-pending{display:flex;align-items:center;gap:15px;padding:19px;border:1px solid var(--admin-border);border-radius:13px;margin-top:28px}
+.photo-admin-pending strong{font-size:36px;color:var(--admin-cream)}
+.photo-admin-pending span{font-size:12px;color:var(--admin-copy)}
+.photo-admin-hint{color:var(--admin-muted);font-size:12px}
+.photo-admin-collection-title{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:19px}
+.photo-admin-filters{display:flex;gap:9px;flex-wrap:wrap}
+.photo-admin-filters a{padding:10px 13px;border:1px solid var(--admin-border);border-radius:40px;text-decoration:none;font-size:11px}
+.photo-admin-filters a[aria-current="page"]{color:#22180e;background:var(--admin-gold)}
+.photo-admin-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:18px}
+.photo-admin-photo{min-width:0;border:1px solid var(--admin-border);border-radius:18px;background:rgba(29,24,20,.88);overflow:hidden}
+.photo-admin-photo>a{display:block;aspect-ratio:4/3;background:#17120e}
+.photo-admin-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.photo-admin-photo-meta{display:grid;gap:6px;padding:13px 14px;font-size:12px}
+.photo-admin-photo-meta strong{color:var(--admin-cream)}
+.photo-admin-photo-meta span{font-size:11px;color:var(--admin-muted)}
+.photo-admin-status{width:max-content;padding:4px 9px;border-radius:30px;text-transform:uppercase;font-weight:700;letter-spacing:.07em}
+.photo-admin-status-pending{color:#f6d59b!important;background:rgba(218,177,99,.14)}
+.photo-admin-status-approved{color:#bfe9c8!important;background:rgba(69,148,92,.17)}
+.photo-admin-photo-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0 12px 15px}
+.photo-admin-photo-actions form{margin:0}
+.photo-admin-empty{grid-column:1/-1;padding:45px 22px;text-align:center;border:1px dashed var(--admin-border);border-radius:16px;color:var(--admin-muted)}
+.photo-admin-pagination{display:flex;justify-content:center;align-items:center;gap:18px;margin:27px}
+.photo-admin-pagination a{color:var(--admin-gold)}
+@media(max-width:850px){.photo-admin-grid{grid-template-columns:1fr}.photo-admin-number{margin-top:14px}.photo-admin-collection-title{align-items:start;flex-direction:column}}
+@media(max-width:450px){.photo-admin-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.photo-admin-photo-meta{padding:10px}.photo-admin-photo-actions{padding:0 8px 10px}.photo-admin-button,.photo-admin-delete{font-size:10px;padding:7px 9px}}

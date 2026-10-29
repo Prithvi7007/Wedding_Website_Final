@@ -61,6 +61,12 @@
 
             {% if current_admin_is_full %}
                 <a
+                    href="{{ url_for('photos.admin_photos') }}"
+                    {% if request.endpoint and request.endpoint.startswith('photos.admin_') %}
+                        aria-current="page"
+                    {% endif %}
+                >Guest Photos</a>
+                <a
                     href="{{ url_for('admin.change_requests') }}"
                     {% if request.endpoint and request.endpoint.startswith('admin.change_request') %}
                         aria-current="page"
