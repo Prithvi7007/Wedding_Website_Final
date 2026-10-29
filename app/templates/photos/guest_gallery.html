@@ -26,7 +26,7 @@
             <h1>Through <em>your eyes.</em></h1>
             <p class="photo-drop-description">The celebrations, the laughter, the little moments we might have missed. A wedding remembered by everyone who was there.</p>
             <p class="photo-gallery-count">{{ total }} {{ 'memory' if total == 1 else 'memories' }} shared with love</p>
-            <a class="photo-drop-button" href="{{ url_for('photos.guest_upload', token=token) }}">Add your moments <span aria-hidden="true">↗</span></a>
+            {% if upload_enabled %}<a class="photo-drop-button" href="{{ url_for('photos.guest_upload', token=token) }}">Add your moments <span aria-hidden="true">↗</span></a>{% endif %}
         </section>
 
         <section class="photo-gallery-section" aria-label="Host-approved wedding photographs">
@@ -48,7 +48,7 @@
             <div class="photo-gallery-empty">
                 <span aria-hidden="true">♡</span>
                 <h2>Our story is still unfolding.</h2>
-                <p>Photos will appear here as the hosts approve them. In the meantime, share a favorite moment of your own.</p>
+                <p>Photos will appear here when the hosts choose to publish them. Every shared moment is reviewed first.</p>
             </div>
             {% endif %}
         </section>
@@ -66,7 +66,7 @@
         {% endif %}
 
         <footer class="photo-drop-footer">
-            <span>Only photos approved by the hosts appear here.</span>
+            <span>Only photos published by the hosts appear here.</span>
             <span class="photo-drop-footer-heart" aria-hidden="true">♡</span>
             <span>Please share this gallery only with wedding guests.</span>
         </footer>

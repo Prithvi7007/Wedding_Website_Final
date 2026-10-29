@@ -31,6 +31,7 @@ def protect_photo_requests():
 def private_photo_responses(response):
     response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
     response.headers["Cache-Control"] = "private, no-store, max-age=0"
+    response.headers["Referrer-Policy"] = "no-referrer"
     return response
 
 
@@ -156,6 +157,7 @@ def guest_gallery(token: str):
         photos=approved[(page - 1) * per_page:page * per_page],
         total=len(approved),
         page=page, pages=pages, token=token,
+        upload_enabled=_enabled(),
     )
 
 

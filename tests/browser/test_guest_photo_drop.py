@@ -75,7 +75,7 @@ def test_qr_guest_can_upload_photo_from_phone_without_login(browser, photo_site,
         expect(page.get_by_role("status")).to_contain_text("1 photo selected")
         page.get_by_role("textbox", name=re.compile("Your name")).fill("Wedding Guest")
         page.get_by_role("combobox", name="Which moment?").select_option("Reception")
-        page.get_by_role("checkbox", name=re.compile("once approved by the hosts")).check()
+        page.get_by_role("checkbox", name=re.compile("I agree that the hosts may publish")).check()
         page.get_by_role("button", name=re.compile("Share this moment")).click()
 
         expect(page).to_have_url(re.compile(r"/thanks\?count=1$"), timeout=12000)

@@ -21,6 +21,7 @@
 </section>
 {% else %}
 <section class="photo-admin-grid">
+  {% if upload_enabled %}
   <article class="photo-admin-card photo-admin-qr">
     <p class="admin-eyebrow">The QR your guests will scan</p>
     <h2>One scan, a thousand memories.</h2>
@@ -36,6 +37,7 @@
     <small>Keep this QR for your wedding guests. Anyone holding the link can upload; only explicitly published, consented photos can be viewed.</small>
   </article>
 
+  {% endif %}
   <article class="photo-admin-card photo-admin-stats">
     <p class="admin-eyebrow">Your guest photo inbox</p>
     <div class="photo-admin-number">{{ total }}</div>
@@ -75,9 +77,9 @@
     <div class="photo-admin-photo-actions">
       {% if photo.status == 'pending' %}
       <form method="post" action="{{ url_for('photos.admin_photo_review', photo_id=photo.id, action='approve') }}"
-            data-confirm-form="Publish this photograph to the guest gallery? Anyone holding the QR link can view it.">
+            data-confirm-form="Approve this photo privately? Select Publish later to share it with QR-link holders.">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="photo-admin-button" type="submit">Approve &amp; share</button>
+        <button class="photo-admin-button" type="submit">Approve</button>
       </form>
       {% endif %}
       {% if photo.status == 'approved' %}
@@ -86,7 +88,7 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button class="photo-admin-button photo-admin-button-outline" type="submit">Unpublish</button>
           </form>
-        {% elif photo.gallery_consent %}
+        {% elif photo.gallery_consent and gallery_enabled %}
           <form method="post" action="{{ url_for('photos.admin_photo_review', photo_id=photo.id, action='publish') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button class="photo-admin-button" type="submit">Publish</button>

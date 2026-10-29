@@ -3,6 +3,7 @@
 All uploads run against an isolated temporary directory; never production.
 """
 from io import BytesIO
+import json
 import re
 
 import pytest
@@ -277,3 +278,50 @@ def test_gallery_requires_explicit_upload_consent(client, photo_inbox):
     assert response.json["success"] is False
     assert "guest gallery" in response.json["message"]
     assert not list((photo_inbox / "files").glob("*.jpg"))
+
+def test_guest_gallery_has_independent_feature_switch(client, app, photo_inbox):
+    assert client.get(SHARE_PATH).status_code == 200
+    app.config["WEDDING_PHOTO_GALLERY_ENABLED"] = False
+    assert client.get(SHARE_PATH + "/gallery").status_code == 404
+    assert client.get(SHARE_PATH).status_code == 200
+
+
+def test_legacy_unconsented_approval_does_not_publish(client, photo_inbox):
+    response = client.post(SHARE_PATH, data=photo_form(),
+                           content_type="multipart/form-data")
+    assert response.status_code == 303
+    photo_id = next((photo_inbox / "files").glob("*.jpg")).stem
+    meta = photo_inbox / "metadata" / f"{photo_id}.json"
+    record = json.loads(meta.read_text(encoding="utf-8"))
+    record.pop("gallery_consent", None)
+    meta.write_text(json.dumps(record), encoding="utf-8")
+    login_host(client)
+    assert client.post(f"/admin/photos/{photo_id}/approve").status_code == 302
+    assert client.post(f"/admin/photos/{photo_id}/publish").status_code == 404
+    assert photo_id.encode() not in client.get(SHARE_PATH + "/gallery").data
+    assert client.get(f"{SHARE_PATH}/gallery/{photo_id}.jpg").status_code == 404
+
+
+def test_gallery_remains_accessible_after_uploads_close(client, app, photo_inbox):
+    response = client.post(SHARE_PATH, data=photo_form(),
+                           content_type="multipart/form-data")
+    assert response.status_code == 303
+    photo_id = next((photo_inbox / "files").glob("*.jpg")).stem
+    login_host(client)
+    assert client.post(f"/admin/photos/{photo_id}/approve").status_code == 302
+    assert client.post(f"/admin/photos/{photo_id}/publish").status_code == 302
+    app.config["WEDDING_PHOTO_ENABLED"] = False
+    assert client.get(SHARE_PATH).status_code == 404
+    assert client.get(SHARE_PATH + "/gallery").status_code == 200
+    assert client.get(f"{SHARE_PATH}/gallery/{photo_id}.jpg").status_code == 200
+    admin = client.get("/admin/photos")
+    assert admin.status_code == 200
+    assert b"Preview guest gallery" in admin.data
+    assert b"admin/photos/qr.svg" not in admin.data
+
+
+def test_gallery_photo_responses_do_not_reveal_qr_link_in_referrers(client, photo_inbox):
+    response = client.get(SHARE_PATH)
+    assert response.headers["Referrer-Policy"] == "no-referrer"
+    gallery = client.get(SHARE_PATH + "/gallery")
+    assert gallery.headers["Referrer-Policy"] == "no-referrer"
