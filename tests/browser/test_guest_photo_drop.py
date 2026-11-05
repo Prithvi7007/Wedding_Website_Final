@@ -2,6 +2,8 @@
 from io import BytesIO
 import json
 import re
+import shutil
+import subprocess
 import threading
 
 import pytest
@@ -12,27 +14,41 @@ Image = pytest.importorskip("PIL.Image")
 expect = playwright.expect
 sync_playwright = playwright.sync_playwright
 
-from app import create_app
+from app.photos.storage import save_photos
+from werkzeug.datastructures import FileStorage
 
 
 TOKEN = "browser-photo-token-very-long-and-private-0001"
 
 
 @pytest.fixture()
-def photo_site(tmp_path):
+def photo_site(tmp_path, app):
     root = tmp_path / "wedding-uploads"
     (root / "files").mkdir(parents=True)
     (root / "metadata").mkdir(parents=True)
-    app = create_app("testing")
     app.config.update(
+        WTF_CSRF_ENABLED=True,
+        WTF_CSRF_SSL_STRICT=True,
+        SESSION_COOKIE_SECURE=True,
         WEDDING_PHOTO_ENABLED=True,
         WEDDING_PHOTO_GALLERY_ENABLED=True,
         WEDDING_PHOTO_BACKEND="local",
         WEDDING_PHOTO_STORAGE_DIR=str(root),
         WEDDING_PHOTO_SHARE_TOKEN=TOKEN,
     )
-    server = make_server("127.0.0.1", 0, app, threaded=True)
-    url = f"http://127.0.0.1:{server.server_port}"
+    openssl = shutil.which("openssl")
+    if openssl is None:
+        pytest.skip("HTTPS photo regression requires OpenSSL (available in CI)")
+    certificate, key = tmp_path / "certificate.pem", tmp_path / "key.pem"
+    subprocess.run(
+        [openssl, "req", "-x509", "-newkey", "rsa:2048", "-nodes",
+         "-keyout", str(key), "-out", str(certificate), "-days", "1",
+         "-subj", "/CN=localhost"],
+        check=True, capture_output=True,
+    )
+    server = make_server("127.0.0.1", 0, app, threaded=True,
+                         ssl_context=(str(certificate), str(key)))
+    url = f"https://127.0.0.1:{server.server_port}"
     app.config["PUBLIC_BASE_URL"] = url
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -59,11 +75,20 @@ def test_qr_guest_can_upload_photo_from_phone_without_login(browser, photo_site,
     page = browser.new_page(
         viewport={"width": width, "height": 844},
         reduced_motion="reduce",
+        ignore_https_errors=True,
     )
+    external_headers = []
+
+    def block_external_font(route):
+        external_headers.append(route.request.all_headers())
+        route.abort()
+
     page.route(re.compile(r"https://fonts\.(googleapis|gstatic)\.com/.*"),
-               lambda route: route.abort())
+               block_external_font)
     try:
         page.goto(f"{url}/photos/{TOKEN}")
+        assert external_headers
+        assert all("referer" not in headers for headers in external_headers)
         expect(page.get_by_role("heading", name=re.compile("Every little moment"))).to_be_visible()
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
         assert page.locator(".photo-drop-card").bounding_box()["width"] <= width
@@ -77,7 +102,10 @@ def test_qr_guest_can_upload_photo_from_phone_without_login(browser, photo_site,
         page.get_by_role("textbox", name=re.compile("Your name")).fill("Wedding Guest")
         page.get_by_role("combobox", name="Which moment?").select_option("Reception")
         page.get_by_role("checkbox", name=re.compile("I agree that the hosts may publish")).check()
-        page.get_by_role("button", name=re.compile("Share this moment")).click()
+        with page.expect_response(lambda response: response.request.method == "POST"
+                                  and response.url == f"{url}/photos/{TOKEN}") as upload:
+            page.get_by_role("button", name=re.compile("Share this moment")).click()
+        assert upload.value.status == 201
 
         expect(page).to_have_url(re.compile(r"/thanks\?count=1$"), timeout=12000)
         expect(page.get_by_role("heading", name="We got your moments.")).to_be_visible()
@@ -113,5 +141,40 @@ def test_qr_guest_can_upload_photo_from_phone_without_login(browser, photo_site,
         page.reload()
         expect(page.get_by_role("heading", name="Our story is still unfolding.")).to_be_visible()
         assert page.request.get(image_url).status == 404
+    finally:
+        page.close()
+
+
+def test_host_can_approve_publish_and_unpublish_over_https(browser, photo_site, app):
+    url, root = photo_site
+    sample = BytesIO()
+    Image.new("RGB", (100, 80), (110, 78, 60)).save(sample, "JPEG")
+    sample.seek(0)
+    with app.app_context():
+        save_photos([FileStorage(stream=sample, filename="memory.jpg")],
+                    "HTTPS Guest", "Reception", gallery_consent=True)
+    photo_id = next((root / "files").glob("*.jpg")).stem
+    image_url = f"{url}/photos/{TOKEN}/gallery/{photo_id}.jpg"
+    page = browser.new_page(ignore_https_errors=True)
+    page.on("dialog", lambda dialog: dialog.accept())
+    try:
+        page.goto(f"{url}/admin/login")
+        page.locator("#username").fill("prithvi")
+        page.locator("#password").fill("test-admin-password-for-testing")
+        page.get_by_role("button", name="Open Admin Portal").click()
+        expect(page).to_have_url(re.compile(r"/admin/?$"))
+        page.goto(f"{url}/admin/photos")
+        assert page.request.get(image_url).status == 404
+        for action, label in (("approve", "Approve"), ("publish", "Publish"),
+                              ("unpublish", "Unpublish")):
+            with page.expect_response(lambda response, action=action:
+                                      response.request.method == "POST"
+                                      and response.url.endswith(f"/{photo_id}/{action}")) as review:
+                page.get_by_role("button", name=label, exact=True).click()
+            assert review.value.status == 302
+            expect(page.get_by_role("heading", name="Photo Collection")).to_be_visible()
+            assert page.request.get(image_url).status == (200 if action == "publish" else 404)
+            if action == "approve":
+                page.get_by_role("link", name="Approved", exact=True).click()
     finally:
         page.close()

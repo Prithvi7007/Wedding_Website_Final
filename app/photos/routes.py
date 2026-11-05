@@ -32,7 +32,10 @@ def protect_photo_requests():
 def private_photo_responses(response):
     response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
     response.headers["Cache-Control"] = "private, no-store, max-age=0"
-    response.headers["Referrer-Policy"] = "no-referrer"
+    # Secure CSRF checks require a referrer on form submissions. Same-origin
+    # keeps it available to this app while suppressing it for external sites.
+    form_page = request.endpoint in {"photos.guest_upload", "photos.admin_photos"}
+    response.headers["Referrer-Policy"] = "same-origin" if form_page else "no-referrer"
     return response
 
 
