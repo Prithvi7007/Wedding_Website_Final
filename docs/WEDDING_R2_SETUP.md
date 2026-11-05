@@ -69,7 +69,7 @@ Existing hidden photos are not automatically made visible.
 ## Required launch verification
 
 1. Use an isolated QR token and an actual iPhone and Android phone over HTTPS.
-2. Upload one photo, then six photos. Confirm EXIF/GPS is stripped, JPEGs
+2. Upload one photo, then select thirteen photos and confirm automatic grouping. Confirm EXIF/GPS is stripped, JPEGs
    appear in private R2, and no permanent JPEGs are on the VPS.
 3. Upload JPEG, PNG, WebP and a real HEIC from a phone. Confirm they appear
    immediately in the QR-linked gallery with no host action. Also verify the

@@ -19,3 +19,16 @@ other formats. Install the new `pillow-heif` requirement before rollout.
 Both photo feature flags remain disabled by default. A merge does **not**
 configure or enable cloud photo storage. Do not use the legacy VPS-photo
 deployment instructions: use the R2 rollout checklist instead.
+
+Guests can select more than six photos in the JavaScript upload page. The page
+prepares and sends them sequentially in groups of up to six, with a 30 MiB image
+payload target below the existing 32 MiB request limit. These are transport
+batches, not a selection-count limit. The server's per-request validation is
+unchanged. Automatic grouping runs in JavaScript; direct endpoint requests
+still follow its existing six-file request contract.
+
+The page reports progress across the full selection. If a later request is
+rejected, acknowledged files remain shared and Retry sends the remaining queue.
+Network interruption or an unreadable response is not automatically retried:
+the page asks guests to check the gallery because the server may have saved
+photos before the response was lost. Reloading the page loses the browser queue.
