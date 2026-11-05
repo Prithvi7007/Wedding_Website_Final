@@ -321,8 +321,31 @@ def test_gallery_remains_accessible_after_uploads_close(client, app, photo_inbox
     assert b"admin/photos/qr.svg" not in admin.data
 
 
-def test_gallery_photo_responses_do_not_reveal_qr_link_in_referrers(client, photo_inbox):
-    response = client.get(SHARE_PATH)
-    assert response.headers["Referrer-Policy"] == "no-referrer"
+def test_read_only_gallery_does_not_reveal_qr_link_in_referrers(client, photo_inbox):
     gallery = client.get(SHARE_PATH + "/gallery")
     assert gallery.headers["Referrer-Policy"] == "no-referrer"
+
+
+@pytest.mark.parametrize("invalid", ["missing-token", "bad-token", "missing-referrer", "foreign-referrer"])
+def test_https_photo_upload_keeps_csrf_protection(client, app, photo_inbox, invalid):
+    base = "https://localhost"
+    app.config.update(WTF_CSRF_ENABLED=True, WTF_CSRF_SSL_STRICT=True,
+                      PUBLIC_BASE_URL=base, SESSION_COOKIE_SECURE=True)
+    page = client.get(SHARE_PATH, base_url=base)
+    csrf = re.search(rb'name="csrf_token" value="([^"]+)"', page.data).group(1).decode()
+    payload = photo_form()
+    payload["csrf_token"] = csrf
+    headers = {"Accept": "application/json", "Referer": base + SHARE_PATH}
+    if invalid == "missing-token":
+        del payload["csrf_token"]
+    elif invalid == "bad-token":
+        payload["csrf_token"] = "invalid"
+    elif invalid == "missing-referrer":
+        del headers["Referer"]
+    else:
+        headers["Referer"] = "https://other.example/"
+    response = client.post(SHARE_PATH, base_url=base, data=payload,
+                           content_type="multipart/form-data", headers=headers)
+    assert response.status_code == 400
+    assert response.json["success"] is False
+    assert not list((photo_inbox / "files").glob("*.jpg"))
