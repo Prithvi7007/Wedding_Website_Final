@@ -1,4 +1,4 @@
-"""No-login QR photo sharing with private host moderation.
+"""No-login QR photo sharing with immediate visibility and host controls.
 
 All uploads run against an isolated temporary directory; never production.
 """
@@ -79,7 +79,7 @@ def test_private_qr_and_guest_upload_page(client, photo_inbox):
     assert result.status_code == 200
     assert b"Every little moment" in result.data
     assert b'name="csrf_token"' in result.data
-    assert b'accept="image/*"' in result.data
+    assert b'accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,.gif,.bmp,.tif,.tiff"' in result.data
     assert b"Guest Photos" not in result.data
     assert result.headers["X-Robots-Tag"].startswith("noindex")
     assert result.headers["Cache-Control"].startswith("private, no-store")
@@ -88,7 +88,7 @@ def test_private_qr_and_guest_upload_page(client, photo_inbox):
     assert client.get("/photos/wrong-token-that-looks-long-enough/gallery").status_code == 404
 
 
-def test_upload_removes_exif_and_requires_host_for_photo_bytes(client, photo_inbox):
+def test_upload_strips_exif_shares_immediately_and_preserves_host_controls(client, photo_inbox):
     response = client.post(
         SHARE_PATH, data=photo_form(sample_jpg(with_exif=True)),
         content_type="multipart/form-data",
@@ -110,11 +110,14 @@ def test_upload_removes_exif_and_requires_host_for_photo_bytes(client, photo_inb
 
     private_path = f"/admin/photos/{record_id}/image"
     guest_image_path = f"{SHARE_PATH}/gallery/{record_id}.jpg"
-    empty_gallery = client.get(SHARE_PATH + "/gallery")
-    assert empty_gallery.status_code == 200
-    assert b"Our story is still unfolding." in empty_gallery.data
-    assert record_id.encode() not in empty_gallery.data
-    assert client.get(guest_image_path).status_code == 404
+    gallery = client.get(SHARE_PATH + "/gallery")
+    assert gallery.status_code == 200
+    assert record_id.encode() in gallery.data
+    assert b"A dear guest" not in gallery.data  # Names remain host-only.
+    shared_image = client.get(guest_image_path)
+    assert shared_image.status_code == 200
+    assert shared_image.mimetype == "image/jpeg"
+    assert shared_image.headers["Cache-Control"].startswith("private, no-store")
     assert client.get(private_path).status_code == 302
     assert client.get(f"/photos/{SHARE_TOKEN}/{record_id}").status_code == 404
 
@@ -124,7 +127,7 @@ def test_upload_removes_exif_and_requires_host_for_photo_bytes(client, photo_inb
     assert b"A dear guest" in page.data
     assert b"Haldi" in page.data
     assert SHARE_TOKEN.encode() in page.data
-    assert page.data.count(b"status-pending") == 1
+    assert b"Shared" in page.data
 
     image_result = client.get(private_path)
     assert image_result.status_code == 200
@@ -140,29 +143,10 @@ def test_upload_removes_exif_and_requires_host_for_photo_bytes(client, photo_inb
     assert b"<svg" in code.data
     assert code.headers["X-Robots-Tag"].startswith("noindex")
 
-    approval = client.post(f"/admin/photos/{record_id}/approve")
-    assert approval.status_code == 302
-    approved = client.get("/admin/photos?show=approved")
-    assert approved.status_code == 200
-    assert b"status-approved" in approved.data
-    # Moderation and publication are two explicit host actions.
-    assert record_id.encode() not in client.get(SHARE_PATH + "/gallery").data
-    assert client.get(guest_image_path).status_code == 404
-    published = client.post(f"/admin/photos/{record_id}/publish")
-    assert published.status_code == 302
-    gallery = client.get(SHARE_PATH + "/gallery")
-    assert gallery.status_code == 200
-    assert b"1 memory shared with love" in gallery.data
-    assert record_id.encode() in gallery.data
-    assert b"A dear guest" not in gallery.data  # Names remain admin-only.
-    shared_image = client.get(guest_image_path)
-    assert shared_image.status_code == 200
-    assert shared_image.mimetype == "image/jpeg"
-    assert shared_image.headers["Cache-Control"].startswith("private, no-store")
-    assert client.post(f"/admin/photos/{record_id}/unpublish").status_code == 302
+    assert client.post(f"/admin/photos/{record_id}/hide").status_code == 302
     assert client.get(guest_image_path).status_code == 404
     assert record_id.encode() not in client.get(SHARE_PATH + "/gallery").data
-    assert client.post(f"/admin/photos/{record_id}/publish").status_code == 302
+    assert client.post(f"/admin/photos/{record_id}/show").status_code == 302
     assert client.get(guest_image_path).status_code == 200
     removed = client.post(f"/admin/photos/{record_id}/delete")
     assert removed.status_code == 302
@@ -287,7 +271,7 @@ def test_guest_gallery_has_independent_feature_switch(client, app, photo_inbox):
     assert client.get(SHARE_PATH).status_code == 200
 
 
-def test_legacy_unconsented_approval_does_not_publish(client, photo_inbox):
+def test_legacy_unconsented_photo_cannot_be_shown(client, photo_inbox):
     response = client.post(SHARE_PATH, data=photo_form(),
                            content_type="multipart/form-data")
     assert response.status_code == 303
@@ -297,8 +281,7 @@ def test_legacy_unconsented_approval_does_not_publish(client, photo_inbox):
     record.pop("gallery_consent", None)
     meta.write_text(json.dumps(record), encoding="utf-8")
     login_host(client)
-    assert client.post(f"/admin/photos/{photo_id}/approve").status_code == 302
-    assert client.post(f"/admin/photos/{photo_id}/publish").status_code == 404
+    assert client.post(f"/admin/photos/{photo_id}/show").status_code == 404
     assert photo_id.encode() not in client.get(SHARE_PATH + "/gallery").data
     assert client.get(f"{SHARE_PATH}/gallery/{photo_id}.jpg").status_code == 404
 
@@ -309,8 +292,6 @@ def test_gallery_remains_accessible_after_uploads_close(client, app, photo_inbox
     assert response.status_code == 303
     photo_id = next((photo_inbox / "files").glob("*.jpg")).stem
     login_host(client)
-    assert client.post(f"/admin/photos/{photo_id}/approve").status_code == 302
-    assert client.post(f"/admin/photos/{photo_id}/publish").status_code == 302
     app.config["WEDDING_PHOTO_ENABLED"] = False
     assert client.get(SHARE_PATH).status_code == 404
     assert client.get(SHARE_PATH + "/gallery").status_code == 200
@@ -349,3 +330,78 @@ def test_https_photo_upload_keeps_csrf_protection(client, app, photo_inbox, inva
     assert response.status_code == 400
     assert response.json["success"] is False
     assert not list((photo_inbox / "files").glob("*.jpg"))
+
+
+def test_consented_upload_is_instantly_visible_without_host_actions(client, photo_inbox):
+    result = client.post(SHARE_PATH, data=photo_form(), content_type="multipart/form-data")
+    assert result.status_code == 303
+    photo_id = next((photo_inbox / "files").glob("*.jpg")).stem
+    assert photo_id.encode() in client.get(SHARE_PATH + "/gallery").data
+    assert client.get(f"{SHARE_PATH}/gallery/{photo_id}.jpg").status_code == 200
+
+
+@pytest.mark.parametrize("format,extension", [
+    ("JPEG", "jpeg"), ("PNG", "png"), ("WEBP", "webp"), ("HEIF", "heic"),
+    ("AVIF", "avif"), ("GIF", "gif"), ("BMP", "bmp"), ("TIFF", "tiff"),
+])
+def test_real_photo_input_formats_are_normalized_and_shared(client, photo_inbox, format, extension):
+    source = BytesIO()
+    image = Image.new("RGB", (120, 80), (110, 78, 60))
+    if format == "HEIF":
+        heif = pytest.importorskip("pillow_heif")
+        heif.from_pillow(image).save(source)
+    else:
+        image.save(source, format)
+    source.seek(0)
+    form = photo_form()
+    form["photos"] = (source, "camera." + extension, "application/octet-stream")
+    response = client.post(SHARE_PATH, data=form, content_type="multipart/form-data",
+                           headers={"Accept": "application/json"})
+    assert response.status_code == 201
+    stored = next((photo_inbox / "files").glob("*.jpg"))
+    with Image.open(stored) as normalized:
+        assert normalized.format == "JPEG"
+        assert normalized.getexif() == {}
+        assert normalized.size == (120, 80)
+    assert client.get(f"{SHARE_PATH}/gallery/{stored.stem}.jpg").status_code == 200
+
+
+def test_host_can_hide_and_restore_a_shared_photo_in_one_step(client, photo_inbox):
+    assert client.post(SHARE_PATH, data=photo_form(), content_type="multipart/form-data").status_code == 303
+    photo_id = next((photo_inbox / "files").glob("*.jpg")).stem
+    image_url = f"{SHARE_PATH}/gallery/{photo_id}.jpg"
+    login_host(client)
+    assert client.post(f"/admin/photos/{photo_id}/hide").status_code == 302
+    assert client.get(image_url).status_code == 404
+    assert client.post(f"/admin/photos/{photo_id}/show").status_code == 302
+    assert client.get(image_url).status_code == 200
+    page = client.get("/admin/photos")
+    assert b">Approve</button>" not in page.data
+    assert b">Publish</button>" not in page.data
+
+
+def test_legacy_consented_hidden_photo_stays_hidden_until_host_shows_it(client, photo_inbox):
+    assert client.post(SHARE_PATH, data=photo_form(), content_type="multipart/form-data").status_code == 303
+    meta = next((photo_inbox / "metadata").glob("*.json"))
+    record = json.loads(meta.read_text())
+    record["status"] = "pending"
+    record.pop("published_at")
+    meta.write_text(json.dumps(record))
+    image_url = f"{SHARE_PATH}/gallery/{meta.stem}.jpg"
+    assert client.get(image_url).status_code == 404
+    assert meta.stem.encode() not in client.get(SHARE_PATH + "/gallery").data
+    assert client.post(SHARE_PATH, data=photo_form(), content_type="multipart/form-data").status_code == 303
+    assert client.get(image_url).status_code == 404
+    login_host(client)
+    assert client.post(f"/admin/photos/{meta.stem}/show").status_code == 302
+    assert client.get(image_url).status_code == 200
+
+
+def test_mixed_valid_and_invalid_photos_do_not_share_a_partial_batch(client, photo_inbox):
+    response = client.post(SHARE_PATH, data={
+        "gallery_consent": "yes", "moment": "Reception",
+        "photos": [(sample_jpg(), "valid.jpg"), (BytesIO(b"not a photo"), "bad.heic")],
+    }, content_type="multipart/form-data", headers={"Accept": "application/json"})
+    assert response.status_code == 400
+    assert not list((photo_inbox / "files").glob("*.jpg"))
+    assert not list((photo_inbox / "metadata").glob("*.json"))

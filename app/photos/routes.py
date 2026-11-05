@@ -13,7 +13,7 @@ from werkzeug.exceptions import RequestEntityTooLarge
 from app.admin.decorators import admin_write_required, current_admin_username
 from app.photos.storage import (
     PhotoUploadError, get_photo, list_photos, review_photo, save_photos,
-    storage_ready,
+    storage_ready, photo_is_shared,
 )
 from app.photos.r2 import RemotePhotoError
 
@@ -122,7 +122,7 @@ def guest_upload(token: str):
 
     try:
         if request.form.get("gallery_consent") != "yes":
-            raise PhotoUploadError("Please confirm that approved photos may appear in the wedding guest gallery.")
+            raise PhotoUploadError("Please confirm that your photos will appear immediately in the wedding guest gallery.")
         count = save_photos(
             [upload for upload in request.files.getlist("photos") if upload.filename],
             request.form.get("guest_name"),
@@ -156,23 +156,20 @@ def guest_thanks(token: str):
 
 @photos_bp.get("/photos/<token>/gallery")
 def guest_gallery(token: str):
-    """Only explicitly published photographs appear to QR-link holders."""
+    """Consented uploads appear immediately, unless a host hides or deletes them."""
     _public_access(token, gallery=True)
-    approved = [
-        photo for photo in list_photos() if photo.get("status") == "approved"
-        and photo.get("gallery_consent") is True and bool(photo.get("published_at"))
-    ]
+    shared = [photo for photo in list_photos() if photo_is_shared(photo)]
     try:
         page = max(1, int(request.args.get("page", "1")))
     except ValueError:
         page = 1
     per_page = 24
-    pages = max(1, (len(approved) + per_page - 1) // per_page)
+    pages = max(1, (len(shared) + per_page - 1) // per_page)
     page = min(page, pages)
     return render_template(
         "photos/guest_gallery.html",
-        photos=approved[(page - 1) * per_page:page * per_page],
-        total=len(approved),
+        photos=shared[(page - 1) * per_page:page * per_page],
+        total=len(shared),
         page=page, pages=pages, token=token,
         upload_enabled=_enabled(),
     )
@@ -185,10 +182,8 @@ def guest_gallery_image(token: str, photo_id: str):
         record, path = get_photo(photo_id)
     except (FileNotFoundError, ValueError):
         abort(404)
-    # Checking approval on EVERY image request protects against stale gallery
-    # HTML and revocation: pending / deleted image bytes must never leak.
-    if (record.get("status") != "approved" or record.get("gallery_consent") is not True
-            or not record.get("published_at")):
+    # Check on every request so hidden/deleted images disappear from stale pages.
+    if not photo_is_shared(record):
         abort(404)
     return send_file(
         path,
@@ -203,15 +198,17 @@ def guest_gallery_image(token: str, photo_id: str):
 def admin_photos():
     if not (_enabled() or _gallery_enabled()):
         return render_template("photos/admin_inbox.html", enabled=False, records=[],
-                               total=0, pending=0, page=1, pages=1,
-                               share_url=None, show="pending")
+                               total=0, shared=0, page=1, pages=1,
+                               share_url=None, show="all")
 
     records = list_photos()
     active = [item for item in records if item.get("status") != "deleted"]
-    show = request.args.get("show", "pending")
-    if show not in ("pending", "approved", "all"):
-        show = "pending"
-    selected = [item for item in active if show == "all" or item.get("status") == show]
+    show = request.args.get("show", "all")
+    show = {"pending": "hidden", "approved": "shared"}.get(show, show)
+    if show not in ("hidden", "shared", "all"):
+        show = "all"
+    selected = [item for item in active if show == "all"
+                or (show == "shared") == photo_is_shared(item)]
 
     try:
         page = max(1, int(request.args.get("page", "1")))
@@ -226,7 +223,8 @@ def admin_photos():
         enabled=True, upload_enabled=_enabled(), gallery_enabled=_gallery_enabled(),
         records=selected[(page - 1)*page_size:page*page_size],
         total=len(active),
-        pending=sum(item.get("status") == "pending" for item in active),
+        shared=sum(photo_is_shared(item) for item in active),
+        is_shared=photo_is_shared,
         page=page, pages=pages, show=show, share_url=_public_url(),
     )
 
@@ -272,15 +270,14 @@ def admin_photo_image(photo_id: str):
 @photos_bp.post("/admin/photos/<photo_id>/<action>")
 @admin_write_required
 def admin_photo_review(photo_id: str, action: str):
-    if action not in ("approve", "delete", "publish", "unpublish"):
+    if action not in ("show", "hide", "delete"):
         abort(404)
     try:
         review_photo(photo_id, action, actor=current_admin_username() or "host")
     except (FileNotFoundError, ValueError):
         abort(404)
-    messages = {"approve": "Photo saved privately. Publish it separately to share.",
-                "publish": "Photo published in the guest gallery.",
-                "unpublish": "Photo removed from the guest gallery.",
+    messages = {"show": "Photo shown in the guest gallery.",
+                "hide": "Photo hidden from the guest gallery.",
                 "delete": "Photo permanently removed."}
     flash(messages[action], "success")
-    return redirect(url_for("photos.admin_photos", show="approved" if action in ("publish", "unpublish") else "pending"))
+    return redirect(url_for("photos.admin_photos"))

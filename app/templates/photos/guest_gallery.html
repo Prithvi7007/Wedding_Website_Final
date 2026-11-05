@@ -29,7 +29,7 @@
             {% if upload_enabled %}<a class="photo-drop-button" href="{{ url_for('photos.guest_upload', token=token) }}">Add your moments <span aria-hidden="true">↗</span></a>{% endif %}
         </section>
 
-        <section class="photo-gallery-section" aria-label="Host-approved wedding photographs">
+        <section class="photo-gallery-section" aria-label="Shared wedding photographs">
             {% if photos %}
             <div class="photo-gallery-grid">
                 {% for photo in photos %}
@@ -48,7 +48,7 @@
             <div class="photo-gallery-empty">
                 <span aria-hidden="true">♡</span>
                 <h2>Our story is still unfolding.</h2>
-                <p>Photos will appear here when the hosts choose to publish them. Every shared moment is reviewed first.</p>
+                <p>Be the first to share a memory. Uploaded photos appear here immediately.</p>
             </div>
             {% endif %}
         </section>
@@ -66,7 +66,7 @@
         {% endif %}
 
         <footer class="photo-drop-footer">
-            <span>Only photos published by the hosts appear here.</span>
+            <span>A wedding remembered through everyone's eyes.</span>
             <span class="photo-drop-footer-heart" aria-hidden="true">♡</span>
             <span>Please share this gallery only with wedding guests.</span>
         </footer>

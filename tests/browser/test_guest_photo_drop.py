@@ -1,6 +1,5 @@
 """Chromium smoke test for the stand-alone QR guest photo experience."""
 from io import BytesIO
-import json
 import re
 import shutil
 import subprocess
@@ -101,7 +100,7 @@ def test_qr_guest_can_upload_photo_from_phone_without_login(browser, photo_site,
         expect(page.get_by_role("status")).to_contain_text("1 photo selected")
         page.get_by_role("textbox", name=re.compile("Your name")).fill("Wedding Guest")
         page.get_by_role("combobox", name="Which moment?").select_option("Reception")
-        page.get_by_role("checkbox", name=re.compile("I agree that the hosts may publish")).check()
+        page.get_by_role("checkbox", name=re.compile("I agree")).check()
         with page.expect_response(lambda response: response.request.method == "POST"
                                   and response.url == f"{url}/photos/{TOKEN}") as upload:
             page.get_by_role("button", name=re.compile("Share this moment")).click()
@@ -114,38 +113,16 @@ def test_qr_guest_can_upload_photo_from_phone_without_login(browser, photo_site,
         assert page.request.get(f"{url}/admin/photos", max_redirects=0).status == 302
         photo_id = next((root / "files").glob("*.jpg")).stem
         image_url = f"{url}/photos/{TOKEN}/gallery/{photo_id}.jpg"
-        assert page.request.get(image_url).status == 404
-
-        # Pending photos never appear in the QR-accessible gallery.
+        assert page.request.get(image_url).status == 200
         page.get_by_role("link", name=re.compile("Explore the guest gallery")).click()
-        expect(page.get_by_role("heading", name="Our story is still unfolding.")).to_be_visible()
-        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
-
-        # Simulate the host review in this isolated browser fixture.
-        metadata = root / "metadata" / f"{photo_id}.json"
-        record = json.loads(metadata.read_text(encoding="utf-8"))
-        record["status"] = "approved"
-        metadata.write_text(json.dumps(record), encoding="utf-8")
-        page.reload()
-        expect(page.get_by_role("heading", name="Our story is still unfolding.")).to_be_visible()
-        assert page.request.get(image_url).status == 404
-        record["published_at"] = "2026-10-29T00:00:00+00:00"
-        metadata.write_text(json.dumps(record), encoding="utf-8")
-        page.reload()
         expect(page.get_by_role("link", name="View Reception wedding photograph")).to_be_visible()
         assert page.request.get(image_url).status == 200
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
-
-        record["status"] = "deleted"
-        metadata.write_text(json.dumps(record), encoding="utf-8")
-        page.reload()
-        expect(page.get_by_role("heading", name="Our story is still unfolding.")).to_be_visible()
-        assert page.request.get(image_url).status == 404
     finally:
         page.close()
 
 
-def test_host_can_approve_publish_and_unpublish_over_https(browser, photo_site, app):
+def test_host_can_hide_show_and_delete_over_https(browser, photo_site, app):
     url, root = photo_site
     sample = BytesIO()
     Image.new("RGB", (100, 80), (110, 78, 60)).save(sample, "JPEG")
@@ -164,17 +141,51 @@ def test_host_can_approve_publish_and_unpublish_over_https(browser, photo_site, 
         page.get_by_role("button", name="Open Admin Portal").click()
         expect(page).to_have_url(re.compile(r"/admin/?$"))
         page.goto(f"{url}/admin/photos")
-        assert page.request.get(image_url).status == 404
-        for action, label in (("approve", "Approve"), ("publish", "Publish"),
-                              ("unpublish", "Unpublish")):
+        assert page.request.get(image_url).status == 200
+        for action, label in (("hide", "Hide"), ("show", "Show"),
+                              ("delete", "Permanently delete photo")):
             with page.expect_response(lambda response, action=action:
                                       response.request.method == "POST"
                                       and response.url.endswith(f"/{photo_id}/{action}")) as review:
                 page.get_by_role("button", name=label, exact=True).click()
             assert review.value.status == 302
             expect(page.get_by_role("heading", name="Photo Collection")).to_be_visible()
-            assert page.request.get(image_url).status == (200 if action == "publish" else 404)
-            if action == "approve":
-                page.get_by_role("link", name="Approved", exact=True).click()
+            assert page.request.get(image_url).status == (200 if action == "show" else 404)
+    finally:
+        page.close()
+
+
+@pytest.mark.parametrize("format,extension,mime", [
+    ("PNG", "png", "image/png"), ("WEBP", "webp", "image/webp"),
+    ("HEIF", "heic", "image/heic"), ("TIFF", "tiff", "application/octet-stream"),
+])
+def test_non_jpg_phone_uploads_appear_immediately(browser, photo_site, format, extension, mime):
+    url, root = photo_site
+    sample = BytesIO()
+    image = Image.new("RGB", (160, 120), (110, 78, 60))
+    if format == "HEIF":
+        pytest.importorskip("pillow_heif").from_pillow(image).save(sample)
+    else:
+        image.save(sample, format)
+    page = browser.new_page(ignore_https_errors=True, viewport={"width": 390, "height": 844})
+    page.route(re.compile(r"https://fonts\.(googleapis|gstatic)\.com/.*"), lambda route: route.abort())
+    try:
+        page.goto(f"{url}/photos/{TOKEN}")
+        page.locator('input[name="photos"]').set_input_files({
+            "name": "camera." + extension, "mimeType": mime, "buffer": sample.getvalue(),
+        })
+        page.get_by_role("checkbox", name=re.compile("I agree")).check()
+        with page.expect_response(lambda response: response.request.method == "POST"
+                                  and response.url == f"{url}/photos/{TOKEN}", timeout=12000) as upload:
+            page.get_by_role("button", name=re.compile("Share this moment")).click()
+        assert upload.value.status == 201
+        if format in {"HEIF", "TIFF"}:
+            # Chromium cannot decode these inputs: ensure the original reached
+            # server normalization rather than silently testing canvas JPEGs.
+            assert (f'filename="camera.{extension}"'.encode()
+                    in upload.value.request.post_data_buffer)
+        expect(page.get_by_role("heading", name="We got your moments.")).to_be_visible()
+        photo_id = next((root / "files").glob("*.jpg")).stem
+        assert page.request.get(f"{url}/photos/{TOKEN}/gallery/{photo_id}.jpg").status == 200
     finally:
         page.close()
