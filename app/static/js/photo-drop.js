@@ -10,6 +10,9 @@
     const status = form.querySelector("[data-photo-progress]");
     let files = [];
     let imageUrls = [];
+    let sharedCount = 0;
+    const maxRequestFiles = 6;
+    const maxRequestBytes = 30 * 1024 * 1024;
 
     function clearPreviews() {
         for (const url of imageUrls) URL.revokeObjectURL(url);
@@ -24,11 +27,6 @@
 
     function showFiles() {
         clearPreviews();
-        if (files.length > 6) {
-            button.disabled = true;
-            message("Please choose up to 6 photos at once.", true);
-            return;
-        }
         if (files.length === 0) {
             button.disabled = true;
             message("");
@@ -44,6 +42,8 @@
             const image = document.createElement("img");
             image.src = url;
             image.alt = "Selected photo preview";
+            image.loading = "lazy";
+            image.decoding = "async";
             image.addEventListener("error", () => {
                 const placeholder = document.createElement("span");
                 placeholder.className = "photo-drop-preview-placeholder";
@@ -58,6 +58,7 @@
     }
 
     input.addEventListener("change", () => {
+        sharedCount = 0;
         files = Array.from(input.files || []);
         showFiles();
     });
@@ -103,54 +104,88 @@
         return new File([blob], "wedding-moment.jpg", {type: "image/jpeg"});
     }
 
+    function sendPhotos(payload, start, end, total) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", window.location.pathname);
+            xhr.responseType = "json";
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.upload.addEventListener("progress", progress => {
+                if (progress.lengthComputable) {
+                    message(`Uploading photos ${start}–${end} of ${total} · ${Math.round(progress.loaded / progress.total * 100)}%`);
+                }
+            });
+            xhr.addEventListener("load", () => resolve(xhr));
+            xhr.addEventListener("error", () => reject(new Error("The connection dropped. Some photos may already be shared; check the gallery before retrying.")));
+            xhr.addEventListener("abort", () => reject(new Error("The upload was interrupted. Some photos may already be shared; check the gallery before retrying.")));
+            xhr.send(payload);
+        });
+    }
+
     form.addEventListener("submit", async event => {
-        // Native submission remains available when JavaScript is disabled.
         event.preventDefault();
-        if (button.disabled || !files.length || files.length > 6) return;
+        if (button.disabled || !files.length) return;
+        const total = sharedCount + files.length;
+        // Snapshot consent and metadata before locking editable controls.
+        const fields = new FormData(form);
+        fields.delete("photos");
+        const controls = Array.from(form.querySelectorAll("input:not([type=hidden]), select"));
+        const disabledStates = controls.map(control => control.disabled);
+        controls.forEach(control => { control.disabled = true; });
         button.disabled = true;
         form.setAttribute("aria-busy", "true");
-        message("Preparing your photos…");
         try {
-            const payload = new FormData(form);
-            payload.delete("photos");
-            for (const file of files) {
-                let prepared;
-                try {
-                    prepared = await convertPhoto(file);
-                } catch (error) {
-                    // HEIC/TIFF and some device images cannot be decoded by
-                    // every browser. The server validates and normalizes bytes.
-                    if (file.size > 12 * 1024 * 1024) {
-                        throw new Error("This photo can't be prepared on your phone. Choose a version under 12 MB.");
+            while (files.length) {
+                const preparedFiles = [];
+                let preparedBytes = 0;
+                for (const file of files.slice(0, maxRequestFiles)) {
+                    message(`Preparing photo ${sharedCount + preparedFiles.length + 1} of ${total}…`);
+                    let prepared;
+                    try {
+                        prepared = await convertPhoto(file);
+                    } catch (error) {
+                        // Use server decoding for browser-unsupported originals.
+                        if (file.size > 12 * 1024 * 1024) {
+                            throw new Error("This photo can't be prepared on your phone. Choose a version under 12 MB.");
+                        }
+                        prepared = file;
                     }
-                    prepared = file;
+                    if (preparedFiles.length && preparedBytes + prepared.size > maxRequestBytes) break;
+                    preparedFiles.push(prepared);
+                    preparedBytes += prepared.size;
                 }
-                payload.append("photos", prepared, prepared.name);
+                const payload = new FormData();
+                for (const [key, value] of fields) payload.append(key, value);
+                for (const file of preparedFiles) payload.append("photos", file, file.name);
+                const response = await sendPhotos(payload, sharedCount + 1,
+                    sharedCount + preparedFiles.length, total);
+                if (response.status < 200 || response.status >= 300 || !response.response?.success) {
+                    throw new Error(response.response?.message ||
+                        `We couldn't confirm this upload (HTTP ${response.status}). Check the gallery before retrying.`);
+                }
+                if (response.response.count !== preparedFiles.length) {
+                    throw new Error("We couldn't confirm all photos. Check the gallery before retrying.");
+                }
+                // Remove only acknowledged files. A later failure leaves the
+                // remaining queue available without resending confirmed photos.
+                sharedCount += preparedFiles.length;
+                files = files.slice(preparedFiles.length);
+                for (let i = 0; i < preparedFiles.length; i++) {
+                    preview.firstElementChild?.remove();
+                    const url = imageUrls.shift();
+                    if (url) URL.revokeObjectURL(url);
+                }
+                message(`${sharedCount} of ${total} photos shared…`);
             }
-            message("Sending your moments…");
-            const response = await new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open("POST", window.location.pathname);
-                xhr.responseType = "json";
-                xhr.setRequestHeader("Accept", "application/json");
-                xhr.upload.addEventListener("progress", progress => {
-                    if (progress.lengthComputable) {
-                        message("Uploading · " + Math.round(progress.loaded / progress.total * 100) + "%");
-                    }
-                });
-                xhr.addEventListener("load", () => resolve(xhr));
-                xhr.addEventListener("error", () => reject(new Error("The connection dropped. Please try again.")));
-                xhr.addEventListener("abort", () => reject(new Error("The upload was interrupted.")));
-                xhr.send(payload);
-            });
-            if (response.status < 200 || response.status >= 300 || !response.response?.success) {
-                throw new Error(response.response?.message || "We couldn't save your photos. Please try again.");
-            }
-            const count = Number(response.response.count) || files.length;
-            window.location.assign(window.location.pathname + "/thanks?count=" + count);
+            input.value = "";
+            window.location.assign(window.location.pathname + "/thanks?count=" + sharedCount);
         } catch (error) {
-            message(error.message || "Something went wrong. Please try again.", true);
-            button.disabled = false;
+            const progress = sharedCount ? `${sharedCount} photos shared. ${files.length} still to send. ` : "";
+            message(progress + (error.message || "Something went wrong. Please try again."), true);
+            if (sharedCount) button.firstChild.textContent = "Retry remaining photos ";
+        } finally {
+            controls.forEach((control, index) => { control.disabled = disabledStates[index]; });
+            button.disabled = files.length === 0;
             form.removeAttribute("aria-busy");
         }
     });

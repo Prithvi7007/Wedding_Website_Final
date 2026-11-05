@@ -1,5 +1,6 @@
 """Chromium smoke test for the stand-alone QR guest photo experience."""
 from io import BytesIO
+import json
 import re
 import shutil
 import subprocess
@@ -225,5 +226,143 @@ def test_phone_can_share_a_mixed_batch_above_two_mib(browser, photo_site):
         assert len(list((root / "files").glob("*.jpg"))) == 3
         page.get_by_role("link", name=re.compile("Explore the guest gallery")).click()
         expect(page.locator(".photo-gallery-photo")).to_have_count(3)
+    finally:
+        page.close()
+
+
+def small_selected_photos(count):
+    sample = BytesIO()
+    Image.new("RGB", (120, 80), (110, 78, 60)).save(sample, "JPEG")
+    return [{"name": f"memory-{i}.jpg", "mimeType": "image/jpeg", "buffer": sample.getvalue()}
+            for i in range(count)]
+
+
+def photo_phone_page(browser, url):
+    page = browser.new_page(ignore_https_errors=True, viewport={"width": 390, "height": 844},
+                            is_mobile=True, has_touch=True)
+    page.route(re.compile(r"https://fonts\.(googleapis|gstatic)\.com/.*"), lambda route: route.abort())
+    page.goto(f"{url}/photos/{TOKEN}")
+    return page
+
+
+def test_guest_can_select_thirteen_photos_without_manual_splitting(browser, photo_site):
+    url, root = photo_site
+    page = photo_phone_page(browser, url)
+    uploads = []
+    page.on("response", lambda response: uploads.append(response.status)
+            if response.request.method == "POST" else None)
+    try:
+        page.locator('input[name="photos"]').set_input_files(small_selected_photos(13))
+        expect(page.get_by_role("status")).to_contain_text("13 photos selected")
+        page.get_by_role("textbox", name=re.compile("Your name")).fill("Batch Guest")
+        page.get_by_role("combobox", name="Which moment?").select_option("Reception")
+        page.get_by_role("checkbox", name=re.compile("I agree")).check()
+        button = page.get_by_role("button", name=re.compile("Share these moments"))
+        expect(button).to_be_enabled()
+        button.click()
+        expect(page).to_have_url(re.compile(r"/thanks\?count=13$"), timeout=20000)
+        expect(page.locator(".photo-drop-description")).to_contain_text("13 photos safely received")
+        assert uploads == [201, 201, 201]
+        assert len(list((root / "files").glob("*.jpg"))) == 13
+        records = [json.loads(path.read_text()) for path in (root / "metadata").glob("*.json")]
+        assert all(record["guest_name"] == "Batch Guest" and record["moment"] == "Reception"
+                   and record["gallery_consent"] is True for record in records)
+        page.get_by_role("link", name=re.compile("Explore the guest gallery")).click()
+        expect(page.locator(".photo-gallery-photo")).to_have_count(13)
+    finally:
+        page.close()
+
+
+def test_retry_sends_only_remaining_photos_after_a_later_request_fails(browser, photo_site):
+    url, root = photo_site
+    page = photo_phone_page(browser, url)
+    posts = []
+    locked_controls = []
+
+    def fail_second_request(route):
+        if route.request.method != "POST":
+            route.continue_()
+            return
+        posts.append(route.request)
+        locked_controls.append(all(page.locator(selector).is_disabled() for selector in
+                                   ['input[name="photos"]', 'input[name="guest_name"]',
+                                    'select[name="moment"]', 'input[name="gallery_consent"]']))
+        if len(posts) == 2:
+            route.fulfill(status=503, content_type="application/json",
+                          body='{"success":false,"message":"Storage temporarily unavailable."}')
+        else:
+            route.continue_()
+
+    page.route(f"{url}/photos/{TOKEN}", fail_second_request)
+    try:
+        page.locator('input[name="photos"]').set_input_files(small_selected_photos(8))
+        page.get_by_role("checkbox", name=re.compile("I agree")).check()
+        button = page.get_by_role("button", name=re.compile("Share these moments"))
+        expect(button).to_be_enabled()
+        button.click()
+        expect(page.get_by_role("status")).to_contain_text("6 photos shared", timeout=15000)
+        expect(page.get_by_role("status")).to_contain_text("2 still to send")
+        assert len(list((root / "files").glob("*.jpg"))) == 6
+        assert len(posts) == 2
+        expect(page.locator('input[name="photos"]')).to_be_enabled()
+        retry = page.get_by_role("button", name="Retry remaining photos", exact=True)
+        expect(retry).to_be_enabled()
+        retry.click()
+        expect(page).to_have_url(re.compile(r"/thanks\?count=8$"), timeout=15000)
+        assert len(posts) == 3
+        assert locked_controls == [True, True, True]
+        assert len(list((root / "files").glob("*.jpg"))) == 8
+    finally:
+        page.close()
+
+
+def test_large_originals_are_grouped_by_request_bytes(browser, photo_site):
+    url, root = photo_site
+    sample = BytesIO()
+    Image.new("RGB", (120, 80), (110, 78, 60)).save(sample, "TIFF")
+    original = sample.getvalue().ljust(11 * 1024 * 1024, b"\0")
+    page = photo_phone_page(browser, url)
+    uploads = []
+    page.on("response", lambda response: uploads.append(response.status)
+            if response.request.method == "POST" else None)
+    try:
+        page.locator('input[name="photos"]').set_input_files([
+            {"name": f"camera-{i}.tiff", "mimeType": "image/tiff", "buffer": original}
+            for i in range(3)
+        ])
+        page.get_by_role("checkbox", name=re.compile("I agree")).check()
+        page.get_by_role("button", name=re.compile("Share these moments")).click()
+        expect(page).to_have_url(re.compile(r"/thanks\?count=3$"), timeout=20000)
+        assert uploads == [201, 201]
+        assert len(list((root / "files").glob("*.jpg"))) == 3
+    finally:
+        page.close()
+
+
+def test_lost_upload_response_is_not_automatically_retried(browser, photo_site):
+    url, root = photo_site
+    page = photo_phone_page(browser, url)
+    requests = []
+
+    def lose_success_response(route):
+        if route.request.method != "POST":
+            route.continue_()
+            return
+        requests.append(route.request)
+        response = route.fetch()
+        assert response.status == 201
+        # The server saved the photos but the browser never receives its ACK.
+        route.abort("failed")
+
+    page.route(f"{url}/photos/{TOKEN}", lose_success_response)
+    try:
+        page.locator('input[name="photos"]').set_input_files(small_selected_photos(3))
+        page.get_by_role("checkbox", name=re.compile("I agree")).check()
+        page.get_by_role("button", name=re.compile("Share these moments")).click()
+        expect(page.get_by_role("status")).to_contain_text("check the gallery before retrying", timeout=15000)
+        expect(page.get_by_role("button", name=re.compile("Share these moments"))).to_be_enabled()
+        assert len(requests) == 1
+        assert len(list((root / "files").glob("*.jpg"))) == 3
+        assert "/thanks" not in page.url
     finally:
         page.close()

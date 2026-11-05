@@ -148,7 +148,7 @@ def guest_upload(token: str):
 def guest_thanks(token: str):
     _public_access(token)
     try:
-        count = max(1, min(int(request.args.get("count", "1")), 6))
+        count = max(1, int(request.args.get("count", "1")))
     except ValueError:
         count = 1
     return render_template("photos/guest_upload.html", error=None, success=count,

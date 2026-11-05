@@ -453,3 +453,9 @@ def test_other_forms_keep_the_ordinary_body_limit(client, app, photo_inbox, path
     response = client.post(path, data=b"x" * (2 * 1024 * 1024 + 1),
                            content_type="application/x-www-form-urlencoded")
     assert response.status_code == 413
+
+
+def test_thank_you_shows_the_full_selection_count(client, photo_inbox):
+    response = client.get(SHARE_PATH + "/thanks?count=13")
+    assert response.status_code == 200
+    assert b"13 photos safely received" in response.data
