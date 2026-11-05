@@ -56,14 +56,16 @@ def create_app(config_name: str | None = None) -> Flask:
 
     db.init_app(app)
     migrate.init_app(app, db)
-    csrf.init_app(app)
 
     from . import models  # noqa: F401
     from .admin.routes import admin_bp
     from .dashboard.routes import dashboard_bp
     from .health.routes import health_bp
     from .invitations.routes import invitations_bp
-    from .photos.routes import photos_bp
+    from .photos.routes import photos_bp, prepare_photo_upload_limit
+
+    app.before_request(prepare_photo_upload_limit)
+    csrf.init_app(app)
 
     app.register_blueprint(health_bp)
     app.register_blueprint(invitations_bp)

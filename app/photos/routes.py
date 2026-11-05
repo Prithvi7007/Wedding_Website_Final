@@ -21,10 +21,11 @@ from app.photos.r2 import RemotePhotoError
 photos_bp = Blueprint("photos", __name__)
 
 
-@photos_bp.before_request
-def protect_photo_requests():
-    if request.method == "POST":
-        # Flask 3.1 per-request cap. Nginx requires the matching host change.
+def prepare_photo_upload_limit():
+    """Set the upload cap before CSRF protection reads multipart form data."""
+    if request.endpoint == "photos.guest_upload" and request.method == "POST":
+        # Registered at app level before csrf.init_app; blueprint hooks run
+        # after CSRF has already parsed the form under the ordinary 2 MiB cap.
         request.max_content_length = 32 * 1024 * 1024
 
 

@@ -189,3 +189,41 @@ def test_non_jpg_phone_uploads_appear_immediately(browser, photo_site, format, e
         assert page.request.get(f"{url}/photos/{TOKEN}/gallery/{photo_id}.jpg").status == 200
     finally:
         page.close()
+
+
+def test_phone_can_share_a_mixed_batch_above_two_mib(browser, photo_site):
+    import random
+    url, root = photo_site
+    large = BytesIO()
+    Image.frombytes("RGB", (1024, 1024), random.Random(17).randbytes(1024 * 1024 * 3)).save(large, "TIFF")
+    assert len(large.getvalue()) > 2 * 1024 * 1024
+    small = Image.new("RGB", (160, 120), (110, 78, 60))
+    heic, jpg = BytesIO(), BytesIO()
+    pytest.importorskip("pillow_heif").from_pillow(small).save(heic)
+    small.save(jpg, "JPEG")
+    page = browser.new_page(ignore_https_errors=True, viewport={"width": 390, "height": 844},
+                            is_mobile=True, has_touch=True)
+    page.route(re.compile(r"https://fonts\.(googleapis|gstatic)\.com/.*"), lambda route: route.abort())
+    try:
+        page.goto(f"{url}/photos/{TOKEN}")
+        page.locator('input[name="photos"]').set_input_files([
+            {"name": "large.tiff", "mimeType": "image/tiff", "buffer": large.getvalue()},
+            {"name": "phone.heic", "mimeType": "image/heic", "buffer": heic.getvalue()},
+            {"name": "memory.jpg", "mimeType": "image/jpeg", "buffer": jpg.getvalue()},
+        ])
+        expect(page.get_by_role("status")).to_contain_text("3 photos selected")
+        # Exercise the mobile preview layout during scrolling before submission.
+        page.locator(".photo-drop-preview").scroll_into_view_if_needed()
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
+        page.get_by_role("checkbox", name=re.compile("I agree")).check()
+        with page.expect_response(lambda response: response.request.method == "POST"
+                                  and response.url == f"{url}/photos/{TOKEN}", timeout=15000) as upload:
+            page.get_by_role("button", name=re.compile("Share these moments")).click()
+        assert upload.value.status == 201
+        expect(page).to_have_url(re.compile(r"/thanks\?count=3$"))
+        expect(page.get_by_role("heading", name="We got your moments.")).to_be_visible()
+        assert len(list((root / "files").glob("*.jpg"))) == 3
+        page.get_by_role("link", name=re.compile("Explore the guest gallery")).click()
+        expect(page.locator(".photo-gallery-photo")).to_have_count(3)
+    finally:
+        page.close()

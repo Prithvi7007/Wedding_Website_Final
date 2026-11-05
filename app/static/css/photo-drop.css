@@ -115,3 +115,12 @@ button,input,select{font:inherit}
  .photo-gallery-caption{padding:23px 6px 10px}
 }
 @media(prefers-reduced-motion:reduce){.photo-gallery-photo img{transition:none}}
+
+/* Avoid live backdrop-blur surfaces around photo previews on mobile GPUs. */
+@media(max-width:768px),(hover:none),(pointer:coarse){
+ .photo-drop-card{
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  background:radial-gradient(ellipse 75% 43% at 50% 0,rgba(255,255,255,.09),transparent 78%),linear-gradient(145deg,#2d1f18,#161211 72%);
+ }
+ .photo-gallery-empty{-webkit-backdrop-filter:none;backdrop-filter:none;background:#201713}
+}
