@@ -405,3 +405,51 @@ def test_mixed_valid_and_invalid_photos_do_not_share_a_partial_batch(client, pho
     assert response.status_code == 400
     assert not list((photo_inbox / "files").glob("*.jpg"))
     assert not list((photo_inbox / "metadata").glob("*.json"))
+
+
+@pytest.mark.parametrize("valid_csrf", [True, False])
+def test_https_large_photo_is_parsed_with_photo_limit_before_csrf(client, app, photo_inbox, valid_csrf):
+    # A real PNG above the ordinary 2 MiB form cap must reach CSRF validation
+    # under the photo route's 32 MiB cap, rather than failing early with 413.
+    import random
+    source = BytesIO()
+    image = Image.frombytes("RGB", (1024, 1024), random.Random(7).randbytes(1024 * 1024 * 3))
+    image.save(source, "PNG")
+    assert 2 * 1024 * 1024 < source.tell() < 12 * 1024 * 1024
+    source.seek(0)
+    base = "https://localhost"
+    app.config.update(WTF_CSRF_ENABLED=True, WTF_CSRF_SSL_STRICT=True,
+                      PUBLIC_BASE_URL=base, SESSION_COOKIE_SECURE=True)
+    page = client.get(SHARE_PATH, base_url=base)
+    token = re.search(rb'name="csrf_token" value="([^"]+)"', page.data).group(1).decode()
+    form = photo_form()
+    form["photos"] = (source, "camera.png")
+    form["csrf_token"] = token if valid_csrf else "invalid"
+    response = client.post(SHARE_PATH, base_url=base, data=form,
+                           content_type="multipart/form-data",
+                           headers={"Accept": "application/json", "Referer": base + SHARE_PATH})
+    assert response.status_code == (201 if valid_csrf else 400)
+    assert len(list((photo_inbox / "files").glob("*.jpg"))) == (1 if valid_csrf else 0)
+    if valid_csrf:
+        photo_id = next((photo_inbox / "files").glob("*.jpg")).stem
+        assert client.get(f"{SHARE_PATH}/gallery/{photo_id}.jpg", base_url=base).status_code == 200
+    else:
+        assert "expired" in response.json["message"]
+
+
+def test_https_photo_request_over_32_mib_is_rejected(client, app, photo_inbox):
+    app.config.update(WTF_CSRF_ENABLED=True, PUBLIC_BASE_URL="https://localhost")
+    response = client.post(SHARE_PATH, base_url="https://localhost",
+                           data=b"x" * (32 * 1024 * 1024 + 1),
+                           content_type="application/x-www-form-urlencoded",
+                           headers={"Accept": "application/json"})
+    assert response.status_code == 413
+    assert not list((photo_inbox / "metadata").glob("*.json"))
+
+
+@pytest.mark.parametrize("path", ["/admin/login", "/admin/photos/unknown/show"])
+def test_other_forms_keep_the_ordinary_body_limit(client, app, photo_inbox, path):
+    app.config["WTF_CSRF_ENABLED"] = True
+    response = client.post(path, data=b"x" * (2 * 1024 * 1024 + 1),
+                           content_type="application/x-www-form-urlencoded")
+    assert response.status_code == 413
