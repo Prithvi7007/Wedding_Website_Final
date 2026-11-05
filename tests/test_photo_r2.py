@@ -85,7 +85,7 @@ def host_login(client):
     assert result.status_code == 302
 
 
-def test_r2_stores_jpegs_off_vps_and_respects_publication(client, cloud_storage):
+def test_r2_shares_on_upload_and_respects_host_visibility_changes(client, cloud_storage):
     root, fake = cloud_storage
     assert client.get(PATH).status_code == 200
     assert upload(client).status_code == 303
@@ -98,17 +98,19 @@ def test_r2_stores_jpegs_off_vps_and_respects_publication(client, cloud_storage)
     with Image.open(BytesIO(fake.objects[f"wedding/photos/{photo_id}.jpg"])) as image:
         assert image.getexif() == {}
     image_path = f"{PATH}/gallery/{photo_id}.jpg"
-    assert client.get(image_path).status_code == 404
+    mirrored = json.loads(fake.objects[f"wedding/metadata/{photo_id}.json"])
+    assert mirrored["status"] == "approved"
+    assert mirrored["published_at"]
+    assert mirrored["gallery_consent"] is True
     host_login(client)
-    assert client.post(f"/admin/photos/{photo_id}/approve").status_code == 302
-    assert client.get(image_path).status_code == 404
-    assert client.post(f"/admin/photos/{photo_id}/publish").status_code == 302
     result = client.get(image_path)
     assert result.status_code == 200
     assert result.mimetype == "image/jpeg"
     assert result.headers["Cache-Control"].startswith("private, no-store")
-    assert client.post(f"/admin/photos/{photo_id}/unpublish").status_code == 302
+    assert client.post(f"/admin/photos/{photo_id}/hide").status_code == 302
     assert client.get(image_path).status_code == 404
+    assert client.post(f"/admin/photos/{photo_id}/show").status_code == 302
+    assert client.get(image_path).status_code == 200
     assert client.post(f"/admin/photos/{photo_id}/delete").status_code == 302
     assert f"wedding/photos/{photo_id}.jpg" not in fake.objects
     assert client.get(image_path).status_code == 404
@@ -142,8 +144,6 @@ def test_missing_remote_photo_returns_404(client, cloud_storage):
     assert upload(client).status_code == 303
     photo_id = next((root / "metadata").glob("*.json")).stem
     host_login(client)
-    assert client.post(f"/admin/photos/{photo_id}/approve").status_code == 302
-    assert client.post(f"/admin/photos/{photo_id}/publish").status_code == 302
     fake.objects.pop(f"wedding/photos/{photo_id}.jpg")
     assert client.get(f"{PATH}/gallery/{photo_id}.jpg").status_code == 404
 
@@ -152,3 +152,86 @@ def test_bad_photo_identifier_does_not_access_remote_objects(client, cloud_stora
     root, fake = cloud_storage
     assert client.get(f"{PATH}/gallery/../../bad.jpg").status_code in (404, 308)
     assert not fake.objects
+
+
+def test_second_cloud_write_failure_rolls_back_the_entire_shared_batch(client, cloud_storage, monkeypatch):
+    root, fake = cloud_storage
+    original_put = fake.put_object
+    photo_writes = 0
+
+    def fail_second_photo(**kwargs):
+        nonlocal photo_writes
+        if kwargs["Key"].startswith("wedding/photos/"):
+            photo_writes += 1
+            if photo_writes == 2:
+                raise RuntimeError("second photo write failed")
+        return original_put(**kwargs)
+
+    monkeypatch.setattr(fake, "put_object", fail_second_photo)
+    result = client.post(PATH, data={
+        "gallery_consent": "yes", "moment": "Reception",
+        "photos": [(jpeg(), "one.jpg"), (jpeg(), "two.jpg")],
+    }, content_type="multipart/form-data", headers={"Accept": "application/json"})
+    assert result.status_code == 503
+    assert result.json["success"] is False
+    assert not list((root / "metadata").glob("*.json"))
+    assert fake.objects == {}
+    assert b"photo-gallery-photo" not in client.get(PATH + "/gallery").data
+
+
+@pytest.mark.parametrize("view", ["gallery", "image"])
+def test_guest_read_waits_for_failed_batch_rollback(app, cloud_storage, monkeypatch, view):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Event
+
+    root, fake = cloud_storage
+    second_write = Event()
+    allow_failure = Event()
+    reader_started = Event()
+    original_put = fake.put_object
+    photo_writes = 0
+
+    def pause_then_fail_second_photo(**kwargs):
+        nonlocal photo_writes
+        if kwargs["Key"].startswith("wedding/photos/"):
+            photo_writes += 1
+            if photo_writes == 2:
+                second_write.set()
+                assert allow_failure.wait(5)
+                raise RuntimeError("second photo write failed")
+        return original_put(**kwargs)
+
+    monkeypatch.setattr(fake, "put_object", pause_then_fail_second_photo)
+
+    def batch_upload():
+        with app.test_client() as guest:
+            return guest.post(PATH, data={
+                "gallery_consent": "yes", "moment": "Reception",
+                "photos": [(jpeg(), "one.jpg"), (jpeg(), "two.jpg")],
+            }, content_type="multipart/form-data")
+
+    def read_gallery():
+        with app.test_client() as guest:
+            reader_started.set()
+            suffix = "/gallery" if view == "gallery" else f"/gallery/{first_id}.jpg"
+            return guest.get(PATH + suffix)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        writer = pool.submit(batch_upload)
+        try:
+            assert second_write.wait(5)
+            first_id = next((root / "metadata").glob("*.json")).stem
+            reader = pool.submit(read_gallery)
+            assert reader_started.wait(5)
+            # Confirm that an in-flight batch cannot be observed, even though
+            # its first metadata record already exists on disk.
+            from concurrent.futures import TimeoutError
+            with pytest.raises(TimeoutError):
+                reader.result(timeout=0.2)
+        finally:
+            allow_failure.set()
+        assert writer.result(timeout=5).status_code == 503
+        gallery = reader.result(timeout=5)
+    assert gallery.status_code == (200 if view == "gallery" else 404)
+    assert first_id.encode() not in gallery.data
+    assert fake.objects == {}

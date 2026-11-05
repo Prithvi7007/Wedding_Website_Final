@@ -42,6 +42,7 @@ button,input,select{font:inherit}
 .photo-drop-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .photo-drop-preview:empty{display:none}
 .photo-drop-preview figure{position:relative;aspect-ratio:1;margin:0;border-radius:12px;overflow:hidden;border:1px solid rgba(249,227,194,.23);background:#34251d}
+.photo-drop-preview-placeholder{display:grid;place-items:center;width:100%;height:100%;padding:12px;color:#eedbc2;font-size:12px;text-align:center}
 .photo-drop-preview img{width:100%;height:100%;object-fit:cover;display:block}
 .photo-drop-preview figcaption{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(18,15,13,.78),transparent);font-size:10px;padding:15px 8px 7px;text-align:center;color:#f9e6cc}
 .photo-drop-fields{display:grid;grid-template-columns:1fr 1fr;gap:13px}
@@ -80,8 +81,7 @@ button,input,select{font:inherit}
 @media(prefers-reduced-motion:reduce){.photo-drop-select,.photo-drop-button{transition:none}}
 @media(prefers-contrast:more),(prefers-reduced-transparency:reduce){.photo-drop-card{background:#201713;backdrop-filter:none;-webkit-backdrop-filter:none}}
 
-/* Guest consent and the approved-only gallery share the invitation's
-   photographic bronze palette; uploads themselves remain private pending review. */
+/* Guest consent and the shared gallery use the invitation's bronze palette. */
 .photo-drop-consent{display:flex;align-items:flex-start;gap:12px;padding:14px 15px;border:1px solid rgba(239,199,143,.26);border-radius:14px;background:rgba(255,233,199,.045);font-size:11px;line-height:1.6;color:#f1dfc8}
 .photo-drop-consent input{flex:0 0 auto;width:19px;height:19px;margin:1px 0 0;accent-color:#ddba80}
 .photo-drop-consent:focus-within{outline:2px solid #f0d5a4;outline-offset:3px}

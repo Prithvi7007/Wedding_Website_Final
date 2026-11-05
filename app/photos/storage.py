@@ -6,6 +6,7 @@ All raster images are decoded and re-encoded, removing EXIF and GPS metadata.
 """
 from __future__ import annotations
 
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from io import BytesIO
 import json
@@ -21,7 +22,7 @@ from werkzeug.datastructures import FileStorage
 from app.photos import r2
 
 PHOTO_ID = re.compile(r"^[a-f0-9]{32}$")
-ALLOWED_FORMATS = {"JPEG", "PNG", "WEBP"}
+ALLOWED_FORMATS = {"JPEG", "PNG", "WEBP", "HEIF", "AVIF", "GIF", "BMP", "TIFF"}
 MAX_FILES_PER_POST = 6
 MAX_IMAGE_BYTES = 12 * 1024 * 1024
 MAX_IMAGE_PIXELS = 30_000_000
@@ -109,6 +110,9 @@ def _save_json(path: Path, record: dict) -> None:
 
 def _normalize_image(upload: FileStorage) -> bytes:
     from PIL import Image, ImageOps, UnidentifiedImageError
+    from pillow_heif import register_heif_opener
+
+    register_heif_opener(thumbnails=False)
 
     stream = upload.stream
     # Bound the actual read, regardless of a forged Content-Length header.
@@ -121,11 +125,12 @@ def _normalize_image(upload: FileStorage) -> bytes:
     try:
         with Image.open(BytesIO(raw)) as source:
             if source.format not in ALLOWED_FORMATS:
-                raise PhotoUploadError("Choose JPG, PNG, or WebP photos.")
+                raise PhotoUploadError("Choose JPG, PNG, HEIC, WebP, AVIF, GIF, BMP, or TIFF photos.")
             width, height = source.size
             if width < 1 or height < 1 or width * height > MAX_IMAGE_PIXELS:
                 raise PhotoUploadError("This photo has unsupported dimensions.")
-            source.seek(0)
+            # Preserve the HEIF primary image selected by its decoder; other
+            # formats open on their first frame, which becomes a still photo.
             source.load()
             turned = ImageOps.exif_transpose(source)
             turned.thumbnail((MAX_SIDE, MAX_SIDE), Image.Resampling.LANCZOS)
@@ -142,7 +147,7 @@ def _normalize_image(upload: FileStorage) -> bytes:
     except PhotoUploadError:
         raise
     except (OSError, ValueError, UnidentifiedImageError, Image.DecompressionBombError) as error:
-        raise PhotoUploadError("One photo could not be read. Try a different JPG, PNG or WebP photo.") from error
+        raise PhotoUploadError("One photo could not be read. Try a different photo or export it as JPG or PNG.") from error
 
 
 def _safe_name(value: str | None) -> str:
@@ -193,12 +198,14 @@ def save_photos(uploads: list[FileStorage], name: str | None, moment: str, *, ga
                 record = {
                     "id": photo_id,
                     "created_at": datetime.now(timezone.utc).isoformat(),
-                    "status": "pending",
+                    "status": "approved" if gallery_consent else "pending",
                     "gallery_consent": bool(gallery_consent),
                     "guest_name": guest_name,
                     "moment": moment,
                     "bytes": len(data),
                 }
+                if gallery_consent:
+                    record["published_at"] = record["created_at"]
                 if remote:
                     r2.backup_metadata(photo_id, record)
                 _save_json(metadata_file, record)
@@ -219,38 +226,59 @@ def save_photos(uploads: list[FileStorage], name: str | None, moment: str, *, ga
     return len(normalized)
 
 
+@contextmanager
+def _read_metadata_lock(root: Path):
+    # A batch writer may roll back earlier records if a later R2 write fails.
+    # Readers must wait for that transaction before exposing shared metadata.
+    import fcntl
+    with (root / "metadata" / ".lock").open("a+b") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_SH)
+        try:
+            yield
+        finally:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+
+
 def list_photos() -> list[dict]:
     root = _root_or_raise()
-    records = []
-    for item in (root / "metadata").glob("*.json"):
-        if not PHOTO_ID.fullmatch(item.stem):
-            continue
-        try:
-            record = _read_json(item)
-        except (ValueError, OSError, json.JSONDecodeError):
-            current_app.logger.warning("Unusable photo metadata record id=%s", item.stem)
-            continue
-        if record.get("id") != item.stem:
-            continue
-        records.append(record)
-    return sorted(records, key=lambda row: row.get("created_at", ""), reverse=True)
+    with _read_metadata_lock(root):
+        records = []
+        for item in (root / "metadata").glob("*.json"):
+            if not PHOTO_ID.fullmatch(item.stem):
+                continue
+            try:
+                record = _read_json(item)
+            except (ValueError, OSError, json.JSONDecodeError):
+                current_app.logger.warning("Unusable photo metadata record id=%s", item.stem)
+                continue
+            if record.get("id") != item.stem:
+                continue
+            records.append(record)
+        return sorted(records, key=lambda row: row.get("created_at", ""), reverse=True)
 
 
 def get_photo(photo_id: str) -> tuple[dict, Path | BytesIO]:
     root = _root_or_raise()
-    record = _read_json(_metadata_file(root, photo_id))
-    if record.get("id") != photo_id or record.get("status") == "deleted":
-        raise FileNotFoundError("Unknown photo.")
-    if current_app.config.get("WEDDING_PHOTO_BACKEND") == "r2":
-        return record, r2.get_image(photo_id)
-    path = photo_path(root, photo_id)
-    if not path.is_file() or path.is_symlink():
-        raise FileNotFoundError("Photo not found.")
-    return record, path
+    with _read_metadata_lock(root):
+        record = _read_json(_metadata_file(root, photo_id))
+        if record.get("id") != photo_id or record.get("status") == "deleted":
+            raise FileNotFoundError("Unknown photo.")
+        if current_app.config.get("WEDDING_PHOTO_BACKEND") == "r2":
+            return record, r2.get_image(photo_id)
+        path = photo_path(root, photo_id)
+        if not path.is_file() or path.is_symlink():
+            raise FileNotFoundError("Photo not found.")
+        return record, path
+
+
+def photo_is_shared(record: dict) -> bool:
+    return (record.get("status") == "approved"
+            and record.get("gallery_consent") is True
+            and bool(record.get("published_at")))
 
 
 def review_photo(photo_id: str, action: str, actor: str) -> None:
-    if action not in {"approve", "delete", "publish", "unpublish"}:
+    if action not in {"show", "hide", "delete"}:
         raise ValueError("Unsupported review action")
     import fcntl
     root = _root_or_raise()
@@ -260,18 +288,12 @@ def review_photo(photo_id: str, action: str, actor: str) -> None:
         record = _read_json(metadata_file)
         if record.get("id") != photo_id or record.get("status") == "deleted":
             raise FileNotFoundError("Unknown photo.")
-        if action == "approve":
-            if record.get("status") != "pending":
-                raise ValueError("Only pending photos can be approved.")
+        if action == "show":
+            if record.get("gallery_consent") is not True:
+                raise ValueError("Guest consent is required before sharing a photo.")
             record["status"] = "approved"
-            record.pop("published_at", None)
-        elif action == "publish":
-            if record.get("status") != "approved" or record.get("gallery_consent") is not True:
-                raise ValueError("Photo must be approved and consented before publication.")
             record["published_at"] = datetime.now(timezone.utc).isoformat()
-        elif action == "unpublish":
-            if record.get("status") != "approved":
-                raise ValueError("Only approved photos can be unpublished.")
+        elif action == "hide":
             record.pop("published_at", None)
         else:
             record["status"] = "deleted"

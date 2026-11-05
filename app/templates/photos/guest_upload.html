@@ -31,7 +31,7 @@
                 {{ success }} {{ 'photo' if success == 1 else 'photos' }} safely received.
                 Thank you for seeing our day through your eyes.
             </p>
-            <p class="photo-drop-note">Your photos are waiting for host review. The hosts may choose to publish selected moments in the guest gallery.</p>
+            <p class="photo-drop-note">Your photos are now in the guest gallery. Thank you for adding to our story.</p>
             <a href="{{ url_for('photos.guest_upload', token=request.view_args.token) }}" class="photo-drop-button">
                 Share more memories <span aria-hidden="true">↗</span>
             </a>
@@ -69,10 +69,10 @@
                     </span>
                     <strong>Choose your photos</strong>
                     <span>Tap to browse your camera roll</span>
-                    <small>Up to 6 photos at once · JPG, PNG, WebP, or photos your phone can convert</small>
+                    <small>Up to 6 photos at once · JPG, PNG, HEIC, WebP and other common photo formats</small>
                 </label>
                 <input class="photo-drop-file-input" id="wedding-photos" name="photos"
-                       type="file" accept="image/*" multiple required data-photo-input>
+                       type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,.gif,.bmp,.tif,.tiff" multiple required data-photo-input>
                 <div class="photo-drop-preview" data-photo-preview aria-live="polite"></div>
 
                 <div class="photo-drop-fields">
@@ -95,7 +95,7 @@
                 </div>
                 <label class="photo-drop-consent">
                     <input type="checkbox" name="gallery_consent" value="yes" required>
-                    <span>I agree that the hosts may publish selected, approved photos for anyone with the wedding QR link to view.</span>
+                    <span>I agree that my photos will appear immediately in the guest gallery for anyone with the wedding QR link to view.</span>
                 </label>
                 <button class="photo-drop-button" type="submit" data-photo-submit disabled>
                     Share these moments <span aria-hidden="true">↗</span>
@@ -109,7 +109,7 @@
         <footer class="photo-drop-footer">
             <span>Made with love, kept with care.</span>
             <span class="photo-drop-footer-heart" aria-hidden="true">♡</span>
-            <span>Only photos explicitly published by the hosts appear in the guest gallery.</span>
+            <span>Your shared photos appear in the guest gallery immediately.</span>
         </footer>
     </main>
 </body>

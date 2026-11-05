@@ -44,6 +44,12 @@
             const image = document.createElement("img");
             image.src = url;
             image.alt = "Selected photo preview";
+            image.addEventListener("error", () => {
+                const placeholder = document.createElement("span");
+                placeholder.className = "photo-drop-preview-placeholder";
+                placeholder.textContent = "Photo selected";
+                image.replaceWith(placeholder);
+            }, {once: true});
             const label = document.createElement("figcaption");
             label.textContent = file.name.length > 20 ? file.name.slice(0, 17) + "…" : file.name;
             figure.append(image, label);
@@ -108,7 +114,17 @@
             const payload = new FormData(form);
             payload.delete("photos");
             for (const file of files) {
-                const prepared = await convertPhoto(file);
+                let prepared;
+                try {
+                    prepared = await convertPhoto(file);
+                } catch (error) {
+                    // HEIC/TIFF and some device images cannot be decoded by
+                    // every browser. The server validates and normalizes bytes.
+                    if (file.size > 12 * 1024 * 1024) {
+                        throw new Error("This photo can't be prepared on your phone. Choose a version under 12 MB.");
+                    }
+                    prepared = file;
+                }
                 payload.append("photos", prepared, prepared.name);
             }
             message("Sending your moments…");
