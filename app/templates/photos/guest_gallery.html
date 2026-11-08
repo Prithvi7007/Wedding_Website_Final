@@ -11,6 +11,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="{{ asset_url('css/photo-drop.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/guest-experience.css') }}">
+    <script src="{{ asset_url('js/guest-experience.js') }}" defer></script>
 </head>
 <body class="photo-drop-page photo-gallery-page">
     <div class="photo-drop-backdrop" aria-hidden="true"></div>
@@ -20,6 +22,7 @@
             <p class="photo-drop-signature">Adlin <span>&amp;</span> Prithvi</p>
             <div class="photo-drop-header-rule" aria-hidden="true"><span>✦</span></div>
         </header>
+        {% include 'experience/navigation.html' %}
 
         <section class="photo-drop-card photo-gallery-intro">
             <p class="photo-drop-kicker">A COLLECTION MADE TOGETHER</p>
@@ -69,6 +72,7 @@
             <span>A wedding remembered through everyone's eyes.</span>
             <span class="photo-drop-footer-heart" aria-hidden="true">♡</span>
             <span>Please share this gallery only with wedding guests.</span>
+            <button type="button" class="experience-effects" data-solid-controls hidden aria-pressed="false">Solid controls</button>
         </footer>
     </main>
 </body>

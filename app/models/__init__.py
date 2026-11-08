@@ -5,6 +5,7 @@ from .event import Event
 from .invitation import Invitation
 from .permission import InvitationEventPermission
 from .rsvp import RSVP
+from .seating import SeatingAssignment, SeatingTable
 
 __all__ = [
     "AdminAuditLog",
@@ -14,4 +15,6 @@ __all__ = [
     "Invitation",
     "InvitationEventPermission",
     "RSVP",
+    "SeatingAssignment",
+    "SeatingTable",
 ]

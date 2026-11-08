@@ -1,0 +1,57 @@
+{% extends 'experience/base.html' %}
+{% block title %}Find your table · Adlin &amp; Prithvi{% endblock %}
+{% block content %}
+<section class="experience-intro experience-intro-compact">
+  <p class="experience-eyebrow">A PLACE FOR EVERYONE WE LOVE</p>
+  <h1>Find <em>your table.</em></h1>
+  <p>Your family has a place in our celebration.</p>
+</section>
+{% if not ready %}
+<section class="experience-content experience-empty" role="status">
+  <h2>We're getting the seating list ready.</h2>
+  <p>Please check back or ask one of the hosts for a hand.</p>
+</section>
+{% elif not events %}
+<section class="experience-content experience-empty">
+  <h2>Seating details are on their way.</h2>
+  <p>Your table will appear here once the hosts have arranged the room.</p>
+</section>
+{% else %}
+<form class="experience-content seating-search" method="get" action="{{ url_for('seating.guest_find', token=experience_token) }}">
+  <label class="experience-field"><span>Wedding event</span><select name="event">
+    {% for event in events %}<option value="{{ event.event_id }}" {% if selected and selected.event_id == event.event_id %}selected{% endif %}>{{ event.title }}</option>{% endfor %}
+  </select></label>
+  <label class="experience-field seating-name-field"><span>Your name or family name</span>
+    <input type="search" name="q" value="{{ query }}" placeholder="e.g. your first name or surname" autocomplete="off">
+  </label>
+  <button type="submit" class="experience-primary">Find my table <span aria-hidden="true">↗</span></button>
+  <p class="experience-help">You can also search using your partner's name.</p>
+</form>
+{% if query %}
+<section class="seating-results" aria-label="Matching families">
+  {% if results %}
+  <p class="experience-eyebrow seating-result-count">{{ total }} matching {{ 'family' if total == 1 else 'families' }} · {{ selected.title }}</p>
+  {% for result in results %}
+  <article class="seating-result experience-content">
+    <p class="experience-eyebrow">{{ result.family_name }}</p>
+    {% if result.table_name %}
+      <h2>{{ result.table_name }}</h2><p>We saved a place for your family.</p>
+    {% else %}
+      <h2>A place is being prepared.</h2><p>Your table assignment is coming soon. Please check back or ask a host.</p>
+    {% endif %}
+  </article>
+  {% endfor %}
+  {% if pages > 1 %}<nav class="experience-pagination" aria-label="Family search pages">
+    {% if page > 1 %}<a href="{{ url_for('seating.guest_find', token=experience_token, event=selected.event_id, q=query, page=page-1) }}">Previous</a>{% endif %}
+    <span>Page {{ page }} of {{ pages }}</span>
+    {% if page < pages %}<a href="{{ url_for('seating.guest_find', token=experience_token, event=selected.event_id, q=query, page=page+1) }}">Next</a>{% endif %}
+  </nav>{% endif %}
+  {% else %}
+  <div class="experience-content experience-empty"><h2>Let's try another name.</h2><p>We couldn't find a matching family for this event. Try a first name, surname or partner's name, or ask a host.</p></div>
+  {% endif %}
+</section>
+{% else %}
+<p class="seating-search-note">One table for the whole family. Search above to find yours.</p>
+{% endif %}
+{% endif %}
+{% endblock %}

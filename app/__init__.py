@@ -63,6 +63,7 @@ def create_app(config_name: str | None = None) -> Flask:
     from .health.routes import health_bp
     from .invitations.routes import invitations_bp
     from .photos.routes import photos_bp, prepare_photo_upload_limit
+    from .seating.routes import seating_bp
 
     app.before_request(prepare_photo_upload_limit)
     csrf.init_app(app)
@@ -72,6 +73,7 @@ def create_app(config_name: str | None = None) -> Flask:
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(photos_bp)
+    app.register_blueprint(seating_bp)
 
     app.before_request(prepare_request_security_context)
     app.after_request(apply_response_security)

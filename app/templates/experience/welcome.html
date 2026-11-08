@@ -1,0 +1,29 @@
+{% extends 'experience/base.html' %}
+{% block content %}
+<section class="experience-intro">
+  <p class="experience-eyebrow">WE'RE SO GLAD YOU'RE HERE</p>
+  <h1>Your place in <em>our story.</em></h1>
+  <p>Everything for our celebration, in one place.</p>
+</section>
+<div class="experience-actions">
+  <a class="experience-action experience-content" href="{{ url_for('seating.guest_find', token=experience_token) }}">
+    <span class="experience-action-number" aria-hidden="true">01</span>
+    <div><h2>Find your table</h2><p>Search your name and find where your family will be sitting.</p></div>
+    <span class="experience-arrow" aria-hidden="true">↗</span>
+  </a>
+  {% if experience_upload_enabled %}
+  <a class="experience-action experience-content" href="{{ url_for('photos.guest_upload', token=experience_token) }}">
+    <span class="experience-action-number" aria-hidden="true">02</span>
+    <div><h2>Share photos</h2><p>Let us see the celebration through your eyes.</p></div>
+    <span class="experience-arrow" aria-hidden="true">↗</span>
+  </a>
+  {% endif %}
+  {% if experience_gallery_enabled %}
+  <a class="experience-action experience-content" href="{{ url_for('photos.guest_gallery', token=experience_token) }}">
+    <span class="experience-action-number" aria-hidden="true">03</span>
+    <div><h2>View the gallery</h2><p>A collection of moments, made together.</p></div>
+    <span class="experience-arrow" aria-hidden="true">↗</span>
+  </a>
+  {% endif %}
+</div>
+{% endblock %}

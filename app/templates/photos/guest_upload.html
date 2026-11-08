@@ -11,6 +11,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="{{ asset_url('css/photo-drop.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/guest-experience.css') }}">
+    <script src="{{ asset_url('js/guest-experience.js') }}" defer></script>
     <script src="{{ asset_url('js/photo-drop.js') }}" defer></script>
 </head>
 <body class="photo-drop-page">
@@ -21,6 +23,7 @@
             <p class="photo-drop-signature">Adlin <span>&amp;</span> Prithvi</p>
             <div class="photo-drop-header-rule" aria-hidden="true"><span>✦</span></div>
         </header>
+        {% include 'experience/navigation.html' %}
 
         {% if success %}
         <section class="photo-drop-card photo-drop-thanks" aria-live="polite">
@@ -110,6 +113,7 @@
             <span>Made with love, kept with care.</span>
             <span class="photo-drop-footer-heart" aria-hidden="true">♡</span>
             <span>Your shared photos appear in the guest gallery immediately.</span>
+            <button type="button" class="experience-effects" data-solid-controls hidden aria-pressed="false">Solid controls</button>
         </footer>
     </main>
 </body>
