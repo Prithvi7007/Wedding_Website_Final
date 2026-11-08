@@ -24,17 +24,17 @@
   {% if upload_enabled %}
   <article class="photo-admin-card photo-admin-qr">
     <p class="admin-eyebrow">The QR your guests will scan</p>
-    <h2>One scan, a thousand memories.</h2>
+    <h2>One scan for your guests.</h2>
     <p>Print this for the welcome table, guestbook, or reception tables.</p>
     <div class="photo-admin-qr-image">
-      <img src="{{ url_for('photos.admin_qr') }}" width="240" height="240" alt="Private QR code linking to the guest photo uploader">
+      <img src="{{ url_for('photos.admin_qr') }}" width="240" height="240" alt="Guest QR code for seating, photo uploads and gallery">
     </div>
     <div class="photo-admin-share-url">{{ share_url }}</div>
     <div class="photo-admin-actions">
-      <button type="button" class="photo-admin-button" data-copy-value="{{ share_url }}">Copy upload link</button>
+      <button type="button" class="photo-admin-button" data-copy-value="{{ share_url }}">Copy guest link</button>
       <a class="photo-admin-button photo-admin-button-outline" href="{{ url_for('photos.admin_qr') }}" download="adlin-prithvi-photo-qr.svg">Save QR (SVG)</a>
     </div>
-    <small>Keep this QR for your wedding guests. Anyone holding the link can upload and view shared photos immediately.</small>
+    <small>Keep this QR for your wedding guests. Anyone holding the link can find their table, upload and view shared photos.</small>
   </article>
 
   {% endif %}
@@ -44,7 +44,7 @@
     <p>Total photos in your collection</p>
     <div class="photo-admin-pending"><strong>{{ shared }}</strong><span>Shared in the guest gallery</span></div>
     <p class="photo-admin-hint">New uploads are shared automatically. Hide keeps a photo in your collection; Delete removes it.</p>
-    {% if gallery_enabled %}<a class="photo-admin-button photo-admin-button-outline" href="{{ url_for('photos.guest_gallery', token=share_url.rsplit('/', 1)[-1]) }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Preview guest gallery</a>{% endif %}
+    {% if gallery_enabled %}<a class="photo-admin-button photo-admin-button-outline" href="{{ url_for('photos.guest_gallery', token=share_token) }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Preview guest gallery</a>{% endif %}
   </article>
 </section>
 

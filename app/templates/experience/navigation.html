@@ -1,0 +1,8 @@
+{% if experience_token %}
+<nav class="experience-nav experience-glass" aria-label="Wedding guest navigation">
+  <a href="{{ url_for('seating.guest_welcome', token=experience_token) }}" {% if request.endpoint == 'seating.guest_welcome' %}aria-current="page"{% endif %}>Welcome</a>
+  <a href="{{ url_for('seating.guest_find', token=experience_token) }}" {% if request.endpoint == 'seating.guest_find' %}aria-current="page"{% endif %}>Find table</a>
+  {% if experience_upload_enabled %}<a href="{{ url_for('photos.guest_upload', token=experience_token) }}" {% if request.endpoint in ['photos.guest_upload', 'photos.guest_thanks'] %}aria-current="page"{% endif %}>Share photos</a>{% endif %}
+  {% if experience_gallery_enabled %}<a href="{{ url_for('photos.guest_gallery', token=experience_token) }}" {% if request.endpoint == 'photos.guest_gallery' %}aria-current="page"{% endif %}>Gallery</a>{% endif %}
+</nav>
+{% endif %}

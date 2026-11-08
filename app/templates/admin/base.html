@@ -21,6 +21,7 @@
         src="{{ asset_url('admin/admin.js') }}"
         defer
     ></script>
+    {% block extra_head %}{% endblock %}
 </head>
 <body class="admin-body">
     <header class="admin-topbar">
@@ -58,6 +59,8 @@
             >
                 RSVPs
             </a>
+
+            <a href="{{ url_for('seating.admin_index') }}" {% if request.endpoint and request.endpoint.startswith('seating.admin_') %}aria-current="page"{% endif %}>Seating</a>
 
             {% if current_admin_is_full %}
                 <a

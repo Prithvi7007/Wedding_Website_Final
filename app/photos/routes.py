@@ -1,8 +1,6 @@
 """Scan-to-share wedding photos, with a private host review inbox."""
 from __future__ import annotations
 
-import hmac
-from urllib.parse import urlsplit
 
 from flask import (
     Blueprint, abort, current_app, flash, jsonify, redirect, render_template,
@@ -16,6 +14,7 @@ from app.photos.storage import (
     storage_ready, photo_is_shared,
 )
 from app.photos.r2 import RemotePhotoError
+from app.guest_links import public_guest_url, require_guest_link, share_token
 
 
 photos_bp = Blueprint("photos", __name__)
@@ -41,21 +40,11 @@ def private_photo_responses(response):
 
 
 def _token() -> str:
-    return str(current_app.config.get("WEDDING_PHOTO_SHARE_TOKEN", "")).strip()
+    return share_token()
 
 
 def _public_url() -> str | None:
-    base = str(current_app.config.get("PUBLIC_BASE_URL", "")).strip().rstrip("/")
-    if not base:
-        return None
-    parsed = urlsplit(base)
-    if parsed.path not in ("", "/") or parsed.query or parsed.fragment or not parsed.netloc:
-        return None
-    if parsed.scheme != "https" and not (
-        current_app.testing and parsed.scheme == "http"
-    ):
-        return None
-    return base + url_for("photos.guest_upload", token=_token())
+    return public_guest_url("photos.guest_upload")
 
 
 def _enabled() -> bool:
@@ -80,8 +69,9 @@ def _gallery_enabled() -> bool:
 
 def _public_access(token: str, *, gallery: bool = False) -> None:
     allowed = _gallery_enabled() if gallery else _enabled()
-    if not allowed or not hmac.compare_digest(_token(), token):
+    if not allowed:
         abort(404)
+    require_guest_link(token)
 
 
 def _wants_json() -> bool:
@@ -226,7 +216,7 @@ def admin_photos():
         total=len(active),
         shared=sum(photo_is_shared(item) for item in active),
         is_shared=photo_is_shared,
-        page=page, pages=pages, show=show, share_url=_public_url(),
+        page=page, pages=pages, show=show, share_url=public_guest_url(), share_token=_token(),
     )
 
 
@@ -238,7 +228,7 @@ def admin_qr():
     import qrcode
     from qrcode.image.svg import SvgPathImage
 
-    code = qrcode.make(_public_url(), error_correction=qrcode.constants.ERROR_CORRECT_M,
+    code = qrcode.make(public_guest_url(), error_correction=qrcode.constants.ERROR_CORRECT_M,
                        box_size=10, border=4, image_factory=SvgPathImage)
     from io import BytesIO
 

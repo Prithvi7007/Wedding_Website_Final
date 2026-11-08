@@ -1,0 +1,108 @@
+{% extends 'admin/base.html' %}
+{% block title %}Family seating · Wedding Admin{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ asset_url('css/guest-experience.css') }}">
+<script src="{{ asset_url('js/guest-experience.js') }}" defer></script>
+{% endblock %}
+{% block content %}
+<div class="seating-admin">
+  <section class="admin-page-heading">
+    <div><p class="admin-eyebrow">THE PEOPLE AROUND YOUR TABLES</p><h1>Family seating</h1><p>One table per family, with the guest list you already know.</p></div>
+    {% if ready and selected %}<a class="experience-button" href="{{ url_for('seating.admin_export', event=selected.event_id) }}">Export seating CSV</a>{% endif %}
+  </section>
+  {% if not ready %}
+  <section class="experience-content experience-empty"><h2>Seating setup is not complete.</h2><p>Your site operator needs to finish the database setup before you can add tables.</p></section>
+  {% else %}
+  <form class="seating-toolbar experience-glass" method="get" action="{{ url_for('seating.admin_index') }}">
+    <label class="experience-field"><span>Wedding event</span><select name="event">{% for event in events %}<option value="{{ event.event_id }}" {% if selected and selected.event_id == event.event_id %}selected{% endif %}>{{ event.title }}</option>{% endfor %}</select></label>
+    <button type="submit" class="experience-button">View event</button>
+    {% if selected %}<div class="seating-overview"><strong>{{ assigned_count }} / {{ family_total }}</strong><span>families assigned</span></div>{% endif %}
+  </form>
+  {% if not selected %}
+  <section class="experience-content experience-empty"><h2>No wedding events found.</h2><p>Add your wedding events before arranging their tables.</p></section>
+  {% else %}
+  {% if current_admin_is_full %}
+  <form class="experience-content seating-create" method="post" action="{{ url_for('seating.admin_create_table') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="event_id" value="{{ selected.event_id }}">
+    <label class="experience-field"><span>Table name or number</span><input name="name" required placeholder="e.g. Table 7 or Garden"></label>
+    <label class="experience-field"><span>Capacity <small>(optional)</small></span><input type="number" name="capacity" min="0" step="1" placeholder="Seats"></label>
+    <button class="experience-primary" type="submit">Add table</button>
+    <p class="experience-help">Capacity is a planning guide. Over-capacity assignments show a warning and can still be saved.</p>
+  </form>
+  {% endif %}
+  <section class="seating-tables" aria-label="Event tables">
+    {% for table in tables %}
+    <article class="experience-content seating-table-card" data-table-id="{{ table.table_id }}">
+      <a class="seating-table-name" href="{{ url_for('seating.admin_index', event=selected.event_id, table=table.table_id) }}">{{ table.name }}</a>
+      <p class="seating-table-occupancy"><strong>{{ table.planned_count }}</strong><span>planned{% if table.capacity is not none %} / {{ table.capacity }} seats{% endif %}</span></p>
+      <p>{{ table.family_count }} {{ 'family' if table.family_count == 1 else 'families' }}{% if table.estimated_count %} · {{ table.estimated_count }} people estimated{% endif %}</p>
+      {% if table.over_capacity %}<p class="seating-warning">Above the capacity you entered</p>{% endif %}
+      {% if table.saved_family_count > table.family_count %}<p class="experience-help">{{ table.saved_family_count - table.family_count }} inactive or ineligible assignments retained</p>{% endif %}
+      {% if current_admin_is_full %}
+      <details class="seating-table-edit"><summary>Edit table</summary>
+        <form method="post" action="{{ url_for('seating.admin_update_table', table_id=table.table_id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <label class="experience-field"><span>Table name</span><input name="name" value="{{ table.name }}" required></label>
+          <label class="experience-field"><span>Capacity</span><input type="number" name="capacity" min="0" step="1" value="{{ table.capacity if table.capacity is not none else '' }}"></label>
+          <button class="experience-button" type="submit">Save table</button>
+        </form>
+        <form method="post" action="{{ url_for('seating.admin_delete_table', table_id=table.table_id) }}" data-confirm-form="Delete this table and return its {{ table.saved_family_count }} families to Unassigned?">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="experience-danger" type="submit">Delete table</button>
+          <p class="experience-help">Its families will return to Unassigned.</p>
+        </form>
+      </details>
+      {% endif %}
+    </article>
+    {% else %}<div class="experience-content experience-empty"><h2>Start with your first table.</h2><p>Give it a name, then select the families who will sit together.</p></div>{% endfor %}
+  </section>
+
+  <section class="experience-content seating-directory" aria-label="Family assignments">
+    <div class="seating-directory-heading"><div><p class="admin-eyebrow">YOUR GUEST LIST</p><h2>Make room for everyone.</h2></div><span>{{ total }} matching {{ 'family' if total == 1 else 'families' }}</span></div>
+    <form class="seating-filters" method="get" action="{{ url_for('seating.admin_index') }}">
+      <input type="hidden" name="event" value="{{ selected.event_id }}">
+      <label class="experience-field"><span>Search families</span><input type="search" name="q" value="{{ query }}" placeholder="Name or family"></label>
+      <label class="experience-field"><span>Assignments</span><select name="view">{% for value, label in [('all','All families'),('unassigned','Unassigned'),('assigned','Assigned')] %}<option value="{{ value }}" {% if view == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+      <button class="experience-button" type="submit">Search families</button>
+      {% if table_filter %}<a class="experience-button" href="{{ url_for('seating.admin_index', event=selected.event_id) }}">Clear table filter</a>{% endif %}
+    </form>
+    <form method="post" action="{{ url_for('seating.admin_assign') }}" data-family-assignment-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="event_id" value="{{ selected.event_id }}">
+      <input type="hidden" name="view" value="{{ view }}"><input type="hidden" name="q" value="{{ query }}">
+      {% if current_admin_is_full and families %}<label class="seating-select-all"><input type="checkbox" data-select-all> Select visible families</label>{% endif %}
+      <ul class="seating-family-list">
+      {% for family in families %}
+        <li class="seating-family-row">
+          <label class="seating-family-name">{% if current_admin_is_full %}<input type="checkbox" name="invitation_ids" value="{{ family.invitation_id }}">{% endif %}<span><strong>{{ family.display_name }}</strong><small>{{ family.response_label }}{% if family.estimated %} · estimated party size{% endif %}</small></span></label>
+          <span class="seating-family-size">{{ family.party_size }} {{ 'person' if family.party_size == 1 else 'people' }}</span>
+          <span class="seating-family-table">{{ family.table_name or 'Unassigned' }}</span>
+        </li>
+      {% else %}<li class="experience-empty"><p>No families match these filters.</p></li>{% endfor %}
+      </ul>
+      {% if current_admin_is_full and families %}
+      <div class="seating-bulkbar">
+        <label class="experience-field"><span>Table for selected families</span><select name="table_id"><option value="">Unassigned</option>{% for table in tables %}<option value="{{ table.table_id }}">{{ table.name }}</option>{% endfor %}</select></label>
+        <button class="experience-primary" type="submit">Apply assignment</button>
+        <span class="experience-help" data-selection-count aria-live="polite">Select families above</span>
+      </div>
+      {% endif %}
+    </form>
+    {% if pages > 1 %}<nav class="experience-pagination" aria-label="Host family pages">
+      {% if page > 1 %}<a href="{{ url_for('seating.admin_index', event=selected.event_id, q=query, view=view, table=table_filter, page=page-1) }}">Previous</a>{% endif %}<span>Page {{ page }} of {{ pages }}</span>{% if page < pages %}<a href="{{ url_for('seating.admin_index', event=selected.event_id, q=query, view=view, table=table_filter, page=page+1) }}">Next</a>{% endif %}
+    </nav>{% endif %}
+  </section>
+  {% endif %}
+  {% if share_url %}
+  <section class="experience-content seating-share">
+    <img src="{{ url_for('seating.admin_qr') }}" width="176" height="176" alt="Shared wedding guest QR code">
+    <div><p class="admin-eyebrow">ONE QR FOR THE CELEBRATION</p><h2>Welcome your guests.</h2><p>Seating, photo uploads and the gallery, together.</p>
+      <p class="seating-share-url">{{ share_url }}</p>
+      <div class="seating-share-actions"><a class="experience-button" href="{{ share_url }}" target="_blank" rel="noopener noreferrer">Preview guest page</a><button type="button" class="experience-button" data-copy-value="{{ share_url }}">Copy guest link</button><a class="experience-button" href="{{ url_for('seating.admin_qr') }}" download="adlin-prithvi-guest-qr.svg">Download QR</a></div>
+    </div>
+  </section>
+  {% endif %}
+  <p class="experience-help seating-estimate-note">Confirmed party sizes follow the latest Yes RSVPs. Other assigned families use their invitation allowance as an estimate. Inactive or no-longer-invited families are hidden from guest search and planned counts; their saved assignments are retained.</p>
+  <button type="button" class="experience-effects" data-solid-controls hidden aria-pressed="false">Solid controls</button>
+  {% endif %}
+</div>
+{% endblock %}
